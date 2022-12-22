@@ -83,9 +83,9 @@ var startPaused = false;
 // 50;{{pump:air:}25|{air:pump:}25|}25|}
 
 // variable setup 
-var loopProtector = function () {
-    return this;
-}().LoopProtector.prototype.leave = function () { };
+// var loopProtector = function () {
+//     return this;
+// }().LoopProtector.prototype.leave = function () { };
 
 var debugInfo = false;
 
@@ -93,7 +93,7 @@ var animationTime = 0;
 var frames = [];
 var lastFpsList = 0;
 var fpsList = [];
-textFont(createFont("monospace"), 10);
+// textFont(createFont("monospace"), 10);
 
 var gridSize = 100;
 
@@ -1814,7 +1814,7 @@ var clickLine = function (startX, startY, endX, endY) {
     }
 };
 
-draw = function () {
+window.draw = function () {
     if (mouseIsPressed && (!gridPaused || !simulatePaused)) {
         lastGrids.push([]);
         for (var i = 0; i < gridSize; i++) {
