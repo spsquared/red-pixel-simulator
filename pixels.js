@@ -1745,9 +1745,17 @@ var pixelSimulator = function(processingInstance) {
                 y += sin(angle);
             }
         };
+
+        var mouseIsPressed = false;
+        mousePressed = function() {
+            mouseIsPressed = true;
+        };
+        mouseReleased = function() {
+            mouseIsPressed = false;
+        };
         
         draw = function () {
-            if (mousePressed && (!gridPaused || !simulatePaused)) {
+            if (mouseIsPressed && (!gridPaused || !simulatePaused)) {
                 lastGrids.push([]);
                 for (var i = 0; i < gridSize; i++) {
                     lastGrids[lastGrids.length - 1].push([]);
