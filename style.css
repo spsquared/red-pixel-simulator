@@ -1,0 +1,79 @@
+.p5Canvas {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    border: 2px solid black;
+}
+body {
+    --max-sidebar-width: 600px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+#sidebar {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    max-width: var(--max-sidebar-width);
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+#saveCode {
+    position: static;
+    margin-top: 10px;
+    width: 50%;
+    min-height: 100px;
+    max-height: 500px;
+    resize: vertical;
+}
+#reset {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    margin-left: 16px;
+    width: 80px;
+    height: 60px;
+    font: 16px Arial;
+    font-weight: bolder;
+    background-color: #ff1100;
+    cursor: pointer;
+}
+
+b {
+    /* background-color: beige; */
+    border: 1px solid black;
+    border-radius: 4px;
+}
+table {
+    border-collapse: collapse;
+}
+td {
+    border: 2px solid black;
+    padding: 2px 4px;
+    overflow-wrap: break-word;
+    max-width: calc(var(--max-sidebar-width) - 48px);
+}
+.save {
+    font-weight: lighter;
+}
+
+#controls {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 600px;
+    max-height: calc(100vh - 680px);
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #333333;
+        color: white;
+    }
+    b, td {
+        border-color: white;
+    }
+}

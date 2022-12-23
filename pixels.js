@@ -8,8 +8,10 @@ let optimizedLiquids = false;
 let optimizedLags = false;
 let fadeEffect = 100;
 
-let xScale = 600 / gridSize;
-let yScale = 600 / gridSize;
+let size = Math.round(Math.min(window.innerWidth - 20, window.innerHeight - 20) / gridSize) * gridSize;
+let xScale = size / gridSize;
+let yScale = size / gridSize;
+let canvasScale = Math.min(window.innerHeight / size, window.innerHeight / size);
 let debugInfo = false;
 let animationTime = 0;
 let frames = [];
@@ -123,14 +125,16 @@ function loadSaveCode() {
 };
 
 function setup() {
-    createCanvas(600, 600);
+    createCanvas(size, size);
     frameRate(60);
     noiseDetail(3, 0.6);
+    windowResized();
 
     createGrid();
     loadSaveCode();
 
-    document.onkeydown = function(e) {
+    document.onkeydown = function (e) {
+        if (e.ctrlKey || e.target.matches('#saveCode')) return;
         const key = e.key.toLowerCase();
         for (let i in pixels) {
             if (pixels[i].key == key) {
@@ -170,7 +174,8 @@ function setup() {
         }
         if (key != 'i' || !e.shiftKey || !e.ctrlKey) e.preventDefault();
     };
-    document.onkeyup = function(e) {
+    document.onkeyup = function (e) {
+        if (e.ctrlKey || e.target.matches('#saveCode')) return;
         const key = e.key.toLowerCase();
         // if (keyCode == 90) {
         //     for (let i = 0; i < gridSize; i++) {
@@ -189,7 +194,7 @@ function setup() {
             frameRate(60);
         }
         if (key == 'z') {
-            println('SAVE CODE:');
+            // println('SAVE CODE:');
             let printedSaveCode = '';
             let string = '';
             let number = 0;
@@ -219,19 +224,24 @@ function setup() {
                     printedSaveCode += string + '-' + number + ':';
                 }
             }
-            println(printedSaveCode);
+            // println(printedSaveCode);
         }
         if (key == 'shift') {
             simulatePaused = !simulatePaused;
-            if (simulatePaused && gridPaused) {
-                frameRate(240);
-            } else {
-                frameRate(60);
-            }
+            // if (simulatePaused && gridPaused) {
+            //     frameRate(240);
+            // } else {
+            //     frameRate(60);
+            // }
         }
         e.preventDefault();
     };
     document.querySelector('.p5Canvas').addEventListener('contextmenu', (e) => e.preventDefault());
+
+    document.getElementById('reset').onclick = function(e) {
+        saveCode = document.getElementById('saveCode').value;
+        loadSaveCode();
+    };
 };
 
 function drawPixels(x, y, width, height, type, opacity) {
@@ -1768,22 +1778,29 @@ function draw() {
             }
         }
     }
-    if (gridPaused == false || runTicks > 0 || simulatePaused) {
-        runTicks--;
-        if (random() < 0.5) {
-            for (let i = 0; i < gridSize; i++) {
-                for (let j = 0; j < gridSize; j++) {
-                    updatePixel(j, i);
+    if (!gridPaused || runTicks > 0 || simulatePaused) {
+        let max = simulatePaused ? 10 : 1;
+        for (let i = 0; i < max; i++) {
+            runTicks--;
+            if (random() < 0.5) {
+                for (let i = 0; i < gridSize; i++) {
+                    for (let j = 0; j < gridSize; j++) {
+                        updatePixel(j, i);
+                    }
                 }
             }
-        }
-        else {
-            for (let i = 0; i < gridSize; i++) {
-                for (let j = gridSize - 1; j >= 0; j--) {
-                    updatePixel(j, i);
+            else {
+                for (let i = 0; i < gridSize; i++) {
+                    for (let j = gridSize - 1; j >= 0; j--) {
+                        updatePixel(j, i);
+                    }
                 }
             }
+            frames.push(millis());
         }
+    }
+    if (gridPaused && runTicks <= 0 && !simulatePaused) {
+        frames.push(millis());
     }
 
     if (!gridPaused || !simulatePaused) {
@@ -1794,7 +1811,6 @@ function draw() {
         drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, clickPixel == 'air' ? 'air2' : clickPixel, 0.5);
     }
 
-    frames.push(millis());
     while (frames[0] + 1000 < millis()) {
         frames.shift(1);
     }
@@ -1848,4 +1864,15 @@ function draw() {
     }
 
     animationTime += 1;
+};
+
+function windowResized() {
+    size = Math.round(Math.min(window.innerWidth - 20, window.innerHeight - 20) / gridSize) * gridSize;
+    xScale = size / gridSize;
+    yScale = size / gridSize;
+    resizeCanvas(size, size);
+    canvasScale = Math.min(window.innerHeight / size, window.innerHeight / size);
+    document.querySelector('.p5Canvas').style.width = size * canvasScale - 20 + 'px';
+    document.querySelector('.p5Canvas').style.height = size * canvasScale - 20 + 'px';
+    document.body.style.setProperty('--max-sidebar-width', window.innerWidth - size * canvasScale - 20 + 'px');
 };
