@@ -129,6 +129,109 @@ function setup() {
 
     createGrid();
     loadSaveCode();
+
+    document.onkeydown = function(e) {
+        const key = e.key.toLowerCase();
+        for (let i in pixels) {
+            if (pixels[i].key == key) {
+                clickPixel = i;
+            }
+        }
+        if (key == 'arrowup') {
+            clickSize += 1;
+            clickSize = min(gridSize / 2 + 1, clickSize);
+        } else if (key == 'arrowdown') {
+            clickSize -= 1;
+            clickSize = max(1, clickSize);
+        } else if (key == 'r') {
+            for (let i = 0; i < gridSize; i++) {
+                if (grid[0][i] == 'air' && random() < 0.25) {
+                    grid[0][i] = 'water';
+                }
+            }
+        } else if (key == 'e') {
+            for (let i = 0; i < gridSize; i++) {
+                if (grid[0][i] == 'air' && random() < 0.25) {
+                    grid[0][i] = 'lava';
+                }
+            }
+        } else if (key == 'b') {
+            for (let i = 0; i < gridSize; i++) {
+                grid[0][i] = 'nuke';
+            }
+        } else if (key == 'n') {
+            for (let i = 0; i < gridSize; i += 5) {
+                for (let j = 0; j < gridSize; j += 5) {
+                    grid[j][i] = 'very_huge_nuke';
+                }
+            }
+        } else if (key == 'enter') {
+            runTicks = 1;
+        }
+        if (key != 'i' || !e.shiftKey || !e.ctrlKey) e.preventDefault();
+    };
+    document.onkeyup = function(e) {
+        const key = e.key.toLowerCase();
+        // if (keyCode == 90) {
+        //     for (let i = 0; i < gridSize; i++) {
+        //         for (let j = 0; j < gridSize; j++) {
+        //             grid[i][j] = lastGrids[lastGrids.length - 1][i][j];
+        //         }
+        //     }
+        //     lastGrids.pop();
+        // }
+        if (key == 'alt') {
+            debugInfo = !debugInfo;
+        }
+        if (key == 'p') {
+            gridPaused = !gridPaused;
+            simulatePaused = false;
+            frameRate(60);
+        }
+        if (key == 'z') {
+            println('SAVE CODE:');
+            let printedSaveCode = '';
+            let string = '';
+            let number = 0;
+            printedSaveCode += gridSize + ';';
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    number += 1;
+                    if (grid[i][j] !== string) {
+                        if (string !== '' && number !== 0) {
+                            if (number == 1) {
+                                printedSaveCode += string + ':';
+                            }
+                            else {
+                                printedSaveCode += string + '-' + number + ':';
+                            }
+                        }
+                        string = grid[i][j];
+                        number = 0;
+                    }
+                }
+            }
+            if (string !== '' && number !== 0) {
+                if (number == 1) {
+                    printedSaveCode += string + ':';
+                }
+                else {
+                    printedSaveCode += string + '-' + number + ':';
+                }
+            }
+            println(printedSaveCode);
+        }
+        if (key == 'shift') {
+            simulatePaused = !simulatePaused;
+            if (simulatePaused && gridPaused) {
+                frameRate(240);
+            } else {
+                frameRate(60);
+            }
+        }
+        e.preventDefault();
+    };
+    document.querySelector('.p5Canvas').addEventListener('contextmenu', (e) => e.preventDefault());
 };
 
 function drawPixels(x, y, width, height, type, opacity) {
@@ -1592,109 +1695,17 @@ const pixels = {
 
         },
         key: Infinity,
+    },
+    'air2': {
+        draw: function (x, y, width, height, opacity) {
+            noStroke();
+            fill(255, 255, 255, 255 * opacity);
+            drawPixel(x, y, width, height);
+        },
+        update: function (x, y) {
+            // illegal pixel
+        },
     }
-};
-
-document.onkeydown = function(e) {
-    const key = e.key.toLowerCase();
-    for (let i in pixels) {
-        if (pixels[i].key == key) {
-            clickPixel = i;
-        }
-    }
-    if (key == 'arrowup') {
-        clickSize += 1;
-        clickSize = min(gridSize / 2 + 1, clickSize);
-    } else if (key == 'arrowdown') {
-        clickSize -= 1;
-        clickSize = max(1, clickSize);
-    } else if (key == 'r') {
-        for (let i = 0; i < gridSize; i++) {
-            if (grid[0][i] == 'air' && random() < 0.25) {
-                grid[0][i] = 'water';
-            }
-        }
-    } else if (key == 'e') {
-        for (let i = 0; i < gridSize; i++) {
-            if (grid[0][i] == 'air' && random() < 0.25) {
-                grid[0][i] = 'lava';
-            }
-        }
-    } else if (key == 'b') {
-        for (let i = 0; i < gridSize; i++) {
-            grid[0][i] = 'nuke';
-        }
-    } else if (key == 'n') {
-        for (let i = 0; i < gridSize; i += 5) {
-            for (let j = 0; j < gridSize; j += 5) {
-                grid[j][i] = 'very_huge_nuke';
-            }
-        }
-    } else if (key == 'enter') {
-        runTicks = 1;
-    }
-    e.preventDefault();
-};
-document.onkeyup = function(e) {
-    const key = e.key.toLowerCase();
-    // if (keyCode == 90) {
-    //     for (let i = 0; i < gridSize; i++) {
-    //         for (let j = 0; j < gridSize; j++) {
-    //             grid[i][j] = lastGrids[lastGrids.length - 1][i][j];
-    //         }
-    //     }
-    //     lastGrids.pop();
-    // }
-    if (key == 'alt') {
-        debugInfo = !debugInfo;
-    }
-    if (key == 'p') {
-        gridPaused = !gridPaused;
-        simulatePaused = false;
-        frameRate(60);
-    }
-    if (key == 'z') {
-        println('SAVE CODE:');
-        let printedSaveCode = '';
-        let string = '';
-        let number = 0;
-        printedSaveCode += gridSize + ';';
-        for (let i = 0; i < gridSize; i++) {
-            for (let j = 0; j < gridSize; j++) {
-                number += 1;
-                if (grid[i][j] !== string) {
-                    if (string !== '' && number !== 0) {
-                        if (number == 1) {
-                            printedSaveCode += string + ':';
-                        }
-                        else {
-                            printedSaveCode += string + '-' + number + ':';
-                        }
-                    }
-                    string = grid[i][j];
-                    number = 0;
-                }
-            }
-        }
-        if (string !== '' && number !== 0) {
-            if (number == 1) {
-                printedSaveCode += string + ':';
-            }
-            else {
-                printedSaveCode += string + '-' + number + ':';
-            }
-        }
-        println(printedSaveCode);
-    }
-    if (key == 'shift') {
-        simulatePaused = !simulatePaused;
-        if (simulatePaused && gridPaused) {
-            frameRate(240);
-        } else {
-            frameRate(60);
-        }
-    }
-    e.preventDefault();
 };
 
 function clickLine(startX, startY, endX, endY) {
@@ -1780,7 +1791,7 @@ function draw() {
         let x2 = min(gridSize - 1, floor(mouseX * gridSize / width) + clickSize - 1);
         let y1 = max(0, floor(mouseY * gridSize / height) - clickSize + 1);
         let y2 = min(gridSize - 1, floor(mouseY * gridSize / height) + clickSize - 1);
-        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, clickPixel, 0.5);
+        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, clickPixel == 'air' ? 'air2' : clickPixel, 0.5);
     }
 
     frames.push(millis());
