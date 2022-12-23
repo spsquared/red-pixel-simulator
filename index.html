@@ -11,13 +11,12 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <div id="controls">
-
-    </div>
+    <main></main>
     <div id="sidebar">
         <div>
             <textarea id="saveCode"></textarea>
             <button id="reset">RESET</button>
+            <button id="copySave">COPY<br>SAVE CODE</button>
         </div>
         <div>
             <h1>
@@ -25,23 +24,20 @@
             </h1>
             <p>
                 Click to place pixels<br>
-                Use the pixel table to change what pixel is placed<br>
+                Press keys listed in the pixel table to change what pixel is placed<br>
                 Press <b>[Up Arrow]</b> and <b>[Down Arrow]</b> to change the size of the brush<br>
                 press <b>[r]</b> for rain<br>
                 press <b>[e]</b> for lava<br>
                 press <b>[b]</b> for WW1<br>
                 press <b>[n]</b> for nukes<br>
-                <!-- press <b>[z]</b> to save it<br> -->
                 press <b>[p]</b> to pause<br>
                 press <b>[Enter]</b> while paused to advance 1 tick<br>
             </p>
             <table><tbody>
-                <tr>
-                </tr>
-                <tr>
-                    <td style="text-align: right;">0:</td>
+                <!-- <tr>
+                    <td style="text-align: right;">`:</td>
                     <td>air</td>
-                </tr>
+                </tr> -->
                 <tr>
                     <td style="text-align: right;">1:</td>
                     <td>sand</td>
@@ -79,12 +75,16 @@
                     <td>water pump</td>
                 </tr>
                 <tr>
+                    <td style="text-align: right;">0:</td>
+                    <td>collapsible nuke defuser</td>
+                </tr>
+                <tr>
                     <td style="text-align: right;">-:</td>
                     <td>nuke diffuser</td>
                 </tr>
                 <tr>
                     <td style="text-align: right;">=:</td>
-                    <td>block</td>
+                    <td>wall</td>
                 </tr>
                 <tr>
                     <td style="text-align: right;">[:</td>

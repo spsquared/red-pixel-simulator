@@ -10,6 +10,14 @@ body {
     font-weight: bold;
     font-size: 14px;
     word-wrap: break-word;
+    scroll-snap-type: y mandatory;
+}
+body::-webkit-scrollbar {
+    width: 0px;
+}
+
+main {
+    scroll-snap-align: end;
 }
 
 #sidebar {
@@ -18,7 +26,9 @@ body {
     right: 0px;
     max-width: var(--max-sidebar-width);
     height: 100vh;
+    overflow-x: hidden;
     overflow-y: scroll;
+    scroll-snap-align: end;
 }
 
 #saveCode {
@@ -31,15 +41,35 @@ body {
 }
 #reset {
     position: absolute;
-    top: 10px;
+    top: 80px;
     left: 50%;
     margin-left: 16px;
-    width: 80px;
-    height: 60px;
+    width: 100px;
+    height: 40px;
     font: 16px Arial;
     font-weight: bolder;
     background-color: #ff1100;
+    border: 5px outset gray;
     cursor: pointer;
+}
+#reset:active {
+    border-style: inset;
+}
+#copySave {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    margin-left: 16px;
+    width: 180px;
+    height: 60px;
+    font: 16px Arial;
+    font-weight: bolder;
+    background-color: lawngreen;
+    border: 5px outset gray;
+    cursor: pointer;
+}
+#copySave:active {
+    border-style: inset;
 }
 
 b {

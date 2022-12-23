@@ -1,17 +1,16 @@
 // no documentation here!
 
 let gridSize = 100;
-let saveCode = '100;air-100:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser-6:piston_rotator_right:piston_left:air-77:piston_rotator_left:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:piston_rotator_right:piston_left:air-77:piston_rotator_left:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:piston_rotator_right:piston_left:air-77:piston_rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:block-13:air-3:nuke_diffuser:air-83:block:lava-11:block:air-3:nuke_diffuser:air-83:block:cloner_down-11:block:air-3:nuke_diffuser:{air-83:block:air-11:block:air-3:nuke_diffuser:}4|{air-83:block:air-11:block:air-4:}3|air-83:{block:air-99:}56|';
+let saveCode = '100;air-100:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser-6:piston_rotator_right:piston_left:air-77:piston_rotator_left:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:piston_rotator_right:piston_left:air-77:piston_rotator_left:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:piston_rotator_right:piston_left:air-77:piston_rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava-11:wall:air-3:nuke_diffuser:air-83:wall:cloner_down-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}4|{air-83:wall:air-11:wall:air-4:}3|air-83:{wall:air-99:}56|';
 let startPaused = false;
 
 let optimizedLiquids = false;
 let optimizedLags = false;
 let fadeEffect = 100;
 
-let size = Math.round(Math.min(window.innerWidth - 20, window.innerHeight - 20) / gridSize) * gridSize;
-let xScale = size / gridSize;
-let yScale = size / gridSize;
-let canvasScale = Math.min(window.innerHeight / size, window.innerHeight / size);
+let xScale = 600 / gridSize;
+let yScale = 600 / gridSize;
+let canvasScale = Math.min(window.innerWidth / 600, window.innerHeight / 600);
 let debugInfo = false;
 let animationTime = 0;
 let frames = [];
@@ -22,7 +21,7 @@ let nextGrid = [];
 // let lastGrids = [];
 let gridPaused = startPaused;
 let simulatePaused = false;
-let clickPixel = 'air';
+let clickPixel = 'wall';
 let clickSize = 5;
 let runTicks = 0;
 
@@ -42,7 +41,7 @@ function createGrid() {
 };
 
 function loadSaveCode() {
-    if (saveCode.length !== 0) {
+    if (saveCode.length != 0) {
         try {
             let x = 0;
             let y = 0;
@@ -125,7 +124,7 @@ function loadSaveCode() {
 };
 
 function setup() {
-    createCanvas(size, size);
+    createCanvas(600, 600);
     frameRate(60);
     noiseDetail(3, 0.6);
     windowResized();
@@ -173,6 +172,7 @@ function setup() {
             runTicks = 1;
         }
         if (key != 'i' || !e.shiftKey || !e.ctrlKey) e.preventDefault();
+        if (e.target.matches('button')) e.target.blur();
     };
     document.onkeyup = function (e) {
         if (e.ctrlKey || e.target.matches('#saveCode')) return;
@@ -187,44 +187,10 @@ function setup() {
         // }
         if (key == 'alt') {
             debugInfo = !debugInfo;
-        }
-        if (key == 'p') {
+        } else if (key == 'p') {
             gridPaused = !gridPaused;
             simulatePaused = false;
             frameRate(60);
-        }
-        if (key == 'z') {
-            // println('SAVE CODE:');
-            let printedSaveCode = '';
-            let string = '';
-            let number = 0;
-            printedSaveCode += gridSize + ';';
-            for (let i = 0; i < gridSize; i++) {
-                for (let j = 0; j < gridSize; j++) {
-                    number += 1;
-                    if (grid[i][j] !== string) {
-                        if (string !== '' && number !== 0) {
-                            if (number == 1) {
-                                printedSaveCode += string + ':';
-                            }
-                            else {
-                                printedSaveCode += string + '-' + number + ':';
-                            }
-                        }
-                        string = grid[i][j];
-                        number = 0;
-                    }
-                }
-            }
-            if (string !== '' && number !== 0) {
-                if (number == 1) {
-                    printedSaveCode += string + ':';
-                }
-                else {
-                    printedSaveCode += string + '-' + number + ':';
-                }
-            }
-            // println(printedSaveCode);
         }
         if (key == 'shift') {
             simulatePaused = !simulatePaused;
@@ -238,9 +204,41 @@ function setup() {
     };
     document.querySelector('.p5Canvas').addEventListener('contextmenu', (e) => e.preventDefault());
 
-    document.getElementById('reset').onclick = function(e) {
+    document.getElementById('reset').onclick = function (e) {
         saveCode = document.getElementById('saveCode').value;
         loadSaveCode();
+    };
+    document.getElementById('copySave').onclick = function (e) {
+        let printedSaveCode = '';
+        let string = '';
+        let number = 0;
+        printedSaveCode += gridSize + ';';
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                number += 1;
+                if (grid[i][j] != string) {
+                    if (string != '' && number != 0) {
+                        if (number == 1) {
+                            printedSaveCode += string + ':';
+                        }
+                        else {
+                            printedSaveCode += string + '-' + number + ':';
+                        }
+                    }
+                    string = grid[i][j];
+                    number = 0;
+                }
+            }
+        }
+        if (string != '' && number != 0) {
+            if (number == 1) {
+                printedSaveCode += string + ':';
+            }
+            else {
+                printedSaveCode += string + '-' + number + ':';
+            }
+        }
+        window.navigator.clipboard.writeText(printedSaveCode);
     };
 };
 
@@ -276,7 +274,7 @@ function updateTouchingPixel(x, y, range, type, action) {
         if (x + i >= 0 && x + i <= gridSize - 1) {
             for (let j = -range; j <= range; j++) {
                 if (y + j >= 0 && y + j <= gridSize - 1) {
-                    if (abs(i) + abs(j) <= range && abs(i) + abs(j) !== 0) {
+                    if (abs(i) + abs(j) <= range && abs(i) + abs(j) != 0) {
                         if (grid[y + j][x + i] == type) {
                             action(x + i, y + j);
                             touchingPixel = true;
@@ -294,8 +292,8 @@ function updateTouchingAnything(x, y, range, action) {
         if (x + i >= 0 && x + i <= gridSize - 1) {
             for (let j = -range; j <= range; j++) {
                 if (y + j >= 0 && y + j <= gridSize - 1) {
-                    if (abs(i) + abs(j) <= range && abs(i) + abs(j) !== 0) {
-                        if (grid[y + j][x + i] !== 'air') {
+                    if (abs(i) + abs(j) <= range && abs(i) + abs(j) != 0) {
+                        if (grid[y + j][x + i] != 'air') {
                             action(x + i, y + j);
                             touchingPixel = true;
                         }
@@ -308,7 +306,7 @@ function updateTouchingAnything(x, y, range, action) {
 };
 function explode(x, y, size, chain) {
     nextGrid[y][x] = 'air';
-    grid[y][x] = 'block';
+    grid[y][x] = 'wall';
     for (let i = -size; i <= size; i++) {
         for (let j = -size; j <= size; j++) {
             if (x + i >= 0 && x + i < gridSize && y + j >= 0 && y + j < gridSize) {
@@ -328,7 +326,7 @@ function explode(x, y, size, chain) {
     }
 };
 const pixels = {
-    'air': {
+    air: {
         draw: function (x, y, width, height, opacity) {
             // noStroke();
             // fill(255, 255, 255, opacity * 255);
@@ -337,9 +335,9 @@ const pixels = {
         update: function (x, y) {
 
         },
-        key: '0',
+        key: Infinity,
     },
-    'sand': {
+    sand: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(255, 225, 125, opacity * 255);
@@ -383,10 +381,10 @@ const pixels = {
         },
         key: '1',
     },
-    'water': {
+    water: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
-            if (optimizedLiquids == true) {
+            if (optimizedLiquids) {
                 fill(75, 50, 255, opacity * 255);
                 drawPixel(x, y, width, height);
             }
@@ -415,7 +413,13 @@ const pixels = {
                         nextGrid[y + 1][x] = 'water';
                     }
                 }
-                else if (grid[y + 1][x] !== 'sponge') {
+                else if (grid[y + 1][x] == 'collapsible_nuke_diffuser') {
+                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
+                        nextGrid[y][x] = 'collapsible_nuke_diffuser';
+                        nextGrid[y + 1][x] = 'water';
+                    }
+                }
+                else if (grid[y + 1][x] != 'sponge') {
                     let validSlidingPositions = [];
                     let leftX = 0;
                     while (x + leftX > 0) {
@@ -478,10 +482,10 @@ const pixels = {
         },
         key: '2',
     },
-    'lava': {
+    lava: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
-            if (optimizedLiquids == true) {
+            if (optimizedLiquids) {
                 fill(255, 125, 0, opacity * 255);
                 drawPixel(x, y, width, height);
             }
@@ -501,6 +505,12 @@ const pixels = {
                 if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
                     nextGrid[actionY][actionX] = 'concrete';
+                }
+            });
+            updateTouchingPixel(x, y, 1, 'collapsible_nuke_diffuser', function (actionX, actionY) {
+                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
+                    nextGrid[y][x] = 'air';
+                    nextGrid[actionY][actionX] = 'sand';
                 }
             });
             if (y < gridSize - 1) {
@@ -607,7 +617,7 @@ const pixels = {
         },
         key: '3',
     },
-    'concrete_powder': {
+    concrete_powder: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(150, 150, 150, opacity * 255);
@@ -664,7 +674,7 @@ const pixels = {
         },
         key: '4',
     },
-    'concrete': {
+    concrete: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(75, 75, 75, opacity * 255);
@@ -690,7 +700,7 @@ const pixels = {
         },
         key: '5',
     },
-    'nuke': {
+    nuke: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(100, 255, 75, opacity * 255);
@@ -710,7 +720,7 @@ const pixels = {
                     }
                 }
             }
-            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { }) == true) {
+            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { })) {
                 explosion = true;
             }
             if (y < gridSize - 1) {
@@ -721,52 +731,13 @@ const pixels = {
             else {
                 explosion = true;
             }
-            if (explosion == true && diffused == false) {
+            if (explosion && !diffused) {
                 explode(x, y, 10);
             }
         },
         key: '6',
     },
-    'nuke2': {
-        draw: function (x, y, width, height, opacity) {
-            noStroke();
-            fill(100, 255, 75, opacity * 255);
-            drawPixel(x, y, width, height);
-        },
-        update: function (x, y) {
-            if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'air';
-                        nextGrid[y + 1][x] = 'nuke2';
-                    }
-                }
-                if (grid[y + 1][x] == 'water') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'water';
-                        nextGrid[y + 1][x] = 'nuke2';
-                    }
-                }
-                if (grid[y + 1][x] == 'lava') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'lava';
-                        nextGrid[y + 1][x] = 'nuke2';
-                    }
-                }
-                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'water' || grid[y + 1][x] == 'lava' || grid[y + 1][x] == 'nuke') {
-                    return;
-                }
-            }
-            else {
-                explode(x, y, 10, 1.5);
-            }
-            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { }) == true) {
-                explode(x, y, 10, 1.5);
-            }
-        },
-        key: Infinity,
-    },
-    'plant': {
+    plant: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(125, 255, 75, opacity * 255);
@@ -786,7 +757,7 @@ const pixels = {
             // updateTouchingPixel(x,y,1,'lava',function(actionX,actionY){
             //     validPlant = false;
             // });
-            if (validPlant == false) {
+            if (!validPlant) {
                 if (nextGrid[y][x] == null) {
                     nextGrid[y][x] = 'water';
                 }
@@ -816,7 +787,7 @@ const pixels = {
         },
         key: '7',
     },
-    'sponge': {
+    sponge: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(225, 255, 75, opacity * 255);
@@ -849,7 +820,7 @@ const pixels = {
                     validSponge = true;
                 }
             }
-            if (validSponge == false && random() < 0.125) {
+            if (!validSponge && random() < 0.125) {
                 if (nextGrid[y][x] == null) {
                     nextGrid[y][x] = 'air';
                 }
@@ -857,7 +828,7 @@ const pixels = {
         },
         key: '8',
     },
-    'pump': {
+    pump: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(25, 125, 75, opacity * 255);
@@ -877,7 +848,7 @@ const pixels = {
         },
         key: '9',
     },
-    'cloner_left': {
+    cloner_left: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(125, 50, 0, opacity * 255);
@@ -893,7 +864,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                if (grid[y][x + 1] !== 'air' && grid[y][x + 1] !== 'cloner_left' && grid[y][x + 1] !== 'cloner_up' && grid[y][x + 1] !== 'cloner_right' && grid[y][x + 1] !== 'cloner_down') {
+                if (grid[y][x + 1] != 'air' && grid[y][x + 1] != 'cloner_left' && grid[y][x + 1] != 'cloner_up' && grid[y][x + 1] != 'cloner_right' && grid[y][x + 1] != 'cloner_down') {
                     if (grid[y][x - 1] == 'air') {
                         if (nextGrid[y][x - 1] == null) {
                             nextGrid[y][x - 1] = grid[y][x + 1];
@@ -904,7 +875,7 @@ const pixels = {
         },
         key: 'a'
     },
-    'cloner_up': {
+    cloner_up: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(125, 50, 0, opacity * 255);
@@ -920,7 +891,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                if (grid[y + 1][x] !== 'air' && grid[y + 1][x] !== 'cloner_left' && grid[y + 1][x] !== 'cloner_up' && grid[y + 1][x] !== 'cloner_right' && grid[y + 1][x] !== 'cloner_down') {
+                if (grid[y + 1][x] != 'air' && grid[y + 1][x] != 'cloner_left' && grid[y + 1][x] != 'cloner_up' && grid[y + 1][x] != 'cloner_right' && grid[y + 1][x] != 'cloner_down') {
                     if (grid[y - 1][x] == 'air') {
                         if (nextGrid[y - 1][x] == null) {
                             nextGrid[y - 1][x] = grid[y + 1][x];
@@ -931,7 +902,7 @@ const pixels = {
         },
         key: 'w'
     },
-    'cloner_right': {
+    cloner_right: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(125, 50, 0, opacity * 255);
@@ -947,7 +918,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                if (grid[y][x - 1] !== 'air' && grid[y][x - 1] !== 'cloner_left' && grid[y][x - 1] !== 'cloner_up' && grid[y][x - 1] !== 'cloner_right' && grid[y][x - 1] !== 'cloner_down') {
+                if (grid[y][x - 1] != 'air' && grid[y][x - 1] != 'cloner_left' && grid[y][x - 1] != 'cloner_up' && grid[y][x - 1] != 'cloner_right' && grid[y][x - 1] != 'cloner_down') {
                     if (grid[y][x + 1] == 'air') {
                         if (nextGrid[y][x + 1] == null) {
                             nextGrid[y][x + 1] = grid[y][x - 1];
@@ -958,7 +929,7 @@ const pixels = {
         },
         key: 'd'
     },
-    'cloner_down': {
+    cloner_down: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(125, 50, 0, opacity * 255);
@@ -974,7 +945,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                if (grid[y - 1][x] !== 'air' && grid[y - 1][x] !== 'cloner_left' && grid[y - 1][x] !== 'cloner_up' && grid[y - 1][x] !== 'cloner_right' && grid[y - 1][x] !== 'cloner_down') {
+                if (grid[y - 1][x] != 'air' && grid[y - 1][x] != 'cloner_left' && grid[y - 1][x] != 'cloner_up' && grid[y - 1][x] != 'cloner_right' && grid[y - 1][x] != 'cloner_down') {
                     if (grid[y + 1][x] == 'air') {
                         if (nextGrid[y + 1][x] == null) {
                             nextGrid[y + 1][x] = grid[y - 1][x];
@@ -985,7 +956,7 @@ const pixels = {
         },
         key: 's'
     },
-    'super_cloner_left': {
+    super_cloner_left: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(125, 50, 0, opacity * 255);
@@ -1001,7 +972,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                // if(grid[y][x + 1] !== 'air'){
+                // if(grid[y][x + 1] != 'air'){
                 // if(grid[y][x - 1] == 'air'){
                 if (nextGrid[y][x - 1] == null) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
@@ -1012,7 +983,7 @@ const pixels = {
         },
         key: Infinity
     },
-    'super_cloner_up': {
+    super_cloner_up: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(125, 50, 0, opacity * 255);
@@ -1028,7 +999,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                // if(grid[y + 1][x] !== 'air'){
+                // if(grid[y + 1][x] != 'air'){
                 // if(grid[y - 1][x] == 'air'){
                 if (nextGrid[y - 1][x] == null) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
@@ -1039,7 +1010,7 @@ const pixels = {
         },
         key: Infinity
     },
-    'super_cloner_right': {
+    super_cloner_right: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(125, 50, 0, opacity * 255);
@@ -1055,7 +1026,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                // if(grid[y][x - 1] !== 'air'){
+                // if(grid[y][x - 1] != 'air'){
                 // if(grid[y][x + 1] == 'air'){
                 if (nextGrid[y][x + 1] == null) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
@@ -1066,7 +1037,7 @@ const pixels = {
         },
         key: Infinity
     },
-    'super_cloner_down': {
+    super_cloner_down: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(125, 50, 0, opacity * 255);
@@ -1082,7 +1053,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                // if(grid[y - 1][x] !== 'air'){
+                // if(grid[y - 1][x] != 'air'){
                 // if(grid[y + 1][x] == 'air'){
                 if (nextGrid[y + 1][x] == null) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
@@ -1093,17 +1064,7 @@ const pixels = {
         },
         key: Infinity
     },
-    'block': {
-        draw: function (x, y, width, height, opacity) {
-            noStroke();
-            fill(0, 0, 0, opacity * 255);
-            drawPixel(x, y, width, height);
-        },
-        update: function (x, y) {
-        },
-        key: '=',
-    },
-    'piston_left': {
+    piston_left: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(75, 255, 255, opacity * 255);
@@ -1125,7 +1086,7 @@ const pixels = {
                     return;
                 }
             });
-            if (validPiston == false) {
+            if (!validPiston) {
                 return;
             }
             let moveX = null;
@@ -1134,38 +1095,60 @@ const pixels = {
                     moveX = i;
                     break;
                 }
-                if (i !== x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'block')) {
+                if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall')) {
                     break;
                 }
             }
-            if (moveX !== null) {
-                let pistonPushed = false;
-                for (let i = moveX; i < x; i += 1) {
-                    if (nextGrid[y][i] == null && nextGrid[y][i + 1] == null) {
-                        nextGrid[y][i] = grid[y][i + 1];
-                        pistonPushed = true;
+            if (moveX == null) {
+                for (let i = x; i >= 0; i -= 1) {
+                    if (grid[y][i] == 'collapsible_nuke_diffuser') {
+                        moveX = i;
+                        break;
+                    }
+                    if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall')) {
+                        break;
                     }
                 }
-                if (pistonPushed == true && nextGrid[y][x] == null) {
+            }
+            if (moveX != null) {
+                let pushable = true;
+                for (let i = moveX; i < x; i += 1) {
+                    if (nextGrid[y][i + 1] != null) {
+                        pushable = false;
+                    }
+                }
+                if (nextGrid[y][x] != null) {
+                    pushable = false;
+                }
+                if (pushable) {
+                    for (let i = moveX; i < x; i += 1) {
+                        nextGrid[y][i] = grid[y][i + 1];
+                    }
                     nextGrid[y][x] = 'air';
                 }
             }
             else {
-                if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { }) == true) {
+                if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_up';
                         return;
                     }
                 }
-                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { }) == true) {
+                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_right';
                         return;
                     }
                 }
-                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { }) == true) {
+                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_down';
+                        return;
+                    }
+                }
+                if (updateTouchingPixel(x, y, 1, 'shimmer_slime', function (actionX, actionY) { })) {
+                    if (nextGrid[y][x] == null) {
+                        nextGrid[y][x] = 'piston_right';
                         return;
                     }
                 }
@@ -1173,7 +1156,7 @@ const pixels = {
         },
         key: 'j',
     },
-    'piston_up': {
+    piston_up: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(75, 255, 255, opacity * 255);
@@ -1195,7 +1178,7 @@ const pixels = {
                     return;
                 }
             });
-            if (validPiston == false) {
+            if (!validPiston) {
                 return;
             }
             let moveY = null;
@@ -1204,36 +1187,58 @@ const pixels = {
                     moveY = i;
                     break;
                 }
-                if (i !== y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'block')) {
+                if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall')) {
                     break;
                 }
             }
-            if (moveY !== null) {
-                let pistonPushed = false;
-                for (let i = moveY; i < y; i += 1) {
-                    if (nextGrid[i][x] == null && nextGrid[i + 1][x] == null) {
-                        nextGrid[i][x] = grid[i + 1][x];
-                        pistonPushed = true;
+            if (moveY == null) {
+                for (let i = y; i >= 0; i -= 1) {
+                    if (grid[i][x] == 'collapsible_nuke_diffuser') {
+                        moveY = i;
+                        break;
+                    }
+                    if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall')) {
+                        break;
                     }
                 }
-                if (pistonPushed == true && nextGrid[y][x] == null) {
+            }
+            if (moveY != null) {
+                let pushable = true;
+                for (let i = moveY; i < y; i += 1) {
+                    if (nextGrid[i + 1][x] != null) {
+                        pushable = false;
+                    }
+                }
+                if (nextGrid[y][x] != null) {
+                    pushable = false;
+                }
+                if (pushable) {
+                    for (let i = moveY; i < y; i += 1) {
+                        nextGrid[i][x] = grid[i + 1][x];
+                    }
                     nextGrid[y][x] = 'air';
                 }
             }
             else {
-                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { }) == true) {
+                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_left';
                         return;
                     }
                 }
-                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { }) == true) {
+                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_right';
                         return;
                     }
                 }
-                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { }) == true) {
+                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
+                    if (nextGrid[y][x] == null) {
+                        nextGrid[y][x] = 'piston_down';
+                        return;
+                    }
+                }
+                if (updateTouchingPixel(x, y, 1, 'shimmer_slime', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_down';
                         return;
@@ -1243,7 +1248,7 @@ const pixels = {
         },
         key: 'i',
     },
-    'piston_right': {
+    piston_right: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(75, 255, 255, opacity * 255);
@@ -1265,7 +1270,7 @@ const pixels = {
                     return;
                 }
             });
-            if (validPiston == false) {
+            if (!validPiston) {
                 return;
             }
             let moveX = null;
@@ -1274,38 +1279,60 @@ const pixels = {
                     moveX = i;
                     break;
                 }
-                if (i !== x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'block')) {
+                if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall')) {
                     break;
                 }
             }
-            if (moveX !== null) {
-                let pistonPushed = false;
-                for (let i = moveX; i > x; i -= 1) {
-                    if (nextGrid[y][i] == null && nextGrid[y][i - 1] == null) {
-                        nextGrid[y][i] = grid[y][i - 1];
-                        pistonPushed = true;
+            if (moveX == null) {
+                for (let i = x; i <= gridSize - 1; i += 1) {
+                    if (grid[y][i] == 'collapsible_nuke_diffuser') {
+                        moveX = i;
+                        break;
+                    }
+                    if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall')) {
+                        break;
                     }
                 }
-                if (pistonPushed == true && nextGrid[y][x] == null) {
+            }
+            if (moveX != null) {
+                let pushable = true;
+                for (let i = moveX; i > x; i -= 1) {
+                    if (nextGrid[y][i - 1] != null) {
+                        pushable = false;
+                    }
+                }
+                if (nextGrid[y][x] != null) {
+                    pushable = false;
+                }
+                if (pushable) {
+                    for (let i = moveX; i > x; i -= 1) {
+                        nextGrid[y][i] = grid[y][i - 1];
+                    }
                     nextGrid[y][x] = 'air';
                 }
             }
             else {
-                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { }) == true) {
+                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_left';
                         return;
                     }
                 }
-                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { }) == true) {
+                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_up';
                         return;
                     }
                 }
-                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { }) == true) {
+                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_down';
+                        return;
+                    }
+                }
+                if (updateTouchingPixel(x, y, 1, 'shimmer_slime', function (actionX, actionY) { })) {
+                    if (nextGrid[y][x] == null) {
+                        nextGrid[y][x] = 'piston_left';
                         return;
                     }
                 }
@@ -1313,7 +1340,7 @@ const pixels = {
         },
         key: 'l',
     },
-    'piston_down': {
+    piston_down: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(75, 255, 255, opacity * 255);
@@ -1335,7 +1362,7 @@ const pixels = {
                     return;
                 }
             });
-            if (validPiston == false) {
+            if (!validPiston) {
                 return;
             }
             let moveY = null;
@@ -1344,38 +1371,60 @@ const pixels = {
                     moveY = i;
                     break;
                 }
-                if (i !== y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'block')) {
+                if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall')) {
                     break;
                 }
             }
-            if (moveY !== null) {
-                let pistonPushed = false;
-                for (let i = moveY; i > y; i -= 1) {
-                    if (nextGrid[i][x] == null && nextGrid[i - 1][x] == null) {
-                        nextGrid[i][x] = grid[i - 1][x];
-                        pistonPushed = true;
+            if (moveY == null) {
+                for (let i = y; i <= gridSize - 1; i += 1) {
+                    if (grid[i][x] == 'collapsible_nuke_diffuser') {
+                        moveY = i;
+                        break;
+                    }
+                    if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall')) {
+                        break;
                     }
                 }
-                if (pistonPushed == true && nextGrid[y][x] == null) {
+            }
+            if (moveY != null) {
+                let pushable = true;
+                for (let i = moveY; i > y; i -= 1) {
+                    if (nextGrid[i - 1][x] != null) {
+                        pushable = false;
+                    }
+                }
+                if (nextGrid[y][x] != null) {
+                    pushable = false;
+                }
+                if (pushable) {
+                    for (let i = moveY; i > y; i -= 1) {
+                        nextGrid[i][x] = grid[i - 1][x];
+                    }
                     nextGrid[y][x] = 'air';
                 }
             }
             else {
-                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { }) == true) {
+                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_left';
                         return;
                     }
                 }
-                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { }) == true) {
+                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_up';
                         return;
                     }
                 }
-                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { }) == true) {
+                else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { })) {
                     if (nextGrid[y][x] == null) {
                         nextGrid[y][x] = 'piston_right';
+                        return;
+                    }
+                }
+                if (updateTouchingPixel(x, y, 1, 'shimmer_slime', function (actionX, actionY) { })) {
+                    if (nextGrid[y][x] == null) {
+                        nextGrid[y][x] = 'piston_up';
                         return;
                     }
                 }
@@ -1383,7 +1432,7 @@ const pixels = {
         },
         key: 'k',
     },
-    'piston_rotator_left': {
+    piston_rotator_left: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(255, 125, 0, opacity * 255);
@@ -1400,7 +1449,7 @@ const pixels = {
         },
         key: 'f',
     },
-    'piston_rotator_up': {
+    piston_rotator_up: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(255, 125, 0, opacity * 255);
@@ -1417,7 +1466,7 @@ const pixels = {
         },
         key: 't',
     },
-    'piston_rotator_right': {
+    piston_rotator_right: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(255, 125, 0, opacity * 255);
@@ -1434,7 +1483,7 @@ const pixels = {
         },
         key: 'h',
     },
-    'piston_rotator_down': {
+    piston_rotator_down: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(255, 125, 0, opacity * 255);
@@ -1451,7 +1500,37 @@ const pixels = {
         },
         key: 'g',
     },
-    'nuke_diffuser': {
+    collapsible_nuke_diffuser: {
+        draw: function (x, y, width, height, opacity) {
+            noStroke();
+            if (optimizedLiquids) {
+                fill(200, 80, 200, opacity * 255);
+                drawPixel(x, y, width, height);
+            }
+            else {
+                fill(255, 90, 200, opacity * 255);
+                drawPixel(x, y, width, height);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fill(255, 255, 255, round(noise((x + i) / 5, (y + j) / 5, animationTime / 20) * 100) * opacity);
+                        drawPixel(x + i, y + j, 1, 1);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            if (y < gridSize - 1) {
+                if (grid[y + 1][x] == 'air') {
+                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
+                        nextGrid[y][x] = 'air';
+                        nextGrid[y + 1][x] = 'collapsible_nuke_diffuser';
+                    }
+                }
+            }
+        },
+        key: '0',
+    },
+    nuke_diffuser: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(175, 50, 0, opacity * 255);
@@ -1471,7 +1550,17 @@ const pixels = {
         },
         key: '-',
     },
-    'lag_spike_generator': {
+    wall: {
+        draw: function (x, y, width, height, opacity) {
+            noStroke();
+            fill(0, 0, 0, opacity * 255);
+            drawPixel(x, y, width, height);
+        },
+        update: function (x, y) {
+        },
+        key: '=',
+    },
+    lag_spike_generator: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             for (let i = 0; i < width; i++) {
@@ -1503,7 +1592,7 @@ const pixels = {
         },
         key: '[',
     },
-    'corruption': {
+    corruption: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             for (let i = 0; i < width; i++) {
@@ -1593,8 +1682,8 @@ const pixels = {
                     let number = 0;
                     for (let j = 0; j < gridSize; j++) {
                         number += 1;
-                        if (grid[i][j] !== string) {
-                            if (string !== '' && number !== 0) {
+                        if (grid[i][j] != string) {
+                            if (string != '' && number != 0) {
                                 if (random() < 0.00) {
                                     // drawPixels(j - number,i,number,1,string);
                                 }
@@ -1603,7 +1692,7 @@ const pixels = {
                             }
                         }
                         number += 1;
-                        if (string !== '' && number !== 0) {
+                        if (string != '' && number != 0) {
                             if (random() < 0.00) {
                                 // drawPixels(j - number,i,number,1,string);
                             }
@@ -1614,7 +1703,46 @@ const pixels = {
         },
         key: ']'
     },
-    'huge_nuke': {
+    nuke2: {
+        draw: function (x, y, width, height, opacity) {
+            noStroke();
+            fill(100, 255, 75, opacity * 255);
+            drawPixel(x, y, width, height);
+        },
+        update: function (x, y) {
+            if (y < gridSize - 1) {
+                if (grid[y + 1][x] == 'air') {
+                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
+                        nextGrid[y][x] = 'air';
+                        nextGrid[y + 1][x] = 'nuke2';
+                    }
+                }
+                if (grid[y + 1][x] == 'water') {
+                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
+                        nextGrid[y][x] = 'water';
+                        nextGrid[y + 1][x] = 'nuke2';
+                    }
+                }
+                if (grid[y + 1][x] == 'lava') {
+                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
+                        nextGrid[y][x] = 'lava';
+                        nextGrid[y + 1][x] = 'nuke2';
+                    }
+                }
+                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'water' || grid[y + 1][x] == 'lava' || grid[y + 1][x] == 'nuke') {
+                    return;
+                }
+            }
+            else {
+                explode(x, y, 10, 1.5);
+            }
+            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { })) {
+                explode(x, y, 10, 1.5);
+            }
+        },
+        key: Infinity,
+    },
+    huge_nuke: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(225, 120, 112, 255 * opacity);
@@ -1634,7 +1762,7 @@ const pixels = {
                     }
                 }
             }
-            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { }) == true) {
+            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { })) {
                 explosion = true;
             }
             if (y < gridSize - 1) {
@@ -1645,13 +1773,13 @@ const pixels = {
             else {
                 explosion = true;
             }
-            if (explosion == true && diffused == false) {
+            if (explosion && !diffused) {
                 explode(x, y, 20, 1.5);
             }
         },
         key: '\\'
     },
-    'very_huge_nuke': {
+    very_huge_nuke: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(255, 0, 70, 255 * opacity);
@@ -1671,7 +1799,7 @@ const pixels = {
                     }
                 }
             }
-            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { }) == true) {
+            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { })) {
                 explosion = true;
             }
             if (y < gridSize - 1) {
@@ -1682,13 +1810,13 @@ const pixels = {
             else {
                 explosion = true;
             }
-            if (explosion == true && diffused == false) {
+            if (explosion && !diffused) {
                 explode(x, y, 40, 1.5);
             }
         },
         key: Infinity
     },
-    'spin': {
+    spin: {
         draw: function (x, y, width, height, opacity) {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -1706,7 +1834,7 @@ const pixels = {
         },
         key: Infinity,
     },
-    'air2': {
+    air2: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             fill(255, 255, 255, 255 * opacity);
@@ -1718,7 +1846,7 @@ const pixels = {
     }
 };
 
-function clickLine(startX, startY, endX, endY) {
+function clickLine(startX, startY, endX, endY, remove) {
     let x = startX;
     let y = startY;
     let angle = atan2(endY - startY, endX - startX);
@@ -1730,7 +1858,7 @@ function clickLine(startX, startY, endX, endY) {
             if (j >= 0 && j <= gridSize - 1) {
                 for (let k = gridY - clickSize + 1; k <= gridY + clickSize - 1; k++) {
                     if (k >= 0 && k <= gridSize - 1) {
-                        grid[k][j] = clickPixel;
+                        grid[k][j] = remove ? 'air' : clickPixel;
                     }
                 }
             }
@@ -1752,7 +1880,7 @@ function draw() {
         // if (lastGrids.length > 20) {
         //     lastGrids.shift(1);
         // }
-        clickLine(floor(mouseX * gridSize / width), floor(mouseY * gridSize / height), floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height));
+        clickLine(floor(mouseX * gridSize / width), floor(mouseY * gridSize / height), floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT);
     }
     if ((gridPaused && !simulatePaused) || !gridPaused) {
         fill(255, 255, 255, 255 - fadeEffect);
@@ -1763,8 +1891,8 @@ function draw() {
             let j = 0;
             while (j < gridSize) {
                 number += 1;
-                if (grid[i][j] !== string) {
-                    if (string !== '' && string !== 'air' && number !== 0) {
+                if (grid[i][j] != string) {
+                    if (string != '' && string != 'air' && number != 0) {
                         drawPixels(j - number, i, number, 1, string, 1);
                     }
                     string = grid[i][j];
@@ -1773,7 +1901,7 @@ function draw() {
                 j++;
             }
             number += 1;
-            if (string !== '') {
+            if (string != '') {
                 drawPixels(j - number, i, number, 1, string, 1);
             }
         }
@@ -1832,7 +1960,7 @@ function draw() {
             fpsList.shift(1);
         }
     }
-    if (debugInfo == true) {
+    if (debugInfo) {
         fill(0, 0, 0, 75);
         rect(5, 20, 200, 100);
         for (let i = 0; i < 100; i++) {
@@ -1844,7 +1972,7 @@ function draw() {
     textAlign(RIGHT, TOP);
     text('Brush Size: ' + clickSize, width - 3, 1);
     text('Brush Pixel: ' + clickPixel, width - 3, 16);
-    if (gridPaused == true) {
+    if (gridPaused) {
         fill(0, 0, 0);
         text('PAUSED', width - 3, 33);
         if (simulatePaused) {
@@ -1856,7 +1984,7 @@ function draw() {
 
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
-            if (nextGrid[i][j] !== null) {
+            if (nextGrid[i][j] != null) {
                 grid[i][j] = nextGrid[i][j];
                 nextGrid[i][j] = null;
             }
@@ -1867,12 +1995,17 @@ function draw() {
 };
 
 function windowResized() {
-    size = Math.round(Math.min(window.innerWidth - 20, window.innerHeight - 20) / gridSize) * gridSize;
-    xScale = size / gridSize;
-    yScale = size / gridSize;
-    resizeCanvas(size, size);
-    canvasScale = Math.min(window.innerHeight / size, window.innerHeight / size);
-    document.querySelector('.p5Canvas').style.width = size * canvasScale - 20 + 'px';
-    document.querySelector('.p5Canvas').style.height = size * canvasScale - 20 + 'px';
-    document.body.style.setProperty('--max-sidebar-width', window.innerWidth - size * canvasScale - 20 + 'px');
+    xScale = 600 / gridSize;
+    yScale = 600 / gridSize;
+    resizeCanvas(600, 600);
+    canvasScale = Math.min(window.innerWidth / 600, window.innerHeight / 600);
+    document.querySelector('.p5Canvas').style.width = 600 * canvasScale - 20 + 'px';
+    document.querySelector('.p5Canvas').style.height = 600 * canvasScale - 20 + 'px';
+    if (window.innerWidth - 600 * canvasScale < 200) {
+        document.getElementById('sidebar').style.top = window.innerHeight + 'px';
+        document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 20 + 'px');
+    } else {
+        document.getElementById('sidebar').style.top = '0px';
+        document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 600 * canvasScale - 20 + 'px');
+    }
 };
