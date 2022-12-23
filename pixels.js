@@ -1739,7 +1739,8 @@ function draw() {
         for (let i = 0; i < gridSize; i++) {
             let string = '';
             let number = 0;
-            for (let j = 0; j < gridSize; j++) {
+            let j = 0;
+            while (j < gridSize) {
                 number += 1;
                 if (grid[i][j] !== string) {
                     if (string !== '' && string !== 'air' && number !== 0) {
@@ -1748,11 +1749,12 @@ function draw() {
                     string = grid[i][j];
                     number = 0;
                 }
+                j++;
             }
             number += 1;
-            // if (string !== '' && number !== 0) {
-            //     drawPixels(j - number, i, number, 1, string, 1);
-            // }
+            if (string !== '') {
+                drawPixels(j - number, i, number, 1, string, 1);
+            }
         }
     }
     if (gridPaused == false || runTicks > 0 || simulatePaused) {
