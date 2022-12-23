@@ -5,42 +5,119 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>red pixel simulator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.8/processing.min.js" defer></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.8/processing.min.js" defer></script> -->
+    <script src="./p5.min.js"></script>
     <script src="./pixels.js" defer></script>
+    <style>
+        canvas {
+            border: 2px solid black;
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+        b {
+            /* background-color: beige; */
+            border: 1px solid black;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
     <div id="tips" style="position: absolute; top: 0px; right: 0px; height: 100vh; max-width: calc(100vw - 640px); overflow-y: scroll;">
-        click to create pixels<br>
-        press the number keys to change the pixel you create<br>
-        use the up and down arrows to change the size of the pixel you create<br>
-        press [r] for rain<br>
-        press [e] for lava<br>
-        press [b] for WW1<br>
-        press [n] for nukes<br>
-        press [z] to save it<br>
-        press [p] to pause<br>
-        press [Enter] while paused to advance 1 tick<br>
-        press [Shift] while paused to simulate without drawing<br>
-        <br>
-        0: air<br>
-        1: sand<br>
-        2: water<br>
-        3: lava<br>
-        4: concrete powder<br>
-        5: concrete<br>
-        6: explosion<br>
-        7: PLANT<br>
-        8: sponge<br>
-        9: water generator<br>
-        -: old cloner<br>
-        =: block<br>
-        [: lag spike generator<br>
-        ]: corruption<br>
-        \: nuke diffuser<br>
-        i-j-k-l: piston<br>
-        t-f-g-h: piston rotator<br>
-        w-a-s-d: cloner<br>
+        <h1>
+            Instructions:
+        </h1>
+        <p>
+            Click to place pixels<br>
+            Use the pixel table to change what pixel is placed<br>
+            Press <b>[Up Arrow]</b> and <b>[Down Arrow]</b> to change the size of the brush<br>
+            press <b>[r]</b> for rain<br>
+            press <b>[e]</b> for lava<br>
+            press <b>[b]</b> for WW1<br>
+            press <b>[n]</b> for nukes<br>
+            press <b>[z]</b> to save it<br>
+            press <b>[p]</b> to pause<br>
+            press <b>[Enter]</b> while paused to advance 1 tick<br>
+        </p>
+        <table><tbody>
+            <tr>
+            </tr>
+            <tr>
+                <td style="text-align: right;">0:</td>
+                <td>air</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">1:</td>
+                <td>sand</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">2:</td>
+                <td>water</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">3:</td>
+                <td>lava</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">4:</td>
+                <td>concrete powder</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">5:</td>
+                <td>concrete</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">6:</td>
+                <td>nuke</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">7:</td>
+                <td>PLANT</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">8:</td>
+                <td>sponge</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">9:</td>
+                <td>water pump</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">-:</td>
+                <td>nuke diffuser</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">=:</td>
+                <td>block</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">[:</td>
+                <td>lag spike generator</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">]:</td>
+                <td>�����</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">\:</td>
+                <td>huge nuke</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">i-j-k-l:</td>
+                <td>pistons</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">t-g-f-h:</td>
+                <td>piston rotators</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;">w-a-s-d:</td>
+                <td>cloners</td>
+            </tr>
+        </tbody></table>
         <br>
         cool save codes:<br>
         <br>
