@@ -39,9 +39,11 @@ function createGrid() {
         }
     }
 };
-
 function loadSaveCode() {
     if (saveCode.length != 0) {
+        gridPaused = true;
+        simulatePaused = false;
+        runTicks = 0;
         try {
             let x = 0;
             let y = 0;
@@ -120,8 +122,41 @@ function loadSaveCode() {
         catch (error) {
             throw 'Invalid Save Code';
         }
+        gridPaused = startPaused;
     }
 };
+function generateSaveCode() {
+    let saveCode = '';
+    let string = '';
+    let number = 0;
+    saveCode += gridSize + ';';
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            number += 1;
+            if (grid[i][j] != string) {
+                if (string != '' && number != 0) {
+                    if (number == 1) {
+                        saveCode += string + ':';
+                    }
+                    else {
+                        saveCode += string + '-' + number + ':';
+                    }
+                }
+                string = grid[i][j];
+                number = 0;
+            }
+        }
+    }
+    if (string != '' && number != 0) {
+        if (number == 1) {
+            saveCode += string + ':';
+        }
+        else {
+            saveCode += string + '-' + number + ':';
+        }
+    }
+    return saveCode;
+}
 
 function setup() {
     createCanvas(600, 600);
@@ -209,36 +244,8 @@ function setup() {
         loadSaveCode();
     };
     document.getElementById('copySave').onclick = function (e) {
-        let printedSaveCode = '';
-        let string = '';
-        let number = 0;
-        printedSaveCode += gridSize + ';';
-        for (let i = 0; i < gridSize; i++) {
-            for (let j = 0; j < gridSize; j++) {
-                number += 1;
-                if (grid[i][j] != string) {
-                    if (string != '' && number != 0) {
-                        if (number == 1) {
-                            printedSaveCode += string + ':';
-                        }
-                        else {
-                            printedSaveCode += string + '-' + number + ':';
-                        }
-                    }
-                    string = grid[i][j];
-                    number = 0;
-                }
-            }
-        }
-        if (string != '' && number != 0) {
-            if (number == 1) {
-                printedSaveCode += string + ':';
-            }
-            else {
-                printedSaveCode += string + '-' + number + ':';
-            }
-        }
-        window.navigator.clipboard.writeText(printedSaveCode);
+        let saveCode = generateSaveCode();
+        window.navigator.clipboard.writeText(saveCode);
     };
 };
 
