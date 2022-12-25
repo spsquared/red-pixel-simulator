@@ -261,7 +261,7 @@ function setup() {
         else document.getElementById('optimizedLiquids').style.backgroundColor = 'red';
     };
     document.getElementById('fadeEffect').onclick = function (e) {
-        fadeEffect = !fadeEffect;
+        fadeEffect = fadeEffect ? 0 : 127;
         if (fadeEffect) document.getElementById('fadeEffect').style.backgroundColor = 'lime';
         else document.getElementById('fadeEffect').style.backgroundColor = 'red';
     };
