@@ -1886,10 +1886,10 @@ const pixels = {
         key: Infinity,
         updatePriority: -1
     },
-    air2: {
+    remove: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
-            fill(255, 255, 255, 255 * opacity);
+            fill(255, 0, 0);
             drawPixel(x, y, width, height);
         },
         update: function (x, y) {},
@@ -1995,7 +1995,7 @@ function draw() {
         let x2 = min(gridSize - 1, floor(mouseX * gridSize / width) + clickSize - 1);
         let y1 = max(0, floor(mouseY * gridSize / height) - clickSize + 1);
         let y2 = min(gridSize - 1, floor(mouseY * gridSize / height) + clickSize - 1);
-        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, clickPixel == 'air' ? 'air2' : clickPixel, 0.5);
+        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, mouseIsPressed && mouseButton == RIGHT ? 'remove' : clickPixel, 0.5);
     }
 
     while (frames[0] + 1000 < millis()) {
