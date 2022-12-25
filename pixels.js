@@ -3,7 +3,7 @@
 window.onerror = document.write;
 
 let gridSize = 100;
-let saveCode = '100;air-100:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser-6:piston_rotator_right:piston_left:air-77:piston_rotator_left:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:piston_rotator_right:piston_left:air-77:piston_rotator_left:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:piston_rotator_right:piston_left:air-77:piston_rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava-11:wall:air-3:nuke_diffuser:air-83:wall:cloner_down-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}4|{air-83:wall:air-11:wall:air-4:}3|air-83:{wall:air-99:}56|';
+let saveCode = '100;air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser-6:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava-11:wall:air-3:nuke_diffuser:air-83:wall:super_cloner_down-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}4|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
 let startPaused = false;
 
 let optimizedLiquids = false;
@@ -168,7 +168,7 @@ function setup() {
 
     createGrid();
     loadSaveCode();
-    document.getElementById('saveCode').value = generateSaveCode();
+    document.getElementById('saveCode').value = saveCode;
 
     document.onkeydown = function (e) {
         if (e.ctrlKey || e.target.matches('#saveCode')) return;
@@ -435,9 +435,9 @@ const pixels = {
                     }
                     return;
                 }
-                if (grid[y + 1][x] == 'collapsible_nuke_diffuser') {
+                if (grid[y + 1][x] == 'collapsible') {
                     if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'collapsible_nuke_diffuser';
+                        nextGrid[y][x] = 'collapsible';
                         nextGrid[y + 1][x] = 'water';
                     }
                     return;
@@ -543,7 +543,7 @@ const pixels = {
                     nextGrid[actionY][actionX] = 'concrete';
                 }
             });
-            updateTouchingPixel(x, y, 1, 'collapsible_nuke_diffuser', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 1, 'collapsible', function (actionX, actionY) {
                 if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
                     nextGrid[actionY][actionX] = 'sand';
@@ -1152,7 +1152,7 @@ const pixels = {
             }
             if (moveX == null) {
                 for (let i = x; i >= 0; i -= 1) {
-                    if (grid[y][i] == 'collapsible_nuke_diffuser') {
+                    if (grid[y][i] == 'collapsible') {
                         moveX = i;
                         break;
                     }
@@ -1245,7 +1245,7 @@ const pixels = {
             }
             if (moveY == null) {
                 for (let i = y; i >= 0; i -= 1) {
-                    if (grid[i][x] == 'collapsible_nuke_diffuser') {
+                    if (grid[i][x] == 'collapsible') {
                         moveY = i;
                         break;
                     }
@@ -1338,7 +1338,7 @@ const pixels = {
             }
             if (moveX == null) {
                 for (let i = x; i <= gridSize - 1; i += 1) {
-                    if (grid[y][i] == 'collapsible_nuke_diffuser') {
+                    if (grid[y][i] == 'collapsible') {
                         moveX = i;
                         break;
                     }
@@ -1431,7 +1431,7 @@ const pixels = {
             }
             if (moveY == null) {
                 for (let i = y; i <= gridSize - 1; i += 1) {
-                    if (grid[i][x] == 'collapsible_nuke_diffuser') {
+                    if (grid[i][x] == 'collapsible') {
                         moveY = i;
                         break;
                     }
@@ -1551,7 +1551,7 @@ const pixels = {
         key: 'g',
         updatePriority: -1
     },
-    collapsible_nuke_diffuser: {
+    collapsible: {
         draw: function (x, y, width, height, opacity) {
             noStroke();
             if (optimizedLiquids) {
@@ -1574,7 +1574,7 @@ const pixels = {
                 if (grid[y + 1][x] == 'air') {
                     if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
                         nextGrid[y][x] = 'air';
-                        nextGrid[y + 1][x] = 'collapsible_nuke_diffuser';
+                        nextGrid[y + 1][x] = 'collapsible';
                     }
                 }
             }
@@ -1958,6 +1958,9 @@ function draw() {
             }
         }
     }
+    if (gridPaused && runTicks <= 0 && !simulatePaused) {
+        frames.push(millis());
+    }
     if (!gridPaused || runTicks > 0 || simulatePaused) {
         let max = simulatePaused ? 10 : 1;
         for (let i = 0; i < max; i++) {
@@ -1985,9 +1988,6 @@ function draw() {
             }
             frames.push(millis());
         }
-    }
-    if (gridPaused && runTicks <= 0 && !simulatePaused) {
-        frames.push(millis());
     }
 
     if (!gridPaused || !simulatePaused) {
