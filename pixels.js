@@ -6,7 +6,7 @@ let startPaused = false;
 
 let optimizedLiquids = false;
 let optimizedLags = false;
-let fadeEffect = 100;
+let fadeEffect = 127;
 
 let xScale = 600 / gridSize;
 let yScale = 600 / gridSize;
@@ -229,7 +229,7 @@ function setup() {
             frameRate(60);
         }
         if (key == 'shift') {
-            simulatePaused = !simulatePaused;
+            if (gridPaused) simulatePaused = !simulatePaused;
             // if (simulatePaused && gridPaused) {
             //     frameRate(240);
             // } else {
@@ -401,9 +401,9 @@ const pixels = {
             else {
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        fill(125, 225, 255, opacity * 255);
+                        fill(100, 225, 255, opacity * 255);
                         drawPixel(x + i, y + j, 1, 1);
-                        fill(125, 0, 125, round(noise((x + i) / 5, (y + j) / 5, animationTime / 20) * 255) * opacity);
+                        fill(75, 0, 125, round(noise((x + i) / 3, (y + j) / 3, animationTime / 20) * 127) * opacity + 60);
                         drawPixel(x + i, y + j, 1, 1);
                     }
                 }
@@ -422,72 +422,86 @@ const pixels = {
                         nextGrid[y][x] = 'air';
                         nextGrid[y + 1][x] = 'water';
                     }
+                    return;
                 }
-                else if (grid[y + 1][x] == 'collapsible_nuke_diffuser') {
+                if (grid[y + 1][x] == 'collapsible_nuke_diffuser') {
                     if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
                         nextGrid[y][x] = 'collapsible_nuke_diffuser';
                         nextGrid[y + 1][x] = 'water';
                     }
+                    return;
                 }
-                else if (grid[y + 1][x] != 'sponge') {
-                    let validSlidingPositions = [];
-                    let leftX = 0;
-                    while (x + leftX > 0) {
-                        if (grid[y][x + leftX - 1] == 'air') {
-                            if (grid[y + 1][x + leftX - 1] == 'air') {
-                                validSlidingPositions.push(leftX - 1);
-                                break;
-                            }
-                        }
-                        else {
+                if (grid[y + 1][x] == 'sponge') return;
+                let validSlidingPositions = [];
+                let leftX = 0;
+                while (x + leftX > 0) {
+                    if (grid[y][x + leftX - 1] == 'air') {
+                        if (grid[y + 1][x + leftX - 1] == 'air') {
+                            validSlidingPositions.push(leftX - 1);
                             break;
                         }
-                        leftX -= 1;
                     }
-                    let rightX = 0;
-                    while (x + rightX < gridSize - 1) {
-                        if (grid[y][x + rightX + 1] == 'air') {
-                            if (grid[y + 1][x + rightX + 1] == 'air') {
-                                validSlidingPositions.push(rightX + 1);
-                                break;
-                            }
-                        }
-                        else {
+                    else {
+                        break;
+                    }
+                    leftX -= 1;
+                }
+                let rightX = 0;
+                while (x + rightX < gridSize - 1) {
+                    if (grid[y][x + rightX + 1] == 'air') {
+                        if (grid[y + 1][x + rightX + 1] == 'air') {
+                            validSlidingPositions.push(rightX + 1);
                             break;
                         }
-                        rightX += 1;
                     }
-                    if (validSlidingPositions.length > 0) {
-                        let slidePosition;
-                        for (let i = 0; i < validSlidingPositions.length; i++) {
-                            if (slidePosition == undefined) {
-                                slidePosition = validSlidingPositions[i];
-                            }
-                            else if (abs(validSlidingPositions[i]) < abs(slidePosition)) {
-                                slidePosition = validSlidingPositions[i];
-                            }
-                            else if (abs(validSlidingPositions[i]) == abs(slidePosition)) {
-                                if (random() < 0.5) {
-                                    slidePosition = validSlidingPositions[i];
-                                }
-                            }
-                        }
-                        if (nextGrid[y][x] == null) {
-                            if (slidePosition == -1 && nextGrid[y + 1][x + slidePosition] == null) {
-                                nextGrid[y][x] = 'air';
-                                nextGrid[y + 1][x + slidePosition] = 'water';
-                            }
-                            else if (slidePosition == 1 && nextGrid[y + 1][x + slidePosition] == null) {
-                                nextGrid[y][x] = 'air';
-                                nextGrid[y + 1][x + slidePosition] = 'water';
-                            }
-                            else if (nextGrid[y][x + slidePosition / abs(slidePosition)] == null) {
-                                nextGrid[y][x] = grid[y][x + slidePosition / abs(slidePosition)];
-                                nextGrid[y][x + slidePosition / abs(slidePosition)] = 'water';
-                            }
-                        }
+                    else {
+                        break;
                     }
+                    rightX += 1;
                 }
+                if (validSlidingPositions.length > 0) {
+                    let slidePosition;
+                    for (let i = 0; i < validSlidingPositions.length; i++) {
+                        if (slidePosition == undefined) {
+                            slidePosition = validSlidingPositions[i];
+                        }
+                        else if (abs(validSlidingPositions[i]) < abs(slidePosition)) {
+                            slidePosition = validSlidingPositions[i];
+                        }
+                        else if (abs(validSlidingPositions[i]) == abs(slidePosition)) {
+                            if (random() < 0.5) {
+                                slidePosition = validSlidingPositions[i];
+                            }
+                        }
+                    }
+                    if (nextGrid[y][x] == null) {
+                        if (slidePosition == -1 && nextGrid[y + 1][x + slidePosition] == null) {
+                            nextGrid[y][x] = 'air';
+                            nextGrid[y + 1][x + slidePosition] = 'water';
+                        }
+                        else if (slidePosition == 1 && nextGrid[y + 1][x + slidePosition] == null) {
+                            nextGrid[y][x] = 'air';
+                            nextGrid[y + 1][x + slidePosition] = 'water';
+                        }
+                        else if (nextGrid[y][x + slidePosition / abs(slidePosition)] == null) {
+                            nextGrid[y][x] = grid[y][x + slidePosition / abs(slidePosition)];
+                            nextGrid[y][x + slidePosition / abs(slidePosition)] = 'water';
+                        }
+                    }
+                    return;
+                }
+            }
+            let slide = 0;
+            if (grid[y][x-2] == 'water' && grid[y][x-1] == 'air' && nextGrid[y][x-1] == null) slide--;
+            if (grid[y][x+2] == 'water' && grid[y][x+1] == 'air' && nextGrid[y][x+1] == null) slide--;
+            if ((grid[y][x-1] == 'air') && nextGrid[y][x-1] == null) slide -= 2;
+            if ((grid[y][x+1] == 'air') && nextGrid[y][x+1] == null) slide += 2;
+            if (slide < 0) {
+                nextGrid[y][x] = 'air';
+                nextGrid[y][x-1] = 'water';
+            } else if (slide > 0) {
+                nextGrid[y][x] = 'air';
+                nextGrid[y][x+1] = 'water'
             }
         },
         key: '2',
