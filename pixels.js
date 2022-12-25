@@ -156,7 +156,7 @@ function generateSaveCode() {
         }
     }
     return saveCode;
-}
+};
 
 function setup() {
     createCanvas(600, 600);
@@ -166,6 +166,7 @@ function setup() {
 
     createGrid();
     loadSaveCode();
+    document.getElementById('saveCode').value = generateSaveCode();
 
     document.onkeydown = function (e) {
         if (e.ctrlKey || e.target.matches('#saveCode')) return;
@@ -270,8 +271,9 @@ function drawPixels(x, y, width, height, type, opacity) {
 function drawPixel(x, y, width, height) {
     rect(x * xScale, y * yScale, xScale * width, yScale * height);
 };
-function updatePixel(x, y) {
-    if (pixels[grid[y][x]]) {
+function updatePixel(x, y, i) {
+    // if (pixels[grid[y][x]]) console.log(pixels[grid[y][x]].updatePriority)
+    if (pixels[grid[y][x]] && pixels[grid[y][x]].updatePriority == i) {
         pixels[grid[y][x]].update(x, y);
     }
 };
@@ -343,6 +345,7 @@ const pixels = {
 
         },
         key: Infinity,
+        updatePriority: -1
     },
     sand: {
         draw: function (x, y, width, height, opacity) {
@@ -387,6 +390,7 @@ const pixels = {
             }
         },
         key: '1',
+        updatePriority: 2
     },
     water: {
         draw: function (x, y, width, height, opacity) {
@@ -488,6 +492,7 @@ const pixels = {
             }
         },
         key: '2',
+        updatePriority: 3
     },
     lava: {
         draw: function (x, y, width, height, opacity) {
@@ -623,6 +628,7 @@ const pixels = {
             }
         },
         key: '3',
+        updatePriority: 3
     },
     concrete_powder: {
         draw: function (x, y, width, height, opacity) {
@@ -680,6 +686,7 @@ const pixels = {
             }
         },
         key: '4',
+        updatePriority: 2
     },
     concrete: {
         draw: function (x, y, width, height, opacity) {
@@ -706,6 +713,7 @@ const pixels = {
             // }
         },
         key: '5',
+        updatePriority: -1
     },
     nuke: {
         draw: function (x, y, width, height, opacity) {
@@ -743,6 +751,7 @@ const pixels = {
             }
         },
         key: '6',
+        updatePriority: 0
     },
     plant: {
         draw: function (x, y, width, height, opacity) {
@@ -793,6 +802,7 @@ const pixels = {
             }
         },
         key: '7',
+        updatePriority: 4
     },
     sponge: {
         draw: function (x, y, width, height, opacity) {
@@ -834,6 +844,7 @@ const pixels = {
             }
         },
         key: '8',
+        updatePriority: 4
     },
     pump: {
         draw: function (x, y, width, height, opacity) {
@@ -854,6 +865,7 @@ const pixels = {
             });
         },
         key: '9',
+        updatePriority: 5
     },
     cloner_left: {
         draw: function (x, y, width, height, opacity) {
@@ -880,7 +892,8 @@ const pixels = {
                 }
             }
         },
-        key: 'a'
+        key: 'a',
+        updatePriority: 5
     },
     cloner_up: {
         draw: function (x, y, width, height, opacity) {
@@ -907,7 +920,8 @@ const pixels = {
                 }
             }
         },
-        key: 'w'
+        key: 'w',
+        updatePriority: 5
     },
     cloner_right: {
         draw: function (x, y, width, height, opacity) {
@@ -934,7 +948,8 @@ const pixels = {
                 }
             }
         },
-        key: 'd'
+        key: 'd',
+        updatePriority: 5
     },
     cloner_down: {
         draw: function (x, y, width, height, opacity) {
@@ -961,7 +976,8 @@ const pixels = {
                 }
             }
         },
-        key: 's'
+        key: 's',
+        updatePriority: 5
     },
     super_cloner_left: {
         draw: function (x, y, width, height, opacity) {
@@ -988,7 +1004,8 @@ const pixels = {
                 // }
             }
         },
-        key: Infinity
+        key: Infinity,
+        updatePriority: 5
     },
     super_cloner_up: {
         draw: function (x, y, width, height, opacity) {
@@ -1015,7 +1032,8 @@ const pixels = {
                 // }
             }
         },
-        key: Infinity
+        key: Infinity,
+        updatePriority: 5
     },
     super_cloner_right: {
         draw: function (x, y, width, height, opacity) {
@@ -1042,7 +1060,8 @@ const pixels = {
                 // }
             }
         },
-        key: Infinity
+        key: Infinity,
+        updatePriority: 5
     },
     super_cloner_down: {
         draw: function (x, y, width, height, opacity) {
@@ -1069,7 +1088,8 @@ const pixels = {
                 // }
             }
         },
-        key: Infinity
+        key: Infinity,
+        updatePriority: 5
     },
     piston_left: {
         draw: function (x, y, width, height, opacity) {
@@ -1162,6 +1182,7 @@ const pixels = {
             }
         },
         key: 'j',
+        updatePriority: 1
     },
     piston_up: {
         draw: function (x, y, width, height, opacity) {
@@ -1254,6 +1275,7 @@ const pixels = {
             }
         },
         key: 'i',
+        updatePriority: 1
     },
     piston_right: {
         draw: function (x, y, width, height, opacity) {
@@ -1346,6 +1368,7 @@ const pixels = {
             }
         },
         key: 'l',
+        updatePriority: 1
     },
     piston_down: {
         draw: function (x, y, width, height, opacity) {
@@ -1438,6 +1461,7 @@ const pixels = {
             }
         },
         key: 'k',
+        updatePriority: 1
     },
     piston_rotator_left: {
         draw: function (x, y, width, height, opacity) {
@@ -1455,6 +1479,7 @@ const pixels = {
 
         },
         key: 'f',
+        updatePriority: -1
     },
     piston_rotator_up: {
         draw: function (x, y, width, height, opacity) {
@@ -1472,6 +1497,7 @@ const pixels = {
 
         },
         key: 't',
+        updatePriority: -1
     },
     piston_rotator_right: {
         draw: function (x, y, width, height, opacity) {
@@ -1489,6 +1515,7 @@ const pixels = {
 
         },
         key: 'h',
+        updatePriority: -1
     },
     piston_rotator_down: {
         draw: function (x, y, width, height, opacity) {
@@ -1506,6 +1533,7 @@ const pixels = {
 
         },
         key: 'g',
+        updatePriority: -1
     },
     collapsible_nuke_diffuser: {
         draw: function (x, y, width, height, opacity) {
@@ -1536,6 +1564,7 @@ const pixels = {
             }
         },
         key: '0',
+        updatePriority: 2
     },
     nuke_diffuser: {
         draw: function (x, y, width, height, opacity) {
@@ -1556,6 +1585,7 @@ const pixels = {
 
         },
         key: '-',
+        updatePriority: -1
     },
     wall: {
         draw: function (x, y, width, height, opacity) {
@@ -1566,6 +1596,7 @@ const pixels = {
         update: function (x, y) {
         },
         key: '=',
+        updatePriority: -1
     },
     lag_spike_generator: {
         draw: function (x, y, width, height, opacity) {
@@ -1598,6 +1629,7 @@ const pixels = {
             });
         },
         key: '[',
+        updatePriority: 6
     },
     corruption: {
         draw: function (x, y, width, height, opacity) {
@@ -1708,7 +1740,8 @@ const pixels = {
                 }
             }
         },
-        key: ']'
+        key: ']',
+        updatePriority: 6
     },
     nuke2: {
         draw: function (x, y, width, height, opacity) {
@@ -1748,6 +1781,7 @@ const pixels = {
             }
         },
         key: Infinity,
+        updatePriority: 0
     },
     huge_nuke: {
         draw: function (x, y, width, height, opacity) {
@@ -1784,7 +1818,8 @@ const pixels = {
                 explode(x, y, 20, 1.5);
             }
         },
-        key: '\\'
+        key: '\\',
+        updatePriority: 0
     },
     very_huge_nuke: {
         draw: function (x, y, width, height, opacity) {
@@ -1821,7 +1856,8 @@ const pixels = {
                 explode(x, y, 40, 1.5);
             }
         },
-        key: Infinity
+        key: Infinity,
+        updatePriority: 0
     },
     spin: {
         draw: function (x, y, width, height, opacity) {
@@ -1840,6 +1876,7 @@ const pixels = {
 
         },
         key: Infinity,
+        updatePriority: -1
     },
     air2: {
         draw: function (x, y, width, height, opacity) {
@@ -1850,6 +1887,8 @@ const pixels = {
         update: function (x, y) {
             // illegal pixel
         },
+        key: Infinity,
+        updatePriority: -1
     }
 };
 
@@ -1917,17 +1956,24 @@ function draw() {
         let max = simulatePaused ? 10 : 1;
         for (let i = 0; i < max; i++) {
             runTicks--;
-            if (random() < 0.5) {
-                for (let i = 0; i < gridSize; i++) {
-                    for (let j = 0; j < gridSize; j++) {
-                        updatePixel(j, i);
-                    }
-                }
-            }
-            else {
-                for (let i = 0; i < gridSize; i++) {
-                    for (let j = gridSize - 1; j >= 0; j--) {
-                        updatePixel(j, i);
+            // if (random() < 0.5) {
+            //     for (let i = 0; i < gridSize; i++) {
+            //         for (let j = 0; j < gridSize; j++) {
+            //             updatePixel(j, i);
+            //         }
+            //     }
+            // }
+            // else {
+            //     for (let i = 0; i < gridSize; i++) {
+            //         for (let j = gridSize - 1; j >= 0; j--) {
+            //             updatePixel(j, i);
+            //         }
+            //     }
+            // }
+            for (let j = 0; j <= 6; j++) {
+                for (let k = 0; k < gridSize; k++) {
+                    for (let l = 0; l < gridSize; l++) {
+                        updatePixel(l, k, j);
                     }
                 }
             }
