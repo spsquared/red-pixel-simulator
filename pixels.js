@@ -272,7 +272,6 @@ function drawPixel(x, y, width, height) {
     rect(x * xScale, y * yScale, xScale * width, yScale * height);
 };
 function updatePixel(x, y, i) {
-    // if (pixels[grid[y][x]]) console.log(pixels[grid[y][x]].updatePriority)
     if (pixels[grid[y][x]] && pixels[grid[y][x]].updatePriority == i) {
         pixels[grid[y][x]].update(x, y);
     }
@@ -713,7 +712,7 @@ const pixels = {
             // }
         },
         key: '5',
-        updatePriority: -1
+        updatePriority: 3
     },
     nuke: {
         draw: function (x, y, width, height, opacity) {
