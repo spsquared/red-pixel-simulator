@@ -1,5 +1,7 @@
 // no documentation here!
 
+window.onerror = document.write;
+
 let gridSize = 100;
 let saveCode = '100;air-100:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser-6:piston_rotator_right:piston_left:air-77:piston_rotator_left:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:piston_rotator_right:piston_left:air-77:piston_rotator_left:piston_rotator_right:air-10:piston_left:air:piston_rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:piston_rotator_right:piston_left:air-77:piston_rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava-11:wall:air-3:nuke_diffuser:air-83:wall:cloner_down-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}4|{air-83:wall:air-11:wall:air-4:}3|air-83:{wall:air-99:}56|';
 let startPaused = false;
@@ -248,6 +250,21 @@ function setup() {
         let saveCode = generateSaveCode();
         window.navigator.clipboard.writeText(saveCode);
     };
+    document.getElementById('startPaused').onclick = function (e) {
+        startPaused = !startPaused;
+        if (startPaused) document.getElementById('startPaused').style.backgroundColor = 'lime';
+        else document.getElementById('startPaused').style.backgroundColor = 'red';
+    };
+    document.getElementById('optimizedLiquids').onclick = function (e) {
+        optimizedLiquids = !optimizedLiquids;
+        if (optimizedLiquids) document.getElementById('optimizedLiquids').style.backgroundColor = 'lime';
+        else document.getElementById('optimizedLiquids').style.backgroundColor = 'red';
+    };
+    document.getElementById('fadeEffect').onclick = function (e) {
+        fadeEffect = !fadeEffect;
+        if (fadeEffect) document.getElementById('fadeEffect').style.backgroundColor = 'lime';
+        else document.getElementById('fadeEffect').style.backgroundColor = 'red';
+    };
 };
 
 function drawPixels(x, y, width, height, type, opacity) {
@@ -335,14 +352,8 @@ function explode(x, y, size, chain) {
 };
 const pixels = {
     air: {
-        draw: function (x, y, width, height, opacity) {
-            // noStroke();
-            // fill(255, 255, 255, opacity * 255);
-            // drawPixel(x,y,width,height);
-        },
-        update: function (x, y) {
-
-        },
+        draw: function (x, y, width, height, opacity) {},
+        update: function (x, y) {},
         key: Infinity,
         updatePriority: -1
     },
@@ -492,16 +503,16 @@ const pixels = {
                 }
             }
             let slide = 0;
-            if (grid[y][x-2] == 'water' && grid[y][x-1] == 'air' && nextGrid[y][x-1] == null) slide--;
-            if (grid[y][x+2] == 'water' && grid[y][x+1] == 'air' && nextGrid[y][x+1] == null) slide--;
-            if ((grid[y][x-1] == 'air') && nextGrid[y][x-1] == null) slide -= 2;
-            if ((grid[y][x+1] == 'air') && nextGrid[y][x+1] == null) slide += 2;
+            if (grid[y][x - 2] == 'water' && grid[y][x - 1] == 'air' && nextGrid[y][x - 1] == null) slide--;
+            if (grid[y][x + 2] == 'water' && grid[y][x + 1] == 'air' && nextGrid[y][x + 1] == null) slide--;
+            if ((grid[y][x - 1] == 'air') && nextGrid[y][x - 1] == null) slide -= 2;
+            if ((grid[y][x + 1] == 'air') && nextGrid[y][x + 1] == null) slide += 2;
             if (slide < 0) {
                 nextGrid[y][x] = 'air';
-                nextGrid[y][x-1] = 'water';
+                nextGrid[y][x - 1] = 'water';
             } else if (slide > 0) {
                 nextGrid[y][x] = 'air';
-                nextGrid[y][x+1] = 'water'
+                nextGrid[y][x + 1] = 'water'
             }
         },
         key: '2',
@@ -1488,9 +1499,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {
-
-        },
+        update: function (x, y) {},
         key: 'f',
         updatePriority: -1
     },
@@ -1506,9 +1515,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {
-
-        },
+        update: function (x, y) {},
         key: 't',
         updatePriority: -1
     },
@@ -1524,9 +1531,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {
-
-        },
+        update: function (x, y) {},
         key: 'h',
         updatePriority: -1
     },
@@ -1542,9 +1547,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {
-
-        },
+        update: function (x, y) {},
         key: 'g',
         updatePriority: -1
     },
@@ -1594,9 +1597,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {
-
-        },
+        update: function (x, y) {},
         key: '-',
         updatePriority: -1
     },
@@ -1606,8 +1607,7 @@ const pixels = {
             fill(0, 0, 0, opacity * 255);
             drawPixel(x, y, width, height);
         },
-        update: function (x, y) {
-        },
+        update: function (x, y) {},
         key: '=',
         updatePriority: -1
     },
@@ -1667,9 +1667,31 @@ const pixels = {
                     }
                 }
             }
+            if (!optimizedLags) {
+                for (let i = 0; i < gridSize; i++) {
+                    let string = '';
+                    let number = 0;
+                    let j = 0;
+                    while (j < gridSize) {
+                        number += 1;
+                        if (grid[i][j] != string) {
+                            if (string != '' && string != 'air' && number != 0) {
+                                if (random() < 0.0001) drawPixels(j - number, i, number, 1, string, 1);
+                            }
+                            string = grid[i][j];
+                            number = 0;
+                        }
+                        j++;
+                    }
+                    number += 1;
+                    if (string != '') {
+                        if (random() < 0.0001) drawPixels(j - number, i, number, 1, string, 1);
+                    }
+                }
+            }
         },
         update: function (x, y) {
-            let chaos = function (actionX, actionY) {
+            function chaos(actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null && random() < 0.4) {
                     nextGrid[actionY][actionX] = 'corruption';
                 }
@@ -1725,33 +1747,8 @@ const pixels = {
                     nextGrid[actionY][actionX] = 'spin';
                 }
             };
-
             updateTouchingPixel(x, y, 2, 'air', chaos);
             updateTouchingAnything(x, y, 2, chaos);
-            if (!optimizedLags) {
-                for (let i = 0; i < gridSize; i++) {
-                    let string = '';
-                    let number = 0;
-                    for (let j = 0; j < gridSize; j++) {
-                        number += 1;
-                        if (grid[i][j] != string) {
-                            if (string != '' && number != 0) {
-                                if (random() < 0.00) {
-                                    // drawPixels(j - number,i,number,1,string);
-                                }
-                                string = grid[i][j];
-                                number = 0;
-                            }
-                        }
-                        number += 1;
-                        if (string != '' && number != 0) {
-                            if (random() < 0.00) {
-                                // drawPixels(j - number,i,number,1,string);
-                            }
-                        }
-                    }
-                }
-            }
         },
         key: ']',
         updatePriority: 6
@@ -1885,9 +1882,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {
-
-        },
+        update: function (x, y) {},
         key: Infinity,
         updatePriority: -1
     },
@@ -1897,9 +1892,7 @@ const pixels = {
             fill(255, 255, 255, 255 * opacity);
             drawPixel(x, y, width, height);
         },
-        update: function (x, y) {
-            // illegal pixel
-        },
+        update: function (x, y) {},
         key: Infinity,
         updatePriority: -1
     }

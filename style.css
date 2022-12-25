@@ -31,6 +31,16 @@ main {
     scroll-snap-align: end;
 }
 
+button {
+    margin-left: 16px;
+    font: 16px Arial;
+    font-weight: bolder;
+    border: 5px outset #AAAAAA;
+    cursor: pointer;
+}
+button:active {
+    border-style: inset;
+}
 #saveCode {
     position: static;
     margin-top: 10px;
@@ -43,33 +53,37 @@ main {
     position: absolute;
     top: 80px;
     left: 50%;
-    margin-left: 16px;
     width: 100px;
     height: 40px;
-    font: 16px Arial;
-    font-weight: bolder;
-    background-color: #ff1100;
-    border: 5px outset gray;
-    cursor: pointer;
-}
-#reset:active {
-    border-style: inset;
+    background-color: red;
 }
 #copySave {
     position: absolute;
     top: 10px;
     left: 50%;
-    margin-left: 16px;
-    width: 180px;
+    width: 140px;
     height: 60px;
-    font: 16px Arial;
-    font-weight: bolder;
-    background-color: lawngreen;
-    border: 5px outset gray;
-    cursor: pointer;
+    background-color: lime;
 }
-#copySave:active {
-    border-style: inset;
+#startPaused {
+    position: absolute;
+    top: 10px;
+    left: calc(50% + 150px);
+    width: 100px;
+    height: 60px;
+    background-color: red;
+}
+
+#optimizedLiquids, #fadeEffect {
+    margin-left: unset;
+    font-size: 12px;
+    border-width: 3px;
+}
+#optimizedLiquids {
+    background-color: red;
+}
+#fadeEffect {
+    background-color: lime;
 }
 
 b {
