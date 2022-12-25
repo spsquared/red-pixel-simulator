@@ -2061,7 +2061,7 @@ function windowResized() {
     document.querySelector('.p5Canvas').style.width = 600 * canvasScale - 20 + 'px';
     document.querySelector('.p5Canvas').style.height = 600 * canvasScale - 20 + 'px';
     if (window.innerWidth - 600 * canvasScale < 200) {
-        document.getElementById('sidebar').style.top = window.innerHeight + 'px';
+        document.getElementById('sidebar').style.top = Math.min(window.innerWidth, window.innerHeight) + 'px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 20 + 'px');
     } else {
         document.getElementById('sidebar').style.top = '0px';
