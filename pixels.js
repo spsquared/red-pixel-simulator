@@ -352,8 +352,8 @@ function explode(x, y, size, chain) {
 };
 const pixels = {
     air: {
-        draw: function (x, y, width, height, opacity) {},
-        update: function (x, y) {},
+        draw: function (x, y, width, height, opacity) { },
+        update: function (x, y) { },
         key: Infinity,
         updatePriority: -1
     },
@@ -504,7 +504,7 @@ const pixels = {
             }
             let slide = 0;
             if (grid[y][x - 2] == 'water' && grid[y][x - 1] == 'air' && nextGrid[y][x - 1] == null) slide--;
-            if (grid[y][x + 2] == 'water' && grid[y][x + 1] == 'air' && nextGrid[y][x + 1] == null) slide--;
+            if (grid[y][x + 2] == 'water' && grid[y][x + 1] == 'air' && nextGrid[y][x + 1] == null) slide++;
             if ((grid[y][x - 1] == 'air') && nextGrid[y][x - 1] == null) slide -= 2;
             if ((grid[y][x + 1] == 'air') && nextGrid[y][x + 1] == null) slide += 2;
             if (slide < 0) {
@@ -1499,7 +1499,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {},
+        update: function (x, y) { },
         key: 'f',
         updatePriority: -1
     },
@@ -1515,7 +1515,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {},
+        update: function (x, y) { },
         key: 't',
         updatePriority: -1
     },
@@ -1531,7 +1531,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {},
+        update: function (x, y) { },
         key: 'h',
         updatePriority: -1
     },
@@ -1547,7 +1547,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {},
+        update: function (x, y) { },
         key: 'g',
         updatePriority: -1
     },
@@ -1597,7 +1597,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {},
+        update: function (x, y) { },
         key: '-',
         updatePriority: -1
     },
@@ -1607,7 +1607,7 @@ const pixels = {
             fill(0, 0, 0, opacity * 255);
             drawPixel(x, y, width, height);
         },
-        update: function (x, y) {},
+        update: function (x, y) { },
         key: '=',
         updatePriority: -1
     },
@@ -1882,7 +1882,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {},
+        update: function (x, y) { },
         key: Infinity,
         updatePriority: -1
     },
@@ -1892,7 +1892,7 @@ const pixels = {
             fill(255, 0, 0);
             drawPixel(x, y, width, height);
         },
-        update: function (x, y) {},
+        update: function (x, y) { },
         key: Infinity,
         updatePriority: -1
     }
@@ -1965,24 +1965,20 @@ function draw() {
         let max = simulatePaused ? 10 : 1;
         for (let i = 0; i < max; i++) {
             runTicks--;
-            // if (random() < 0.5) {
-            //     for (let i = 0; i < gridSize; i++) {
-            //         for (let j = 0; j < gridSize; j++) {
-            //             updatePixel(j, i);
-            //         }
-            //     }
-            // }
-            // else {
-            //     for (let i = 0; i < gridSize; i++) {
-            //         for (let j = gridSize - 1; j >= 0; j--) {
-            //             updatePixel(j, i);
-            //         }
-            //     }
-            // }
-            for (let j = 0; j <= 6; j++) {
-                for (let k = 0; k < gridSize; k++) {
-                    for (let l = 0; l < gridSize; l++) {
-                        updatePixel(l, k, j);
+            if (animationTime % 2 == 0) {
+                for (let j = 0; j <= 6; j++) {
+                    for (let k = 0; k < gridSize; k++) {
+                        for (let l = gridSize - 1; l >= 0; l--) {
+                            updatePixel(l, k, j);
+                        }
+                    }
+                }
+            } else {
+                for (let j = 0; j <= 6; j++) {
+                    for (let k = 0; k < gridSize; k++) {
+                        for (let l = 0; l < gridSize; l++) {
+                            updatePixel(l, k, j);
+                        }
                     }
                 }
             }
