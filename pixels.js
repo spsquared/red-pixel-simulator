@@ -15,6 +15,7 @@ let yScale = 600 / gridSize;
 let canvasScale = Math.min(window.innerWidth / 600, window.innerHeight / 600);
 let debugInfo = false;
 let animationTime = 0;
+let ticks = 0;
 let frames = [];
 let lastFpsList = 0;
 let fpsList = [];
@@ -1965,7 +1966,7 @@ function draw() {
         let max = simulatePaused ? 10 : 1;
         for (let i = 0; i < max; i++) {
             runTicks--;
-            if (animationTime % 2 == 0) {
+            if (ticks % 2 == 0) {
                 for (let j = 0; j <= 6; j++) {
                     for (let k = 0; k < gridSize; k++) {
                         for (let l = gridSize - 1; l >= 0; l--) {
@@ -1982,7 +1983,16 @@ function draw() {
                     }
                 }
             }
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    if (nextGrid[i][j] != null) {
+                        grid[i][j] = nextGrid[i][j];
+                        nextGrid[i][j] = null;
+                    }
+                }
+            }
             frames.push(millis());
+            ticks++;
         }
     }
 
@@ -1997,6 +2007,7 @@ function draw() {
     while (frames[0] + 1000 < millis()) {
         frames.shift(1);
     }
+
     if (gridPaused && simulatePaused) {
         fill(255, 255, 255);
         rect(1, 3, 100, 14);
@@ -2037,16 +2048,7 @@ function draw() {
         }
     }
 
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
-            if (nextGrid[i][j] != null) {
-                grid[i][j] = nextGrid[i][j];
-                nextGrid[i][j] = null;
-            }
-        }
-    }
-
-    animationTime += 1;
+    animationTime++;
 };
 
 function windowResized() {
