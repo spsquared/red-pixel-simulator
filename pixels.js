@@ -1935,7 +1935,9 @@ function draw() {
         // if (lastGrids.length > 20) {
         //     lastGrids.shift(1);
         // }
-        clickLine(floor(mouseX * gridSize / width), floor(mouseY * gridSize / height), floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT);
+        let x = floor(mouseX * gridSize / width);
+        let y = floor(mouseY * gridSize / height);
+        if (x >= 0 && x <= gridSize && y >= 0 && y <= gridSize) clickLine(x, y, floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT);
     }
     if ((gridPaused && !simulatePaused) || !gridPaused) {
         fill(255, 255, 255, 255 - fadeEffect);
