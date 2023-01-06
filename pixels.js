@@ -17,7 +17,7 @@ let debugInfo = false;
 let animationTime = 0;
 let ticks = 0;
 let frames = [];
-let lastFpsList = 0;
+let lastFpsList = -1;
 let fpsList = [];
 let grid = [];
 let nextGrid = [];
@@ -266,6 +266,8 @@ function setup() {
         if (fadeEffect) document.getElementById('fadeEffect').style.backgroundColor = 'lime';
         else document.getElementById('fadeEffect').style.backgroundColor = 'red';
     };
+
+    lastFpsList = millis();
 };
 
 function drawPixels(x, y, width, height, type, opacity) {
@@ -2010,7 +2012,7 @@ function draw() {
 
     if (gridPaused && simulatePaused) {
         fill(255, 255, 255);
-        rect(1, 3, 100, 14);
+        rect(1, 1, 70, 14);
         if (debugInfo) {
             rect(5, 0, 200, 120);
         }
@@ -2019,8 +2021,8 @@ function draw() {
     textFont('Arial', 14);
     textAlign(LEFT, TOP);
     text('FPS: ' + frames.length, 3, 1);
-    if (lastFpsList + 100 < millis()) {
-        lastFpsList = millis();
+    while (lastFpsList + 100 < millis()) {
+        lastFpsList += 100;
         fpsList.push(frames.length);
         while (fpsList.length > 100) {
             fpsList.shift(1);
