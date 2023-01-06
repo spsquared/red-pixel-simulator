@@ -1022,13 +1022,9 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                // if(grid[y][x + 1] != 'air'){
-                // if(grid[y][x - 1] == 'air'){
-                if (nextGrid[y][x - 1] == null) {
+                if (nextGrid[y][x - 1] == null || nextGrid[y][x - 1] == "air") {
                     nextGrid[y][x - 1] = grid[y][x + 1];
                 }
-                // }
-                // }
             }
         },
         key: Infinity,
@@ -1050,13 +1046,9 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                // if(grid[y + 1][x] != 'air'){
-                // if(grid[y - 1][x] == 'air'){
-                if (nextGrid[y - 1][x] == null) {
+                if (nextGrid[y - 1][x] == null || nextGrid[y - 1][x] == "air") {
                     nextGrid[y - 1][x] = grid[y + 1][x];
                 }
-                // }
-                // }
             }
         },
         key: Infinity,
@@ -1078,13 +1070,9 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                // if(grid[y][x - 1] != 'air'){
-                // if(grid[y][x + 1] == 'air'){
-                if (nextGrid[y][x + 1] == null) {
+                if (nextGrid[y][x + 1] == null || nextGrid[y][x + 1] == "air") {
                     nextGrid[y][x + 1] = grid[y][x - 1];
                 }
-                // }
-                // }
             }
         },
         key: Infinity,
@@ -1106,13 +1094,9 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                // if(grid[y - 1][x] != 'air'){
-                // if(grid[y + 1][x] == 'air'){
-                if (nextGrid[y + 1][x] == null) {
+                if (nextGrid[y + 1][x] == null || nextGrid[y + 1][x] == "air") {
                     nextGrid[y + 1][x] = grid[y - 1][x];
                 }
-                // }
-                // }
             }
         },
         key: Infinity,
