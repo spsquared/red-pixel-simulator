@@ -164,6 +164,9 @@ function generateSaveCode() {
 function setup() {
     createCanvas(600, 600);
     frameRate(60);
+    noCursor();
+    noStroke();
+
     noiseDetail(3, 0.6);
     windowResized();
 
@@ -275,7 +278,6 @@ function drawPixels(x, y, width, height, type, opacity) {
         pixels[type].draw(x, y, width, height, opacity);
     }
     else {
-        noStroke();
         for (let i = 0; i < width; i++) {
             for (let j = 0; j < height; j++) {
                 fill(255, 0, 255, opacity * 255);
@@ -362,7 +364,6 @@ const pixels = {
     },
     sand: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(255, 225, 125, opacity * 255);
             drawPixel(x, y, width, height);
         },
@@ -407,7 +408,6 @@ const pixels = {
     },
     water: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             if (optimizedLiquids) {
                 fill(75, 50, 255, opacity * 255);
                 drawPixel(x, y, width, height);
@@ -523,7 +523,6 @@ const pixels = {
     },
     lava: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             if (optimizedLiquids) {
                 fill(255, 125, 0, opacity * 255);
                 drawPixel(x, y, width, height);
@@ -659,7 +658,6 @@ const pixels = {
     },
     concrete_powder: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(150, 150, 150, opacity * 255);
             drawPixel(x, y, width, height);
         },
@@ -717,7 +715,6 @@ const pixels = {
     },
     concrete: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(75, 75, 75, opacity * 255);
             drawPixel(x, y, width, height);
         },
@@ -744,7 +741,6 @@ const pixels = {
     },
     nuke: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(100, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
         },
@@ -782,7 +778,6 @@ const pixels = {
     },
     plant: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(125, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
         },
@@ -833,7 +828,6 @@ const pixels = {
     },
     sponge: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(225, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
         },
@@ -875,7 +869,6 @@ const pixels = {
     },
     pump: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(25, 125, 75, opacity * 255);
             drawPixel(x, y, width, height);
         },
@@ -896,7 +889,6 @@ const pixels = {
     },
     cloner_left: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -924,7 +916,6 @@ const pixels = {
     },
     cloner_up: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -952,7 +943,6 @@ const pixels = {
     },
     cloner_right: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -980,7 +970,6 @@ const pixels = {
     },
     cloner_down: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1008,7 +997,6 @@ const pixels = {
     },
     super_cloner_left: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1032,7 +1020,6 @@ const pixels = {
     },
     super_cloner_up: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1056,7 +1043,6 @@ const pixels = {
     },
     super_cloner_right: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1080,7 +1066,6 @@ const pixels = {
     },
     super_cloner_down: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1104,7 +1089,6 @@ const pixels = {
     },
     piston_left: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1197,7 +1181,6 @@ const pixels = {
     },
     piston_up: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1290,7 +1273,6 @@ const pixels = {
     },
     piston_right: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1383,7 +1365,6 @@ const pixels = {
     },
     piston_down: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1476,7 +1457,6 @@ const pixels = {
     },
     piston_rotator_left: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1492,7 +1472,6 @@ const pixels = {
     },
     piston_rotator_up: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1508,7 +1487,6 @@ const pixels = {
     },
     piston_rotator_right: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1524,7 +1502,6 @@ const pixels = {
     },
     piston_rotator_down: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1540,7 +1517,6 @@ const pixels = {
     },
     collapsible: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             if (optimizedLiquids) {
                 fill(200, 80, 200, opacity * 255);
                 drawPixel(x, y, width, height);
@@ -1571,7 +1547,6 @@ const pixels = {
     },
     nuke_diffuser: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(175, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
@@ -1590,7 +1565,6 @@ const pixels = {
     },
     wall: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(0, 0, 0, opacity * 255);
             drawPixel(x, y, width, height);
         },
@@ -1600,7 +1574,6 @@ const pixels = {
     },
     lag_spike_generator: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     fill(255, 255, 255, opacity * 255);
@@ -1633,7 +1606,6 @@ const pixels = {
     },
     corruption: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     for (let k = 0; k < random(1, 5); k++) {
@@ -1656,6 +1628,12 @@ const pixels = {
             }
             if (!optimizedLags) {
                 for (let i = 0; i < gridSize; i++) {
+                    stroke(color(255, 255, 255, 255));
+                    noStroke();
+                    cursor();
+                    noCursor();
+                    fill(color(255, 255, 255, 255));
+                    noFill();
                     let string = '';
                     let number = 0;
                     let j = 0;
@@ -1742,7 +1720,6 @@ const pixels = {
     },
     nuke2: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(100, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
         },
@@ -1782,7 +1759,6 @@ const pixels = {
     },
     huge_nuke: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(225, 120, 112, 255 * opacity);
             drawPixel(x, y, width, height);
         },
@@ -1820,7 +1796,6 @@ const pixels = {
     },
     very_huge_nuke: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(255, 0, 70, 255 * opacity);
             drawPixel(x, y, width, height);
         },
@@ -1875,7 +1850,6 @@ const pixels = {
     },
     remove: {
         draw: function (x, y, width, height, opacity) {
-            noStroke();
             fill(255, 0, 0);
             drawPixel(x, y, width, height);
         },
