@@ -1959,11 +1959,13 @@ function draw() {
     }
 
     if (!gridPaused || !simulatePaused) {
+        stroke(color(0, 0, 0));
         let x1 = max(0, floor(mouseX * gridSize / width) - clickSize + 1);
         let x2 = min(gridSize - 1, floor(mouseX * gridSize / width) + clickSize - 1);
         let y1 = max(0, floor(mouseY * gridSize / height) - clickSize + 1);
         let y2 = min(gridSize - 1, floor(mouseY * gridSize / height) + clickSize - 1);
         drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, mouseIsPressed && mouseButton == RIGHT ? 'remove' : clickPixel, 0.5);
+        noStroke();
     }
 
     while (frames[0] + 1000 < millis()) {
