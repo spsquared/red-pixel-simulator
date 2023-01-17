@@ -5,6 +5,7 @@ window.onerror = document.write;
 let gridSize = 100;
 let saveCode = '100;air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser-6:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava-11:wall:air-3:nuke_diffuser:air-83:wall:super_cloner_down-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}4|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
 let startPaused = false;
+let backgroundColor = 'ffffff';
 
 let optimizedLiquids = false;
 let optimizedLags = false;
@@ -1898,7 +1899,10 @@ function draw() {
         if (x >= 0 && x <= gridSize && y >= 0 && y <= gridSize) clickLine(x, y, floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT);
     }
     if ((gridPaused && !simulatePaused) || !gridPaused) {
-        fill(255, 255, 255, 255 - fadeEffect);
+        let r = parseInt(backgroundColor.substring(0, 2), 16);
+        let g = parseInt(backgroundColor.substring(2, 4), 16);
+        let b = parseInt(backgroundColor.substring(4, 6), 16);
+        fill(r, g, b, 255 - fadeEffect);
         rect(0, 0, width, height);
         for (let i = 0; i < gridSize; i++) {
             let string = '';
