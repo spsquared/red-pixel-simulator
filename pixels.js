@@ -184,7 +184,7 @@ function setup() {
         }
         if (key == 'arrowup') {
             clickSize += 1;
-            clickSize = min(gridSize / 2 + 1, clickSize);
+            clickSize = min(ceil(gridSize / 2 + 1), clickSize);
         } else if (key == 'arrowdown') {
             clickSize -= 1;
             clickSize = max(1, clickSize);
