@@ -13,15 +13,51 @@
 <body>
     <main></main>
     <div id="sidebar">
+        <!-- WARNING: Tables -->
+        <div id="gameControls">
+            <div id="pixelPicker"></div>
+            <table><tbody>
+                <tr>
+                    <td style="border: none;">
+                        <button id="sizeUp"> ▲ </button>
+                        <button id="sizeDown"> ▼ </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: none;">
+                        <button id="pause">PAUSE</button>
+                    </td>
+                    <td style="border: none;">
+                        <button id="simulatePaused">>>>></button>
+                    </td>
+                    <td style="border: none;">
+                        <button id="advanceTick">>> 1x</button>
+                    </td>
+                </tr>
+            </tbody></table>
+        </div><br>
         <div>
-            <textarea id="saveCode"></textarea>
-            <button id="reset">RESET</button>
-            <button id="copySave">COPY<br>SAVE CODE</button>
-            <button id="startPaused">START<br>PAUSED</button>
-            <div>
-                <button id="optimizedLiquids">Optimized Liquids</button>
-                <button id="fadeEffect">Blur</button>
-            </div>
+            <table style="width: 100%;"><tbody>
+                <tr>
+                    <td style="width: 50%; border: none;">
+                        <textarea id="saveCode"></textarea>
+                    </td>
+                    <td style="width: 50%; border: none;">
+                        <button id="copySave">COPY<br>SAVE CODE</button>
+                        <button id="startPaused">START<br>PAUSED</button><br>
+                        <button id="reset">RESET</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 50%; border: none;">
+                        <div>
+                            <button id="optimizedLiquids">Optimized Liquids</button>
+                            <button id="fadeEffect">Blur</button>
+                        </div>
+                    </td>
+                    <td style="width: 50%; border: none;"></td>
+                </tr>
+            </tbody></table>
         </div>
         <div>
             <h1>

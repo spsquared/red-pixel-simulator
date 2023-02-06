@@ -32,7 +32,7 @@ main {
 }
 
 button {
-    margin-left: 16px;
+    margin: 4px 4px;
     font: 16px Arial;
     font-weight: bolder;
     border: 5px outset #AAAAAA;
@@ -41,34 +41,51 @@ button {
 button:active {
     border-style: inset;
 }
+
+#gameControls {
+    width: 100%;
+}
+#pause {
+    background-color: lime;
+}
+#simulatePaused {
+    background-color: red;
+}
+
+#pixelPicker {
+    display: none;
+    max-width: calc(100% - 20px);
+    border: 2px solid black;
+    /* display: flex; */
+    padding-bottom: 8px;
+    padding-right: 8px;
+}
+.pickerPixel {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    margin-top: 8px;
+    margin-left: 8px;
+}
 #saveCode {
-    position: static;
     margin-top: 10px;
-    width: 50%;
+    width: 100%;
     min-height: 100px;
     max-height: 500px;
     resize: vertical;
 }
 #reset {
-    position: absolute;
-    top: 80px;
-    left: 50%;
     width: 100px;
     height: 40px;
     background-color: red;
 }
 #copySave {
-    position: absolute;
-    top: 10px;
-    left: 50%;
     width: 140px;
     height: 60px;
     background-color: lime;
 }
 #startPaused {
-    position: absolute;
-    top: 10px;
-    left: calc(50% + 150px);
     width: 100px;
     height: 60px;
     background-color: red;
@@ -99,6 +116,7 @@ td {
     padding: 2px 4px;
     overflow-wrap: break-word;
     max-width: calc(var(--max-sidebar-width) - 48px);
+    vertical-align: top;
 }
 .save {
     font-weight: lighter;
@@ -118,6 +136,9 @@ td {
         color: white;
     }
     b, td {
+        border-color: white;
+    }
+    #pixelPicker {
         border-color: white;
     }
 }

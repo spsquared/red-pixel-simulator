@@ -184,11 +184,9 @@ function setup() {
             }
         }
         if (key == 'arrowup') {
-            clickSize += 1;
-            clickSize = min(ceil(gridSize / 2 + 1), clickSize);
+            clickSize = min(ceil(gridSize / 2 + 1), clickSize + 1);
         } else if (key == 'arrowdown') {
-            clickSize -= 1;
-            clickSize = max(1, clickSize);
+            clickSize = max(1, clickSize - 1);
         } else if (key == 'r') {
             for (let i = 0; i < gridSize; i++) {
                 if (grid[0][i] == 'air' && random() < 0.25) {
@@ -214,7 +212,7 @@ function setup() {
         } else if (key == 'enter') {
             runTicks = 1;
         }
-        if (key != 'i' || !e.shiftKey || !e.ctrlKey) e.preventDefault();
+        if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11') e.preventDefault();
         if (e.target.matches('button')) e.target.blur();
     };
     document.onkeyup = function (e) {
@@ -233,10 +231,20 @@ function setup() {
         } else if (key == 'p') {
             gridPaused = !gridPaused;
             simulatePaused = false;
-            frameRate(60);
+            if (gridPaused) {
+                document.getElementById('pause').style.backgroundColor = 'red';
+            } else {
+                document.getElementById('pause').style.backgroundColor = 'lime';
+                document.getElementById('simulatePaused').style.backgroundColor = 'red';
+            }
         }
         if (key == 'shift') {
             if (gridPaused) simulatePaused = !simulatePaused;
+            if (simulatePaused) {
+                document.getElementById('simulatePaused').style.backgroundColor = 'lime';
+            } else {
+                document.getElementById('simulatePaused').style.backgroundColor = 'red';
+            }
             // if (simulatePaused && gridPaused) {
             //     frameRate(240);
             // } else {
@@ -269,6 +277,52 @@ function setup() {
         fadeEffect = fadeEffect ? 0 : 127;
         if (fadeEffect) document.getElementById('fadeEffect').style.backgroundColor = 'lime';
         else document.getElementById('fadeEffect').style.backgroundColor = 'red';
+    };
+
+    const pixelPicker = document.getElementById('pixelPicker');
+    const canvas = document.createElement('canvas');
+    canvas.width = 50;
+    canvas.height = 50;
+    for (const id in pixels) {
+        if (id != Infinity) {
+            const box = document.createElement('div');
+            box.classList.add('pickerPixel');
+            box.onclick = function (e) {
+                clickPixel = id;
+            };
+            const img = new Image(50, 50);
+            img.src = canvas.toDataURL('image/png');
+            box.appendChild(img);
+            pixelPicker.appendChild(box);
+        }
+    }
+
+    document.getElementById('sizeUp').onclick = function (e) {
+        clickSize = min(ceil(gridSize / 2 + 1), clickSize + 1);
+    };
+    document.getElementById('sizeDown').onclick = function (e) {
+        clickSize = max(1, clickSize - 1);
+    };
+    document.getElementById('pause').onclick = function (e) {
+        gridPaused = !gridPaused;
+        simulatePaused = false;
+        if (gridPaused) {
+            document.getElementById('pause').style.backgroundColor = 'red';
+        } else {
+            document.getElementById('pause').style.backgroundColor = 'lime';
+            document.getElementById('simulatePaused').style.backgroundColor = 'red';
+        }
+    };
+    document.getElementById('simulatePaused').onclick = function (e) {
+        if (gridPaused) simulatePaused = !simulatePaused;
+        if (simulatePaused) {
+            document.getElementById('simulatePaused').style.backgroundColor = 'lime';
+        } else {
+            document.getElementById('simulatePaused').style.backgroundColor = 'red';
+        }
+    };
+    document.getElementById('advanceTick').onclick = function (e) {
+        runTicks = 1;
     };
 
     lastFpsList = millis();
@@ -1118,7 +1172,7 @@ const pixels = {
                     moveX = i;
                     break;
                 }
-                if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall')) {
+                if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall' || grid[y][i] == 'slider_vertical')) {
                     break;
                 }
             }
@@ -1128,7 +1182,7 @@ const pixels = {
                         moveX = i;
                         break;
                     }
-                    if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall')) {
+                    if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall' || grid[y][i] == 'slider_vertical')) {
                         break;
                     }
                 }
@@ -1210,7 +1264,7 @@ const pixels = {
                     moveY = i;
                     break;
                 }
-                if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall')) {
+                if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
                     break;
                 }
             }
@@ -1220,7 +1274,7 @@ const pixels = {
                         moveY = i;
                         break;
                     }
-                    if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall')) {
+                    if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
                         break;
                     }
                 }
@@ -1302,7 +1356,7 @@ const pixels = {
                     moveX = i;
                     break;
                 }
-                if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall')) {
+                if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall' || grid[y][i] == 'slider_vertical')) {
                     break;
                 }
             }
@@ -1312,7 +1366,7 @@ const pixels = {
                         moveX = i;
                         break;
                     }
-                    if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall')) {
+                    if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall' || grid[y][i] == 'slider_vertical')) {
                         break;
                     }
                 }
@@ -1394,7 +1448,7 @@ const pixels = {
                     moveY = i;
                     break;
                 }
-                if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall')) {
+                if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
                     break;
                 }
             }
@@ -1404,7 +1458,7 @@ const pixels = {
                         moveY = i;
                         break;
                     }
-                    if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall')) {
+                    if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
                         break;
                     }
                 }
@@ -1516,6 +1570,32 @@ const pixels = {
         key: 'g',
         updatePriority: -1
     },
+    slider_horizontal: {
+        draw: function (x, y, width, height, opacity) {
+            fill(255, 180, 0, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(200, 100, 0, opacity * 255);
+            for (let i = 0; i < height; i++) {
+                drawPixel(x, y + i + 1/4, width, 1/2);
+            }
+        },
+        update: function (x, y) { },
+        key: ';',
+        updatePriority: -1
+    },
+    slider_vertical: {
+        draw: function (x, y, width, height, opacity) {
+            fill(250, 180, 0, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(200, 100, 0, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                drawPixel(x + i + 1/4, y, 1/2, height);
+            }
+        },
+        update: function (x, y) { },
+        key: '\'',
+        updatePriority: -1
+    },
     collapsible: {
         draw: function (x, y, width, height, opacity) {
             if (optimizedLiquids) {
@@ -1550,14 +1630,12 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(175, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(225, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fill(225, 125, 0, opacity * 255);
-                    drawPixel(x + i, y + j, 1 / 3, 1 / 3);
-                    drawPixel(x + i + 2 / 3, y + j, 1 / 3, 1 / 3);
-                    drawPixel(x + i, y + j + 2 / 3, 1 / 3, 1 / 3);
-                    drawPixel(x + i + 2 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
-                }
+                drawPixel(x + i + 1/3, y, 1/3, height);
+            }
+            for (let i = 0; i < height; i++) {
+                drawPixel(x, y + i + 1/3, width, 1/3);
             }
         },
         update: function (x, y) { },
@@ -2026,7 +2104,7 @@ function windowResized() {
     canvasScale = Math.min(window.innerWidth / 600, window.innerHeight / 600);
     document.querySelector('.p5Canvas').style.width = 600 * canvasScale - 20 + 'px';
     document.querySelector('.p5Canvas').style.height = 600 * canvasScale - 20 + 'px';
-    if (window.innerWidth - 600 * canvasScale < 200) {
+    if (window.innerWidth - 600 * canvasScale < 300) {
         document.getElementById('sidebar').style.top = Math.min(window.innerWidth, window.innerHeight) + 'px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 20 + 'px');
     } else {
