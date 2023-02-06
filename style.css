@@ -53,10 +53,9 @@ button:active {
 }
 
 #pixelPicker {
-    display: none;
+    /* display: none; */
     max-width: calc(100% - 20px);
     border: 2px solid black;
-    /* display: flex; */
     padding-bottom: 8px;
     padding-right: 8px;
 }

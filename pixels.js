@@ -281,16 +281,18 @@ function setup() {
 
     const pixelPicker = document.getElementById('pixelPicker');
     const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
     canvas.width = 50;
     canvas.height = 50;
     for (const id in pixels) {
-        if (id != Infinity) {
+        if (pixels[id].pickable) {
             const box = document.createElement('div');
             box.classList.add('pickerPixel');
             box.onclick = function (e) {
                 clickPixel = id;
             };
             const img = new Image(50, 50);
+            pixels[id].drawPreview(ctx);
             img.src = canvas.toDataURL('image/png');
             box.appendChild(img);
             pixelPicker.appendChild(box);
@@ -331,18 +333,8 @@ function setup() {
 function drawPixels(x, y, width, height, type, opacity) {
     if (pixels[type]) {
         pixels[type].draw(x, y, width, height, opacity);
-    }
-    else {
-        for (let i = 0; i < width; i++) {
-            for (let j = 0; j < height; j++) {
-                fill(255, 0, 255, opacity * 255);
-                drawPixel(x + i, y + j, 1 / 2, 1 / 2);
-                drawPixel(x + 1 / 2 + i, y + 1 / 2 + j, 1 / 2, 1 / 2);
-                fill(0, 0, 0, opacity * 255);
-                drawPixel(x + 1 / 2 + i, y + j, 1 / 2, 1 / 2);
-                drawPixel(x + i, y + 1 / 2 + j, 1 / 2, 1 / 2);
-            }
-        }
+    } else {
+        pixels['missing'].draw(x, y, width, height);
     }
 };
 function drawPixel(x, y, width, height) {
@@ -414,8 +406,12 @@ const pixels = {
     air: {
         draw: function (x, y, width, height, opacity) { },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
         key: Infinity,
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: false
     },
     sand: {
         draw: function (x, y, width, height, opacity) {
@@ -458,8 +454,14 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 225, 125)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '1',
-        updatePriority: 2
+        updatePriority: 2,
+        pickable: true
     },
     water: {
         draw: function (x, y, width, height, opacity) {
@@ -573,8 +575,14 @@ const pixels = {
                 nextGrid[y][x + 1] = 'water'
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 50, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '2',
-        updatePriority: 3
+        updatePriority: 3,
+        pickable: true
     },
     lava: {
         draw: function (x, y, width, height, opacity) {
@@ -708,8 +716,14 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '3',
-        updatePriority: 3
+        updatePriority: 3,
+        pickable: true
     },
     concrete_powder: {
         draw: function (x, y, width, height, opacity) {
@@ -765,8 +779,14 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(150, 150, 150)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '4',
-        updatePriority: 2
+        updatePriority: 2,
+        pickable: true
     },
     concrete: {
         draw: function (x, y, width, height, opacity) {
@@ -791,8 +811,14 @@ const pixels = {
             //     }
             // }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 75, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '5',
-        updatePriority: 3
+        updatePriority: 3,
+        pickable: true
     },
     nuke: {
         draw: function (x, y, width, height, opacity) {
@@ -828,8 +854,14 @@ const pixels = {
                 explode(x, y, 10);
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 255, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '6',
-        updatePriority: 0
+        updatePriority: 0,
+        pickable: true
     },
     plant: {
         draw: function (x, y, width, height, opacity) {
@@ -878,8 +910,14 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(125, 255, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '7',
-        updatePriority: 4
+        updatePriority: 4,
+        pickable: true
     },
     sponge: {
         draw: function (x, y, width, height, opacity) {
@@ -919,8 +957,14 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(225, 255, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '8',
-        updatePriority: 4
+        updatePriority: 4,
+        pickable: true
     },
     pump: {
         draw: function (x, y, width, height, opacity) {
@@ -939,8 +983,14 @@ const pixels = {
                 }
             });
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(25, 125, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '9',
-        updatePriority: 5
+        updatePriority: 5,
+        pickable: true
     },
     cloner_left: {
         draw: function (x, y, width, height, opacity) {
@@ -966,8 +1016,18 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+        },
         key: 'a',
-        updatePriority: 5
+        updatePriority: 5,
+        pickable: true
     },
     cloner_up: {
         draw: function (x, y, width, height, opacity) {
@@ -993,8 +1053,18 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+        },
         key: 'w',
-        updatePriority: 5
+        updatePriority: 5,
+        pickable: true
     },
     cloner_right: {
         draw: function (x, y, width, height, opacity) {
@@ -1020,8 +1090,18 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
         key: 'd',
-        updatePriority: 5
+        updatePriority: 5,
+        pickable: true
     },
     cloner_down: {
         draw: function (x, y, width, height, opacity) {
@@ -1047,8 +1127,18 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+        },
         key: 's',
-        updatePriority: 5
+        updatePriority: 5,
+        pickable: true
     },
     super_cloner_left: {
         draw: function (x, y, width, height, opacity) {
@@ -1070,8 +1160,12 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
         key: Infinity,
-        updatePriority: 5
+        updatePriority: 5,
+        pickable: false
     },
     super_cloner_up: {
         draw: function (x, y, width, height, opacity) {
@@ -1093,8 +1187,12 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
         key: Infinity,
-        updatePriority: 5
+        updatePriority: 5,
+        pickable: false
     },
     super_cloner_right: {
         draw: function (x, y, width, height, opacity) {
@@ -1116,8 +1214,12 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
         key: Infinity,
-        updatePriority: 5
+        updatePriority: 5,
+        pickable: false
     },
     super_cloner_down: {
         draw: function (x, y, width, height, opacity) {
@@ -1139,8 +1241,12 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
         key: Infinity,
-        updatePriority: 5
+        updatePriority: 5,
+        pickable: false
     },
     piston_left: {
         draw: function (x, y, width, height, opacity) {
@@ -1231,8 +1337,16 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 125, 255)';
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+        },
         key: 'j',
-        updatePriority: 1
+        updatePriority: 1,
+        pickable: true
     },
     piston_up: {
         draw: function (x, y, width, height, opacity) {
@@ -1323,8 +1437,16 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 125, 255)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+        },
         key: 'i',
-        updatePriority: 1
+        updatePriority: 1,
+        pickable: true
     },
     piston_right: {
         draw: function (x, y, width, height, opacity) {
@@ -1415,8 +1537,16 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 125, 255)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
         key: 'l',
-        updatePriority: 1
+        updatePriority: 1,
+        pickable: true
     },
     piston_down: {
         draw: function (x, y, width, height, opacity) {
@@ -1507,8 +1637,16 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 125, 255)';
+            ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+        },
         key: 'k',
-        updatePriority: 1
+        updatePriority: 1,
+        pickable: true
     },
     piston_rotator_left: {
         draw: function (x, y, width, height, opacity) {
@@ -1522,8 +1660,16 @@ const pixels = {
             }
         },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+        },
         key: 'f',
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: true
     },
     piston_rotator_up: {
         draw: function (x, y, width, height, opacity) {
@@ -1537,8 +1683,16 @@ const pixels = {
             }
         },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+        },
         key: 't',
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: true
     },
     piston_rotator_right: {
         draw: function (x, y, width, height, opacity) {
@@ -1552,8 +1706,16 @@ const pixels = {
             }
         },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
         key: 'h',
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: true
     },
     piston_rotator_down: {
         draw: function (x, y, width, height, opacity) {
@@ -1567,8 +1729,16 @@ const pixels = {
             }
         },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+        },
         key: 'g',
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: true
     },
     slider_horizontal: {
         draw: function (x, y, width, height, opacity) {
@@ -1576,12 +1746,20 @@ const pixels = {
             drawPixel(x, y, width, height);
             fill(200, 100, 0, opacity * 255);
             for (let i = 0; i < height; i++) {
-                drawPixel(x, y + i + 1/4, width, 1/2);
+                drawPixel(x, y + i + 1 / 4, width, 1 / 2);
             }
         },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 180, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(200, 100, 0)';
+            ctx.fillRect(0, 25 / 2, 50, 25);
+        },
         key: ';',
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: true
     },
     slider_vertical: {
         draw: function (x, y, width, height, opacity) {
@@ -1589,17 +1767,25 @@ const pixels = {
             drawPixel(x, y, width, height);
             fill(200, 100, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
-                drawPixel(x + i + 1/4, y, 1/2, height);
+                drawPixel(x + i + 1 / 4, y, 1 / 2, height);
             }
         },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 180, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(200, 100, 0)';
+            ctx.fillRect(25 / 2, 0, 25, 50);
+        },
         key: '\'',
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: true
     },
     collapsible: {
         draw: function (x, y, width, height, opacity) {
             if (optimizedLiquids) {
-                fill(200, 80, 200, opacity * 255);
+                fill(255, 120, 210, opacity * 255);
                 drawPixel(x, y, width, height);
             }
             else {
@@ -1623,8 +1809,14 @@ const pixels = {
                 }
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 120, 210)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '0',
-        updatePriority: 2
+        updatePriority: 2,
+        pickable: true
     },
     nuke_diffuser: {
         draw: function (x, y, width, height, opacity) {
@@ -1632,15 +1824,24 @@ const pixels = {
             drawPixel(x, y, width, height);
             fill(225, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
-                drawPixel(x + i + 1/3, y, 1/3, height);
+                drawPixel(x + i + 1 / 3, y, 1 / 3, height);
             }
             for (let i = 0; i < height; i++) {
-                drawPixel(x, y + i + 1/3, width, 1/3);
+                drawPixel(x, y + i + 1 / 3, width, 1 / 3);
             }
         },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(175, 50, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50);
+        },
         key: '-',
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: true
     },
     wall: {
         draw: function (x, y, width, height, opacity) {
@@ -1648,8 +1849,14 @@ const pixels = {
             drawPixel(x, y, width, height);
         },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '=',
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: true
     },
     lag_spike_generator: {
         draw: function (x, y, width, height, opacity) {
@@ -1680,8 +1887,14 @@ const pixels = {
                 }
             });
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(125, 255, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '[',
-        updatePriority: 6
+        updatePriority: 6,
+        pickable: true
     },
     corruption: {
         draw: function (x, y, width, height, opacity) {
@@ -1700,6 +1913,23 @@ const pixels = {
                         drawPixel(0, 0, borkXScale, borkYScale);
                         fill(100, 255, 0, (random(155) + 100) * opacity);
                         drawPixel(0, 0, borkXScale, borkYScale);
+                        rotate(-rotationAmount);
+                        translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
+                    }
+                    if (random(1, 5) < 1.2) {
+                        let rotationAmount = floor(random(0, 360));
+                        translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
+                        let translateX = random(-gridSize * xScale, gridSize * xScale);
+                        let translateY = random(-gridSize * yScale, gridSize * yScale);
+                        translate(translateX, translateY);
+                        rotate(rotationAmount);
+                        fill(255, 0, 0, opacity*255);
+                        rect(0, 0, 90, 90);
+                        fill(255, 255, 0, opacity * 255);
+                        rect(10, 10, 70, 70);
+                        fill(255, 0, 0, opacity*255);
+                        rect(40, 20, 10, 30);
+                        rect(40, 60, 10, 10);
                         rotate(-rotationAmount);
                         translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
                     }
@@ -1794,8 +2024,19 @@ const pixels = {
             updateTouchingPixel(x, y, 2, 'air', chaos);
             updateTouchingAnything(x, y, 2, chaos);
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(4, 4, 42, 42);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(22, 8, 6, 22);
+            ctx.fillRect(22, 36, 6, 6);
+        },
         key: ']',
-        updatePriority: 6
+        updatePriority: 6,
+        pickable: true
     },
     nuke2: {
         draw: function (x, y, width, height, opacity) {
@@ -1833,12 +2074,16 @@ const pixels = {
                 explode(x, y, 10, 1.5);
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
         key: Infinity,
-        updatePriority: 0
+        updatePriority: 0,
+        pickable: false
     },
     huge_nuke: {
         draw: function (x, y, width, height, opacity) {
-            fill(225, 120, 112, 255 * opacity);
+            fill(100, 60, 255, 255 * opacity);
             drawPixel(x, y, width, height);
         },
         update: function (x, y) {
@@ -1870,8 +2115,14 @@ const pixels = {
                 explode(x, y, 20, 1.5);
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 60, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: '\\',
-        updatePriority: 0
+        updatePriority: 0,
+        pickable: true
     },
     very_huge_nuke: {
         draw: function (x, y, width, height, opacity) {
@@ -1907,8 +2158,14 @@ const pixels = {
                 explode(x, y, 40, 1.5);
             }
         },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 70)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
         key: Infinity,
-        updatePriority: 0
+        updatePriority: 0,
+        pickable: true
     },
     spin: {
         draw: function (x, y, width, height, opacity) {
@@ -1924,8 +2181,12 @@ const pixels = {
             }
         },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
         key: Infinity,
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: false
     },
     remove: {
         draw: function (x, y, width, height, opacity) {
@@ -1933,8 +2194,32 @@ const pixels = {
             drawPixel(x, y, width, height);
         },
         update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
         key: Infinity,
-        updatePriority: -1
+        updatePriority: -1,
+        pickable: false
+    },
+    missing: {
+        draw: function (x, y, width, height, opacity) {
+            fill(0, 0, 0, opacity * 255);
+            drawPixel(x, y, width, height);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fill(255, 0, 255, opacity * 255);
+                    drawPixel(x + i, y + j, 1 / 2, 1 / 2);
+                    drawPixel(x + 1 / 2 + i, y + 1 / 2 + j, 1 / 2, 1 / 2);
+                }
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
+        key: Infinity,
+        updatePriority: -1,
+        pickable: false
     }
 };
 
