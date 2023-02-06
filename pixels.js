@@ -1917,6 +1917,17 @@ const pixels = {
                         translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
                     }
                     if (random(1, 5) < 1.2) {
+                        for (let k = 0; k < random(1, 10); k++) {
+                            let rotationAmount = floor(random(0, 360));
+                            translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
+                            let translateX = random(-20 * xScale, 20 * xScale);
+                            let translateY = random(-20 * yScale, 20 * yScale);
+                            translate(translateX, translateY);
+                            rotate(rotationAmount);
+                            drawPixels(0, 0, 1, 1, 'missing', opacity);
+                            rotate(-rotationAmount);
+                            translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
+                        }
                         let rotationAmount = floor(random(0, 360));
                         translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
                         let translateX = random(-gridSize * xScale, gridSize * xScale);
