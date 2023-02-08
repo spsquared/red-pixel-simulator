@@ -329,7 +329,7 @@ function drawPixels(x, y, width, height, type, opacity) {
     if (pixels[type]) {
         pixels[type].draw(x, y, width, height, opacity);
     } else {
-        pixels['missing'].draw(x, y, width, height);
+        pixels['missing'].draw(x, y, width, height, opacity);
     }
 };
 function drawPixel(x, y, width, height) {
@@ -1858,14 +1858,20 @@ const pixels = {
                         translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
                         let translateX = random(-10 * xScale, 10 * xScale);
                         let translateY = random(-10 * yScale, 10 * yScale);
+                        let skewX = random(-PI / 6, PI / 6);
+                        let skewY = random(-PI / 6, PI / 6);
                         translate(translateX, translateY);
                         rotate(rotationAmount);
+                        shearX(skewX);
+                        shearY(skewY);
                         let borkXScale = random(0, 4);
                         let borkYScale = random(0, 2);
                         fill(0, 0, 0, opacity * 255);
                         drawPixel(0, 0, borkXScale, borkYScale);
                         fill(100, 255, 0, (random(155) + 100) * opacity);
                         drawPixel(0, 0, borkXScale, borkYScale);
+                        shearY(-skewY);
+                        shearX(-skewX);
                         rotate(-rotationAmount);
                         translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
                     }
@@ -1885,8 +1891,12 @@ const pixels = {
                         translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
                         let translateX = random(-gridSize * xScale, gridSize * xScale);
                         let translateY = random(-gridSize * yScale, gridSize * yScale);
+                        let skewX = random(-PI / 6, PI / 6);
+                        let skewY = random(-PI / 6, PI / 6);
                         translate(translateX, translateY);
                         rotate(rotationAmount);
+                        shearX(skewX);
+                        shearY(skewY);
                         fill(255, 0, 0, opacity * 255);
                         rect(0, 0, 90, 90);
                         fill(255, 255, 0, opacity * 255);
@@ -1894,6 +1904,8 @@ const pixels = {
                         fill(255, 0, 0, opacity * 255);
                         rect(40, 20, 10, 30);
                         rect(40, 60, 10, 10);
+                        shearY(-skewY);
+                        shearX(-skewX);
                         rotate(-rotationAmount);
                         translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
                     }
