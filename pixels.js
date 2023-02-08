@@ -290,6 +290,8 @@ function setup() {
             box.classList.add('pickerPixel');
             box.onclick = function (e) {
                 clickPixel = id;
+                pixelPicker.children.forEach(div => div.classList.remove('pickerPixelSelected'));
+                box.classList.add('pickerPixelSelected');
             };
             const img = new Image(50, 50);
             pixels[id].drawPreview(ctx);
