@@ -36,6 +36,7 @@ main {
 
 button {
     margin: 4px 4px;
+    padding: 4px 4px;
     font: 16px Arial;
     font-weight: bolder;
     border: 5px outset #AAAAAA;
@@ -58,7 +59,7 @@ button:active {
 #pixelPicker {
     border: 2px solid black;
     padding-bottom: 8px;
-    padding-right: 8px;
+    padding-right: 2px;
     margin-right: 8px;
 }
 .pickerPixel {
@@ -73,7 +74,7 @@ button:active {
     transition: 50ms linear transform;
 }
 .pickerPixel:hover {
-    border-color: white;
+    border-color: black;
     transform: translateY(-5px);
 }
 .pickerPixelSelected {
@@ -169,6 +170,9 @@ td {
         border-color: white;
     }
     #pixelPickerDescription {
+        border-color: white;
+    }
+    .pickerPixel:hover {
         border-color: white;
     }
 }
