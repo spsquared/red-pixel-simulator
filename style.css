@@ -7,7 +7,6 @@
 body {
     --max-sidebar-width: 600px;
     font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
     font-size: 14px;
     user-select: none;
     word-wrap: break-word;
@@ -26,7 +25,7 @@ main {
     position: absolute;
     top: 0px;
     right: 0px;
-    max-width: var(--max-sidebar-width);
+    width: var(--max-sidebar-width);
     height: 100vh;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -57,7 +56,6 @@ button:active {
 }
 
 #pixelPicker {
-    max-width: calc(var(--max-sidebar-width) - 40px);
     border: 2px solid black;
     padding-bottom: 8px;
     padding-right: 8px;
@@ -88,6 +86,15 @@ button:active {
 .pickerPixelSelected:hover {
     border-color: gold;
 }
+#pixelPickerDescription {
+    border: 2px solid black;
+    border-top: none;
+    padding: 8px 8px;
+    margin-right: 8px;
+    height: min-content;
+    transition: 0.5s ease height;
+}
+
 #saveCode {
     margin-top: 10px;
     width: 100%;
@@ -159,6 +166,9 @@ td {
         border-color: white;
     }
     #pixelPicker {
+        border-color: white;
+    }
+    #pixelPickerDescription {
         border-color: white;
     }
 }

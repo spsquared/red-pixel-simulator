@@ -180,6 +180,7 @@ function setup() {
                 clickPixel = i;
                 document.getElementById('pixelPicker').children.forEach(div => div.classList.remove('pickerPixelSelected'));
                 document.getElementById(`picker-${i}`).classList.add('pickerPixelSelected');
+                pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[i].name}</span><br>${pixels[i].description}`;
             }
         }
         if (key == 'arrowup') {
@@ -271,6 +272,7 @@ function setup() {
     };
 
     const pixelPicker = document.getElementById('pixelPicker');
+    const pixelPickerDescription = document.getElementById('pixelPickerDescription');
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = 50;
@@ -284,6 +286,13 @@ function setup() {
                 clickPixel = id;
                 pixelPicker.children.forEach(div => div.classList.remove('pickerPixelSelected'));
                 box.classList.add('pickerPixelSelected');
+                pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}`;
+            };
+            box.onmouseover = function (e) {
+                pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}`;
+            };
+            box.onmouseout = function (e) {
+                pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[clickPixel].name}</span><br>${pixels[clickPixel].description}`;
             };
             const img = new Image(50, 50);
             pixels[id].drawPreview(ctx);
@@ -293,6 +302,7 @@ function setup() {
         }
     }
     document.getElementById(`picker-${clickPixel}`).classList.add('pickerPixelSelected');
+    pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[clickPixel].name}</span><br>${pixels[clickPixel].description}`;
 
     document.getElementById('sizeUp').onclick = function (e) {
         clickSize = min(ceil(gridSize / 2 + 1), clickSize + 1);
@@ -399,6 +409,8 @@ function explode(x, y, size, chain) {
 };
 const pixels = {
     air: {
+        name: 'Air',
+        description: 'It\'s air... What else would it be?',
         draw: function (x, y, width, height, opacity) { },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -409,6 +421,8 @@ const pixels = {
         pickable: false
     },
     sand: {
+        name: 'Sand',
+        description: 'Weird yellow stuff that falls',
         draw: function (x, y, width, height, opacity) {
             fill(255, 225, 125, opacity * 255);
             drawPixel(x, y, width, height);
@@ -451,6 +465,8 @@ const pixels = {
         pickable: true
     },
     water: {
+        name: 'Water',
+        description: 'Unrealistically viscous and may or may not be wet',
         draw: function (x, y, width, height, opacity) {
             if (optimizedLiquids) {
                 fill(75, 50, 255, opacity * 255);
@@ -567,6 +583,8 @@ const pixels = {
         pickable: true
     },
     lava: {
+        name: 'Lava',
+        description: 'Try not to get burned, it also melts concrete and other things',
         draw: function (x, y, width, height, opacity) {
             if (optimizedLiquids) {
                 fill(255, 125, 0, opacity * 255);
@@ -700,6 +718,8 @@ const pixels = {
         pickable: true
     },
     concrete_powder: {
+        name: 'Concrete Powder',
+        description: 'Like sand, but hardens into concrete when in contact with water',
         draw: function (x, y, width, height, opacity) {
             fill(150, 150, 150, opacity * 255);
             drawPixel(x, y, width, height);
@@ -756,6 +776,8 @@ const pixels = {
         pickable: true
     },
     concrete: {
+        name: 'Concrete',
+        description: 'Hard stuff that doesn\'t move easily',
         draw: function (x, y, width, height, opacity) {
             fill(75, 75, 75, opacity * 255);
             drawPixel(x, y, width, height);
@@ -788,6 +810,8 @@ const pixels = {
         pickable: true
     },
     nuke: {
+        name: 'Nuke',
+        description: 'TBH, kinda weak',
         draw: function (x, y, width, height, opacity) {
             fill(100, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
@@ -830,6 +854,8 @@ const pixels = {
         pickable: true
     },
     plant: {
+        name: 'P.L.A.N.T.',
+        description: '<span style="font-style: italic;">Persistent Loud Aesthetic Nail Tables.</span> No, it doesn\'t actually stand for anything. But it does consume concrete alarmingly fast',
         draw: function (x, y, width, height, opacity) {
             fill(125, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
@@ -886,6 +912,8 @@ const pixels = {
         pickable: true
     },
     sponge: {
+        name: 'S.P.O.N.G.E.',
+        description: 'Sample Providing... no',
         draw: function (x, y, width, height, opacity) {
             fill(225, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
@@ -933,6 +961,8 @@ const pixels = {
         pickable: true
     },
     pump: {
+        name: 'Water Pump',
+        description: 'Violates the Laws of Thermodynamics to create water',
         draw: function (x, y, width, height, opacity) {
             fill(25, 125, 75, opacity * 255);
             drawPixel(x, y, width, height);
@@ -959,6 +989,8 @@ const pixels = {
         pickable: true
     },
     cloner_left: {
+        name: 'Cloner (Left)',
+        description: 'Copies stuff from its right to its left',
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -996,6 +1028,8 @@ const pixels = {
         pickable: true
     },
     cloner_up: {
+        name: 'Cloner (Up)',
+        description: 'Copies stuff from below it to above it',
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1033,6 +1067,8 @@ const pixels = {
         pickable: true
     },
     cloner_right: {
+        name: 'Cloner (Right)',
+        description: 'Copies stuff from its left to its right',
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1070,6 +1106,8 @@ const pixels = {
         pickable: true
     },
     cloner_down: {
+        name: 'Cloner (Down)',
+        description: 'Copies stuff from above it to below it',
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1107,6 +1145,8 @@ const pixels = {
         pickable: true
     },
     super_cloner_left: {
+        name: 'Super Cloner (Left)',
+        description: 'Copies stuff from its right to its left, removing whatever was previously there',
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1121,9 +1161,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                if (nextGrid[y][x - 1] == null || nextGrid[y][x - 1] == "air") {
-                    nextGrid[y][x - 1] = grid[y][x + 1];
-                }
+                nextGrid[y][x - 1] = grid[y][x + 1];
             }
         },
         drawPreview: function (ctx) {
@@ -1134,6 +1172,8 @@ const pixels = {
         pickable: false
     },
     super_cloner_up: {
+        name: 'Super Cloner (Up)',
+        description: 'Copies stuff from below it to above it, removing whatever was previously there',
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1148,9 +1188,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                if (nextGrid[y - 1][x] == null || nextGrid[y - 1][x] == "air") {
-                    nextGrid[y - 1][x] = grid[y + 1][x];
-                }
+                nextGrid[y - 1][x] = grid[y + 1][x];
             }
         },
         drawPreview: function (ctx) {
@@ -1161,6 +1199,8 @@ const pixels = {
         pickable: false
     },
     super_cloner_right: {
+        name: 'Super Cloner (Right)',
+        description: 'Copies stuff from its left to its right, removing whatever was previously there',
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1175,9 +1215,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                if (nextGrid[y][x + 1] == null || nextGrid[y][x + 1] == "air") {
-                    nextGrid[y][x + 1] = grid[y][x - 1];
-                }
+                nextGrid[y][x + 1] = grid[y][x - 1];
             }
         },
         drawPreview: function (ctx) {
@@ -1188,6 +1226,8 @@ const pixels = {
         pickable: false
     },
     super_cloner_down: {
+        name: 'Super Cloner (Down)',
+        description: 'Copies stuff from above it to below it, removing whatever was previously there',
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1202,9 +1242,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
-                if (nextGrid[y + 1][x] == null || nextGrid[y + 1][x] == "air") {
-                    nextGrid[y + 1][x] = grid[y - 1][x];
-                }
+                nextGrid[y + 1][x] = grid[y - 1][x];
             }
         },
         drawPreview: function (ctx) {
@@ -1215,6 +1253,8 @@ const pixels = {
         pickable: false
     },
     piston_left: {
+        name: 'Piston (Left)',
+        description: 'Closer to a flying machine, it pushes stuff',
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1312,6 +1352,8 @@ const pixels = {
         pickable: true
     },
     piston_up: {
+        name: 'Piston (Up)',
+        description: 'Closer to a flying machine, it pushes stuff',
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1409,6 +1451,8 @@ const pixels = {
         pickable: true
     },
     piston_right: {
+        name: 'Piston (Right)',
+        description: 'Closer to a flying machine, it pushes stuff',
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1506,6 +1550,8 @@ const pixels = {
         pickable: true
     },
     piston_down: {
+        name: 'Piston (Down)',
+        description: 'Closer to a flying machine, it pushes stuff',
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1603,6 +1649,8 @@ const pixels = {
         pickable: true
     },
     piston_rotator_left: {
+        name: 'Piston Rotator (Left)',
+        description: 'Rotates stationary pistons in contact with it to face left',
         draw: function (x, y, width, height, opacity) {
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1626,6 +1674,8 @@ const pixels = {
         pickable: true
     },
     piston_rotator_up: {
+        name: 'Piston Rotator (Up)',
+        description: 'Rotates stationary pistons in contact with it to face up',
         draw: function (x, y, width, height, opacity) {
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1649,6 +1699,8 @@ const pixels = {
         pickable: true
     },
     piston_rotator_right: {
+        name: 'Piston Rotator (Right)',
+        description: 'Rotates stationary pistons in contact with it to face right',
         draw: function (x, y, width, height, opacity) {
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1672,6 +1724,8 @@ const pixels = {
         pickable: true
     },
     piston_rotator_down: {
+        name: 'Piston Rotator (Down)',
+        description: 'Rotates stationary pistons in contact with it to face down',
         draw: function (x, y, width, height, opacity) {
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1695,6 +1749,8 @@ const pixels = {
         pickable: true
     },
     slider_horizontal: {
+        name: 'Horizontal Slider',
+        description: 'Can only be pushed left and right',
         draw: function (x, y, width, height, opacity) {
             fill(255, 180, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1716,6 +1772,8 @@ const pixels = {
         pickable: true
     },
     slider_vertical: {
+        name: 'Vertical Slider',
+        description: 'Can only be pushed up and down',
         draw: function (x, y, width, height, opacity) {
             fill(250, 180, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1737,6 +1795,8 @@ const pixels = {
         pickable: true
     },
     collapsible: {
+        name: 'Collapsible Box',
+        description: 'A box that will disintegrate when squished',
         draw: function (x, y, width, height, opacity) {
             if (optimizedLiquids) {
                 fill(255, 120, 210, opacity * 255);
@@ -1772,6 +1832,8 @@ const pixels = {
         pickable: true
     },
     nuke_diffuser: {
+        name: 'Nuke Diffuser',
+        description: 'Doesn\'t cause diffusion, but will defuse nukes touching it',
         draw: function (x, y, width, height, opacity) {
             fill(175, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1797,6 +1859,8 @@ const pixels = {
         pickable: true
     },
     wall: {
+        name: 'Wall',
+        description: 'An immovable wall',
         draw: function (x, y, width, height, opacity) {
             fill(0, 0, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1812,6 +1876,8 @@ const pixels = {
         pickable: true
     },
     lag_spike_generator: {
+        name: 'lag_spike_generator',
+        description: 'Not that laggy',
         draw: function (x, y, width, height, opacity) {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -1850,6 +1916,8 @@ const pixels = {
         pickable: true
     },
     corruption: {
+        name: '�',
+        description: '<span style="color: red">�</span>',
         draw: function (x, y, width, height, opacity) {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -2015,6 +2083,8 @@ const pixels = {
         pickable: true
     },
     nuke2: {
+        name: 'Nuke 2',
+        description: 'Like nuke but with one line of code difference',
         draw: function (x, y, width, height, opacity) {
             fill(100, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
@@ -2057,6 +2127,8 @@ const pixels = {
         pickable: false
     },
     huge_nuke: {
+        name: 'Huge Nuke',
+        description: 'KABOOM!',
         draw: function (x, y, width, height, opacity) {
             fill(100, 60, 255, 255 * opacity);
             drawPixel(x, y, width, height);
@@ -2099,6 +2171,8 @@ const pixels = {
         pickable: true
     },
     very_huge_nuke: {
+        name: 'Very Huge Nuke',
+        description: 'AAAAAAAAAAAAAAAAAAAAA',
         draw: function (x, y, width, height, opacity) {
             fill(255, 0, 70, 255 * opacity);
             drawPixel(x, y, width, height);
@@ -2141,6 +2215,8 @@ const pixels = {
         pickable: true
     },
     spin: {
+        name: 'Spin',
+        description: 'SPINNY CARRIER GO WEEEEEEEEEEEEEEEEEEEEEEEEE!!',
         draw: function (x, y, width, height, opacity) {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -2162,6 +2238,8 @@ const pixels = {
         pickable: false
     },
     remove: {
+        name: "Remove (brush only)",
+        description: `<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&rel=0&controls=0&disablekb=1" width=${window.innerWidth} height=${window.innerHeight} style="position: absolute; top: -2px; left: -2px; pointer-events: none;"></iframe><div style="position: absolute; top: 0px, left: 0px; width: 100vw; height: 100vh; z-index: 100;"></div>`,
         draw: function (x, y, width, height, opacity) {
             fill(255, 0, 0);
             drawPixel(x, y, width, height);
@@ -2175,6 +2253,8 @@ const pixels = {
         pickable: false
     },
     missing: {
+        name: 'Missing Pixel',
+        description: 'Check your save code, it probably has pixels that don\'t exist in it',
         draw: function (x, y, width, height, opacity) {
             fill(0, 0, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -2219,6 +2299,7 @@ function clickLine(startX, startY, endX, endY, remove) {
 };
 
 function draw() {
+    // place pixels
     if (mouseIsPressed && (!gridPaused || !simulatePaused)) {
         // lastGrids.push([]);
         // for (let i = 0; i < gridSize; i++) {
@@ -2234,6 +2315,7 @@ function draw() {
         let y = floor(mouseY * gridSize / height);
         if (x >= 0 && x <= gridSize && y >= 0 && y <= gridSize) clickLine(x, y, floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT);
     }
+    // draw pixels
     if ((gridPaused && !simulatePaused) || !gridPaused) {
         let r = parseInt(backgroundColor.substring(0, 2), 16);
         let g = parseInt(backgroundColor.substring(2, 4), 16);
@@ -2264,6 +2346,18 @@ function draw() {
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
         frames.push(millis());
     }
+    // draw brush
+    if (!gridPaused || !simulatePaused) {
+        stroke(color(0, 0, 0));
+        let x1 = max(0, floor(mouseX * gridSize / width) - clickSize + 1);
+        let x2 = min(gridSize - 1, floor(mouseX * gridSize / width) + clickSize - 1);
+        let y1 = max(0, floor(mouseY * gridSize / height) - clickSize + 1);
+        let y2 = min(gridSize - 1, floor(mouseY * gridSize / height) + clickSize - 1);
+        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, mouseIsPressed && mouseButton == RIGHT ? 'remove' : clickPixel, 0.5);
+        noStroke();
+    }
+
+    // simulate pixels
     if (!gridPaused || runTicks > 0 || simulatePaused) {
         let max = simulatePaused ? 10 : 1;
         for (let i = 0; i < max; i++) {
@@ -2298,20 +2392,12 @@ function draw() {
         }
     }
 
-    if (!gridPaused || !simulatePaused) {
-        stroke(color(0, 0, 0));
-        let x1 = max(0, floor(mouseX * gridSize / width) - clickSize + 1);
-        let x2 = min(gridSize - 1, floor(mouseX * gridSize / width) + clickSize - 1);
-        let y1 = max(0, floor(mouseY * gridSize / height) - clickSize + 1);
-        let y2 = min(gridSize - 1, floor(mouseY * gridSize / height) + clickSize - 1);
-        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, mouseIsPressed && mouseButton == RIGHT ? 'remove' : clickPixel, 0.5);
-        noStroke();
-    }
-
+    // fps
     while (frames[0] + 1000 < millis()) {
         frames.shift(1);
     }
 
+    // ui
     if (gridPaused && simulatePaused) {
         fill(255, 255, 255);
         rect(1, 1, 70, 14);
@@ -2341,7 +2427,7 @@ function draw() {
     }
     textAlign(RIGHT, TOP);
     text('Brush Size: ' + clickSize, width - 3, 1);
-    text('Brush Pixel: ' + clickPixel, width - 3, 16);
+    text('Brush Pixel: ' + (pixels[clickPixel] ?? pixels['missing']).name, width - 3, 16);
     if (gridPaused) {
         fill(0, 0, 0);
         text('PAUSED', width - 3, 33);
@@ -2365,8 +2451,14 @@ function windowResized() {
     if (window.innerWidth - 600 * canvasScale < 300) {
         document.getElementById('sidebar').style.top = Math.min(window.innerWidth, window.innerHeight) + 'px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 20 + 'px');
+        let pickerWidth = (Math.round((window.innerWidth - 20) / 62) - 1) * 62 - 3;
+        document.getElementById('pixelPicker').style.width = pickerWidth + 'px';
+        document.getElementById('pixelPickerDescription').style.width = pickerWidth - 8 + 'px';
     } else {
         document.getElementById('sidebar').style.top = '0px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 600 * canvasScale - 20 + 'px');
+        let pickerWidth = (Math.round((window.innerWidth - 600 * canvasScale - 20) / 62) - 1) * 62 - 3;
+        document.getElementById('pixelPicker').style.width = pickerWidth + 'px';
+        document.getElementById('pixelPickerDescription').style.width = pickerWidth - 8 + 'px';
     }
 };
