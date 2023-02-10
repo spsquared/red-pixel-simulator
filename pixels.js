@@ -251,7 +251,14 @@ function setup() {
         }
         e.preventDefault();
     };
-    document.querySelector('.p5Canvas').addEventListener('contextmenu', (e) => e.preventDefault());
+    document.querySelector('.p5Canvas').addEventListener('contextmenu', e => e.preventDefault());
+    document.querySelector('.p5Canvas').addEventListener('wheel', e => {
+        if (e.deltaY > 0) {
+            clickSize = max(1, clickSize - 1);
+        } else {
+            clickSize = min(ceil(gridSize / 2 + 1), clickSize + 1);
+        }
+    });
 
     document.getElementById('reset').onclick = function (e) {
         saveCode = document.getElementById('saveCode').value;
