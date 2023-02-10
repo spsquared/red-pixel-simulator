@@ -509,29 +509,37 @@ const pixels = {
                     if (canMoveTo(x, y + 1)) {
                         move(x, y, x, y + 1);
                     }
-                } else if (grid[y + 1][x] != 'sponge') {
+                } else {
                     let left = x - 1;
                     let right = x + 1;
                     let slideLeft = 0;
                     let slideRight = 0;
                     let foundLeftDrop = false;
                     let foundRightDrop = false;
-                    let incrementLeft = canMoveTo(x - 1, y);
-                    let incrementRight = canMoveTo(x + 1, y);
+                    let incrementLeft = canMoveTo(x - 1, y) && grid[y][x - 1] == 'air';
+                    let incrementRight = canMoveTo(x + 1, y) && grid[y][x + 1] == 'air';
                     while (incrementLeft || incrementRight) {
                         if (incrementLeft) {
-                            if (grid[y][left] != 'air' || grid[y + 1][left] == 'air') {
-                                slideLeft = (grid[y][x - 1] == 'air' && (grid[y][left] != 'water' || grid[y + 1][left] == 'air')) ? x - left : 0;
-                                foundLeftDrop = grid[y][x - 1] == 'air' && grid[y + 1][x - 1] == 'air' && grid[y + 1][left] == 'air';
+                            if (grid[y][left] != 'air') {
+                                if (grid[y][left] != 'water' || (y > 0 && grid[y - 1][left] != 'air')) slideLeft = x - left;
+                                incrementLeft = false;
+                            }
+                            if (grid[y + 1][left] == 'air') {
+                                slideLeft = x - left;
+                                foundLeftDrop = true;
                                 incrementLeft = false;
                             }
                             left--;
                             if (left < 0) incrementLeft = false;
                         }
                         if (incrementRight) {
-                            if (grid[y][right] != 'air' || grid[y + 1][right] == 'air') {
-                                slideRight = (grid[y][x + 1] == 'air' && (grid[y][right] != 'water' || grid[y + 1][right] == 'air')) ? right - x : 0;
-                                foundRightDrop = grid[y][x + 1] == 'air' && grid[y + 1][x + 1] == 'air' && grid[y + 1][right] == 'air';
+                            if (grid[y][right] != 'air') {
+                                if (grid[y][right] != 'water' || (y > 0 && grid[y - 1][right] != 'air')) slideRight = right - x;
+                                incrementRight = false;
+                            }
+                            if (grid[y + 1][right] == 'air') {
+                                slideRight = right - x;
+                                foundRightDrop = true;
                                 incrementRight = false;
                             }
                             right++;
@@ -567,13 +575,13 @@ const pixels = {
                         }
                     }
                     if (toSlide > 0) {
-                        if (foundRightDrop) {
+                        if (foundRightDrop && grid[y + 1][x + 1] == 'air') {
                             move(x, y, x + 1, y + 1);
                         } else {
                             move(x, y, x + 1, y);
                         }
                     } else if (toSlide < 0) {
-                        if (foundRightDrop) {
+                        if (foundLeftDrop && grid[y + 1][x - 1] == 'air') {
                             move(x, y, x - 1, y + 1);
                         } else {
                             move(x, y, x - 1, y);
@@ -760,7 +768,7 @@ const pixels = {
                             move(x, y, x + 1, y + 1);
                         }
                     } else if (slideLeft) {
-                        move(x, y, x + 1, y - 1);
+                        move(x, y, x - 1, y + 1);
                     } else if (slideRight) {
                         move(x, y, x + 1, y + 1);
                     }
@@ -893,12 +901,12 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         key: '7',
-        updatePriority: 4,
+        updatePriority: 0,
         pickable: true
     },
     sponge: {
         name: 'S.P.O.N.G.E.',
-        description: 'Sample Providing Oceanic Green Egg',
+        description: '<span style="font-style: italic;">Sample Providing Oceanic Nucleolic Green Egg</span>',
         draw: function (x, y, width, height, opacity) {
             fill(225, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
@@ -928,7 +936,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         key: '8',
-        updatePriority: 4,
+        updatePriority: 0,
         pickable: true
     },
     pump: {
@@ -956,7 +964,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         key: '9',
-        updatePriority: 5,
+        updatePriority: 4,
         pickable: true
     },
     cloner_up: {
@@ -991,7 +999,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
         key: 'w',
-        updatePriority: 5,
+        updatePriority: 4,
         pickable: true
     },
     cloner_down: {
@@ -1026,7 +1034,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         key: 's',
-        updatePriority: 5,
+        updatePriority: 4,
         pickable: true
     },
     cloner_right: {
@@ -1045,7 +1053,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1
+            if (x > 0 && x < gridSize - 1
                 && grid[y][x - 1] != 'air' && !grid[y][x - 1].includes('cloner')
                 && grid[y][x + 1] == 'air' && canMoveTo(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
@@ -1061,7 +1069,7 @@ const pixels = {
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         key: 'd',
-        updatePriority: 5,
+        updatePriority: 4,
         pickable: true
     },
     cloner_left: {
@@ -1080,7 +1088,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1
+            if (x > 0 && x < gridSize - 1
                 && grid[y][x + 1] != 'air' && !grid[y][x + 1].includes('cloner')
                 && grid[y][x - 1] == 'air' && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
@@ -1096,7 +1104,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
         key: 'a',
-        updatePriority: 5,
+        updatePriority: 4,
         pickable: true
     },
     super_cloner_up: {
@@ -1129,7 +1137,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
         key: Infinity,
-        updatePriority: 5,
+        updatePriority: 4,
         pickable: false
     },
     super_cloner_down: {
@@ -1162,7 +1170,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         key: Infinity,
-        updatePriority: 5,
+        updatePriority: 4,
         pickable: false
     },
     super_cloner_left: {
@@ -1195,7 +1203,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
         key: Infinity,
-        updatePriority: 5,
+        updatePriority: 4,
         pickable: false
     },
     super_cloner_right: {
@@ -1228,7 +1236,7 @@ const pixels = {
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         key: Infinity,
-        updatePriority: 5,
+        updatePriority: 4,
         pickable: false
     },
     piston_up: {
@@ -1676,8 +1684,8 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (validMovingPixel(x, y) && y < gridSize - 1 && canMoveTo(x, y+1)) {
-                move(x, y+1);
+            if (validMovingPixel(x, y) && y < gridSize - 1 && canMoveTo(x, y + 1)) {
+                move(x, y + 1);
             }
         },
         drawPreview: function (ctx) {
@@ -1733,6 +1741,21 @@ const pixels = {
         updatePriority: -1,
         pickable: true
     },
+    laser_left: {
+        name: "L.A.S.E.R. (Left)",
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats)</span>',
+        draw: function (x, y, width, height, opacity) {
+
+        },
+        update: function (x, y) {
+
+        },
+        drawPreview: function (ctx) {
+
+        },
+        key: 'c',
+        updatePriority: 4,
+    },
     lag_spike_generator: {
         name: 'lag_spike_generator',
         description: 'Not that laggy',
@@ -1770,7 +1793,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         key: '[',
-        updatePriority: 6,
+        updatePriority: 5,
         pickable: true
     },
     corruption: {
@@ -1922,7 +1945,7 @@ const pixels = {
                 if (nextGrid[actionY][actionX] == null && random() < 0.001) {
                     nextGrid[actionY][actionX] = 'spin';
                 }
-                move(round(random(x - 5, x + 1)), round(random(x - 5, x + 1)), round(random(x - 5, x + 1)), round(random(x - 5, x + 1)));
+                move(min(max(round(random(x - 5, x + 5)), 0), gridSize - 1), min(max(round(random(y - 5, y + 5)), 0), gridSize - 1), min(max(round(random(x - 5, x + 5)), 0), gridSize - 1), min(max(round(random(y - 5, y + 5)), 0), gridSize - 1));
             };
             updateTouchingPixel(x, y, 2, 'air', chaos);
             updateTouchingAnything(x, y, 2, chaos);
@@ -1938,7 +1961,7 @@ const pixels = {
             ctx.fillRect(22, 36, 6, 6);
         },
         key: ']',
-        updatePriority: 6,
+        updatePriority: 5,
         pickable: true
     },
     huge_nuke: {
@@ -2176,8 +2199,17 @@ function draw() {
         let max = simulatePaused ? 10 : 1;
         for (let i = 0; i < max; i++) {
             runTicks--;
+            /*
+            update priority:
+            0: nukes, plants, and sponges
+            1: pistons
+            2: gravity pixels
+            3: liquids and concrete
+            4: pumps, cloners, and lasers
+            5: lag
+            */
             if (ticks % 2 == 0) {
-                for (let j = 0; j <= 6; j++) {
+                for (let j = 0; j <= 5; j++) {
                     for (let k = 0; k < gridSize; k++) {
                         for (let l = gridSize - 1; l >= 0; l--) {
                             updatePixel(l, k, j);
@@ -2185,7 +2217,7 @@ function draw() {
                     }
                 }
             } else {
-                for (let j = 0; j <= 6; j++) {
+                for (let j = 0; j <= 5; j++) {
                     for (let k = 0; k < gridSize; k++) {
                         for (let l = 0; l < gridSize; l++) {
                             updatePixel(l, k, j);
