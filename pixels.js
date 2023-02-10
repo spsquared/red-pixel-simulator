@@ -52,13 +52,13 @@ function loadSaveCode() {
             let x = 0;
             let y = 0;
             function incrementPosition() {
-                x += 1;
+                x++;
                 if (x == gridSize) {
                     x = 0;
-                    y += 1;
+                    y++;
                 }
                 if (y == gridSize) {
-                    y -= 1;
+                    y--;
                     x = gridSize - 1;
                 }
             };
@@ -100,10 +100,10 @@ function loadSaveCode() {
                         if (inLoop == 0) {
                             loopedSaveCodeStartIndex = i + 1;
                         }
-                        inLoop += 1;
+                        inLoop++;
                     }
                     if (inputSaveCode[i] == '}') {
-                        inLoop -= 1;
+                        inLoop--;
                         if (inLoop == 0) {
                             loopTimesStartIndex = i + 1;
                         }
@@ -141,7 +141,7 @@ function generateSaveCode() {
     saveCode += gridSize + ';';
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
-            number += 1;
+            number++;
             if (grid[i][j] != string) {
                 if (string != '' && number != 0) {
                     if (number == 1) {
@@ -405,22 +405,14 @@ function move(x1, y1, x2, y2) {
     nextGrid[y1][x1] = grid[y2][x2];
     nextGrid[y2][x2] = grid[y1][x1];
 };
-function explode(x, y, size, chain) {
+function explode(x, y, size) {
     nextGrid[y][x] = 'air';
     grid[y][x] = 'wall';
     for (let i = -size; i <= size; i++) {
         for (let j = -size; j <= size; j++) {
             if (x + i >= 0 && x + i < gridSize && y + j >= 0 && y + j < gridSize) {
                 if (random() < 1 - (dist(x, y, x + i, y + j) / (size * 1.2))) {
-                    // if (grid[y + j][x + i] == 'nuke' || nextGrid[y + j][x + i] == 'nuke2') {
-                    //     explode(x+i, y+j, 10/chain, chain + 0.5);
-                    // } else if (nextGrid[y + j][x + i] == 'huge_nuke') {
-                    //     explode(x+i, y+j, 20/chain, chain + 0.5);
-                    // } else if (nextGrid[y + j][x + i] == 'very_huge_nuke') {
-                    //     explode(x+i, y+j, 40/chain, chain + 0.5);
-                    // } else {
                     nextGrid[y + j][x + i] = 'air';
-                    // }
                 }
             }
         }
@@ -641,7 +633,7 @@ const pixels = {
                         } else {
                             break;
                         }
-                        leftX -= 1;
+                        leftX--;
                     }
                     let rightX = 0;
                     while (x + rightX < gridSize - 1) {
@@ -653,7 +645,7 @@ const pixels = {
                         } else {
                             break;
                         }
-                        rightX += 1;
+                        rightX++;
                     }
                     if (validSlidingPositions.length > 0) {
                         let slidePosition;
@@ -738,10 +730,8 @@ const pixels = {
             if (!validMovingPixel(x, y)) return;
             let ret = false;
             updateTouchingPixel(x, y, 1, 'water', function (actionX, actionY) {
-                if (nextGrid[y][x] == null) {
-                    nextGrid[y][x] = 'concrete';
-                    ret = true;
-                }
+                nextGrid[y][x] = 'concrete';
+                ret = true;
             });
             if (ret) return;
             if (y > 0 && grid[y - 1][x] == 'lava') {
@@ -876,15 +866,11 @@ const pixels = {
             //     validPlant = false;
             // });
             if (!validPlant) {
-                if (nextGrid[y][x] == null) {
-                    nextGrid[y][x] = 'water';
-                }
+                nextGrid[y][x] = 'water';
             }
             updateTouchingPixel(x, y, 1, 'concrete', function (actionX, actionY) {
                 nextGrid[y][x] = 'water';
-                if (nextGrid[actionY][actionX] == null) {
-                    nextGrid[actionY][actionX] = 'plant';
-                }
+                nextGrid[actionY][actionX] = 'plant';
             });
             if (y < gridSize - 1) {
                 if (isPassableFluid(x, y + 1)) {
@@ -911,36 +897,22 @@ const pixels = {
             drawPixel(x, y, width, height);
         },
         update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
             updateTouchingPixel(x, y, 1, 'water', function (actionX, actionY) {
                 nextGrid[y][x] = 'air';
-                if (nextGrid[actionY][actionX] == null) {
-                    nextGrid[actionY][actionX] = 'sponge';
-                }
+                nextGrid[actionY][actionX] = 'sponge';
             });
             let validSponge = false;
             if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'air';
-                        nextGrid[y + 1][x] = 'sponge';
-                    }
-                }
-                if (random() < 0.25) {
-                    if (grid[y + 1][x] == 'lava') {
-                        if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                            nextGrid[y][x] = 'lava';
-                            nextGrid[y + 1][x] = 'sponge';
-                        }
-                    }
+                if ((grid[y + 1][x] == 'air' || (grid[y + 1][x] == 'lava' && random() < 0.25)) && canMoveTo(x, y + 1)) {
+                    move(x, y, x, y + 1);
                 }
                 if (grid[y + 1][x] == 'sand') {
                     validSponge = true;
                 }
             }
             if (!validSponge && random() < 0.125) {
-                if (nextGrid[y][x] == null) {
-                    nextGrid[y][x] = 'air';
-                }
+                nextGrid[y][x] = 'air';
             }
         },
         drawPreview: function (ctx) {
@@ -980,45 +952,6 @@ const pixels = {
         updatePriority: 5,
         pickable: true
     },
-    cloner_left: {
-        name: 'Cloner (Left)',
-        description: 'Copies stuff from its right to its left',
-        draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
-            drawPixel(x, y, width, height);
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (y > 0 && y < gridSize - 1) {
-                if (grid[y][x + 1] != 'air' && grid[y][x + 1] != 'cloner_left' && grid[y][x + 1] != 'cloner_up' && grid[y][x + 1] != 'cloner_right' && grid[y][x + 1] != 'cloner_down') {
-                    if (grid[y][x - 1] == 'air') {
-                        if (nextGrid[y][x - 1] == null) {
-                            nextGrid[y][x - 1] = grid[y][x + 1];
-                        }
-                    }
-                }
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
-            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(255, 255, 0)';
-            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-        },
-        key: 'a',
-        updatePriority: 5,
-        pickable: true
-    },
     cloner_up: {
         name: 'Cloner (Up)',
         description: 'Copies stuff from below it to above it',
@@ -1035,14 +968,10 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1) {
-                if (grid[y + 1][x] != 'air' && grid[y + 1][x] != 'cloner_left' && grid[y + 1][x] != 'cloner_up' && grid[y + 1][x] != 'cloner_right' && grid[y + 1][x] != 'cloner_down') {
-                    if (grid[y - 1][x] == 'air') {
-                        if (nextGrid[y - 1][x] == null) {
-                            nextGrid[y - 1][x] = grid[y + 1][x];
-                        }
-                    }
-                }
+            if (y > 0 && y < gridSize - 1
+                && grid[y + 1][x] != 'air' && !grid[y + 1][x].includes('cloner')
+                && grid[y - 1][x] == 'air' && canMoveTo(x, y - 1)) {
+                nextGrid[y - 1][x] = grid[y + 1][x];
             }
         },
         drawPreview: function (ctx) {
@@ -1055,45 +984,6 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
         key: 'w',
-        updatePriority: 5,
-        pickable: true
-    },
-    cloner_right: {
-        name: 'Cloner (Right)',
-        description: 'Copies stuff from its left to its right',
-        draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
-            drawPixel(x, y, width, height);
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (y > 0 && y < gridSize - 1) {
-                if (grid[y][x - 1] != 'air' && grid[y][x - 1] != 'cloner_left' && grid[y][x - 1] != 'cloner_up' && grid[y][x - 1] != 'cloner_right' && grid[y][x - 1] != 'cloner_down') {
-                    if (grid[y][x + 1] == 'air') {
-                        if (nextGrid[y][x + 1] == null) {
-                            nextGrid[y][x + 1] = grid[y][x - 1];
-                        }
-                    }
-                }
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
-            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(255, 255, 0)';
-            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
-        },
-        key: 'd',
         updatePriority: 5,
         pickable: true
     },
@@ -1113,14 +1003,10 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1) {
-                if (grid[y - 1][x] != 'air' && grid[y - 1][x] != 'cloner_left' && grid[y - 1][x] != 'cloner_up' && grid[y - 1][x] != 'cloner_right' && grid[y - 1][x] != 'cloner_down') {
-                    if (grid[y + 1][x] == 'air') {
-                        if (nextGrid[y + 1][x] == null) {
-                            nextGrid[y + 1][x] = grid[y - 1][x];
-                        }
-                    }
-                }
+            if (y > 0 && y < gridSize - 1
+                && grid[y - 1][x] != 'air' && !grid[y - 1][x].includes('cloner')
+                && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+                nextGrid[y + 1][x] = grid[y - 1][x];
             }
         },
         drawPreview: function (ctx) {
@@ -1136,9 +1022,44 @@ const pixels = {
         updatePriority: 5,
         pickable: true
     },
-    super_cloner_left: {
-        name: 'Super Cloner (Left)',
-        description: 'Copies stuff from its right to its left, removing whatever was previously there',
+    cloner_right: {
+        name: 'Cloner (Right)',
+        description: 'Copies stuff from its left to its right',
+        draw: function (x, y, width, height, opacity) {
+            fill(125, 50, 0, opacity * 255);
+            drawPixel(x, y, width, height);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fill(255, 125, 0, opacity * 255);
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    fill(255, 255, 0, opacity * 255);
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (y > 0 && y < gridSize - 1
+                && grid[y][x - 1] != 'air' && !grid[y][x - 1].includes('cloner')
+                && grid[y][x + 1] == 'air' && canMoveTo(x + 1, y)) {
+                nextGrid[y][x + 1] = grid[y][x - 1];
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
+        key: 'd',
+        updatePriority: 5,
+        pickable: true
+    },
+    cloner_left: {
+        name: 'Cloner (Left)',
+        description: 'Copies stuff from its right to its left',
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
@@ -1152,7 +1073,9 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1) {
+            if (y > 0 && y < gridSize - 1
+                && grid[y][x + 1] != 'air' && !grid[y][x + 1].includes('cloner')
+                && grid[y][x - 1] == 'air' && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
             }
         },
@@ -1165,9 +1088,9 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
-        key: Infinity,
+        key: 'a',
         updatePriority: 5,
-        pickable: false
+        pickable: true
     },
     super_cloner_up: {
         name: 'Super Cloner (Up)',
@@ -1197,39 +1120,6 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
-        },
-        key: Infinity,
-        updatePriority: 5,
-        pickable: false
-    },
-    super_cloner_right: {
-        name: 'Super Cloner (Right)',
-        description: 'Copies stuff from its left to its right, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
-            drawPixel(x, y, width, height);
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (y > 0 && y < gridSize - 1) {
-                nextGrid[y][x + 1] = grid[y][x - 1];
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
-            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(255, 255, 0)';
-            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         key: Infinity,
         updatePriority: 5,
@@ -1268,104 +1158,71 @@ const pixels = {
         updatePriority: 5,
         pickable: false
     },
-    piston_left: {
-        name: 'Piston (Left)',
-        description: 'Closer to a flying machine, it pushes stuff',
+    super_cloner_left: {
+        name: 'Super Cloner (Left)',
+        description: 'Copies stuff from its right to its left, removing whatever was previously there',
         draw: function (x, y, width, height, opacity) {
-            fill(75, 255, 255, opacity * 255);
+            fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(75, 125, 255, opacity * 255);
+                    fill(255, 125, 0, opacity * 255);
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    fill(255, 255, 0, opacity * 255);
                     drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
                 }
             }
         },
         update: function (x, y) {
-            let validPiston = true;
-            updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
-                validPiston = false;
-                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = 'air';
-                    nextGrid[actionY][actionX] = 'air';
-                    return;
-                }
-            });
-            if (!validPiston) {
-                return;
-            }
-            let moveX = null;
-            for (let i = x; i >= 0; i -= 1) {
-                if (grid[y][i] == 'air') {
-                    moveX = i;
-                    break;
-                }
-                if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall' || grid[y][i] == 'slider_vertical')) {
-                    break;
-                }
-            }
-            if (moveX == null) {
-                for (let i = x; i >= 0; i -= 1) {
-                    if (grid[y][i] == 'collapsible') {
-                        moveX = i;
-                        break;
-                    }
-                    if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall' || grid[y][i] == 'slider_vertical')) {
-                        break;
-                    }
-                }
-            }
-            if (moveX != null) {
-                let pushable = true;
-                for (let i = moveX; i < x; i += 1) {
-                    if (nextGrid[y][i + 1] != null) {
-                        pushable = false;
-                    }
-                }
-                if (nextGrid[y][x] != null) {
-                    pushable = false;
-                }
-                if (pushable) {
-                    for (let i = moveX; i < x; i += 1) {
-                        nextGrid[y][i] = grid[y][i + 1];
-                    }
-                    nextGrid[y][x] = 'air';
-                }
-            } else {
-                if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_up';
-                        return;
-                    }
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_right';
-                        return;
-                    }
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_down';
-                        return;
-                    }
-                }
-                if (updateTouchingPixel(x, y, 1, 'shimmer_slime', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_right';
-                        return;
-                    }
-                }
+            if (y > 0 && y < gridSize - 1) {
+                nextGrid[y][x - 1] = grid[y][x + 1];
             }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillStyle = 'rgb(125, 50, 0)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 125, 255)';
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
-        key: 'j',
-        updatePriority: 1,
-        pickable: true
+        key: Infinity,
+        updatePriority: 5,
+        pickable: false
+    },
+    super_cloner_right: {
+        name: 'Super Cloner (Right)',
+        description: 'Copies stuff from its left to its right, removing whatever was previously there',
+        draw: function (x, y, width, height, opacity) {
+            fill(125, 50, 0, opacity * 255);
+            drawPixel(x, y, width, height);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fill(255, 125, 0, opacity * 255);
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    fill(255, 255, 0, opacity * 255);
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (y > 0 && y < gridSize - 1) {
+                nextGrid[y][x + 1] = grid[y][x - 1];
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
+        key: Infinity,
+        updatePriority: 5,
+        pickable: false
     },
     piston_up: {
         name: 'Piston (Up)',
@@ -1381,77 +1238,48 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
             let validPiston = true;
             updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
                 validPiston = false;
-                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
+                if (nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
                     nextGrid[actionY][actionX] = 'air';
-                    return;
                 }
             });
-            if (!validPiston) {
-                return;
-            }
+            if (!validPiston) return;
             let moveY = null;
-            for (let i = y; i >= 0; i -= 1) {
+            let lastCollapsible = null;
+            for (let i = y; i >= 0; i--) {
                 if (grid[i][x] == 'air') {
                     moveY = i;
                     break;
                 }
-                if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
+                if (grid[i][x] == 'collapsible') {
+                    lastCollapsible = i;
+                }
+                if (i != y && ((grid[i][x].includes('piston') && grid[i][x].length <= 12) || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
                     break;
                 }
             }
-            if (moveY == null) {
-                for (let i = y; i >= 0; i -= 1) {
-                    if (grid[i][x] == 'collapsible') {
-                        moveY = i;
-                        break;
-                    }
-                    if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
-                        break;
-                    }
-                }
+            if (moveY == null && lastCollapsible != null) {
+                moveY = lastCollapsible;
             }
             if (moveY != null) {
-                let pushable = true;
-                for (let i = moveY; i < y; i += 1) {
-                    if (nextGrid[i + 1][x] != null) {
-                        pushable = false;
-                    }
+                for (let i = moveY; i < y; i++) {
+                    if (!canMoveTo(x, i + 1)) return;
                 }
-                if (nextGrid[y][x] != null) {
-                    pushable = false;
+                for (let i = moveY; i < y; i++) {
+                    nextGrid[i][x] = grid[i + 1][x];
                 }
-                if (pushable) {
-                    for (let i = moveY; i < y; i += 1) {
-                        nextGrid[i][x] = grid[i + 1][x];
-                    }
-                    nextGrid[y][x] = 'air';
-                }
+                nextGrid[y][x] = 'air';
             } else {
                 if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_left';
-                        return;
-                    }
+                    nextGrid[y][x] = 'piston_left';
                 } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_right';
-                        return;
-                    }
+                    nextGrid[y][x] = 'piston_right';
                 } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_down';
-                        return;
-                    }
-                }
-                if (updateTouchingPixel(x, y, 1, 'shimmer_slime', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_down';
-                        return;
-                    }
+                    nextGrid[y][x] = 'piston_down';
                 }
             }
         },
@@ -1463,105 +1291,6 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
         key: 'i',
-        updatePriority: 1,
-        pickable: true
-    },
-    piston_right: {
-        name: 'Piston (Right)',
-        description: 'Closer to a flying machine, it pushes stuff',
-        draw: function (x, y, width, height, opacity) {
-            fill(75, 255, 255, opacity * 255);
-            drawPixel(x, y, width, height);
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fill(75, 125, 255, opacity * 255);
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
-                }
-            }
-        },
-        update: function (x, y) {
-            let validPiston = true;
-            updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
-                validPiston = false;
-                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = 'air';
-                    nextGrid[actionY][actionX] = 'air';
-                    return;
-                }
-            });
-            if (!validPiston) {
-                return;
-            }
-            let moveX = null;
-            for (let i = x; i <= gridSize - 1; i += 1) {
-                if (grid[y][i] == 'air') {
-                    moveX = i;
-                    break;
-                }
-                if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall' || grid[y][i] == 'slider_vertical')) {
-                    break;
-                }
-            }
-            if (moveX == null) {
-                for (let i = x; i <= gridSize - 1; i += 1) {
-                    if (grid[y][i] == 'collapsible') {
-                        moveX = i;
-                        break;
-                    }
-                    if (i != x && (grid[y][i] == 'piston_left' || grid[y][i] == 'piston_up' || grid[y][i] == 'piston_right' || grid[y][i] == 'piston_down' || grid[y][i] == 'wall' || grid[y][i] == 'slider_vertical')) {
-                        break;
-                    }
-                }
-            }
-            if (moveX != null) {
-                let pushable = true;
-                for (let i = moveX; i > x; i -= 1) {
-                    if (nextGrid[y][i - 1] != null) {
-                        pushable = false;
-                    }
-                }
-                if (nextGrid[y][x] != null) {
-                    pushable = false;
-                }
-                if (pushable) {
-                    for (let i = moveX; i > x; i -= 1) {
-                        nextGrid[y][i] = grid[y][i - 1];
-                    }
-                    nextGrid[y][x] = 'air';
-                }
-            } else {
-                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_left';
-                        return;
-                    }
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_up';
-                        return;
-                    }
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_down';
-                        return;
-                    }
-                }
-                if (updateTouchingPixel(x, y, 1, 'shimmer_slime', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_left';
-                        return;
-                    }
-                }
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 125, 255)';
-            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
-        },
-        key: 'l',
         updatePriority: 1,
         pickable: true
     },
@@ -1579,77 +1308,48 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
             let validPiston = true;
             updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
                 validPiston = false;
-                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
+                if (nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
                     nextGrid[actionY][actionX] = 'air';
-                    return;
                 }
             });
-            if (!validPiston) {
-                return;
-            }
+            if (!validPiston) return;
             let moveY = null;
-            for (let i = y; i <= gridSize - 1; i += 1) {
+            let lastCollapsible = null;
+            for (let i = y; i <= gridSize - 1; i++) {
                 if (grid[i][x] == 'air') {
                     moveY = i;
                     break;
                 }
-                if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
+                if (grid[i][x] == 'collapsible') {
+                    lastCollapsible = i;
+                }
+                if (i != y && ((grid[i][x].includes('piston') && grid[i][x].length <= 12) || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
                     break;
                 }
             }
-            if (moveY == null) {
-                for (let i = y; i <= gridSize - 1; i += 1) {
-                    if (grid[i][x] == 'collapsible') {
-                        moveY = i;
-                        break;
-                    }
-                    if (i != y && (grid[i][x] == 'piston_left' || grid[i][x] == 'piston_up' || grid[i][x] == 'piston_right' || grid[i][x] == 'piston_down' || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
-                        break;
-                    }
-                }
+            if (moveY == null && lastCollapsible != null) {
+                moveY = lastCollapsible;
             }
             if (moveY != null) {
-                let pushable = true;
-                for (let i = moveY; i > y; i -= 1) {
-                    if (nextGrid[i - 1][x] != null) {
-                        pushable = false;
-                    }
+                for (let i = moveY; i > y; i--) {
+                    if (!canMoveTo(x, i - 1)) return;
                 }
-                if (nextGrid[y][x] != null) {
-                    pushable = false;
+                for (let i = moveY; i > y; i--) {
+                    nextGrid[i][x] = grid[i - 1][x];
                 }
-                if (pushable) {
-                    for (let i = moveY; i > y; i -= 1) {
-                        nextGrid[i][x] = grid[i - 1][x];
-                    }
-                    nextGrid[y][x] = 'air';
-                }
+                nextGrid[y][x] = 'air';
             } else {
                 if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_left';
-                        return;
-                    }
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_up';
-                        return;
-                    }
+                    nextGrid[y][x] = 'piston_left';
                 } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_right';
-                        return;
-                    }
-                }
-                if (updateTouchingPixel(x, y, 1, 'shimmer_slime', function (actionX, actionY) { })) {
-                    if (nextGrid[y][x] == null) {
-                        nextGrid[y][x] = 'piston_up';
-                        return;
-                    }
+                    nextGrid[y][x] = 'piston_right';
+                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
+                    nextGrid[y][x] = 'piston_up';
                 }
             }
         },
@@ -1661,6 +1361,146 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         key: 'k',
+        updatePriority: 1,
+        pickable: true
+    },
+    piston_left: {
+        name: 'Piston (Left)',
+        description: 'Closer to a flying machine, it pushes stuff',
+        draw: function (x, y, width, height, opacity) {
+            fill(75, 255, 255, opacity * 255);
+            drawPixel(x, y, width, height);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fill(75, 125, 255, opacity * 255);
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            let validPiston = true;
+            updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
+                validPiston = false;
+                if (nextGrid[actionY][actionX] == null) {
+                    nextGrid[y][x] = 'air';
+                    nextGrid[actionY][actionX] = 'air';
+                }
+            });
+            if (!validPiston) return;
+            let moveX = null;
+            let lastCollapsible = null;
+            for (let i = x; i >= 0; i--) {
+                if (grid[y][i] == 'air') {
+                    moveX = i;
+                    break;
+                }
+                if (grid[y][i] == 'collapsible') {
+                    lastCollapsible = i;
+                }
+                if (i != x && ((grid[y][i].includes('piston') && grid[y][i].length <= 12) || grid[y][i] == 'wall' || grid[y][i] == 'slider_vertical')) {
+                    break;
+                }
+            }
+            if (moveX == null && lastCollapsible != null) {
+                moveX = lastCollapsible;
+            }
+            if (moveX != null) {
+                for (let i = moveX; i < x; i++) {
+                    if (!canMoveTo(i + 1, y)) return;
+                }
+                for (let i = moveX; i < x; i++) {
+                    nextGrid[y][i] = grid[y][i + 1];
+                }
+                nextGrid[y][x] = 'air';
+            } else {
+                if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { })) {
+                    nextGrid[y][x] = 'piston_right';
+                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
+                    nextGrid[y][x] = 'piston_up';
+                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
+                    nextGrid[y][x] = 'piston_down';
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 125, 255)';
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+        },
+        key: 'j',
+        updatePriority: 1,
+        pickable: true
+    },
+    piston_right: {
+        name: 'Piston (Right)',
+        description: 'Closer to a flying machine, it pushes stuff',
+        draw: function (x, y, width, height, opacity) {
+            fill(75, 255, 255, opacity * 255);
+            drawPixel(x, y, width, height);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fill(75, 125, 255, opacity * 255);
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            let validPiston = true;
+            updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
+                validPiston = false;
+                if (nextGrid[actionY][actionX] == null) {
+                    nextGrid[y][x] = 'air';
+                    nextGrid[actionY][actionX] = 'air';
+                }
+            });
+            if (!validPiston) return;
+            let moveX = null;
+            let lastCollapsible = null;
+            for (let i = x; i <= gridSize - 1; i++) {
+                if (grid[y][i] == 'air') {
+                    moveX = i;
+                    break;
+                }
+                if (grid[y][i] == 'collapsible') {
+                    lastCollapsible = i;
+                }
+                if (i != x && ((grid[y][i].includes('piston') && grid[y][i].length <= 12) || grid[y][i] == 'wall' || grid[y][i] == 'slider_vertical')) {
+                    break;
+                }
+            }
+            if (moveX == null && lastCollapsible != null) {
+                moveX = lastCollapsible;
+            }
+            if (moveX != null) {
+                for (let i = moveX; i > x; i--) {
+                    if (!canMoveTo(i - 1, y)) return;
+                }
+                for (let i = moveX; i > x; i--) {
+                    nextGrid[y][i] = grid[y][i - 1];
+                }
+                nextGrid[y][x] = 'air';
+            } else {
+                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { })) {
+                    nextGrid[y][x] = 'piston_left';
+                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
+                    nextGrid[y][x] = 'piston_up';
+                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
+                    nextGrid[y][x] = 'piston_down';
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 125, 255)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
+        key: 'l',
         updatePriority: 1,
         pickable: true
     },
@@ -1829,13 +1669,8 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'air';
-                        nextGrid[y + 1][x] = 'collapsible';
-                    }
-                }
+            if (validMovingPixel(x, y) && y < gridSize - 1 && canMoveTo(x, y+1)) {
+                move(x, y+1);
             }
         },
         drawPreview: function (ctx) {
@@ -1890,9 +1725,6 @@ const pixels = {
         key: '=',
         updatePriority: -1,
         pickable: true
-    },
-    laser_left: {
-
     },
     lag_spike_generator: {
         name: 'lag_spike_generator',
@@ -2010,7 +1842,7 @@ const pixels = {
                     let number = 0;
                     let j = 0;
                     while (j < gridSize) {
-                        number += 1;
+                        number++;
                         if (grid[i][j] != string) {
                             if (string != '' && string != 'air' && number != 0) {
                                 if (random() < 0.0001) drawPixels(j - number, i, number, 1, string, 1);
@@ -2020,7 +1852,7 @@ const pixels = {
                         }
                         j++;
                     }
-                    number += 1;
+                    number++;
                     if (string != '') {
                         if (random() < 0.0001) drawPixels(j - number, i, number, 1, string, 1);
                     }
@@ -2102,50 +1934,6 @@ const pixels = {
         updatePriority: 6,
         pickable: true
     },
-    nuke2: {
-        name: 'Nuke 2',
-        description: 'Like nuke but with one line of code difference',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 255, 75, opacity * 255);
-            drawPixel(x, y, width, height);
-        },
-        update: function (x, y) {
-            if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'air';
-                        nextGrid[y + 1][x] = 'nuke2';
-                    }
-                }
-                if (grid[y + 1][x] == 'water') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'water';
-                        nextGrid[y + 1][x] = 'nuke2';
-                    }
-                }
-                if (grid[y + 1][x] == 'lava') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'lava';
-                        nextGrid[y + 1][x] = 'nuke2';
-                    }
-                }
-                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'water' || grid[y + 1][x] == 'lava' || grid[y + 1][x] == 'nuke') {
-                    return;
-                }
-            } else {
-                explode(x, y, 10, 1.5);
-            }
-            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { })) {
-                explode(x, y, 10, 1.5);
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-        },
-        key: Infinity,
-        updatePriority: 0,
-        pickable: false
-    },
     huge_nuke: {
         name: 'Huge Nuke',
         description: 'KABOOM!',
@@ -2154,18 +1942,14 @@ const pixels = {
             drawPixel(x, y, width, height);
         },
         update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
             let explosion = false;
             let diffused = false;
             updateTouchingPixel(x, y, 1, 'nuke_diffuser', function (actionX, actionY) {
                 diffused = true;
             });
-            if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'air';
-                        nextGrid[y + 1][x] = 'huge_nuke';
-                    }
-                }
+            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+                move(x, y, x, y + 1);
             }
             if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { })) {
                 explosion = true;
@@ -2178,7 +1962,7 @@ const pixels = {
                 explosion = true;
             }
             if (explosion && !diffused) {
-                explode(x, y, 20, 1.5);
+                explode(x, y, 20);
             }
         },
         drawPreview: function (ctx) {
@@ -2198,18 +1982,14 @@ const pixels = {
             drawPixel(x, y, width, height);
         },
         update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
             let explosion = false;
             let diffused = false;
             updateTouchingPixel(x, y, 1, 'nuke_diffuser', function (actionX, actionY) {
                 diffused = true;
             });
-            if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null) {
-                        nextGrid[y][x] = 'air';
-                        nextGrid[y + 1][x] = 'very_huge_nuke';
-                    }
-                }
+            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+                move(x, y, x, y + 1);
             }
             if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { })) {
                 explosion = true;
@@ -2222,7 +2002,7 @@ const pixels = {
                 explosion = true;
             }
             if (explosion && !diffused) {
-                explode(x, y, 40, 1.5);
+                explode(x, y, 40);
             }
         },
         drawPreview: function (ctx) {
@@ -2354,7 +2134,7 @@ function draw() {
             let number = 0;
             let j = 0;
             while (j < gridSize) {
-                number += 1;
+                number++;
                 if (grid[i][j] != string) {
                     if (string != '' && string != 'air' && number != 0) {
                         drawPixels(j - number, i, number, 1, string, 1);
@@ -2364,7 +2144,7 @@ function draw() {
                 }
                 j++;
             }
-            number += 1;
+            number++;
             if (string != '') {
                 drawPixels(j - number, i, number, 1, string, 1);
             }

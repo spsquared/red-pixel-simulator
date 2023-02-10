@@ -60,6 +60,7 @@ button:active {
     border: 2px solid black;
     padding-bottom: 8px;
     padding-right: 2px;
+    margin-top: 8px;
     margin-right: 8px;
 }
 .pickerPixel {
@@ -72,6 +73,7 @@ button:active {
     margin-right: 2px;
     border: 2px solid transparent;
     transition: 50ms linear transform;
+    cursor: pointer;
 }
 .pickerPixel:hover {
     border-color: black;
@@ -85,7 +87,7 @@ button:active {
     border: 4px solid gold;
 }
 .pickerPixelSelected:hover {
-    border-color: gold;
+    border-color: gold !important;
 }
 #pixelPickerDescription {
     border: 2px solid black;
