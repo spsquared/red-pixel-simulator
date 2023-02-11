@@ -356,39 +356,43 @@ function updatePixel(x, y, i) {
         pixels[grid[y][x]].update(x, y);
     }
 };
-function updateTouchingPixel(x, y, range, type, action) {
+function updateTouchingPixel(x, y, type, action) {
     let touchingPixel = false;
-    for (let i = -range; i <= range; i++) {
-        if (x + i >= 0 && x + i <= gridSize - 1) {
-            for (let j = -range; j <= range; j++) {
-                if (y + j >= 0 && y + j <= gridSize - 1) {
-                    if (abs(i) + abs(j) <= range && abs(i) + abs(j) != 0) {
-                        if (grid[y + j][x + i] == type) {
-                            action(x + i, y + j);
-                            touchingPixel = true;
-                        }
-                    }
-                }
-            }
-        }
+    if (x > 0 && grid[y][x - 1] == type) {
+        typeof action == 'function' && action(x - 1, y);
+        touchingPixel = true;
+    }
+    if (x < gridSize - 1 && grid[y][x + 1] == type) {
+        typeof action == 'function' && action(x + 1, y);
+        touchingPixel = true;
+    }
+    if (y > 0 && grid[y - 1][x] == type) {
+        typeof action == 'function' && action(x, y - 1);
+        touchingPixel = true;
+    }
+    if (y < gridSize - 1 && grid[y + 1][x] == type) {
+        typeof action == 'function' && action(x, y + 1);
+        touchingPixel = true;
     }
     return touchingPixel;
 };
-function updateTouchingAnything(x, y, range, action) {
+function updateTouchingAnything(x, y, action) {
     let touchingPixel = false;
-    for (let i = -range; i <= range; i++) {
-        if (x + i >= 0 && x + i <= gridSize - 1) {
-            for (let j = -range; j <= range; j++) {
-                if (y + j >= 0 && y + j <= gridSize - 1) {
-                    if (abs(i) + abs(j) <= range && abs(i) + abs(j) != 0) {
-                        if (grid[y + j][x + i] != 'air') {
-                            action(x + i, y + j);
-                            touchingPixel = true;
-                        }
-                    }
-                }
-            }
-        }
+    if (x > 0 && grid[y][x - 1] != 'air') {
+        typeof action == 'function' && action(x - 1, y);
+        touchingPixel = true;
+    }
+    if (x < gridSize - 1 && grid[y][x + 1] != 'air') {
+        typeof action == 'function' && action(x + 1, y);
+        touchingPixel = true;
+    }
+    if (y > 0 && grid[y - 1][x] != 'air') {
+        typeof action == 'function' && action(x, y - 1);
+        touchingPixel = true;
+    }
+    if (y < gridSize - 1 && grid[y + 1][x] != 'air') {
+        typeof action == 'function' && action(x, y + 1);
+        touchingPixel = true;
     }
     return touchingPixel;
 };
@@ -474,7 +478,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 225, 125)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '1',
+        key: Infinity,
         updatePriority: 2,
         pickable: true
     },
@@ -498,7 +502,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
                     nextGrid[actionY][actionX] = 'concrete';
@@ -595,7 +599,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 50, 255)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '2',
+        key: Infinity,
         updatePriority: 3,
         pickable: true
     },
@@ -618,13 +622,13 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            updateTouchingPixel(x, y, 1, 'water', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
                 if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
                     nextGrid[actionY][actionX] = 'concrete';
                 }
             });
-            updateTouchingPixel(x, y, 1, 'collapsible', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'collapsible', function (actionX, actionY) {
                 if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
                     nextGrid[actionY][actionX] = 'sand';
@@ -730,7 +734,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 125, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '3',
+        key: Infinity,
         updatePriority: 3,
         pickable: true
     },
@@ -744,7 +748,7 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
             let ret = false;
-            updateTouchingPixel(x, y, 1, 'water', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
                 nextGrid[y][x] = 'concrete';
                 ret = true;
             });
@@ -780,7 +784,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(150, 150, 150)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '4',
+        key: Infinity,
         updatePriority: 2,
         pickable: true
     },
@@ -814,7 +818,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 75, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '5',
+        key: Infinity,
         updatePriority: 3,
         pickable: true
     },
@@ -827,16 +831,10 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            let explosion = false;
-            let diffused = false;
-            updateTouchingPixel(x, y, 1, 'nuke_diffuser', function (actionX, actionY) {
-                diffused = true;
-            });
+            let explosion = updateTouchingAnything(x, y);
+            let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
             if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
-            }
-            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { })) {
-                explosion = true;
             }
             if (y < gridSize - 1) {
                 if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'nuke') {
@@ -854,7 +852,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(100, 255, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '6',
+        key: Infinity,
         updatePriority: 0,
         pickable: true
     },
@@ -867,23 +865,11 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            let validPlant = false;
-            updateTouchingPixel(x, y, 1, 'air', function (actionX, actionY) {
-                validPlant = true;
-            });
-            updateTouchingPixel(x, y, 1, 'water', function (actionX, actionY) {
-                validPlant = true;
-            });
-            // updateTouchingPixel(x,y,1,'plant',function(actionX,actionY){
-            //     validPlant = true;
-            // });
-            // updateTouchingPixel(x,y,1,'lava',function(actionX,actionY){
-            //     validPlant = false;
-            // });
+            let validPlant = updateTouchingPixel(x, y, 'air') || updateTouchingPixel(x, y, 'water');
             if (!validPlant) {
                 nextGrid[y][x] = 'water';
             }
-            updateTouchingPixel(x, y, 1, 'concrete', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'concrete', function (actionX, actionY) {
                 nextGrid[y][x] = 'water';
                 nextGrid[actionY][actionX] = 'plant';
             });
@@ -900,7 +886,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '7',
+        key: Infinity,
         updatePriority: 0,
         pickable: true
     },
@@ -913,7 +899,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            updateTouchingPixel(x, y, 1, 'water', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
                 nextGrid[y][x] = 'air';
                 nextGrid[actionY][actionX] = 'sponge';
             });
@@ -935,7 +921,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(225, 255, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '8',
+        key: Infinity,
         updatePriority: 0,
         pickable: true
     },
@@ -947,12 +933,12 @@ const pixels = {
             drawPixel(x, y, width, height);
         },
         update: function (x, y) {
-            updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
                 if (nextGrid[y][x] == null) {
                     nextGrid[y][x] = 'water';
                 }
             });
-            updateTouchingPixel(x, y, 1, 'air', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null && random() < 0.125) {
                     nextGrid[actionY][actionX] = 'water';
                 }
@@ -963,7 +949,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(25, 125, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '9',
+        key: Infinity,
         updatePriority: 4,
         pickable: true
     },
@@ -971,9 +957,9 @@ const pixels = {
         name: 'Cloner (Up)',
         description: 'Copies stuff from below it to above it',
         draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
+            fill(100, 100, 100, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(255, 125, 0, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
@@ -995,14 +981,14 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
-        key: 'w',
+        key: Infinity,
         updatePriority: 4,
         pickable: true
     },
@@ -1010,9 +996,9 @@ const pixels = {
         name: 'Cloner (Down)',
         description: 'Copies stuff from above it to below it',
         draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
+            fill(100, 100, 100, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(255, 125, 0, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
@@ -1034,14 +1020,14 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
-        key: 's',
+        key: Infinity,
         updatePriority: 4,
         pickable: true
     },
@@ -1049,9 +1035,9 @@ const pixels = {
         name: 'Cloner (Right)',
         description: 'Copies stuff from its left to its right',
         draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
+            fill(100, 100, 100, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(255, 125, 0, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
@@ -1073,14 +1059,14 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
-        key: 'd',
+        key: Infinity,
         updatePriority: 4,
         pickable: true
     },
@@ -1088,9 +1074,9 @@ const pixels = {
         name: 'Cloner (Left)',
         description: 'Copies stuff from its right to its left',
         draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
+            fill(100, 100, 100, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(255, 125, 0, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
@@ -1112,14 +1098,14 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
-        key: 'a',
+        key: Infinity,
         updatePriority: 4,
         pickable: true
     },
@@ -1127,9 +1113,9 @@ const pixels = {
         name: 'Super Cloner (Up)',
         description: 'Copies stuff from below it to above it, removing whatever was previously there',
         draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
+            fill(100, 100, 100, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(255, 125, 0, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
@@ -1149,9 +1135,9 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
@@ -1164,9 +1150,9 @@ const pixels = {
         name: 'Super Cloner (Down)',
         description: 'Copies stuff from above it to below it, removing whatever was previously there',
         draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
+            fill(100, 100, 100, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(255, 125, 0, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
@@ -1186,9 +1172,9 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
@@ -1201,9 +1187,9 @@ const pixels = {
         name: 'Super Cloner (Left)',
         description: 'Copies stuff from its right to its left, removing whatever was previously there',
         draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
+            fill(100, 100, 100, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(255, 125, 0, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
@@ -1223,9 +1209,9 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
@@ -1238,9 +1224,9 @@ const pixels = {
         name: 'Super Cloner (Right)',
         description: 'Copies stuff from its left to its right, removing whatever was previously there',
         draw: function (x, y, width, height, opacity) {
-            fill(125, 50, 0, opacity * 255);
+            fill(100, 100, 100, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(255, 125, 0, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
@@ -1260,9 +1246,9 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(125, 50, 0)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
@@ -1287,7 +1273,7 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
             let validPiston = true;
-            updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
                 validPiston = false;
                 if (nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
@@ -1321,11 +1307,11 @@ const pixels = {
                 }
                 nextGrid[y][x] = 'air';
             } else {
-                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { })) {
+                if (updateTouchingPixel(x, y, 'piston_rotator_left', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_left';
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { })) {
+                } else if (updateTouchingPixel(x, y, 'piston_rotator_right', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_right';
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
+                } else if (updateTouchingPixel(x, y, 'piston_rotator_down', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_down';
                 }
             }
@@ -1337,7 +1323,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 125, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
-        key: 'i',
+        key: Infinity,
         updatePriority: 1,
         pickable: true
     },
@@ -1357,7 +1343,7 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
             let validPiston = true;
-            updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
                 validPiston = false;
                 if (nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
@@ -1391,11 +1377,11 @@ const pixels = {
                 }
                 nextGrid[y][x] = 'air';
             } else {
-                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { })) {
+                if (updateTouchingPixel(x, y, 'piston_rotator_left', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_left';
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { })) {
+                } else if (updateTouchingPixel(x, y, 'piston_rotator_right', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_right';
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
+                } else if (updateTouchingPixel(x, y, 'piston_rotator_up', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_up';
                 }
             }
@@ -1427,7 +1413,7 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
             let validPiston = true;
-            updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
                 validPiston = false;
                 if (nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
@@ -1461,11 +1447,11 @@ const pixels = {
                 }
                 nextGrid[y][x] = 'air';
             } else {
-                if (updateTouchingPixel(x, y, 1, 'piston_rotator_right', function (actionX, actionY) { })) {
+                if (updateTouchingPixel(x, y, 'piston_rotator_right', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_right';
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
+                } else if (updateTouchingPixel(x, y, 'piston_rotator_up', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_up';
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
+                } else if (updateTouchingPixel(x, y, 'piston_rotator_down', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_down';
                 }
             }
@@ -1477,7 +1463,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 125, 255)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
-        key: 'j',
+        key: Infinity,
         updatePriority: 1,
         pickable: true
     },
@@ -1497,7 +1483,7 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
             let validPiston = true;
-            updateTouchingPixel(x, y, 1, 'lava', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
                 validPiston = false;
                 if (nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
@@ -1531,11 +1517,11 @@ const pixels = {
                 }
                 nextGrid[y][x] = 'air';
             } else {
-                if (updateTouchingPixel(x, y, 1, 'piston_rotator_left', function (actionX, actionY) { })) {
+                if (updateTouchingPixel(x, y, 'piston_rotator_left', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_left';
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_up', function (actionX, actionY) { })) {
+                } else if (updateTouchingPixel(x, y, 'piston_rotator_up', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_up';
-                } else if (updateTouchingPixel(x, y, 1, 'piston_rotator_down', function (actionX, actionY) { })) {
+                } else if (updateTouchingPixel(x, y, 'piston_rotator_down', function (actionX, actionY) { })) {
                     nextGrid[y][x] = 'piston_down';
                 }
             }
@@ -1547,7 +1533,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 125, 255)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
-        key: 'l',
+        key: Infinity,
         updatePriority: 1,
         pickable: true
     },
@@ -1572,7 +1558,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
-        key: 'f',
+        key: Infinity,
         updatePriority: -1,
         pickable: true
     },
@@ -1597,7 +1583,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
-        key: 't',
+        key: Infinity,
         updatePriority: -1,
         pickable: true
     },
@@ -1622,7 +1608,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
-        key: 'h',
+        key: Infinity,
         updatePriority: -1,
         pickable: true
     },
@@ -1647,7 +1633,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
-        key: 'g',
+        key: Infinity,
         updatePriority: -1,
         pickable: true
     },
@@ -1670,7 +1656,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(200, 100, 0)';
             ctx.fillRect(0, 25 / 2, 50, 25);
         },
-        key: ';',
+        key: Infinity,
         updatePriority: -1,
         pickable: true
     },
@@ -1693,7 +1679,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(200, 100, 0)';
             ctx.fillRect(25 / 2, 0, 25, 50);
         },
-        key: '\'',
+        key: Infinity,
         updatePriority: -1,
         pickable: true
     },
@@ -1716,7 +1702,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (validMovingPixel(x, y) && y < gridSize - 1 && grid[y+1][x] == 'air' && canMoveTo(x, y + 1)) {
+            if (validMovingPixel(x, y) && y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
         },
@@ -1725,7 +1711,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 120, 210)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '0',
+        key: Infinity,
         updatePriority: 2,
         pickable: true
     },
@@ -1752,7 +1738,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50, 50 / 3);
             ctx.fillRect(50 / 3, 0, 50 / 3, 50);
         },
-        key: '-',
+        key: Infinity,
         updatePriority: -1,
         pickable: true
     },
@@ -1769,7 +1755,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 0, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '=',
+        key: Infinity,
         updatePriority: -1,
         pickable: true
     },
@@ -1814,7 +1800,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
-        key: 'z',
+        key: Infinity,
         updatePriority: 0,
         pickable: true
     },
@@ -1859,7 +1845,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
-        key: 'x',
+        key: Infinity,
         updatePriority: 0,
         pickable: true
     },
@@ -1904,7 +1890,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
-        key: 'c',
+        key: Infinity,
         updatePriority: 0,
         pickable: true
     },
@@ -1949,7 +1935,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
-        key: 'v',
+        key: Infinity,
         updatePriority: 0,
         pickable: true
     },
@@ -1967,7 +1953,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            updateTouchingPixel(x, y, 1, 'air', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null && random() < 0.5) {
                     nextGrid[actionY][actionX] = 'lag_spike_generator';
                 }
@@ -1978,7 +1964,7 @@ const pixels = {
                     nextGrid[actionY][actionX] = 'cloner';
                 }
             });
-            updateTouchingPixel(x, y, 1, 'lag_spike_generator', function (actionX, actionY) {
+            updateTouchingPixel(x, y, 'lag_spike_generator', function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null && random() < 0.005) {
                     nextGrid[actionY][actionX] = 'nuke';
                 }
@@ -1989,7 +1975,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(125, 255, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '[',
+        key: Infinity,
         updatePriority: 5,
         pickable: true
     },
@@ -2144,8 +2130,8 @@ const pixels = {
                 }
                 move(min(max(round(random(x - 5, x + 5)), 0), gridSize - 1), min(max(round(random(y - 5, y + 5)), 0), gridSize - 1), min(max(round(random(x - 5, x + 5)), 0), gridSize - 1), min(max(round(random(y - 5, y + 5)), 0), gridSize - 1));
             };
-            updateTouchingPixel(x, y, 2, 'air', chaos);
-            updateTouchingAnything(x, y, 2, chaos);
+            updateTouchingPixel(x, y, 'air', chaos);
+            updateTouchingAnything(x, y, chaos);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2157,7 +2143,7 @@ const pixels = {
             ctx.fillRect(22, 8, 6, 22);
             ctx.fillRect(22, 36, 6, 6);
         },
-        key: ']',
+        key: Infinity,
         updatePriority: 5,
         pickable: true
     },
@@ -2170,16 +2156,10 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            let explosion = false;
-            let diffused = false;
-            updateTouchingPixel(x, y, 1, 'nuke_diffuser', function (actionX, actionY) {
-                diffused = true;
-            });
+            let explosion = updateTouchingAnything(x, y);
+            let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
             if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
-            }
-            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { })) {
-                explosion = true;
             }
             if (y < gridSize - 1) {
                 if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'huge_nuke') {
@@ -2197,7 +2177,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(100, 60, 255)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        key: '\\',
+        key: Infinity,
         updatePriority: 0,
         pickable: true
     },
@@ -2210,16 +2190,10 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            let explosion = false;
-            let diffused = false;
-            updateTouchingPixel(x, y, 1, 'nuke_diffuser', function (actionX, actionY) {
-                diffused = true;
-            });
+            let explosion = updateTouchingAnything(x, y);
+            let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
             if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
-            }
-            if (updateTouchingAnything(x, y, 1, function (actionX, actionY) { })) {
-                explosion = true;
             }
             if (y < gridSize - 1) {
                 if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'very_huge_nuke') {
@@ -2405,28 +2379,26 @@ function draw() {
             4: pumps and cloners
             5: lag
             */
-            if (ticks % 2 == 0) {
-                for (let j = 0; j <= 5; j++) {
+            for (let j = 0; j <= 5; j++) {
+                if (ticks % 2 == 0) {
                     for (let k = 0; k < gridSize; k++) {
                         for (let l = gridSize - 1; l >= 0; l--) {
                             updatePixel(l, k, j);
                         }
                     }
-                }
-            } else {
-                for (let j = 0; j <= 5; j++) {
+                } else {
                     for (let k = 0; k < gridSize; k++) {
                         for (let l = 0; l < gridSize; l++) {
                             updatePixel(l, k, j);
                         }
                     }
                 }
-            }
-            for (let i = 0; i < gridSize; i++) {
-                for (let j = 0; j < gridSize; j++) {
-                    if (nextGrid[i][j] != null) {
-                        grid[i][j] = nextGrid[i][j];
-                        nextGrid[i][j] = null;
+                for (let i = 0; i < gridSize; i++) {
+                    for (let j = 0; j < gridSize; j++) {
+                        if (nextGrid[i][j] != null) {
+                            grid[i][j] = nextGrid[i][j];
+                            nextGrid[i][j] = null;
+                        }
                     }
                 }
             }
