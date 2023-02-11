@@ -139,6 +139,7 @@ b {
     /* background-color: beige; */
     border: 1px solid black;
     border-radius: 4px;
+    padding: 0px 2px;
 }
 table {
     border-collapse: collapse;
