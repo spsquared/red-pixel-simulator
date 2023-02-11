@@ -252,13 +252,6 @@ function setup() {
         e.preventDefault();
     };
     document.querySelector('.p5Canvas').addEventListener('contextmenu', e => e.preventDefault());
-    document.querySelector('.p5Canvas').addEventListener('wheel', e => {
-        if (e.deltaY > 0) {
-            clickSize = max(1, clickSize - 1);
-        } else {
-            clickSize = min(ceil(gridSize / 2 + 1), clickSize + 1);
-        }
-    });
 
     document.getElementById('reset').onclick = function (e) {
         saveCode = document.getElementById('saveCode').value;
@@ -404,7 +397,7 @@ function validMovingPixel(x, y) {
 };
 function isPassableFluid(x, y) {
     return grid[y][x] == 'air' || grid[y][x] == 'water';
-}
+};
 function canMoveTo(x, y) {
     return nextGrid[y][x] == null || nextGrid[y][x] == 'air';
 };
@@ -424,6 +417,13 @@ function explode(x, y, size) {
             }
         }
     }
+};
+function colorLerp(r1, g1, b1, r2, g2, b2, p) {
+    return [
+        (r1 * (Math.sin(animationTime * Math.PI / p) + 1) / 2) + (r2 * (Math.sin((animationTime + p) * Math.PI / p) + 1) / 2),
+        (g1 * (Math.sin(animationTime * Math.PI / p) + 1) / 2) + (g2 * (Math.sin((animationTime + p) * Math.PI / p) + 1) / 2),
+        (b1 * (Math.sin(animationTime * Math.PI / p) + 1) / 2) + (b2 * (Math.sin((animationTime + p) * Math.PI / p) + 1) / 2),
+    ];
 };
 const pixels = {
     air: {
@@ -860,7 +860,7 @@ const pixels = {
     },
     plant: {
         name: 'P.L.A.N.T.',
-        description: '<span style="font-style: italic;">Persistent Loud Aesthetic Nail Tables.</span> No, it doesn\'t actually stand for anything. But it does consume concrete alarmingly fast',
+        description: '<span style="font-style: italic;">Persistent Loud Aesthetic Nail Tables.</span><br>No, it doesn\'t actually stand for anything. But it does consume concrete alarmingly fast',
         draw: function (x, y, width, height, opacity) {
             fill(125, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
@@ -906,7 +906,7 @@ const pixels = {
     },
     sponge: {
         name: 'S.P.O.N.G.E.',
-        description: '<span style="font-style: italic;">Sample Providing Oceanic Nucleolic Green Egg</span>',
+        description: '<span style="font-style: italic;">Sample Providing Oceanic Nucleolic Green Egg</span><br>Don\'t ask',
         draw: function (x, y, width, height, opacity) {
             fill(225, 255, 75, opacity * 255);
             drawPixel(x, y, width, height);
@@ -973,11 +973,15 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(255, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
                     drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
+                }
+            }
+            fill(255, 255, 0, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
                 }
             }
@@ -1008,11 +1012,15 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(255, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
                     drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
+                }
+            }
+            fill(255, 255, 0, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1043,11 +1051,15 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(255, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
                     drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
+                }
+            }
+            fill(255, 255, 0, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1078,11 +1090,15 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(255, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
                     drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
+                }
+            }
+            fill(255, 255, 0, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
                     drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1113,11 +1129,15 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(255, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
                     drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
+                }
+            }
+            fill(255, 255, 0, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
                 }
             }
@@ -1146,11 +1166,15 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(255, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
                     drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
+                }
+            }
+            fill(255, 255, 0, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1179,11 +1203,15 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(255, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
                     drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
+                }
+            }
+            fill(255, 255, 0, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
                     drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1212,11 +1240,15 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(125, 50, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(255, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(255, 125, 0, opacity * 255);
                     drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
-                    fill(255, 255, 0, opacity * 255);
+                }
+            }
+            fill(255, 255, 0, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1245,9 +1277,9 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(75, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(75, 125, 255, opacity * 255);
                     drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
                 }
             }
@@ -1315,9 +1347,9 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(75, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(75, 125, 255, opacity * 255);
                     drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1385,9 +1417,9 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(75, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(75, 125, 255, opacity * 255);
                     drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1455,9 +1487,9 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(75, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(75, 125, 255, opacity * 255);
                     drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1525,9 +1557,9 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(225, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(225, 255, 0, opacity * 255);
                     drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1550,9 +1582,9 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(225, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(225, 255, 0, opacity * 255);
                     drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
                 }
             }
@@ -1575,9 +1607,9 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(225, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(225, 255, 0, opacity * 255);
                     drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1600,9 +1632,9 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(255, 125, 0, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(225, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(225, 255, 0, opacity * 255);
                     drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
                 }
             }
@@ -1741,20 +1773,185 @@ const pixels = {
         updatePriority: -1,
         pickable: true
     },
-    laser_left: {
-        name: "L.A.S.E.R. (Left)",
-        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats)</span>',
+    laser_up: {
+        name: "L.A.S.E.R. (Up)",
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
         draw: function (x, y, width, height, opacity) {
-
+            fill(90, 0, 120, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(...colorLerp(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2);
+                }
+            }
+            fill(71, 216, 159, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                let endY = y;
+                while (endY >= 0) {
+                    endY--;
+                    if (endY >= 0 && grid[endY][x + i] != 'air') break;
+                }
+                drawPixel(x + 1 / 3 + i, endY + 1, 1 / 3, y - endY - 1);
+            }
         },
         update: function (x, y) {
-
+            if (random() < 0.2) {
+                let removeY = y;
+                while (removeY > 0) {
+                    removeY--;
+                    if (grid[removeY][x] != 'air') {
+                        nextGrid[removeY][x] = 'air';
+                        break;
+                    }
+                }
+            }
         },
         drawPreview: function (ctx) {
-
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(60, 0, 120)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(60, 112, 255)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 25);
+        },
+        key: 'z',
+        updatePriority: 0,
+        pickable: true
+    },
+    laser_down: {
+        name: "L.A.S.E.R. (Down)",
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
+        draw: function (x, y, width, height, opacity) {
+            fill(90, 0, 120, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(...colorLerp(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2);
+                }
+            }
+            fill(71, 216, 159, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                let endY = y;
+                while (endY < gridSize) {
+                    endY++;
+                    if (endY < gridSize && grid[endY][x + i] != 'air') break;
+                }
+                drawPixel(x + 1 / 3 + i, y + 1, 1 / 3, endY - y - 1);
+            }
+        },
+        update: function (x, y) {
+            if (random() < 0.2) {
+                let removeY = y;
+                while (removeY < gridSize - 1) {
+                    removeY++;
+                    if (grid[removeY][x] != 'air') {
+                        nextGrid[removeY][x] = 'air';
+                        break;
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(60, 0, 120)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(60, 112, 255)';
+            ctx.fillRect(50 / 3, 25, 50 / 3, 25);
+        },
+        key: 'x',
+        updatePriority: 0,
+        pickable: true
+    },
+    laser_left: {
+        name: "L.A.S.E.R. (Left)",
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
+        draw: function (x, y, width, height, opacity) {
+            fill(90, 0, 120, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(...colorLerp(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3);
+                }
+            }
+            fill(71, 216, 159, opacity * 255);
+            for (let i = 0; i < height; i++) {
+                let endX = x;
+                while (endX >= 0) {
+                    endX--;
+                    if (grid[y + i][endX] != 'air') break;
+                }
+                drawPixel(endX + 1, y + 1 / 3 + i, x - endX - 1, 1 / 3);
+            }
+        },
+        update: function (x, y) {
+            if (random() < 0.2) {
+                let removeX = x;
+                while (removeX > 0) {
+                    removeX--;
+                    if (grid[y][removeX] != 'air') {
+                        nextGrid[y][removeX] = 'air';
+                        break;
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(60, 0, 120)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(60, 112, 255)';
+            ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
         key: 'c',
-        updatePriority: 4,
+        updatePriority: 0,
+        pickable: true
+    },
+    laser_right: {
+        name: "L.A.S.E.R. (Right)",
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
+        draw: function (x, y, width, height, opacity) {
+            fill(90, 0, 120, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(...colorLerp(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3);
+                }
+            }
+            fill(71, 216, 159, opacity * 255);
+            for (let i = 0; i < height; i++) {
+                let endX = x;
+                while (endX < gridSize) {
+                    endX++;
+                    if (grid[y + i][endX] != 'air') break;
+                }
+                drawPixel(x + 1, y + 1 / 3 + i, endX - x - 1, 1 / 3);
+            }
+        },
+        update: function (x, y) {
+            if (random() < 0.2) {
+                let removeX = x;
+                while (removeX < gridSize - 1) {
+                    removeX++;
+                    if (grid[y][removeX] != 'air') {
+                        nextGrid[y][removeX] = 'air';
+                        break;
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(60, 0, 120)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(60, 112, 255)';
+            ctx.fillRect(25, 50 / 3, 25, 50 / 3);
+        },
+        key: 'v',
+        updatePriority: 0,
+        pickable: true
     },
     lag_spike_generator: {
         name: 'lag_spike_generator',
@@ -2201,11 +2398,11 @@ function draw() {
             runTicks--;
             /*
             update priority:
-            0: nukes, plants, and sponges
+            0: nukes, plants, sponges, and lasers
             1: pistons
             2: gravity pixels
             3: liquids and concrete
-            4: pumps, cloners, and lasers
+            4: pumps and cloners
             5: lag
             */
             if (ticks % 2 == 0) {
@@ -2285,6 +2482,14 @@ function draw() {
     }
 
     animationTime++;
+};
+
+function mouseWheel(e) {
+    if (e.deltaY > 0) {
+        clickSize = max(1, clickSize - 1);
+    } else {
+        clickSize = min(ceil(gridSize / 2 + 1), clickSize + 1);
+    }
 };
 
 function windowResized() {
