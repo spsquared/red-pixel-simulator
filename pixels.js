@@ -1217,7 +1217,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1) {
+            if (x > 0 && x < gridSize - 1) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
             }
         },
@@ -1254,7 +1254,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1) {
+            if (x > 0 && x < gridSize - 1) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
             }
         },
