@@ -1716,8 +1716,8 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (validMovingPixel(x, y) && y < gridSize - 1 && canMoveTo(x, y + 1)) {
-                move(x, y + 1);
+            if (validMovingPixel(x, y) && y < gridSize - 1 && grid[y+1][x] == 'air' && canMoveTo(x, y + 1)) {
+                move(x, y, x, y + 1);
             }
         },
         drawPreview: function (ctx) {
