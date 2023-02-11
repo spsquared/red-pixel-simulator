@@ -3,7 +3,7 @@
 window.onerror = e => document.write(e);
 
 let gridSize = 100;
-let saveCode = '100;air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser-6:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava-11:wall:air-3:nuke_diffuser:air-83:wall:super_cloner_down-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}4|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
+let saveCode = '100;air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser-6:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
 let startPaused = false;
 let backgroundColor = 'ffffff';
 
@@ -444,9 +444,106 @@ const pixels = {
         updatePriority: -1,
         pickable: false
     },
+    dirt: {
+        name: 'Dirt',
+        description: 'Wash your hands after handling it, it\'s pretty dirty',
+        draw: function (x, y, width, height, opacity) {
+            fill(125, 75, 0, opacity * 255);
+            drawPixel(x, y, width, height);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (y < gridSize - 1) {
+                if ((grid[y + 1][x] == 'air' || grid[y + 1][x] == 'water') && canMoveTo(x, y + 1)) {
+                    move(x, y, x, y + 1);
+                } else if (y < gridSize - 2) {
+                    let slideLeft = x > 0 && (grid[y][x - 1] == 'air') && isPassableFluid(x - 1, y + 1) && isPassableFluid(x - 1, y + 2);
+                    let slideRight = x < gridSize - 1 && (grid[y][x + 1] == 'air') && isPassableFluid(x + 1, y + 1) && isPassableFluid(x + 1, y + 2);
+                    if (slideLeft && slideRight) {
+                        if (ticks % 2 == 0) {
+                            move(x, y, x - 1, y + 1);
+                        } else {
+                            move(x, y, x + 1, y + 1);
+                        }
+                    } else if (slideLeft) {
+                        move(x, y, x - 1, y + 1);
+                    } else if (slideRight) {
+                        move(x, y, x + 1, y + 1);
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(125, 75, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        key: Infinity,
+        updatePriority: 2,
+        pickable: true
+    },
+    grass: {
+        name: 'Grass',
+        description: 'Go touch some',
+        draw: function (x, y, width, height, opacity) {
+            fill(25, 175, 25, opacity * 255);
+            drawPixel(x, y, width, height);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            let dead = random() < 0.1;
+            if (dead) updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
+                if (actionY <= y) dead = false;
+            });
+            if (dead) {
+                nextGrid[y][x] = 'dirt';
+                return;
+            }
+            for (let i = Math.max(y - 1, 0); i <= Math.min(y + 1, gridSize - 1); i++) {
+                for (let j = Math.max(x - 1, 0); j <= Math.min(x + 1, gridSize - 1); j++) {
+                    if (grid[i][j] == 'dirt' && (i != y || j != x)) {
+                        let canGrow = false;
+                        updateTouchingPixel(j, i, 'air', function (actionX2, actionY2) {
+                            if (actionY2 <= i) canGrow = true;
+                        });
+                        if (canGrow) {
+                            nextGrid[i][j] = 'grass';
+                        }
+                    }
+                }
+            }
+            if (y < gridSize - 1) {
+                if ((grid[y + 1][x] == 'air' || grid[y + 1][x] == 'water') && canMoveTo(x, y + 1)) {
+                    move(x, y, x, y + 1);
+                } else if (y < gridSize - 2) {
+                    let slideLeft = x > 0 && (grid[y][x - 1] == 'air') && isPassableFluid(x - 1, y + 1) && isPassableFluid(x - 1, y + 2);
+                    let slideRight = x < gridSize - 1 && (grid[y][x + 1] == 'air') && isPassableFluid(x + 1, y + 1) && isPassableFluid(x + 1, y + 2);
+                    if (slideLeft && slideRight) {
+                        if (ticks % 2 == 0) {
+                            move(x, y, x - 1, y + 1);
+                        } else {
+                            move(x, y, x + 1, y + 1);
+                        }
+                    } else if (slideLeft) {
+                        move(x, y, x - 1, y + 1);
+                    } else if (slideRight) {
+                        move(x, y, x + 1, y + 1);
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(25, 175, 25)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        key: Infinity,
+        updatePriority: 2,
+        pickable: true
+    },
     sand: {
         name: 'Sand',
-        description: 'Weird yellow stuff that falls',
+        description: 'Weird yellow powdery stuff that falls',
         draw: function (x, y, width, height, opacity) {
             fill(255, 225, 125, opacity * 255);
             drawPixel(x, y, width, height);
@@ -487,14 +584,14 @@ const pixels = {
         description: 'Unrealistically flows and may or may not be wet',
         draw: function (x, y, width, height, opacity) {
             if (optimizedLiquids) {
-                fill(75, 50, 255, opacity * 255);
+                fill(75, 100, 255, opacity * 255);
                 drawPixel(x, y, width, height);
             } else {
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        fill(100, 225, 255, opacity * 255);
+                        fill(100, 175, 255, opacity * 255);
                         drawPixel(x + i, y + j, 1, 1);
-                        fill(75, 0, 125, round(noise((x + i) / 3, (y + j) / 3, animationTime / 20) * 127) * opacity + 60);
+                        fill(75, 50, 255, round(noise((x + i) / 4, (y + j) / 4, animationTime / 10) * 127) * opacity + 30);
                         drawPixel(x + i, y + j, 1, 1);
                     }
                 }
@@ -596,7 +693,7 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 50, 255)';
+            ctx.fillStyle = 'rgb(75, 100, 255)';
             ctx.fillRect(0, 0, 50, 50);
         },
         key: Infinity,
@@ -615,25 +712,29 @@ const pixels = {
                     for (let j = 0; j < height; j++) {
                         fill(255, 0, 0, opacity * 255);
                         drawPixel(x + i, y + j, 1, 1);
-                        fill(255, 255, 0, round(noise((x + i) / 5, (y + j) / 5, animationTime / 20) * 255) * opacity);
+                        fill(255, 255, 0, round(noise((x + i) / 6, (y + j) / 6, animationTime / 30) * 255) * opacity);
                         drawPixel(x + i, y + j, 1, 1);
                     }
                 }
             }
         },
         update: function (x, y) {
-            updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
-                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = 'air';
-                    nextGrid[actionY][actionX] = 'concrete';
-                }
-            });
             updateTouchingPixel(x, y, 'collapsible', function (actionX, actionY) {
                 if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
                     nextGrid[actionY][actionX] = 'sand';
                 }
             });
+            let cooldownSpeed = 3;
+            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
+                cooldownSpeed--;
+            });
+            updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
+                cooldownSpeed++;
+            });
+            if (random() < 0.0001 * cooldownSpeed) {
+                nextGrid[y][x] = 'concrete_powder';
+            }
             if (y < gridSize - 1) {
                 if (grid[y + 1][x] == 'air') {
                     if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null && random() < 0.5) {
@@ -931,6 +1032,12 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(25, 125, 75, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(75, 100, 255, opacity * 255);
+            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3);
+            fill(25, 125, 75, opacity * 255);
+            for (let i = 0; i < width - 1; i++) {
+                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3)
+            }
         },
         update: function (x, y) {
             updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
@@ -948,6 +1055,42 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(25, 125, 75)';
             ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 100, 255)';
+            ctx.fillRect(50/3, 50/3, 50/3, 50/3);
+        },
+        key: Infinity,
+        updatePriority: 4,
+        pickable: true
+    },
+    lava_generator: {
+        name: 'Lava Heater',
+        description: 'Violates the Laws of Thermodynamics to create lava',
+        draw: function (x, y, width, height, opacity) {
+            fill(25, 125, 75, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(255, 125, 0, opacity * 255);
+            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3);
+            fill(25, 125, 75, opacity * 255);
+            for (let i = 0; i < width - 1; i++) {
+                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3)
+            }
+        },
+        update: function (x, y) {
+            updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
+                explode(x, y, 5);
+            });
+            updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
+                    nextGrid[actionY][actionX] = 'lava';
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(25, 125, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(50/3, 50/3, 50/3, 50/3);
         },
         key: Infinity,
         updatePriority: 4,
