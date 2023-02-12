@@ -53,7 +53,7 @@ button:active {
     background-color: lime;
 }
 #simulatePaused {
-    background-color: red;
+    background-color: gray;
 }
 
 #pixelPicker {
@@ -103,23 +103,36 @@ button:active {
 #saveCode {
     margin-top: 10px;
     width: 100%;
-    min-height: 100px;
+    min-height: 150px;
     max-height: 500px;
     resize: vertical;
+}
+#copySave {
+    width: 95px;
+    height: 50px;
+    font-size: 12px;
+    margin-top: 12px;
+    margin-right: 0px;
+}
+#uploadSave {
+    width: 95px;
+    height: 50px;
+    font-size: 12px;
+    margin-right: 0px;
+}
+#downloadSave {
+    width: 95px;
+    height: 50px;
+    font-size: 12px;
+}
+#startPaused {
+    width: 140px;
+    height: 40px;
+    background-color: red;
 }
 #reset {
     width: 100px;
     height: 40px;
-    background-color: red;
-}
-#copySave {
-    width: 140px;
-    height: 60px;
-    background-color: lime;
-}
-#startPaused {
-    width: 100px;
-    height: 60px;
     background-color: red;
 }
 

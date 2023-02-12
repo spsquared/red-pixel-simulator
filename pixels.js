@@ -126,12 +126,7 @@ function loadSaveCode() {
             throw 'Invalid Save Code';
         }
         gridPaused = startPaused;
-        if (gridPaused) {
-            document.getElementById('pause').style.backgroundColor = 'red';
-        } else {
-            document.getElementById('pause').style.backgroundColor = 'lime';
-            document.getElementById('simulatePaused').style.backgroundColor = 'red';
-        }
+        updateTimeControlButtons();
     }
 };
 function generateSaveCode() {
@@ -163,6 +158,26 @@ function generateSaveCode() {
         }
     }
     return saveCode;
+};
+
+function updateTimeControlButtons() {
+    if (gridPaused) {
+        document.getElementById('pause').style.backgroundColor = 'red';
+        if (simulatePaused) {
+            document.getElementById('simulatePaused').style.backgroundColor = 'lime';
+        } else {
+            document.getElementById('simulatePaused').style.backgroundColor = 'red';
+        }
+        document.getElementById('advanceTick').style.backgroundColor = '';
+        document.getElementById('simulatePaused').style.cursor = '';
+        document.getElementById('advanceTick').style.cursor = '';
+    } else {
+        document.getElementById('pause').style.backgroundColor = 'lime';
+        document.getElementById('simulatePaused').style.backgroundColor = 'grey';
+        document.getElementById('advanceTick').style.backgroundColor = 'grey';
+        document.getElementById('simulatePaused').style.cursor = 'not-allowed';
+        document.getElementById('advanceTick').style.cursor = 'not-allowed';
+    }
 };
 
 function setup() {
@@ -229,25 +244,11 @@ function setup() {
         } else if (key == 'p') {
             gridPaused = !gridPaused;
             simulatePaused = false;
-            if (gridPaused) {
-                document.getElementById('pause').style.backgroundColor = 'red';
-            } else {
-                document.getElementById('pause').style.backgroundColor = 'lime';
-                document.getElementById('simulatePaused').style.backgroundColor = 'red';
-            }
+            updateTimeControlButtons();
         }
         if (key == 'shift') {
             if (gridPaused) simulatePaused = !simulatePaused;
-            if (simulatePaused) {
-                document.getElementById('simulatePaused').style.backgroundColor = 'lime';
-            } else {
-                document.getElementById('simulatePaused').style.backgroundColor = 'red';
-            }
-            // if (simulatePaused && gridPaused) {
-            //     frameRate(240);
-            // } else {
-            //     frameRate(60);
-            // }
+            updateTimeControlButtons();
         }
         e.preventDefault();
     };
@@ -260,6 +261,28 @@ function setup() {
     document.getElementById('copySave').onclick = function (e) {
         let saveCode = generateSaveCode();
         window.navigator.clipboard.writeText(saveCode);
+    };
+    document.getElementById('uploadSave').onclick = function (e) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.redpixel';
+        input.click();
+        input.oninput = () => {
+            let files = input.files;
+            if (files.length == 0) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('saveCode').value = e.target.result;
+            };
+            reader.readAsText(files[0]);
+        };
+    };
+    document.getElementById('downloadSave').onclick = function (e) {
+        const encoded = `data:text/redpixel;base64,${btoa(generateSaveCode())}`;
+        const a = document.createElement('a');
+        a.href = encoded;
+        a.download = `red-pixel-simulator_${Math.ceil(Math.random()*1000)}.redpixel`;
+        a.click();
     };
     document.getElementById('startPaused').onclick = function (e) {
         startPaused = !startPaused;
@@ -319,20 +342,11 @@ function setup() {
     document.getElementById('pause').onclick = function (e) {
         gridPaused = !gridPaused;
         simulatePaused = false;
-        if (gridPaused) {
-            document.getElementById('pause').style.backgroundColor = 'red';
-        } else {
-            document.getElementById('pause').style.backgroundColor = 'lime';
-            document.getElementById('simulatePaused').style.backgroundColor = 'red';
-        }
+        updateTimeControlButtons();
     };
     document.getElementById('simulatePaused').onclick = function (e) {
         if (gridPaused) simulatePaused = !simulatePaused;
-        if (simulatePaused) {
-            document.getElementById('simulatePaused').style.backgroundColor = 'lime';
-        } else {
-            document.getElementById('simulatePaused').style.backgroundColor = 'red';
-        }
+        updateTimeControlButtons();
     };
     document.getElementById('advanceTick').onclick = function (e) {
         runTicks = 1;
@@ -429,6 +443,10 @@ function colorLerp(r1, g1, b1, r2, g2, b2, p) {
         (b1 * (Math.sin(animationTime * Math.PI / p) + 1) / 2) + (b2 * (Math.sin((animationTime + p) * Math.PI / p) + 1) / 2),
     ];
 };
+// seeds that grow trees
+// music pixels
+// fire
+// ice
 const pixels = {
     air: {
         name: 'Air',
@@ -725,7 +743,7 @@ const pixels = {
                     nextGrid[actionY][actionX] = 'sand';
                 }
             });
-            let cooldownSpeed = 3;
+            let cooldownSpeed = 2;
             updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
                 cooldownSpeed--;
             });
@@ -1080,6 +1098,16 @@ const pixels = {
                 explode(x, y, 5);
             });
             updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
+                    nextGrid[actionY][actionX] = 'lava';
+                }
+            });
+            updateTouchingPixel(x, y, 'concrete', function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
+                    nextGrid[actionY][actionX] = 'lava';
+                }
+            });
+            updateTouchingPixel(x, y, 'concrete_powder', function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null && random() < 0.075) {
                     nextGrid[actionY][actionX] = 'lava';
                 }
@@ -2467,7 +2495,7 @@ function draw() {
         if (x >= 0 && x <= gridSize && y >= 0 && y <= gridSize) clickLine(x, y, floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT);
     }
     // draw pixels
-    if ((gridPaused && !simulatePaused) || !gridPaused) {
+    if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
         let r = parseInt(backgroundColor.substring(0, 2), 16);
         let g = parseInt(backgroundColor.substring(2, 4), 16);
         let b = parseInt(backgroundColor.substring(4, 6), 16);
