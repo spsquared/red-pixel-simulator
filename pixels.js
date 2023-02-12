@@ -20,9 +20,8 @@ let ticks = 0;
 let frames = [];
 let lastFpsList = -1;
 let fpsList = [];
-let grid = [];
-let nextGrid = [];
-// let lastGrids = [];
+const grid = [];
+const nextGrid = [];
 let gridPaused = startPaused;
 let simulatePaused = false;
 let clickPixel = 'wall';
@@ -32,8 +31,8 @@ let runTicks = 0;
 function createGrid() {
     xScale = width / gridSize;
     yScale = height / gridSize;
-    grid = [];
-    nextGrid = [];
+    grid.length = 0;
+    nextGrid.length = 0;
     for (let i = 0; i < gridSize; i++) {
         grid.push([]);
         nextGrid.push([]);
@@ -281,7 +280,7 @@ function setup() {
         const encoded = `data:text/redpixel;base64,${btoa(generateSaveCode())}`;
         const a = document.createElement('a');
         a.href = encoded;
-        a.download = `red-pixel-simulator_${Math.ceil(Math.random()*1000)}.redpixel`;
+        a.download = `red-pixel-simulator_${Math.ceil(Math.random() * 1000)}.redpixel`;
         a.click();
     };
     document.getElementById('startPaused').onclick = function (e) {
@@ -423,14 +422,24 @@ function move(x1, y1, x2, y2) {
     nextGrid[y1][x1] = grid[y2][x2];
     nextGrid[y2][x2] = grid[y1][x1];
 };
-function explode(x, y, size) {
+function explode(x, y, size, chain) {
+    chain = chain ?? 3;
     nextGrid[y][x] = 'air';
     grid[y][x] = 'wall';
-    for (let i = -size; i <= size; i++) {
-        for (let j = -size; j <= size; j++) {
-            if (x + i >= 0 && x + i < gridSize && y + j >= 0 && y + j < gridSize) {
-                if (random() < 1 - (dist(x, y, x + i, y + j) / (size * 1.2))) {
-                    nextGrid[y + j][x + i] = 'air';
+    for (let i = y - size; i <= y + size; i++) {
+        for (let j = x - size; j <= x + size; j++) {
+            if (i >= 0 && i < gridSize && j >= 0 && j < gridSize) {
+                if (random() < 1 - (dist(x, y, j, i) / (size * 1.2))) {
+                    nextGrid[i][j] = 'air';
+                    if (chain > 0) {
+                        if (grid[i][j] == 'nuke') {
+                            explode(j, i, 10, chain - 1);
+                        } else if (grid[i][j] == 'huge_nuke') {
+                            explode(j, i, 20, chain - 1);
+                        } else if (grid[i][j] == 'very_huge_nuke') {
+                            explode(j, i, 40, chain - 1);
+                        }
+                    }
                 }
             }
         }
@@ -461,6 +470,23 @@ const pixels = {
         key: Infinity,
         updatePriority: -1,
         pickable: false
+    },
+    wall: {
+        name: 'Wall',
+        description: 'An immovable wall',
+        draw: function (x, y, width, height, opacity) {
+            fill(0, 0, 0, opacity * 255);
+            drawPixel(x, y, width, height);
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        key: Infinity,
+        updatePriority: -1,
+        pickable: true
     },
     dirt: {
         name: 'Dirt',
@@ -941,40 +967,6 @@ const pixels = {
         updatePriority: 3,
         pickable: true
     },
-    nuke: {
-        name: 'Nuke',
-        description: 'TBH, kinda weak',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 255, 75, opacity * 255);
-            drawPixel(x, y, width, height);
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            let explosion = updateTouchingAnything(x, y);
-            let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
-            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
-                move(x, y, x, y + 1);
-            }
-            if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'nuke') {
-                    explosion = false;
-                }
-            } else {
-                explosion = true;
-            }
-            if (explosion && !diffused) {
-                explode(x, y, 10);
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 255, 75)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        key: Infinity,
-        updatePriority: 0,
-        pickable: true
-    },
     plant: {
         name: 'P.L.A.N.T.',
         description: '<span style="font-style: italic;">Persistent Loud Aesthetic Nail Tables.</span><br>No, it doesn\'t actually stand for anything. But it does consume concrete alarmingly fast',
@@ -1074,7 +1066,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(25, 125, 75)';
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(75, 100, 255)';
-            ctx.fillRect(50/3, 50/3, 50/3, 50/3);
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         key: Infinity,
         updatePriority: 4,
@@ -1118,7 +1110,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(25, 125, 75)';
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(255, 125, 0)';
-            ctx.fillRect(50/3, 50/3, 50/3, 50/3);
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         key: Infinity,
         updatePriority: 4,
@@ -1913,18 +1905,26 @@ const pixels = {
         updatePriority: -1,
         pickable: true
     },
-    wall: {
-        name: 'Wall',
-        description: 'An immovable wall',
+    laser_scatterer: {
+        name: 'Laser Scatterer',
+        description: 'Scatters lasers that pass through it and makes them useless',
         draw: function (x, y, width, height, opacity) {
-            fill(0, 0, 0, opacity * 255);
+            fill(220, 220, 255, opacity * 255);
             drawPixel(x, y, width, height);
+            fill(210, 210, 220, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                drawPixel(x + i, y, 1 / 4, height);
+                drawPixel(x + i + 1 / 2, y, 1 / 4, height);
+            }
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillStyle = 'rgb(220, 220, 255)';
             ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(210, 210, 220)';
+            ctx.fillRect(0, 0, 25 / 2, 50);
+            ctx.fillRect(25, 0, 25 / 2, 50);
         },
         key: Infinity,
         updatePriority: -1,
@@ -1958,7 +1958,7 @@ const pixels = {
                 while (removeY > 0) {
                     removeY--;
                     if (grid[removeY][x] != 'air') {
-                        nextGrid[removeY][x] = 'air';
+                        if (grid[removeY][x] != 'laser_scatterer') nextGrid[removeY][x] = 'air';
                         break;
                     }
                 }
@@ -2003,7 +2003,7 @@ const pixels = {
                 while (removeY < gridSize - 1) {
                     removeY++;
                     if (grid[removeY][x] != 'air') {
-                        nextGrid[removeY][x] = 'air';
+                        if (grid[removeY][x] != 'laser_scatterer') nextGrid[removeY][x] = 'air';
                         break;
                     }
                 }
@@ -2048,7 +2048,7 @@ const pixels = {
                 while (removeX > 0) {
                     removeX--;
                     if (grid[y][removeX] != 'air') {
-                        nextGrid[y][removeX] = 'air';
+                        if (grid[y][removeX] != 'laser_scatterer') nextGrid[y][removeX] = 'air';
                         break;
                     }
                 }
@@ -2093,7 +2093,7 @@ const pixels = {
                 while (removeX < gridSize - 1) {
                     removeX++;
                     if (grid[y][removeX] != 'air') {
-                        nextGrid[y][removeX] = 'air';
+                        if (grid[y][removeX] != 'laser_scatterer') nextGrid[y][removeX] = 'air';
                         break;
                     }
                 }
@@ -2105,6 +2105,108 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
+        },
+        key: Infinity,
+        updatePriority: 0,
+        pickable: true
+    },
+    nuke: {
+        name: 'Nuke',
+        description: 'TBH, kinda weak',
+        draw: function (x, y, width, height, opacity) {
+            fill(100, 255, 75, opacity * 255);
+            drawPixel(x, y, width, height);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            let explosion = updateTouchingAnything(x, y);
+            let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
+            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+                move(x, y, x, y + 1);
+            }
+            if (y < gridSize - 1) {
+                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'nuke') {
+                    explosion = false;
+                }
+            } else {
+                explosion = true;
+            }
+            if (explosion && !diffused) {
+                explode(x, y, 10);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 255, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        key: Infinity,
+        updatePriority: 0,
+        pickable: true
+    },
+    huge_nuke: {
+        name: 'Huge Nuke',
+        description: 'KABOOM!',
+        draw: function (x, y, width, height, opacity) {
+            fill(100, 60, 255, 255 * opacity);
+            drawPixel(x, y, width, height);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            let explosion = updateTouchingAnything(x, y);
+            let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
+            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+                move(x, y, x, y + 1);
+            }
+            if (y < gridSize - 1) {
+                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'huge_nuke') {
+                    explosion = false;
+                }
+            } else {
+                explosion = true;
+            }
+            if (explosion && !diffused) {
+                explode(x, y, 20);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 60, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        key: Infinity,
+        updatePriority: 0,
+        pickable: true
+    },
+    very_huge_nuke: {
+        name: 'Very Huge Nuke',
+        description: 'AAAAAAAAAAAAAAAAAAAAA',
+        draw: function (x, y, width, height, opacity) {
+            fill(255, 0, 70, 255 * opacity);
+            drawPixel(x, y, width, height);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            let explosion = updateTouchingAnything(x, y);
+            let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
+            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+                move(x, y, x, y + 1);
+            }
+            if (y < gridSize - 1) {
+                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'very_huge_nuke') {
+                    explosion = false;
+                }
+            } else {
+                explosion = true;
+            }
+            if (explosion && !diffused) {
+                explode(x, y, 40);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 70)';
+            ctx.fillRect(0, 0, 50, 50);
         },
         key: Infinity,
         updatePriority: 0,
@@ -2316,74 +2418,6 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 5,
-        pickable: true
-    },
-    huge_nuke: {
-        name: 'Huge Nuke',
-        description: 'KABOOM!',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 60, 255, 255 * opacity);
-            drawPixel(x, y, width, height);
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            let explosion = updateTouchingAnything(x, y);
-            let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
-            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
-                move(x, y, x, y + 1);
-            }
-            if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'huge_nuke') {
-                    explosion = false;
-                }
-            } else {
-                explosion = true;
-            }
-            if (explosion && !diffused) {
-                explode(x, y, 20);
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 60, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        key: Infinity,
-        updatePriority: 0,
-        pickable: true
-    },
-    very_huge_nuke: {
-        name: 'Very Huge Nuke',
-        description: 'AAAAAAAAAAAAAAAAAAAAA',
-        draw: function (x, y, width, height, opacity) {
-            fill(255, 0, 70, 255 * opacity);
-            drawPixel(x, y, width, height);
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            let explosion = updateTouchingAnything(x, y);
-            let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
-            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
-                move(x, y, x, y + 1);
-            }
-            if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'very_huge_nuke') {
-                    explosion = false;
-                }
-            } else {
-                explosion = true;
-            }
-            if (explosion && !diffused) {
-                explode(x, y, 40);
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 0, 70)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        key: Infinity,
-        updatePriority: 0,
         pickable: true
     },
     spin: {
