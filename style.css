@@ -153,12 +153,12 @@ td {
     background-color: red;
 }
 
-#optimizedLiquids, #fadeEffect {
+#noNoise, #fadeEffect {
     margin-left: unset;
     font-size: 12px;
     border-width: 3px;
 }
-#optimizedLiquids {
+#noNoise {
     background-color: red;
 }
 #fadeEffect {

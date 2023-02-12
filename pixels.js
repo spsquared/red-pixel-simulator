@@ -7,7 +7,7 @@ let saveCode = '100;air-16:wall:piston_rotator_right:piston_left:air:piston_rota
 let startPaused = false;
 let backgroundColor = 'ffffff';
 
-let optimizedLiquids = false;
+let noNoise = false;
 let optimizedLags = false;
 let fadeEffect = 127;
 
@@ -22,24 +22,29 @@ let lastFpsList = -1;
 let fpsList = [];
 const grid = [];
 const nextGrid = [];
+const noiseGrid = [];
 let gridPaused = startPaused;
 let simulatePaused = false;
 let clickPixel = 'wall';
 let clickSize = 5;
 let runTicks = 0;
 let acceptInputs = true;
+let mouseOver = false;
 
 function createGrid() {
     xScale = width / gridSize;
     yScale = height / gridSize;
     grid.length = 0;
     nextGrid.length = 0;
+    noiseGrid.length = 0;
     for (let i = 0; i < gridSize; i++) {
         grid.push([]);
         nextGrid.push([]);
+        noiseGrid.push([]);
         for (let j = 0; j < gridSize; j++) {
             grid[i][j] = 'air';
             nextGrid[i][j] = null;
+            noiseGrid[i][j] = round(noise(j / 2, i / 2) * 255);
         }
     }
 };
@@ -333,10 +338,10 @@ function setup() {
         if (startPaused) document.getElementById('startPaused').style.backgroundColor = 'lime';
         else document.getElementById('startPaused').style.backgroundColor = 'red';
     };
-    document.getElementById('optimizedLiquids').onclick = (e) => {
-        optimizedLiquids = !optimizedLiquids;
-        if (optimizedLiquids) document.getElementById('optimizedLiquids').style.backgroundColor = 'lime';
-        else document.getElementById('optimizedLiquids').style.backgroundColor = 'red';
+    document.getElementById('noNoise').onclick = (e) => {
+        noNoise = !noNoise;
+        if (noNoise) document.getElementById('noNoise').style.backgroundColor = 'lime';
+        else document.getElementById('noNoise').style.backgroundColor = 'red';
     };
     document.getElementById('fadeEffect').onclick = (e) => {
         fadeEffect = fadeEffect ? 0 : 127;
@@ -395,6 +400,16 @@ function setup() {
     document.getElementById('advanceTick').onclick = (e) => {
         runTicks = 1;
     };
+
+    const preventMotion = (e) => {
+        if (mouseOver) {
+            window.scrollTo(0, 0);
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    };
+    window.addEventListener("scroll", preventMotion, false);
+    window.addEventListener("touchmove", preventMotion, false);
 
     lastFpsList = millis();
 };
@@ -458,6 +473,9 @@ function validMovingPixel(x, y) {
     return nextGrid[y][x] == null;
 };
 function isPassableFluid(x, y) {
+    return grid[y][x] == 'air' || grid[y][x] == 'water' || grid[y][x] == 'lava';
+};
+function isPassableNonLavaFluid(x, y) {
     return grid[y][x] == 'air' || grid[y][x] == 'water';
 };
 function canMoveTo(x, y) {
@@ -468,7 +486,7 @@ function move(x1, y1, x2, y2) {
     nextGrid[y2][x2] = grid[y1][x1];
 };
 function explode(x, y, size, chain) {
-    chain = chain ?? 5;
+    chain = chain ?? 3;
     nextGrid[y][x] = 'air';
     grid[y][x] = 'wall';
     let chained = false;
@@ -487,6 +505,12 @@ function explode(x, y, size, chain) {
                         } else if (grid[i][j] == 'very_huge_nuke') {
                             explode(j, i, 40, chain - 1);
                             chained = true;
+                        } else if (grid[i][j] == 'gunpowder') {
+                            explode(j, i, 5, 1);
+                            // chained = true;
+                        } else if (grid[i][j] == 'c4') {
+                            explode(j, i, 15, 1);
+                            // chained = true;
                         }
                     }
                 }
@@ -506,8 +530,6 @@ function colorLerp(r1, g1, b1, r2, g2, b2, p) {
 // fire
 // ice
 // rotatey spinny thing
-// c4
-// low explosives that blow up when lit on fire
 const pixels = {
     air: {
         name: 'Air',
@@ -550,11 +572,11 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
             if (y < gridSize - 1) {
-                if ((grid[y + 1][x] == 'air' || grid[y + 1][x] == 'water') && canMoveTo(x, y + 1)) {
+                if (isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
                 } else if (y < gridSize - 2) {
-                    let slideLeft = x > 0 && (grid[y][x - 1] == 'air') && isPassableFluid(x - 1, y + 1) && isPassableFluid(x - 1, y + 2);
-                    let slideRight = x < gridSize - 1 && (grid[y][x + 1] == 'air') && isPassableFluid(x + 1, y + 1) && isPassableFluid(x + 1, y + 2);
+                    let slideLeft = x > 0 && isPassableFluid(x - 1, y) && isPassableFluid(x - 1, y + 1) && isPassableFluid(x - 1, y + 2);
+                    let slideRight = x < gridSize - 1 && isPassableFluid(x + 1, y) && isPassableFluid(x + 1, y + 1) && isPassableFluid(x + 1, y + 2);
                     if (slideLeft && slideRight) {
                         if (ticks % 2 == 0) {
                             move(x, y, x - 1, y + 1);
@@ -591,13 +613,14 @@ const pixels = {
             if (dead) updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
                 if (actionY <= y) dead = false;
             });
+            if (!dead) dead = updateTouchingPixel(x, y, 'lava');
             if (dead) {
                 nextGrid[y][x] = 'dirt';
                 return;
             }
             for (let i = Math.max(y - 1, 0); i <= Math.min(y + 1, gridSize - 1); i++) {
                 for (let j = Math.max(x - 1, 0); j <= Math.min(x + 1, gridSize - 1); j++) {
-                    if (grid[i][j] == 'dirt' && (i != y || j != x)) {
+                    if (grid[i][j] == 'dirt' && (i != y || j != x) && random() < 0.2) {
                         let canGrow = false;
                         updateTouchingPixel(j, i, 'air', function (actionX2, actionY2) {
                             if (actionY2 <= i) canGrow = true;
@@ -609,11 +632,11 @@ const pixels = {
                 }
             }
             if (y < gridSize - 1) {
-                if ((grid[y + 1][x] == 'air' || grid[y + 1][x] == 'water') && canMoveTo(x, y + 1)) {
+                if (isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
                 } else if (y < gridSize - 2) {
-                    let slideLeft = x > 0 && (grid[y][x - 1] == 'air') && isPassableFluid(x - 1, y + 1) && isPassableFluid(x - 1, y + 2);
-                    let slideRight = x < gridSize - 1 && (grid[y][x + 1] == 'air') && isPassableFluid(x + 1, y + 1) && isPassableFluid(x + 1, y + 2);
+                    let slideLeft = x > 0 && isPassableFluid(x - 1, y) && isPassableFluid(x - 1, y + 1) && isPassableFluid(x - 1, y + 2);
+                    let slideRight = x < gridSize - 1 && isPassableFluid(x + 1, y) && isPassableFluid(x + 1, y + 1) && isPassableFluid(x + 1, y + 2);
                     if (slideLeft && slideRight) {
                         if (ticks % 2 == 0) {
                             move(x, y, x - 1, y + 1);
@@ -647,7 +670,7 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
             if (y < gridSize - 1) {
-                if ((grid[y + 1][x] == 'air' || grid[y + 1][x] == 'water') && canMoveTo(x, y + 1)) {
+                if (isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
                 } else {
                     let slideLeft = x > 0 && canMoveTo(x - 1, y + 1) && isPassableFluid(x - 1, y) && isPassableFluid(x - 1, y + 1);
@@ -679,7 +702,7 @@ const pixels = {
         name: 'Water',
         description: 'Unrealistically flows and may or may not be wet',
         draw: function (x, y, width, height, opacity) {
-            if (optimizedLiquids) {
+            if (noNoise) {
                 fill(75, 100, 255, opacity * 255);
                 drawPixel(x, y, width, height);
             } else {
@@ -800,7 +823,7 @@ const pixels = {
         name: 'Lava',
         description: 'Try not to get burned, it also melts concrete and other things',
         draw: function (x, y, width, height, opacity) {
-            if (optimizedLiquids) {
+            if (noNoise) {
                 fill(255, 125, 0, opacity * 255);
                 drawPixel(x, y, width, height);
             } else {
@@ -957,11 +980,11 @@ const pixels = {
                 }
             }
             if (y < gridSize - 1) {
-                if ((grid[y + 1][x] == 'air' || grid[y + 1][x] == 'water') && canMoveTo(x, y + 1)) {
+                if (isPassableNonLavaFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
                 } else if (y < gridSize - 2) {
-                    let slideLeft = x > 0 && (grid[y][x - 1] == 'air') && isPassableFluid(x - 1, y + 1) && isPassableFluid(x - 1, y + 2);
-                    let slideRight = x < gridSize - 1 && (grid[y][x + 1] == 'air') && isPassableFluid(x + 1, y + 1) && isPassableFluid(x + 1, y + 2);
+                    let slideLeft = x > 0 && isPassableNonLavaFluid(x - 1, y) && isPassableNonLavaFluid(x - 1, y + 1) && isPassableNonLavaFluid(x - 1, y + 2);
+                    let slideRight = x < gridSize - 1 && isPassableNonLavaFluid(x + 1, y) && isPassableNonLavaFluid(x + 1, y + 1) && isPassableNonLavaFluid(x + 1, y + 2);
                     if (slideLeft && slideRight) {
                         if (ticks % 2 == 0) {
                             move(x, y, x - 1, y + 1);
@@ -1068,7 +1091,7 @@ const pixels = {
             });
             let validSponge = false;
             if (y < gridSize - 1) {
-                if ((grid[y + 1][x] == 'air' || (grid[y + 1][x] == 'lava' && random() < 0.25)) && canMoveTo(x, y + 1)) {
+                if ((isPassableNonLavaFluid(x, y + 1) || (grid[y + 1][x] == 'lava' && random() < 0.25)) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
                 }
                 if (grid[y + 1][x] == 'sand') {
@@ -1082,6 +1105,57 @@ const pixels = {
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(225, 255, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        key: Infinity,
+        updatePriority: 0,
+        pickable: true
+    },
+    gunpowder: {
+        name: 'Gunpowder',
+        description: 'A low explosive that explodes when lit on fire',
+        draw: function (x, y, width, height, opacity) {
+            if (noNoise) {
+                fill(50, 25, 25, opacity * 255);
+                drawPixel(x, y, width, height);
+            } else {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fill(30, 20, 20, opacity * 255);
+                        drawPixel(x + i, y + j, 1, 1);
+                        fill(55, 40, 40, noiseGrid[y + j][x + i] * opacity);
+                        drawPixel(x + i, y + j, 1, 1);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+                move(x, y, x, y + 1);
+            }
+            // detect fire and explode
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(50, 25, 25)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        key: Infinity,
+        updatePriority: 0,
+        pickable: true
+    },
+    c4: {
+        name: 'C-4',
+        description: 'A high explosive that can only be triggered by other explosions',
+        draw: function (x, y, width, height, opacity) {
+            fill(245, 245, 200, opacity * 255);
+            drawPixel(x, y, width, height);
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(245, 245, 200)';
             ctx.fillRect(0, 0, 50, 50);
         },
         key: Infinity,
@@ -1902,15 +1976,15 @@ const pixels = {
         name: 'Collapsible Box',
         description: 'A box that will disintegrate when squished',
         draw: function (x, y, width, height, opacity) {
-            if (optimizedLiquids) {
+            if (noNoise) {
                 fill(255, 120, 210, opacity * 255);
                 drawPixel(x, y, width, height);
             } else {
-                fill(255, 90, 200, opacity * 255);
+                fill(255, 100, 200, opacity * 255);
                 drawPixel(x, y, width, height);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        fill(255, 255, 255, round(noise((x + i) / 5, (y + j) / 5, animationTime / 20) * 100) * opacity);
+                        fill(255, 140, 255, noiseGrid[y + j][x + i] * opacity);
                         drawPixel(x + i, y + j, 1, 1);
                     }
                 }
@@ -2162,40 +2236,6 @@ const pixels = {
         updatePriority: 0,
         pickable: true
     },
-    c4: {
-        name: 'C-4',
-        description: 'A high explosive that can only be triggered by other explosions',
-        draw: function (x, y, width, height, opacity) {
-            // fill(100, 255, 75, opacity * 255);
-            // drawPixel(x, y, width, height);
-        },
-        update: function (x, y) {
-            // if (!validMovingPixel(x, y)) return;
-            // let explosion = updateTouchingAnything(x, y);
-            // let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
-            // if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
-            //     move(x, y, x, y + 1);
-            // }
-            // if (y < gridSize - 1) {
-            //     if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'nuke') {
-            //         explosion = false;
-            //     }
-            // } else {
-            //     explosion = true;
-            // }
-            // if (explosion && !diffused) {
-            //     explode(x, y, 10);
-            // }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-        //     ctx.fillStyle = 'rgb(100, 255, 75)';
-        //     ctx.fillRect(0, 0, 50, 50);
-        },
-        key: Infinity,
-        updatePriority: 0,
-        pickable: false
-    },
     nuke: {
         name: 'Nuke',
         description: 'TBH, kinda weak',
@@ -2207,11 +2247,11 @@ const pixels = {
             if (!validMovingPixel(x, y)) return;
             let explosion = updateTouchingAnything(x, y);
             let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
-            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+            if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
             if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'nuke') {
+                if (isPassableFluid(x, y + 1) || grid[y + 1][x] == 'nuke') {
                     explosion = false;
                 }
             } else {
@@ -2241,11 +2281,11 @@ const pixels = {
             if (!validMovingPixel(x, y)) return;
             let explosion = updateTouchingAnything(x, y);
             let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
-            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+            if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
             if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'huge_nuke') {
+                if (isPassableFluid(x, y + 1) || grid[y + 1][x] == 'huge_nuke') {
                     explosion = false;
                 }
             } else {
@@ -2275,11 +2315,11 @@ const pixels = {
             if (!validMovingPixel(x, y)) return;
             let explosion = updateTouchingAnything(x, y);
             let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
-            if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+            if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
             if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'very_huge_nuke') {
+                if (isPassableFluid(x, y + 1) || grid[y + 1][x] == 'very_huge_nuke') {
                     explosion = false;
                 }
             } else {
@@ -2598,6 +2638,10 @@ function clickLine(startX, startY, endX, endY, remove) {
 };
 
 function draw() {
+    let x = floor(mouseX * gridSize / width);
+    let y = floor(mouseY * gridSize / height);
+    mouseOver = x >= 0 && x <= gridSize && y >= 0 && y <= gridSize;
+
     // place pixels
     if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs) {
         // lastGrids.push([]);
@@ -2610,9 +2654,7 @@ function draw() {
         // if (lastGrids.length > 20) {
         //     lastGrids.shift(1);
         // }
-        let x = floor(mouseX * gridSize / width);
-        let y = floor(mouseY * gridSize / height);
-        if (x >= 0 && x <= gridSize && y >= 0 && y <= gridSize) clickLine(x, y, floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT);
+        if (mouseOver) clickLine(x, y, floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT);
     }
     // draw pixels
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
