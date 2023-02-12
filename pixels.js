@@ -27,6 +27,7 @@ let simulatePaused = false;
 let clickPixel = 'wall';
 let clickSize = 5;
 let runTicks = 0;
+let acceptInputs = true;
 
 function createGrid() {
     xScale = width / gridSize;
@@ -192,8 +193,8 @@ function setup() {
     loadSaveCode();
     document.getElementById('saveCode').value = saveCode;
 
-    document.onkeydown = function (e) {
-        if (e.ctrlKey || e.target.matches('#saveCode')) return;
+    document.onkeydown = (e) => {
+        if (e.ctrlKey || e.target.matches('#saveCode') || !acceptInputs) return;
         const key = e.key.toLowerCase();
         for (let i in pixels) {
             if (pixels[i].key == key) {
@@ -235,8 +236,8 @@ function setup() {
         if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11') e.preventDefault();
         if (e.target.matches('button')) e.target.blur();
     };
-    document.onkeyup = function (e) {
-        if (e.ctrlKey || e.target.matches('#saveCode')) return;
+    document.onkeyup = (e) => {
+        if (e.ctrlKey || e.target.matches('#saveCode') || !acceptInputs) return;
         const key = e.key.toLowerCase();
         if (key == 'alt') {
             debugInfo = !debugInfo;
@@ -253,47 +254,91 @@ function setup() {
     };
     document.querySelector('.p5Canvas').addEventListener('contextmenu', e => e.preventDefault());
 
-    document.getElementById('reset').onclick = function (e) {
-        saveCode = document.getElementById('saveCode').value;
-        loadSaveCode();
+    function confirmationModal() {
+        acceptInputs = false;
+        const confirmationModalContainer = document.getElementById('confirmationModalContainer');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationModalYes = document.getElementById('confirmationModalYes');
+        const confirmationModalNo = document.getElementById('confirmationModalNo');
+        confirmationModalContainer.style.opacity = '1';
+        confirmationModalContainer.style.pointerEvents = 'all';
+        confirmationModal.style.transform = 'translateY(0px)';
+        const hide = () => {
+            confirmationModalContainer.style.opacity = '';
+            confirmationModalContainer.style.pointerEvents = '';
+            confirmationModal.style.transform = '';
+            acceptInputs = true;
+        };
+        return new Promise((resolve, reject) => {
+            confirmationModalYes.onclick = (e) => {
+                hide();
+                resolve(true);
+            };
+            confirmationModalNo.onclick = (e) => {
+                hide();
+                resolve(false);
+            };
+        });
     };
-    document.getElementById('copySave').onclick = function (e) {
-        let saveCode = generateSaveCode();
+    document.getElementById('reset').onclick = async (e) => {
+        if (await confirmationModal()) {
+            saveCode = document.getElementById('saveCode').value;
+            loadSaveCode();
+        }
+    };
+    document.getElementById('copySave').onclick = (e) => {
+        gridPaused = true;
+        simulatePaused = false;
+        updateTimeControlButtons();
+        saveCode = generateSaveCode();
+        document.getElementById('saveCode').value = saveCode;
         window.navigator.clipboard.writeText(saveCode);
     };
-    document.getElementById('uploadSave').onclick = function (e) {
+    document.getElementById('uploadSave').onclick = (e) => {
+        gridPaused = true;
+        simulatePaused = false;
+        updateTimeControlButtons();
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.redpixel';
         input.click();
-        input.oninput = () => {
+        input.oninput = (e) => {
             let files = input.files;
             if (files.length == 0) return;
             const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('saveCode').value = e.target.result;
+            reader.onload = async (e) => {
+                if (await confirmationModal()) {
+                    saveCode = e.target.result;
+                    document.getElementById('saveCode').value = saveCode;
+                    loadSaveCode();
+                }
             };
             reader.readAsText(files[0]);
         };
     };
-    document.getElementById('downloadSave').onclick = function (e) {
-        const encoded = `data:text/redpixel;base64,${btoa(generateSaveCode())}`;
+    document.getElementById('downloadSave').onclick = (e) => {
+        gridPaused = true;
+        simulatePaused = false;
+        updateTimeControlButtons();
+        saveCode = generateSaveCode();
+        document.getElementById('saveCode').value = saveCode;
+        const encoded = `data:text/redpixel;base64,${btoa(saveCode)}`;
         const a = document.createElement('a');
         a.href = encoded;
         a.download = `red-pixel-simulator_${Math.ceil(Math.random() * 1000)}.redpixel`;
         a.click();
     };
-    document.getElementById('startPaused').onclick = function (e) {
+    document.getElementById('startPaused').onclick = (e) => {
         startPaused = !startPaused;
         if (startPaused) document.getElementById('startPaused').style.backgroundColor = 'lime';
         else document.getElementById('startPaused').style.backgroundColor = 'red';
     };
-    document.getElementById('optimizedLiquids').onclick = function (e) {
+    document.getElementById('optimizedLiquids').onclick = (e) => {
         optimizedLiquids = !optimizedLiquids;
         if (optimizedLiquids) document.getElementById('optimizedLiquids').style.backgroundColor = 'lime';
         else document.getElementById('optimizedLiquids').style.backgroundColor = 'red';
     };
-    document.getElementById('fadeEffect').onclick = function (e) {
+    document.getElementById('fadeEffect').onclick = (e) => {
         fadeEffect = fadeEffect ? 0 : 127;
         if (fadeEffect) document.getElementById('fadeEffect').style.backgroundColor = 'lime';
         else document.getElementById('fadeEffect').style.backgroundColor = 'red';
@@ -310,16 +355,16 @@ function setup() {
             const box = document.createElement('div');
             box.id = `picker-${id}`;
             box.classList.add('pickerPixel');
-            box.onclick = function (e) {
+            box.onclick = (e) => {
                 clickPixel = id;
                 pixelPicker.children.forEach(div => div.classList.remove('pickerPixelSelected'));
                 box.classList.add('pickerPixelSelected');
                 pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}`;
             };
-            box.onmouseover = function (e) {
+            box.onmouseover = (e) => {
                 pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}`;
             };
-            box.onmouseout = function (e) {
+            box.onmouseout = (e) => {
                 pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[clickPixel].name}</span><br>${pixels[clickPixel].description}`;
             };
             const img = new Image(50, 50);
@@ -332,22 +377,22 @@ function setup() {
     document.getElementById(`picker-${clickPixel}`).classList.add('pickerPixelSelected');
     pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[clickPixel].name}</span><br>${pixels[clickPixel].description}`;
 
-    document.getElementById('sizeUp').onclick = function (e) {
+    document.getElementById('sizeUp').onclick = (e) => {
         clickSize = min(ceil(gridSize / 2 + 1), clickSize + 1);
     };
-    document.getElementById('sizeDown').onclick = function (e) {
+    document.getElementById('sizeDown').onclick = (e) => {
         clickSize = max(1, clickSize - 1);
     };
-    document.getElementById('pause').onclick = function (e) {
+    document.getElementById('pause').onclick = (e) => {
         gridPaused = !gridPaused;
         simulatePaused = false;
         updateTimeControlButtons();
     };
-    document.getElementById('simulatePaused').onclick = function (e) {
+    document.getElementById('simulatePaused').onclick = (e) => {
         if (gridPaused) simulatePaused = !simulatePaused;
         updateTimeControlButtons();
     };
-    document.getElementById('advanceTick').onclick = function (e) {
+    document.getElementById('advanceTick').onclick = (e) => {
         runTicks = 1;
     };
 
@@ -423,21 +468,25 @@ function move(x1, y1, x2, y2) {
     nextGrid[y2][x2] = grid[y1][x1];
 };
 function explode(x, y, size, chain) {
-    chain = chain ?? 3;
+    chain = chain ?? 5;
     nextGrid[y][x] = 'air';
     grid[y][x] = 'wall';
+    let chained = false;
     for (let i = y - size; i <= y + size; i++) {
         for (let j = x - size; j <= x + size; j++) {
             if (i >= 0 && i < gridSize && j >= 0 && j < gridSize) {
                 if (random() < 1 - (dist(x, y, j, i) / (size * 1.2))) {
                     nextGrid[i][j] = 'air';
-                    if (chain > 0) {
+                    if (chain > 0 && !chained) {
                         if (grid[i][j] == 'nuke') {
                             explode(j, i, 10, chain - 1);
+                            chained = true;
                         } else if (grid[i][j] == 'huge_nuke') {
                             explode(j, i, 20, chain - 1);
+                            chained = true;
                         } else if (grid[i][j] == 'very_huge_nuke') {
                             explode(j, i, 40, chain - 1);
+                            chained = true;
                         }
                     }
                 }
@@ -456,6 +505,9 @@ function colorLerp(r1, g1, b1, r2, g2, b2, p) {
 // music pixels
 // fire
 // ice
+// rotatey spinny thing
+// c4
+// low explosives that blow up when lit on fire
 const pixels = {
     air: {
         name: 'Air',
@@ -2110,6 +2162,40 @@ const pixels = {
         updatePriority: 0,
         pickable: true
     },
+    c4: {
+        name: 'C-4',
+        description: 'A high explosive that can only be triggered by other explosions',
+        draw: function (x, y, width, height, opacity) {
+            // fill(100, 255, 75, opacity * 255);
+            // drawPixel(x, y, width, height);
+        },
+        update: function (x, y) {
+            // if (!validMovingPixel(x, y)) return;
+            // let explosion = updateTouchingAnything(x, y);
+            // let diffused = updateTouchingPixel(x, y, 'nuke_diffuser');
+            // if (y < gridSize - 1 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+            //     move(x, y, x, y + 1);
+            // }
+            // if (y < gridSize - 1) {
+            //     if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'nuke') {
+            //         explosion = false;
+            //     }
+            // } else {
+            //     explosion = true;
+            // }
+            // if (explosion && !diffused) {
+            //     explode(x, y, 10);
+            // }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        //     ctx.fillStyle = 'rgb(100, 255, 75)';
+        //     ctx.fillRect(0, 0, 50, 50);
+        },
+        key: Infinity,
+        updatePriority: 0,
+        pickable: false
+    },
     nuke: {
         name: 'Nuke',
         description: 'TBH, kinda weak',
@@ -2513,7 +2599,7 @@ function clickLine(startX, startY, endX, endY, remove) {
 
 function draw() {
     // place pixels
-    if (mouseIsPressed && (!gridPaused || !simulatePaused)) {
+    if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs) {
         // lastGrids.push([]);
         // for (let i = 0; i < gridSize; i++) {
         //     lastGrids[lastGrids.length - 1].push([]);

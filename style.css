@@ -46,6 +46,23 @@ button:active {
     border-style: inset;
 }
 
+b {
+    /* background-color: beige; */
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 0px 2px;
+}
+table {
+    border-collapse: collapse;
+}
+td {
+    border: 2px solid black;
+    padding: 2px 4px;
+    overflow-wrap: break-word;
+    max-width: calc(var(--max-sidebar-width) - 48px);
+    vertical-align: top;
+}
+
 #gameControls {
     width: 100%;
 }
@@ -148,37 +165,48 @@ button:active {
     background-color: lime;
 }
 
-b {
-    /* background-color: beige; */
-    border: 1px solid black;
-    border-radius: 4px;
-    padding: 0px 2px;
-}
-table {
-    border-collapse: collapse;
-}
-td {
-    border: 2px solid black;
-    padding: 2px 4px;
-    overflow-wrap: break-word;
-    max-width: calc(var(--max-sidebar-width) - 48px);
-    vertical-align: top;
-}
 .save {
     font-weight: lighter;
 }
 
-#controls {
+#confirmationModalContainer {
     position: absolute;
-    bottom: 0px;
+    top: 0px;
     left: 0px;
-    width: 600px;
-    max-height: calc(100vh - 680px);
+    width: 100vw;
+    height: 100vh;
+    background-color: #0005;
+    opacity: 0;
+    transition: 500ms linear opacity;
+    pointer-events: none;
+    z-index: 1000;
+}
+#confirmationModal {
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    width: 50vw;
+    height: 160px;
+    margin-top: -80px;
+    margin-left: -25vw;
+    border: 4px solid black;
+    background-color: lightgray;
+    text-align: center;
+    transform: translateY(-100vh);
+    transition: 500ms ease transform;
+}
+#confirmationModalYes {
+    width: 100px;
+    background-color: lime;
+}
+#confirmationModalNo {
+    width: 100px;
+    background-color: red;
 }
 
 @media (prefers-color-scheme: dark) {
     body {
-        background-color: #333333;
+        background-color: #333;
         color: white;
     }
     b, td {
@@ -191,6 +219,10 @@ td {
         border-color: white;
     }
     .pickerPixel:hover {
+        border-color: white;
+    }
+    #confirmationModal {
+        background-color: #333;
         border-color: white;
     }
 }
