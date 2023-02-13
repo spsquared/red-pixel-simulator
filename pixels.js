@@ -1187,7 +1187,7 @@ const pixels = {
                 move(x, y, x, y + 1);
             }
             let explosion = updateTouchingPixel(x, y, 'lava');
-            if (explosion) explosion(x, y, 5, 1);
+            if (explosion) explode(x, y, 5, 1);
             // detect fire and explode
         },
         drawPreview: function (ctx) {
