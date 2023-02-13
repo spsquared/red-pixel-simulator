@@ -1,9 +1,11 @@
 // no documentation here!
 
-window.onerror = e => document.write(e);
+window.onerror = e => {
+
+};
 
 let gridSize = 100;
-let saveCode = '100;air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser-6:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-16:wall:piston_rotator_right:piston_left:air:piston_rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:piston_rotator_right:piston_left:air-70:piston_rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
+let saveCode = '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
 let startPaused = false;
 let backgroundColor = 'ffffff';
 
@@ -433,40 +435,40 @@ function updatePixel(x, y, i) {
 function updateTouchingPixel(x, y, type, action) {
     let touchingPixel = false;
     if (x > 0 && grid[y][x - 1] == type) {
-        typeof action == 'function' && action(x - 1, y);
-        touchingPixel = true;
+        if (typeof action == 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
+        else touchingPixel = true;
     }
     if (x < gridSize - 1 && grid[y][x + 1] == type) {
-        typeof action == 'function' && action(x + 1, y);
-        touchingPixel = true;
+        if (typeof action == 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
+        else touchingPixel = true;
     }
     if (y > 0 && grid[y - 1][x] == type) {
-        typeof action == 'function' && action(x, y - 1);
-        touchingPixel = true;
+        if (typeof action == 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
+        else touchingPixel = true;
     }
     if (y < gridSize - 1 && grid[y + 1][x] == type) {
-        typeof action == 'function' && action(x, y + 1);
-        touchingPixel = true;
+        if (typeof action == 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
+        else touchingPixel = true;
     }
     return touchingPixel;
 };
 function updateTouchingAnything(x, y, action) {
     let touchingPixel = false;
     if (x > 0 && grid[y][x - 1] != 'air') {
-        typeof action == 'function' && action(x - 1, y);
-        touchingPixel = true;
+        if (typeof action == 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
+        else touchingPixel = true;
     }
     if (x < gridSize - 1 && grid[y][x + 1] != 'air') {
-        typeof action == 'function' && action(x + 1, y);
-        touchingPixel = true;
+        if (typeof action == 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
+        else touchingPixel = true;
     }
     if (y > 0 && grid[y - 1][x] != 'air') {
-        typeof action == 'function' && action(x, y - 1);
-        touchingPixel = true;
+        if (typeof action == 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
+        else touchingPixel = true;
     }
     if (y < gridSize - 1 && grid[y + 1][x] != 'air') {
-        typeof action == 'function' && action(x, y + 1);
-        touchingPixel = true;
+        if (typeof action == 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
+        else touchingPixel = true;
     }
     return touchingPixel;
 };
@@ -485,6 +487,54 @@ function canMoveTo(x, y) {
 function move(x1, y1, x2, y2) {
     nextGrid[y1][x1] = grid[y2][x2];
     nextGrid[y2][x2] = grid[y1][x1];
+};
+function detectRotate(x, y) {
+    return updateTouchingAnything(x, y, function (actionX, actionY) {
+        if (grid[actionY][actionX] == 'rotator_clockwise') {
+            const selfType = grid[y][x].replace(/_up|_down|_left|_right/g, '');
+            const selfDir = grid[y][x].replace(selfType + '_', '');
+            switch (selfDir) {
+                case 'up':
+                    nextGrid[y][x] = selfType + '_right';
+                    break;
+                case 'down':
+                    nextGrid[y][x] = selfType + '_left';
+                    break;
+                case 'left':
+                    nextGrid[y][x] = selfType + '_up';
+                    break;
+                case 'right':
+                    nextGrid[y][x] = selfType + '_down';
+                    break;
+            }
+            return true;
+        } else if (grid[actionY][actionX] == 'rotator_counterclockwise') {
+            const selfType = grid[y][x].replace(/_up|_down|_left|_right/g, '');
+            const selfDir = grid[y][x].replace(selfType + '_', '');
+            switch (selfDir) {
+                case 'up':
+                    nextGrid[y][x] = selfType + '_left';
+                    break;
+                case 'down':
+                    nextGrid[y][x] = selfType + '_right';
+                    break;
+                case 'left':
+                    nextGrid[y][x] = selfType + '_down';
+                    break;
+                case 'right':
+                    nextGrid[y][x] = selfType + '_up';
+                    break;
+            }
+            return true;
+        } else if (grid[actionY][actionX].startsWith('rotator_')) {
+            const selfType = grid[y][x].replace(/_up|_down|_left|_right/g, '');
+            if (grid[actionY][actionX].replace('rotator', '') != grid[y][x].replace(selfType, '')) {
+                nextGrid[y][x] = selfType + grid[actionY][actionX].replace('rotator', '');
+                return true;
+            }
+        }
+        return false;
+    });
 };
 function explode(x, y, size, chain) {
     chain = chain ?? 3;
@@ -519,18 +569,19 @@ function explode(x, y, size, chain) {
         }
     }
 };
-function colorLerp(r1, g1, b1, r2, g2, b2, p) {
+function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
+    let multiplier1 = (Math.sin(animationTime * Math.PI / p) + 1) / 2;
+    let multiplier2 = (Math.sin((animationTime + p) * Math.PI / p) + 1) / 2;
     return [
-        (r1 * (Math.sin(animationTime * Math.PI / p) + 1) / 2) + (r2 * (Math.sin((animationTime + p) * Math.PI / p) + 1) / 2),
-        (g1 * (Math.sin(animationTime * Math.PI / p) + 1) / 2) + (g2 * (Math.sin((animationTime + p) * Math.PI / p) + 1) / 2),
-        (b1 * (Math.sin(animationTime * Math.PI / p) + 1) / 2) + (b2 * (Math.sin((animationTime + p) * Math.PI / p) + 1) / 2),
+        (r1 * multiplier1) + (r2 * multiplier2),
+        (g1 * multiplier1) + (g2 * multiplier2),
+        (b1 * multiplier1) + (b2 * multiplier2),
     ];
 };
 // seeds that grow trees
 // music pixels
 // fire
 // ice
-// rotatey spinny thing
 const pixels = {
     air: {
         name: 'Air',
@@ -707,10 +758,10 @@ const pixels = {
                 fill(75, 100, 255, opacity * 255);
                 drawPixel(x, y, width, height);
             } else {
+                fill(100, 175, 255, opacity * 255);
+                drawPixel(x, y, width, height);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        fill(100, 175, 255, opacity * 255);
-                        drawPixel(x + i, y + j, 1, 1);
                         fill(75, 50, 255, round(noise((x + i) / 4, (y + j) / 4, animationTime / 10) * 127) * opacity + 30);
                         drawPixel(x + i, y + j, 1, 1);
                     }
@@ -828,10 +879,10 @@ const pixels = {
                 fill(255, 125, 0, opacity * 255);
                 drawPixel(x, y, width, height);
             } else {
+                fill(255, 0, 0, opacity * 255);
+                drawPixel(x, y, width, height);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        fill(255, 0, 0, opacity * 255);
-                        drawPixel(x + i, y + j, 1, 1);
                         fill(255, 255, 0, round(noise((x + i) / 6, (y + j) / 6, animationTime / 30) * 255) * opacity);
                         drawPixel(x + i, y + j, 1, 1);
                     }
@@ -1120,10 +1171,10 @@ const pixels = {
                 fill(50, 25, 25, opacity * 255);
                 drawPixel(x, y, width, height);
             } else {
+                fill(30, 20, 20, opacity * 255);
+                drawPixel(x, y, width, height);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        fill(30, 20, 20, opacity * 255);
-                        drawPixel(x + i, y + j, 1, 1);
                         fill(55, 40, 40, noiseGrid[y + j][x + i] * opacity);
                         drawPixel(x + i, y + j, 1, 1);
                     }
@@ -1135,6 +1186,8 @@ const pixels = {
             if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
+            let explosion = updateTouchingPixel(x, y, 'lava');
+            if (explosion) explosion(x, y, 5, 1);
             // detect fire and explode
         },
         drawPreview: function (ctx) {
@@ -1263,6 +1316,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (y > 0 && y < gridSize - 1
                 && grid[y + 1][x] != 'air' && !grid[y + 1][x].includes('cloner')
                 && grid[y - 1][x] == 'air' && canMoveTo(x, y - 1)) {
@@ -1302,6 +1356,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (y > 0 && y < gridSize - 1
                 && grid[y - 1][x] != 'air' && !grid[y - 1][x].includes('cloner')
                 && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
@@ -1341,6 +1396,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (x > 0 && x < gridSize - 1
                 && grid[y][x - 1] != 'air' && !grid[y][x - 1].includes('cloner')
                 && grid[y][x + 1] == 'air' && canMoveTo(x + 1, y)) {
@@ -1380,6 +1436,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (x > 0 && x < gridSize - 1
                 && grid[y][x + 1] != 'air' && !grid[y][x + 1].includes('cloner')
                 && grid[y][x - 1] == 'air' && canMoveTo(x - 1, y)) {
@@ -1419,6 +1476,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (y > 0 && y < gridSize - 1) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
             }
@@ -1456,6 +1514,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (y > 0 && y < gridSize - 1) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
             }
@@ -1493,6 +1552,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (x > 0 && x < gridSize - 1) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
             }
@@ -1530,6 +1590,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (x > 0 && x < gridSize - 1) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
             }
@@ -1553,10 +1614,10 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(75, 125, 255, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2);
                 }
             }
         },
@@ -1597,21 +1658,15 @@ const pixels = {
                 }
                 nextGrid[y][x] = 'air';
             } else {
-                if (updateTouchingPixel(x, y, 'piston_rotator_left', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_left';
-                } else if (updateTouchingPixel(x, y, 'piston_rotator_right', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_right';
-                } else if (updateTouchingPixel(x, y, 'piston_rotator_down', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_down';
-                }
+                detectRotate(x, y);
             }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 125, 255)';
-            ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
         key: Infinity,
         updatePriority: 1,
@@ -1623,10 +1678,10 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(75, 125, 255, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2);
                 }
             }
         },
@@ -1667,21 +1722,15 @@ const pixels = {
                 }
                 nextGrid[y][x] = 'air';
             } else {
-                if (updateTouchingPixel(x, y, 'piston_rotator_left', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_left';
-                } else if (updateTouchingPixel(x, y, 'piston_rotator_right', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_right';
-                } else if (updateTouchingPixel(x, y, 'piston_rotator_up', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_up';
-                }
+                detectRotate(x, y);
             }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 125, 255)';
-            ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
         key: 'k',
         updatePriority: 1,
@@ -1693,10 +1742,10 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(75, 125, 255, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3);
                 }
             }
         },
@@ -1737,21 +1786,15 @@ const pixels = {
                 }
                 nextGrid[y][x] = 'air';
             } else {
-                if (updateTouchingPixel(x, y, 'piston_rotator_right', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_right';
-                } else if (updateTouchingPixel(x, y, 'piston_rotator_up', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_up';
-                } else if (updateTouchingPixel(x, y, 'piston_rotator_down', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_down';
-                }
+                detectRotate(x, y);
             }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 125, 255)';
-            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
         key: Infinity,
         updatePriority: 1,
@@ -1763,10 +1806,10 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(75, 255, 255, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(75, 125, 255, opacity * 255);
+            fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3);
                 }
             }
         },
@@ -1807,121 +1850,219 @@ const pixels = {
                 }
                 nextGrid[y][x] = 'air';
             } else {
-                if (updateTouchingPixel(x, y, 'piston_rotator_left', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_left';
-                } else if (updateTouchingPixel(x, y, 'piston_rotator_up', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_up';
-                } else if (updateTouchingPixel(x, y, 'piston_rotator_down', function (actionX, actionY) { })) {
-                    nextGrid[y][x] = 'piston_down';
-                }
+                detectRotate(x, y);
             }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 125, 255)';
-            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
         key: Infinity,
         updatePriority: 1,
         pickable: true
     },
-    piston_rotator_left: {
-        name: 'Piston Rotator (Left)',
-        description: 'Rotates stationary pistons in contact with it to face left',
-        draw: function (x, y, width, height, opacity) {
-            fill(255, 125, 0, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(225, 255, 0, opacity * 255);
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
-                }
-            }
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 0)';
-            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-        },
-        key: Infinity,
-        updatePriority: -1,
-        pickable: true
-    },
-    piston_rotator_up: {
+    rotator_up: {
         name: 'Piston Rotator (Up)',
-        description: 'Rotates stationary pistons in contact with it to face up',
+        description: 'Rotates directional pixels to face up',
         draw: function (x, y, width, height, opacity) {
-            fill(255, 125, 0, opacity * 255);
+            fill(100, 100, 100, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(225, 255, 0, opacity * 255);
+            fill(75, 255, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2);
                 }
             }
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 0)';
-            ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
         key: Infinity,
-        updatePriority: -1,
+        updatePriority: 5,
         pickable: true
     },
-    piston_rotator_right: {
-        name: 'Piston Rotator (Right)',
-        description: 'Rotates stationary pistons in contact with it to face right',
-        draw: function (x, y, width, height, opacity) {
-            fill(255, 125, 0, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(225, 255, 0, opacity * 255);
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
-                }
-            }
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 0)';
-            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
-        },
-        key: Infinity,
-        updatePriority: -1,
-        pickable: true
-    },
-    piston_rotator_down: {
+    rotator_down: {
         name: 'Piston Rotator (Down)',
-        description: 'Rotates stationary pistons in contact with it to face down',
+        description: 'Rotates directional pixels to face down',
         draw: function (x, y, width, height, opacity) {
-            fill(255, 125, 0, opacity * 255);
+            fill(100, 100, 100, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(225, 255, 0, opacity * 255);
+            fill(75, 255, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2);
                 }
             }
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(50 / 3, 25, 50 / 3, 25);
+        },
+        key: Infinity,
+        updatePriority: 5,
+        pickable: true
+    },
+    rotator_left: {
+        name: 'Piston Rotator (Left)',
+        description: 'Rotates directional pixels to face left',
+        draw: function (x, y, width, height, opacity) {
+            fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(75, 255, 255, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3);
+                }
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 50 / 3, 25, 50 / 3);
+        },
+        key: Infinity,
+        updatePriority: 5,
+        pickable: true
+    },
+    rotator_right: {
+        name: 'Piston Rotator (Right)',
+        description: 'Rotates directional pixels to face right',
+        draw: function (x, y, width, height, opacity) {
+            fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(75, 255, 255, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3);
+                }
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(25, 50 / 3, 25, 50 / 3);
+        },
+        key: Infinity,
+        updatePriority: 5,
+        pickable: true
+    },
+    rotator_clockwise: {
+        name: 'Rotator (Clockwise)',
+        description: 'Rotates directional pixels clockwise',
+        draw: function (x, y, width, height, opacity) {
+            fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(75, 255, 255, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    switch (floor(animationTime / 10) % 4) {
+                        case 0:
+                            drawPixel(x + i, y + j, 2 / 3, 1 / 3);
+                            drawPixel(x + i + 1 / 3, y + j + 2 / 3, 2 / 3, 1 / 3);
+                            break;
+                        case 1:
+                            drawPixel(x + i + 1 / 3, y + j, 2 / 3, 1 / 3);
+                            drawPixel(x + i, y + j + 2 / 3, 2 / 3, 1 / 3);
+                            break;
+                        case 2:
+                            drawPixel(x + i + 2 / 3, y + j, 1 / 3, 2 / 3);
+                            drawPixel(x + i, y + j + 1 / 3, 1 / 3, 2 / 3);
+                            break;
+                        case 3:
+                            drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 2 / 3);
+                            drawPixel(x + i, y + j, 1 / 3, 2 / 3);
+                            break;
+                    }
+                }
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgba(75, 255, 255, 1)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgba(75, 255, 255, 0.66)';
+            ctx.fillRect(100 / 3, 0, 50 / 3, 50 / 3);
+            ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgba(75, 255, 255, 0.33)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgba(75, 255, 255, 0.2)';
+            ctx.fillRect(0, 0, 50 / 3, 50 / 3);
+            ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
+        },
+        key: Infinity,
+        updatePriority: -1,
+        pickable: true
+    },
+    rotator_counterclockwise: {
+        name: 'Rotator (Counterclockwise)',
+        description: 'Rotates directional pixels counterclockwise',
+        draw: function (x, y, width, height, opacity) {
+            fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height);
+            fill(75, 255, 255, opacity * 255);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    switch (floor(animationTime / 10) % 4) {
+                        case 3:
+                            drawPixel(x + i + 2 / 3, y + j, 1 / 3, 2 / 3);
+                            drawPixel(x + i, y + j + 1 / 3, 1 / 3, 2 / 3);
+                            break;
+                        case 2:
+                            drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 2 / 3);
+                            drawPixel(x + i, y + j, 1 / 3, 2 / 3);
+                            break;
+                        case 1:
+                            drawPixel(x + i, y + j, 2 / 3, 1 / 3);
+                            drawPixel(x + i + 1 / 3, y + j + 2 / 3, 2 / 3, 1 / 3);
+                            break;
+                        case 0:
+                            drawPixel(x + i + 1 / 3, y + j, 2 / 3, 1 / 3);
+                            drawPixel(x + i, y + j + 2 / 3, 2 / 3, 1 / 3);
+                            break;
+                    }
+                }
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgba(75, 255, 255, 1)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgba(75, 255, 255, 0.66)';
+            ctx.fillRect(0, 0, 50 / 3, 50 / 3);
+            ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgba(75, 255, 255, 0.33)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+            ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgba(75, 255, 255, 0.2)';
+            ctx.fillRect(100 / 3, 0, 50 / 3, 50 / 3);
+            ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
         },
         key: Infinity,
         updatePriority: -1,
@@ -2063,7 +2204,7 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(90, 0, 120, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(...colorLerp(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+            fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2);
@@ -2080,12 +2221,14 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (random() < 0.2) {
                 let removeY = y;
                 while (removeY > 0) {
                     removeY--;
                     if (grid[removeY][x] != 'air') {
                         if (grid[removeY][x] != 'laser_scatterer') nextGrid[removeY][x] = 'air';
+                        if (grid[removeY][x] == 'gunpowder') explode(x, removeY, 5, 1);
                         break;
                     }
                 }
@@ -2108,7 +2251,7 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(90, 0, 120, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(...colorLerp(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+            fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2);
@@ -2116,21 +2259,23 @@ const pixels = {
             }
             fill(71, 216, 159, opacity * 255);
             for (let i = 0; i < width; i++) {
-                let endY = y;
+                let endY = y + height - 1;
                 while (endY < gridSize) {
                     endY++;
                     if (endY < gridSize && grid[endY][x + i] != 'air') break;
                 }
-                drawPixel(x + 1 / 3 + i, y + 1, 1 / 3, endY - y - 1);
+                drawPixel(x + 1 / 3 + i, y + height, 1 / 3, endY - y - height);
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (random() < 0.2) {
                 let removeY = y;
                 while (removeY < gridSize - 1) {
                     removeY++;
                     if (grid[removeY][x] != 'air') {
                         if (grid[removeY][x] != 'laser_scatterer') nextGrid[removeY][x] = 'air';
+                        if (grid[removeY][x] == 'gunpowder') explode(x, removeY, 5, 1);
                         break;
                     }
                 }
@@ -2153,7 +2298,7 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(90, 0, 120, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(...colorLerp(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+            fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3);
@@ -2170,12 +2315,14 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (random() < 0.2) {
                 let removeX = x;
                 while (removeX > 0) {
                     removeX--;
                     if (grid[y][removeX] != 'air') {
                         if (grid[y][removeX] != 'laser_scatterer') nextGrid[y][removeX] = 'air';
+                        if (grid[y][removeX] == 'gunpowder') explode(removeX, y, 5, 1);
                         break;
                     }
                 }
@@ -2198,7 +2345,7 @@ const pixels = {
         draw: function (x, y, width, height, opacity) {
             fill(90, 0, 120, opacity * 255);
             drawPixel(x, y, width, height);
-            fill(...colorLerp(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+            fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3);
@@ -2206,21 +2353,23 @@ const pixels = {
             }
             fill(71, 216, 159, opacity * 255);
             for (let i = 0; i < height; i++) {
-                let endX = x;
+                let endX = x + width - 1;
                 while (endX < gridSize) {
                     endX++;
                     if (grid[y + i][endX] != 'air') break;
                 }
-                drawPixel(x + 1, y + 1 / 3 + i, endX - x - 1, 1 / 3);
+                drawPixel(x + width, y + 1 / 3 + i, endX - x - width, 1 / 3);
             }
         },
         update: function (x, y) {
+            if (detectRotate(x, y)) return;
             if (random() < 0.2) {
                 let removeX = x;
                 while (removeX < gridSize - 1) {
                     removeX++;
                     if (grid[y][removeX] != 'air') {
                         if (grid[y][removeX] != 'laser_scatterer') nextGrid[y][removeX] = 'air';
+                        if (grid[y][removeX] == 'gunpowder') explode(removeX, y, 5, 1);
                         break;
                     }
                 }
