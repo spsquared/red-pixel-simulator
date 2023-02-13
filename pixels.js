@@ -27,6 +27,7 @@ let gridPaused = startPaused;
 let simulatePaused = false;
 let clickPixel = 'wall';
 let clickSize = 5;
+let removing = false;
 let runTicks = 0;
 let acceptInputs = true;
 let mouseOver = false;
@@ -237,6 +238,8 @@ function setup() {
             }
         } else if (key == 'enter') {
             runTicks = 1;
+        } else if (key == 'shift') {
+            removing = true;
         }
         if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11') e.preventDefault();
         if (e.target.matches('button')) e.target.blur();
@@ -250,10 +253,8 @@ function setup() {
             gridPaused = !gridPaused;
             simulatePaused = false;
             updateTimeControlButtons();
-        }
-        if (key == 'shift') {
-            if (gridPaused) simulatePaused = !simulatePaused;
-            updateTimeControlButtons();
+        } else if (key == 'shift') {
+            removing = false;
         }
         e.preventDefault();
     };
@@ -2654,7 +2655,7 @@ function draw() {
         // if (lastGrids.length > 20) {
         //     lastGrids.shift(1);
         // }
-        if (mouseOver) clickLine(x, y, floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT);
+        if (mouseOver) clickLine(x, y, floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT || removing);
     }
     // draw pixels
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
@@ -2694,7 +2695,7 @@ function draw() {
         let x2 = min(gridSize - 1, floor(mouseX * gridSize / width) + clickSize - 1);
         let y1 = max(0, floor(mouseY * gridSize / height) - clickSize + 1);
         let y2 = min(gridSize - 1, floor(mouseY * gridSize / height) + clickSize - 1);
-        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, mouseIsPressed && mouseButton == RIGHT ? 'remove' : clickPixel, 0.5);
+        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5);
         noStroke();
     }
 
