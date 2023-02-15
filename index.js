@@ -17,7 +17,7 @@ let noNoise = false;
 let optimizedLags = false;
 let fadeEffect = 127;
 
-const canvasResolution = parseInt(window.localStorage.getItem('resolution') ?? 600);
+const canvasResolution = parseInt(window.localStorage.getItem('resolution') ?? 800);
 const NO_OFFSCREENCANVAS = typeof OffscreenCanvas == 'undefined';
 function createCanvas2(w, h) {
     if (NO_OFFSCREENCANVAS) {
