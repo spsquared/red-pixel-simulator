@@ -19,7 +19,6 @@ let gridResolution = 600;
 
 let below;
 let above;
-let main;
 let xScale = gridResolution / gridSize;
 let yScale = gridResolution / gridSize;
 let canvasScale = Math.min(window.innerWidth / gridResolution, window.innerHeight / gridResolution);
@@ -206,7 +205,7 @@ function updateTimeControlButtons() {
 };
 
 function setup() {
-    main = createCanvas(gridResolution, gridResolution);
+    createCanvas(gridResolution, gridResolution);
     below = createGraphics(gridResolution, gridResolution);
     above = createGraphics(gridResolution, gridResolution);
     frameRate(60);
@@ -3048,23 +3047,7 @@ function draw() {
         let b = parseInt(backgroundColor.substring(4, 6), 16);
         fill(r, g, b, 255 - fadeEffect);
         rect(0, 0, width, height);
-        // below.clear();
         above.clear();
-        // for (let i = 0; i < gridSize; i++) {
-        //     let curr = 'air';
-        //     let amount = 0;
-        //     let toDraw = false;
-        //     let j;
-        //     for (j = 0; j < gridSize; j++) {
-        //         amount++;
-        //         if (grid[i][j] != curr) {
-        //             drawPixels(j - amount, i , amount, 1, curr, 1, pixels[curr].above ? above : below);
-        //             curr = grid[i][j]
-        //             amount = 0;
-        //         }
-        //     }
-        //     if (curr != 'air') drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixels[curr].above ? above : below);
-        // }
         for (let i = 0; i < gridSize; i++) {
             let curr = 'air';
             let redrawing = grid[i][0] != lastGrid[i][0];
@@ -3081,8 +3064,9 @@ function draw() {
                     amount = 0;
                 }
             }
-            if (curr != 'air' && (redrawing || forcedRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixels[curr].above ? above : below);
-            else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixels[curr].above ? above : below);
+            let pixelType = pixels[curr];
+            if (curr != 'air' && (redrawing || pixelType.animated || pixelType.animatedNoise || forcedRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? above : below);
+            else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixelType.above ? above : below);
         }
         // for (let i = 0; i < gridSize; i++) {
         //     let j = 0;
@@ -3114,19 +3098,19 @@ function draw() {
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
         frames.push(millis());
     }
-    // copy layers
-    image(below, 0, 0);
-    image(above, 0, 0);
     // draw brush
     if (!gridPaused || !simulatePaused) {
-        stroke(color(0, 0, 0));
+        above.stroke(color(0, 0, 0));
         let x1 = max(0, floor(mouseX * gridSize / width) - clickSize + 1);
         let x2 = min(gridSize - 1, floor(mouseX * gridSize / width) + clickSize - 1);
         let y1 = max(0, floor(mouseY * gridSize / height) - clickSize + 1);
         let y2 = min(gridSize - 1, floor(mouseY * gridSize / height) + clickSize - 1);
-        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5, main);
-        noStroke();
+        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5, above);
+        above.noStroke();
     }
+    // copy layers
+    image(below, 0, 0);
+    image(above, 0, 0);
 
     // place pixels
     if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && mouseOver) {
