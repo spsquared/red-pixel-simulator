@@ -48,7 +48,7 @@ above.height = canvasResolution;
 
 let xScale = canvasResolution / gridSize;
 let yScale = canvasResolution / gridSize;
-let canvasScale = Math.min(window.innerWidth, window.innerHeight);
+let canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;
 let debugInfo = false;
 let animationTime = 0;
 let ticks = 0;
@@ -88,7 +88,7 @@ function createGrid() {
             grid[i][j] = 'air';
             lastGrid[i][j] = null;
             nextGrid[i][j] = null;
-            noiseGrid[i][j] = Math.round(noise(j / 2, i / 2) * 255);
+            noiseGrid[i][j] = noise(j / 2, i / 2);
             fireGrid[i][j] = false;
         }
     }
@@ -468,9 +468,9 @@ function clickLine(startX, startY, endX, endY, remove) {
 };
 
 function draw() {
-    let x = Math.floor(mouseX * gridSize / canvasResolution / (window.devicePixelRatio ?? 1));
-    let y = Math.floor(mouseY * gridSize / canvasResolution / (window.devicePixelRatio ?? 1));
-    mouseOver = x >= 0 && x <= gridSize && y >= 0 && y <= gridSize;
+    let x = Math.floor((mouseX - 10) * gridSize / canvasSize);
+    let y = Math.floor((mouseY - 10) * gridSize / canvasSize);
+    mouseOver = x >= 0 && x < gridSize && y >= 0 && y < gridSize;
 
     // draw pixels
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
@@ -527,28 +527,32 @@ function draw() {
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
         frames.push(millis());
     }
+    // copy layers
+    ctx.drawImage(below, 0, 0);
+    ctx.drawImage(above, 0, 0);
     // draw brush
     if (!gridPaused || !simulatePaused) {
         let x1 = Math.min(gridSize - 1, Math.max(0, x - clickSize + 1));
         let x2 = Math.min(gridSize - 1, Math.max(0, x + clickSize - 1));
         let y1 = Math.min(gridSize - 1, Math.max(0, y - clickSize + 1));
         let y2 = Math.min(gridSize - 1, Math.max(0, y + clickSize - 1));
-        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5, abovectx);
-        abovectx.strokeStyle = 'rgba(0, 0, 0, 1)';
-        abovectx.beginPath();
-        abovectx.moveTo(x1 * xScale, y1 * yScale);
-        abovectx.lineTo((x2 + 1) * xScale, y1 * yScale);
-        abovectx.lineTo((x2 + 1) * xScale, (y2 + 1) * yScale);
-        abovectx.lineTo(x1 * xScale, (y2 + 1) * yScale);
-        abovectx.stroke();
+        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5, ctx);
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 2;
+        ctx.lineJoin = 'miter';
+        ctx.beginPath();
+        ctx.moveTo(x1 * xScale, y1 * yScale);
+        ctx.lineTo((x2 + 1) * xScale, y1 * yScale);
+        ctx.lineTo((x2 + 1) * xScale, (y2 + 1) * yScale);
+        ctx.lineTo(x1 * xScale, (y2 + 1) * yScale);
+        ctx.lineTo(x1 * xScale, y1 * yScale);
+        ctx.lineTo((x2 + 1) * xScale, y1 * yScale);
+        ctx.stroke();
     }
-    // copy layers
-    ctx.drawImage(below, 0, 0);
-    ctx.drawImage(above, 0, 0);
 
     // place pixels
     if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && mouseOver) {
-        clickLine(x, y, Math.floor(pmouseX * gridSize / canvasResolution / (window.devicePixelRatio ?? 1)), Math.floor(pmouseY * gridSize / canvasResolution / (window.devicePixelRatio ?? 1)), mouseButton == RIGHT || removing);
+        clickLine(x, y, Math.floor((pmouseX - 10) * gridSize / canvasSize), Math.floor((pmouseY - 10) * gridSize / canvasSize), mouseButton == RIGHT || removing);
     }
     // simulate pixels
     if (!gridPaused || runTicks > 0 || simulatePaused) {
@@ -808,16 +812,16 @@ document.getElementById('advanceTick').onclick = (e) => {
 };
 
 window.onresize = (e) => {
-    canvasScale = Math.min(window.innerWidth, window.innerHeight);
+    canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;
     canvas.width = canvasResolution;
     canvas.height = canvasResolution;
     below.width = canvasResolution;
     below.height = canvasResolution;
     above.width = canvasResolution;
     above.height = canvasResolution;
-    canvas.style.width = canvasScale - 20 + 'px';
-    canvas.style.height = canvasScale - 20 + 'px';
-    if (window.innerWidth - canvasScale < 300) {
+    canvas.style.width = canvasSize + 'px';
+    canvas.style.height = canvasSize + 'px';
+    if (window.innerWidth - canvasSize < 500) {
         sidebar.style.top = Math.min(window.innerWidth, window.innerHeight) + 'px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 20 + 'px');
         let pickerWidth = (Math.round((window.innerWidth - 20) / 62) - 1) * 62;
@@ -825,8 +829,8 @@ window.onresize = (e) => {
         pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
     } else {
         sidebar.style.top = '0px';
-        document.body.style.setProperty('--max-sidebar-width', window.innerWidth - canvasScale - 20 + 'px');
-        let pickerWidth = (Math.round((window.innerWidth - canvasScale - 20) / 62) - 1) * 62;
+        document.body.style.setProperty('--max-sidebar-width', window.innerWidth - canvasSize - 20 + 'px');
+        let pickerWidth = (Math.round((window.innerWidth - canvasSize) / 62) - 1) * 62;
         pixelPicker.style.width = pickerWidth + 'px';
         pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
     }
