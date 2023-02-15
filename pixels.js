@@ -33,9 +33,6 @@ const grid = [];
 const nextGrid = [];
 const noiseGrid = [];
 const fireGrid = [];
-const lastFireGrid = [];
-const redrawGrid = [];
-let forceRedraw = true;
 let gridPaused = startPaused;
 let simulatePaused = false;
 let clickPixel = 'wall';
@@ -52,21 +49,16 @@ function createGrid() {
     nextGrid.length = 0;
     noiseGrid.length = 0;
     fireGrid.length = 0;
-    redrawGrid.length = 0;
     for (let i = 0; i < gridSize; i++) {
         grid[i] = [];
         nextGrid[i] = [];
         noiseGrid[i] = [];
         fireGrid[i] = [];
-        lastFireGrid[i] = [];
-        redrawGrid[i] = [];
         for (let j = 0; j < gridSize; j++) {
             grid[i][j] = 'air';
             nextGrid[i][j] = null;
             noiseGrid[i][j] = round(noise(j / 2, i / 2) * 255);
             fireGrid[i][j] = false;
-            lastFireGrid[i][j] = false;
-            redrawGrid[i][j] = false;
         }
     }
 };
@@ -75,7 +67,6 @@ function loadSaveCode() {
         gridPaused = true;
         simulatePaused = false;
         runTicks = 0;
-        forceRedraw = true;
         try {
             let x = 0;
             let y = 0;
@@ -217,7 +208,6 @@ function setup() {
     noStroke();
     below.noStroke();
     above.noStroke();
-    forceRedraw = true;
 
     noiseDetail(3, 0.6);
     windowResized();
@@ -3051,46 +3041,42 @@ function draw() {
         let b = parseInt(backgroundColor.substring(4, 6), 16);
         fill(r, g, b, 255 - fadeEffect);
         rect(0, 0, width, height);
+        below.clear();
         above.clear();
         for (let i = 0; i < gridSize; i++) {
             let curr = 'air';
-            let redrawing = redrawGrid[i][0];
             let amount = 0;
             let j;
             for (j = 0; j < gridSize; j++) {
                 amount++;
-                if (grid[i][j] != curr || redrawGrid[i][j] != redrawing) {
-                    if (curr != 'air' && (redrawing || forceRedraw)) drawPixels(j - amount, i , amount, 1, curr, 1, pixels[curr].above ? above : below);
-                    else if (curr == 'air') clearPixels(j - amount, i, amount, 1, pixels[curr].above ? above : below);
+                if (grid[i][j] != curr) {
+                    drawPixels(j - amount, i , amount, 1, curr, 1, pixels[curr].above ? above : below);
                     curr = grid[i][j]
-                    redrawing = redrawGrid[i][j];
                     amount = 0;
                 }
             }
-            if (curr != 'air' && (redrawing || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixels[curr].above ? above : below);
-            else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixels[curr].above ? above : below);
+            if (curr != 'air') drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixels[curr].above ? above : below);
         }
-        for (let i = 0; i < gridSize; i++) {
-            let j = 0;
-            let fire = false;
-            let number = 0;
-            while (j < gridSize) {
-                number++;
-                if (fireGrid[i][j] != fire) {
-                    if (fire) {
-                        drawPixels(j - number, i, number, 1, 'fire', 1, above);
-                    }
-                    fire = fireGrid[i][j];
-                    number = 0;
-                }
-                j++;
-            }
-            number++;
-            if (fire) {
-                drawPixels(j - number, i, number, 1, 'fire', 1, above);
-            }
-        }
-        forceRedraw = false;
+        // for (let i = 0; i < gridSize; i++) {
+        //     let j = 0;
+        //     let fire = false;
+        //     let number = 0;
+        //     while (j < gridSize) {
+        //         number++;
+        //         if (fireGrid[i][j] != fire) {
+        //             if (fire) {
+        //                 drawPixels(j - number, i, number, 1, 'fire', 1, above);
+        //             }
+        //             fire = fireGrid[i][j];
+        //             number = 0;
+        //         }
+        //         j++;
+        //     }
+        //     number++;
+        //     if (fire) {
+        //         drawPixels(j - number, i, number, 1, 'fire', 1, above);
+        //     }
+        // }
     }
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
         frames.push(millis());
@@ -3133,12 +3119,6 @@ function draw() {
                     if (fireGrid[k][j]) pixels['fire'].update(j, k);
                 }
             }
-            for (let i = 0; i < gridSize; i++) {
-                for (let j = 0; j < gridSize; j++) {
-                    lastFireGrid[i][j] = fireGrid[i][j];
-                    redrawGrid[i][j] = false;
-                }
-            }
             for (let j = 0; j <= 5; j++) {
                 if (ticks % 2 == 0) {
                     for (let k = 0; k < gridSize; k++) {
@@ -3156,29 +3136,14 @@ function draw() {
                 for (let i = 0; i < gridSize; i++) {
                     for (let j = 0; j < gridSize; j++) {
                         if (nextGrid[i][j] != null) {
-                            redrawGrid[i][j] = grid[i][j] != nextGrid[i][j] || redrawGrid[i][j] || pixels[nextGrid[i][j]].animated;
                             grid[i][j] = nextGrid[i][j];
                             nextGrid[i][j] = null;
-                        } else {
-                            redrawGrid[i][j] = pixels[grid[i][j]].animated || redrawGrid[i][j];
                         }
                     }
                 }
             }
             frames.push(millis());
             ticks++;
-        }
-    } else if (gridPaused) {
-        for (let i = 0; i < gridSize; i++) {
-            for (let j = 0; j < gridSize; j++) {
-                if (nextGrid[i][j] != null) {
-                    redrawGrid[i][j] = grid[i][j] != nextGrid[i][j] || pixels[nextGrid[i][j]].animated;
-                    grid[i][j] = nextGrid[i][j];
-                    nextGrid[i][j] = null;
-                } else {
-                    redrawGrid[i][j] = pixels[grid[i][j]].animated;
-                }
-            }
         }
     }
 
@@ -3249,7 +3214,6 @@ function windowResized() {
     above = createGraphics(gridResolution, gridResolution);
     below.noStroke();
     above.noStroke();
-    forceRedraw = true;
     canvasScale = Math.min(window.innerWidth / gridResolution, window.innerHeight / gridResolution);
     document.querySelector('.p5Canvas').style.width = gridResolution * canvasScale - 20 + 'px';
     document.querySelector('.p5Canvas').style.height = gridResolution * canvasScale - 20 + 'px';
