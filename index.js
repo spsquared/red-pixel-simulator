@@ -17,7 +17,7 @@ let noNoise = false;
 let optimizedLags = false;
 let fadeEffect = 127;
 
-const canvasResolution = 600;
+const canvasResolution = parseInt(window.localStorage.getItem('resolution') ?? 600);
 const NO_OFFSCREENCANVAS = typeof OffscreenCanvas == 'undefined';
 function createCanvas2(w, h) {
     if (NO_OFFSCREENCANVAS) {
@@ -28,6 +28,17 @@ function createCanvas2(w, h) {
     } else {
         return new OffscreenCanvas(w || 1, h || 1);
     }
+};
+function resetCanvases() {
+    ctx.imageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+    belowctx.imageSmoothingEnabled = false;
+    belowctx.webkitImageSmoothingEnabled = false;
+    belowctx.mozImageSmoothingEnabled = false;
+    abovectx.imageSmoothingEnabled = false;
+    abovectx.webkitImageSmoothingEnabled = false;
+    abovectx.mozImageSmoothingEnabled = false;
 };
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -45,6 +56,7 @@ below.width = canvasResolution;
 below.height = canvasResolution;
 above.width = canvasResolution;
 above.height = canvasResolution;
+resetCanvases();
 
 let xScale = canvasResolution / gridSize;
 let yScale = canvasResolution / gridSize;
@@ -532,10 +544,10 @@ function draw() {
     ctx.drawImage(above, 0, 0);
     // draw brush
     if (!gridPaused || !simulatePaused) {
-        let x1 = Math.min(gridSize - 1, Math.max(0, x - clickSize + 1));
-        let x2 = Math.min(gridSize - 1, Math.max(0, x + clickSize - 1));
-        let y1 = Math.min(gridSize - 1, Math.max(0, y - clickSize + 1));
-        let y2 = Math.min(gridSize - 1, Math.max(0, y + clickSize - 1));
+        let x1 = Math.min(gridSize, Math.max(0, x - clickSize + 1));
+        let x2 = Math.min(gridSize - 1, Math.max(-1, x + clickSize - 1));
+        let y1 = Math.min(gridSize, Math.max(0, y - clickSize + 1));
+        let y2 = Math.min(gridSize - 1, Math.max(-1, y + clickSize - 1));
         drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5, ctx);
         ctx.strokeStyle = 'rgb(0, 0, 0)';
         ctx.lineWidth = 2;
@@ -617,7 +629,7 @@ function draw() {
         }
     }
     ctx.fillStyle = '#000';
-    ctx.font = '14px Arial';
+    ctx.font = '20px Arial';
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
     ctx.fillText(`FPS: ${frames.length}`, 3, 1);
@@ -635,16 +647,16 @@ function draw() {
             ctx.fillStyle = '#000';
             ctx.fillRect(5 + i * 2, 120 - fpsList[i], 2, fpsList[i]);
         }
-        ctx.fillText('Last 10 seconds:', 10, 22);
+        ctx.fillText('Last 10 seconds:', 10, 24);
     }
     ctx.textAlign = 'right';
     ctx.fillText(`Brush Size: ${clickSize * 2 - 1}`, canvasResolution - 3, 1);
-    ctx.fillText(`Brush Pixel: ${(pixels[clickPixel] ?? pixels['missing']).name}`, canvasResolution - 3, 16);
+    ctx.fillText(`Brush Pixel: ${(pixels[clickPixel] ?? pixels['missing']).name}`, canvasResolution - 3, 22);
     if (gridPaused) {
         ctx.fillStyle = '#000';
         ctx.fillText('PAUSED', canvasResolution - 3, 33);
         if (simulatePaused) {
-            ctx.font = '40px Arial';
+            ctx.font = '60px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'center';
             ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
@@ -791,6 +803,13 @@ document.getElementById('fadeEffect').onclick = (e) => {
     if (fadeEffect) document.getElementById('fadeEffect').style.backgroundColor = 'lime';
     else document.getElementById('fadeEffect').style.backgroundColor = 'red';
 };
+document.getElementById('changeResolution').onclick = (e) => {
+    let newRes = window.prompt('Enter new resolution: ', canvasResolution);
+    if (parseInt(newRes).toString() == newRes && parseInt(newRes) > 0) {
+        window.localStorage.setItem('resolution', newRes);
+        window.location.reload();
+    }
+};
 
 document.getElementById('sizeUp').onclick = (e) => {
     clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
@@ -819,9 +838,10 @@ window.onresize = (e) => {
     below.height = canvasResolution;
     above.width = canvasResolution;
     above.height = canvasResolution;
+    resetCanvases();
     canvas.style.width = canvasSize + 'px';
     canvas.style.height = canvasSize + 'px';
-    if (window.innerWidth - canvasSize < 500) {
+    if (window.innerWidth - canvasSize < 400) {
         sidebar.style.top = Math.min(window.innerWidth, window.innerHeight) + 'px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 20 + 'px');
         let pickerWidth = (Math.round((window.innerWidth - 20) / 62) - 1) * 62;

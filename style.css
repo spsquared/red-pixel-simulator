@@ -27,7 +27,8 @@ main {
     left: 0px;
     margin: 8px 8px;
     border: 2px solid black;
-    /* cursor: none; */
+    /* image-rendering: pixelated; */
+    cursor: none;
 }
 
 #sidebar {
@@ -171,7 +172,7 @@ td {
     font-size: 18px;
 }
 
-#noNoise, #fadeEffect {
+#noNoise, #fadeEffect, #changeResolution {
     margin-left: unset;
     font-size: 12px;
     border-width: 3px;
