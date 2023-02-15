@@ -27,6 +27,7 @@ main {
     left: 0px;
     margin: 8px 8px;
     border: 2px solid black;
+    /* cursor: none; */
 }
 
 #sidebar {

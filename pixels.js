@@ -193,7 +193,7 @@ const pixels = {
                 drawPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(75, 50, 255, ${Math.round(noise((x + i) / 4, (y + j) / 4, animationTime / 10) * 127) * opacity + 30})`;
+                        ctx.fillStyle = `rgba(75, 50, 255, ${noise((x + i) / 4, (y + j) / 4, animationTime / 10) * opacity + 0.1})`;
                         drawPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -317,7 +317,7 @@ const pixels = {
                 drawPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(255, 255, 0, ${Math.round(noise((x + i) / 6, (y + j) / 6, animationTime / 30) * 255) * opacity})`;
+                        ctx.fillStyle = `rgba(255, 255, 0, ${noise((x + i) / 6, (y + j) / 6, animationTime / 30) * opacity})`;
                         drawPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
