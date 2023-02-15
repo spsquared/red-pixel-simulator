@@ -30,6 +30,7 @@ let frames = [];
 let lastFpsList = -1;
 let fpsList = [];
 const grid = [];
+const lastGrid = [];
 const nextGrid = [];
 const noiseGrid = [];
 const fireGrid = [];
@@ -41,21 +42,25 @@ let removing = false;
 let runTicks = 0;
 let acceptInputs = true;
 let mouseOver = false;
+let forcedRedraw = true;
 
 function createGrid() {
     xScale = width / gridSize;
     yScale = height / gridSize;
     grid.length = 0;
+    lastGrid.length = 0;
     nextGrid.length = 0;
     noiseGrid.length = 0;
     fireGrid.length = 0;
     for (let i = 0; i < gridSize; i++) {
         grid[i] = [];
+        lastGrid[i] = [];
         nextGrid[i] = [];
         noiseGrid[i] = [];
         fireGrid[i] = [];
         for (let j = 0; j < gridSize; j++) {
             grid[i][j] = 'air';
+            lastGrid[i][j] = null;
             nextGrid[i][j] = null;
             noiseGrid[i][j] = round(noise(j / 2, i / 2) * 255);
             fireGrid[i][j] = false;
@@ -67,6 +72,7 @@ function loadSaveCode() {
         gridPaused = true;
         simulatePaused = false;
         runTicks = 0;
+        forcedRedraw = true;
         try {
             let x = 0;
             let y = 0;
@@ -455,8 +461,9 @@ function drawPixel(x, y, width, height, renderer) {
     renderer.rect(x * xScale, y * yScale, xScale * width, yScale * height);
 };
 function updatePixel(x, y, i) {
-    if (pixels[grid[y][x]] && pixels[grid[y][x]].updatePriority == i) {
-        pixels[grid[y][x]].update(x, y);
+    let pixelType = pixels[grid[y][x]];
+    if (pixelType != null && pixelType.updatePriority == i) {
+        pixelType.update(x, y);
     }
 };
 function updateTouchingPixel(x, y, type, action) {
@@ -1259,7 +1266,7 @@ const pixels = {
                 drawPixel(x, y, width, height, rend);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        rend.fill(255, 255, 0, noiseGrid[y + j][x + i] * opacity * 0.5);
+                        rend.fill(255, 255, 0, noiseGrid[y + j][x + i] * opacity);
                         drawPixel(x + i, y + j, 1, 1, rend);
                     }
                 }
@@ -3041,21 +3048,41 @@ function draw() {
         let b = parseInt(backgroundColor.substring(4, 6), 16);
         fill(r, g, b, 255 - fadeEffect);
         rect(0, 0, width, height);
-        below.clear();
+        // below.clear();
         above.clear();
+        // for (let i = 0; i < gridSize; i++) {
+        //     let curr = 'air';
+        //     let amount = 0;
+        //     let toDraw = false;
+        //     let j;
+        //     for (j = 0; j < gridSize; j++) {
+        //         amount++;
+        //         if (grid[i][j] != curr) {
+        //             drawPixels(j - amount, i , amount, 1, curr, 1, pixels[curr].above ? above : below);
+        //             curr = grid[i][j]
+        //             amount = 0;
+        //         }
+        //     }
+        //     if (curr != 'air') drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixels[curr].above ? above : below);
+        // }
         for (let i = 0; i < gridSize; i++) {
             let curr = 'air';
+            let redrawing = grid[i][0] != lastGrid[i][0];
             let amount = 0;
             let j;
             for (j = 0; j < gridSize; j++) {
                 amount++;
-                if (grid[i][j] != curr) {
-                    drawPixels(j - amount, i , amount, 1, curr, 1, pixels[curr].above ? above : below);
+                if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
+                    let pixelType = pixels[curr];
+                    if (curr != 'air' && (redrawing || pixelType.animated || pixelType.animatedNoise || forcedRedraw)) drawPixels(j - amount, i , amount, 1, curr, 1, pixelType.above ? above : below);
+                    else if (curr == 'air') clearPixels(j - amount, i, amount, 1, pixelType.above ? above : below);
                     curr = grid[i][j]
+                    redrawing = grid[i][j] != lastGrid[i][j];
                     amount = 0;
                 }
             }
-            if (curr != 'air') drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixels[curr].above ? above : below);
+            if (curr != 'air' && (redrawing || forcedRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixels[curr].above ? above : below);
+            else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixels[curr].above ? above : below);
         }
         // for (let i = 0; i < gridSize; i++) {
         //     let j = 0;
@@ -3077,6 +3104,12 @@ function draw() {
         //         drawPixels(j - number, i, number, 1, 'fire', 1, above);
         //     }
         // }
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                lastGrid[i][j] = grid[i][j];
+            }
+        }
+        forcedRedraw = false;
     }
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
         frames.push(millis());
@@ -3114,9 +3147,10 @@ function draw() {
             4: pumps and cloners
             5: lag
             */
+           let firePixelType = pixels['fire']
             for (let j = 0; j < gridSize; j++) {
                 for (let k = 0; k < gridSize; k++) {
-                    if (fireGrid[k][j]) pixels['fire'].update(j, k);
+                    if (fireGrid[k][j]) firePixelType.update(j, k);
                 }
             }
             for (let j = 0; j <= 5; j++) {
@@ -3230,4 +3264,5 @@ function windowResized() {
         document.getElementById('pixelPicker').style.width = pickerWidth + 'px';
         document.getElementById('pixelPickerDescription').style.width = pickerWidth - 14 + 'px';
     }
+    forcedRedraw = true;
 };
