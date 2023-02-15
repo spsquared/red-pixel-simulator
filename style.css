@@ -152,6 +152,15 @@ td {
     height: 40px;
     background-color: red;
 }
+#gridSizeLabel {
+    margin-top: 8px;
+    margin-left: 8px;
+    font-size: 18px;
+}
+#gridSize {
+    margin-top: 8px;
+    font-size: 18px;
+}
 
 #noNoise, #fadeEffect {
     margin-left: unset;
@@ -177,7 +186,7 @@ td {
     height: 100vh;
     background-color: #0005;
     opacity: 0;
-    transition: 500ms linear opacity;
+    transition: 250ms linear opacity;
     pointer-events: none;
     z-index: 1000;
 }
@@ -193,7 +202,7 @@ td {
     background-color: lightgray;
     text-align: center;
     transform: translateY(-100vh);
-    transition: 500ms ease transform;
+    transition: 400ms ease-in-out transform;
 }
 #confirmationModalYes {
     width: 100px;

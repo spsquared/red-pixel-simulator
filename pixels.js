@@ -1,8 +1,11 @@
 // no documentation here!
 
-window.onerror = e => {
-
-};
+window.addEventListener('error', (e) => {
+    document.getElementById('confirmationModalContainer').style.opacity = '1';
+    document.getElementById('confirmationModalContainer').style.pointerEvents = 'all';
+    document.getElementById('confirmationModal').style.transform = 'translateY(0px)';
+    document.getElementById('confirmationModal').innerHTML = `<span style="color: red;"><br>${e.message}<br>${e.filename} ${e.lineno}:${e.colno}</span>`;
+});
 
 let gridSize = 100;
 let saveCode = '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
@@ -12,10 +15,14 @@ let backgroundColor = 'ffffff';
 let noNoise = false;
 let optimizedLags = false;
 let fadeEffect = 127;
+let gridResolution = 600;
 
-let xScale = 600 / gridSize;
-let yScale = 600 / gridSize;
-let canvasScale = Math.min(window.innerWidth / 600, window.innerHeight / 600);
+let below;
+let above;
+let main;
+let xScale = gridResolution / gridSize;
+let yScale = gridResolution / gridSize;
+let canvasScale = Math.min(window.innerWidth / gridResolution, window.innerHeight / gridResolution);
 let debugInfo = false;
 let animationTime = 0;
 let ticks = 0;
@@ -25,6 +32,10 @@ let fpsList = [];
 const grid = [];
 const nextGrid = [];
 const noiseGrid = [];
+const fireGrid = [];
+const lastFireGrid = [];
+const redrawGrid = [];
+let forceRedraw = true;
 let gridPaused = startPaused;
 let simulatePaused = false;
 let clickPixel = 'wall';
@@ -40,14 +51,22 @@ function createGrid() {
     grid.length = 0;
     nextGrid.length = 0;
     noiseGrid.length = 0;
+    fireGrid.length = 0;
+    redrawGrid.length = 0;
     for (let i = 0; i < gridSize; i++) {
-        grid.push([]);
-        nextGrid.push([]);
-        noiseGrid.push([]);
+        grid[i] = [];
+        nextGrid[i] = [];
+        noiseGrid[i] = [];
+        fireGrid[i] = [];
+        lastFireGrid[i] = [];
+        redrawGrid[i] = [];
         for (let j = 0; j < gridSize; j++) {
             grid[i][j] = 'air';
             nextGrid[i][j] = null;
             noiseGrid[i][j] = round(noise(j / 2, i / 2) * 255);
+            fireGrid[i][j] = false;
+            lastFireGrid[i][j] = false;
+            redrawGrid[i][j] = false;
         }
     }
 };
@@ -56,6 +75,7 @@ function loadSaveCode() {
         gridPaused = true;
         simulatePaused = false;
         runTicks = 0;
+        forceRedraw = true;
         try {
             let x = 0;
             let y = 0;
@@ -189,20 +209,27 @@ function updateTimeControlButtons() {
 };
 
 function setup() {
-    createCanvas(600, 600);
+    main = createCanvas(gridResolution, gridResolution);
+    below = createGraphics(gridResolution, gridResolution);
+    above = createGraphics(gridResolution, gridResolution);
     frameRate(60);
     noCursor();
     noStroke();
+    below.noStroke();
+    above.noStroke();
+    forceRedraw = true;
 
     noiseDetail(3, 0.6);
     windowResized();
 
     createGrid();
     loadSaveCode();
-    document.getElementById('saveCode').value = saveCode;
+    const saveCodeText = document.getElementById('saveCode');
+    saveCodeText.value = saveCode;
+    // store in local storage
 
     document.onkeydown = (e) => {
-        if (e.ctrlKey || e.target.matches('#saveCode') || !acceptInputs) return;
+        if (e.ctrlKey || e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs) return;
         const key = e.key.toLowerCase();
         for (let i in pixels) {
             if (pixels[i].key == key) {
@@ -288,18 +315,12 @@ function setup() {
             };
         });
     };
-    document.getElementById('reset').onclick = async (e) => {
-        if (await confirmationModal()) {
-            saveCode = document.getElementById('saveCode').value;
-            loadSaveCode();
-        }
-    };
     document.getElementById('copySave').onclick = (e) => {
         gridPaused = true;
         simulatePaused = false;
         updateTimeControlButtons();
         saveCode = generateSaveCode();
-        document.getElementById('saveCode').value = saveCode;
+        saveCodeText.value = saveCode;
         window.navigator.clipboard.writeText(saveCode);
     };
     document.getElementById('uploadSave').onclick = (e) => {
@@ -317,7 +338,7 @@ function setup() {
             reader.onload = async (e) => {
                 if (await confirmationModal()) {
                     saveCode = e.target.result;
-                    document.getElementById('saveCode').value = saveCode;
+                    saveCodeText.value = saveCode;
                     loadSaveCode();
                 }
             };
@@ -329,7 +350,7 @@ function setup() {
         simulatePaused = false;
         updateTimeControlButtons();
         saveCode = generateSaveCode();
-        document.getElementById('saveCode').value = saveCode;
+        saveCodeText.value = saveCode;
         const encoded = `data:text/redpixel;base64,${btoa(saveCode)}`;
         const a = document.createElement('a');
         a.href = encoded;
@@ -340,6 +361,17 @@ function setup() {
         startPaused = !startPaused;
         if (startPaused) document.getElementById('startPaused').style.backgroundColor = 'lime';
         else document.getElementById('startPaused').style.backgroundColor = 'red';
+    };
+    document.getElementById('reset').onclick = async (e) => {
+        if (await confirmationModal()) {
+            saveCode = saveCodeText.value;
+            loadSaveCode();
+        }
+    };
+    document.getElementById('gridSize').oninput = (e) => {
+        document.getElementById('gridSize').value = Math.max(1, Math.min(parseInt(document.getElementById('gridSize').value.replace('e', '')), 500));
+        if (document.getElementById('gridSize').value != '') saveCode = document.getElementById('gridSize').value + saveCode.substring(saveCode.indexOf(';'));
+        saveCodeText.value = saveCode;
     };
     document.getElementById('noNoise').onclick = (e) => {
         noNoise = !noNoise;
@@ -417,15 +449,20 @@ function setup() {
     lastFpsList = millis();
 };
 
-function drawPixels(x, y, width, height, type, opacity) {
+function drawPixels(x, y, width, height, type, opacity, renderer) {
     if (pixels[type]) {
-        pixels[type].draw(x, y, width, height, opacity);
+        pixels[type].draw(x, y, width, height, opacity, renderer);
     } else {
-        pixels['missing'].draw(x, y, width, height, opacity);
+        pixels['missing'].draw(x, y, width, height, opacity, renderer);
     }
 };
-function drawPixel(x, y, width, height) {
-    rect(x * xScale, y * yScale, xScale * width, yScale * height);
+function clearPixels(x, y, width, height, renderer) {
+    renderer.erase();
+    renderer.rect(x * xScale, y * yScale, xScale * width, yScale * height);
+    renderer.noErase();
+};
+function drawPixel(x, y, width, height, renderer) {
+    renderer.rect(x * xScale, y * yScale, xScale * width, yScale * height);
 };
 function updatePixel(x, y, i) {
     if (pixels[grid[y][x]] && pixels[grid[y][x]].updatePriority == i) {
@@ -537,7 +574,7 @@ function detectRotate(x, y) {
     });
 };
 function explode(x, y, size, chain) {
-    chain = chain ?? 3;
+    chain = chain ?? 2;
     nextGrid[y][x] = 'air';
     grid[y][x] = 'wall';
     let chained = false;
@@ -586,7 +623,7 @@ const pixels = {
     air: {
         name: 'Air',
         description: 'It\'s air... What else would it be?',
-        draw: function (x, y, width, height, opacity) { },
+        draw: function (x, y, width, height, opacity, rend) { },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -595,14 +632,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: false
     },
     wall: {
         name: 'Wall',
         description: 'An immovable wall',
-        draw: function (x, y, width, height, opacity) {
-            fill(0, 0, 0, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(0, 0, 0, opacity * 255);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -612,14 +652,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     dirt: {
         name: 'Dirt',
         description: 'Wash your hands after handling it, it\'s pretty dirty',
-        draw: function (x, y, width, height, opacity) {
-            fill(125, 75, 0, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(125, 75, 0, opacity * 255);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -650,14 +693,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 2,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     grass: {
         name: 'Grass',
         description: 'Go touch some',
-        draw: function (x, y, width, height, opacity) {
-            fill(25, 175, 25, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(25, 175, 25, opacity * 255);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -710,14 +756,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 2,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     sand: {
         name: 'Sand',
         description: 'Weird yellow powdery stuff that falls',
-        draw: function (x, y, width, height, opacity) {
-            fill(255, 225, 125, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(255, 225, 125, opacity * 255);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -748,22 +797,25 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 2,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     water: {
         name: 'Water',
         description: 'Unrealistically flows and may or may not be wet',
-        draw: function (x, y, width, height, opacity) {
+        draw: function (x, y, width, height, opacity, rend) {
             if (noNoise) {
-                fill(75, 100, 255, opacity * 255);
-                drawPixel(x, y, width, height);
+                rend.fill(75, 100, 255, opacity * 255);
+                drawPixel(x, y, width, height, rend);
             } else {
-                fill(100, 175, 255, opacity * 255);
-                drawPixel(x, y, width, height);
+                rend.fill(100, 175, 255, opacity * 255);
+                drawPixel(x, y, width, height, rend);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        fill(75, 50, 255, round(noise((x + i) / 4, (y + j) / 4, animationTime / 10) * 127) * opacity + 30);
-                        drawPixel(x + i, y + j, 1, 1);
+                        rend.fill(75, 50, 255, round(noise((x + i) / 4, (y + j) / 4, animationTime / 10) * 127) * opacity + 30);
+                        drawPixel(x + i, y + j, 1, 1, rend);
                     }
                 }
             }
@@ -869,28 +921,37 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 3,
+        animatedNoise: true,
+        animated: true,
+        above: false,
         pickable: true
     },
     lava: {
         name: 'Lava',
         description: 'Try not to get burned, it also melts concrete and other things',
-        draw: function (x, y, width, height, opacity) {
+        draw: function (x, y, width, height, opacity, rend) {
             if (noNoise) {
-                fill(255, 125, 0, opacity * 255);
-                drawPixel(x, y, width, height);
+                rend.fill(255, 125, 0, opacity * 255);
+                drawPixel(x, y, width, height, rend);
             } else {
-                fill(255, 0, 0, opacity * 255);
-                drawPixel(x, y, width, height);
+                rend.fill(255, 0, 0, opacity * 255);
+                drawPixel(x, y, width, height, rend);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        fill(255, 255, 0, round(noise((x + i) / 6, (y + j) / 6, animationTime / 30) * 255) * opacity);
-                        drawPixel(x + i, y + j, 1, 1);
+                        rend.fill(255, 255, 0, round(noise((x + i) / 6, (y + j) / 6, animationTime / 30) * 255) * opacity);
+                        drawPixel(x + i, y + j, 1, 1, rend);
                     }
                 }
             }
         },
         update: function (x, y) {
             updateTouchingPixel(x, y, 'collapsible', function (actionX, actionY) {
+                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
+                    nextGrid[y][x] = 'air';
+                    nextGrid[actionY][actionX] = 'sand';
+                }
+            });
+            updateTouchingPixel(x, y, 'laser_scatterer', function (actionX, actionY) {
                 if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
                     nextGrid[actionY][actionX] = 'sand';
@@ -906,62 +967,87 @@ const pixels = {
             if (random() < 0.0001 * cooldownSpeed) {
                 nextGrid[y][x] = 'concrete_powder';
             }
-            if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air') {
-                    if (nextGrid[y][x] == null && nextGrid[y + 1][x] == null && random() < 0.5) {
-                        nextGrid[y][x] = 'air';
-                        nextGrid[y + 1][x] = 'lava';
+            if (y < gridSize - 1 && random() < 0.5) {
+                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'collapsible') {
+                    if (canMoveTo(x, y + 1)) {
+                        move(x, y, x, y + 1);
                     }
                 } else {
-                    let validSlidingPositions = [];
-                    let leftX = 0;
-                    while (x + leftX > 0) {
-                        if (grid[y][x + leftX - 1] == 'air' || grid[y][x + leftX - 1] == 'concrete') {
-                            if (grid[y + 1][x + leftX - 1] == 'air') {
-                                validSlidingPositions.push(leftX - 1);
-                                break;
+                    let left = x - 1;
+                    let right = x + 1;
+                    let slideLeft = 0;
+                    let slideRight = 0;
+                    let foundLeftDrop = false;
+                    let foundRightDrop = false;
+                    let incrementLeft = canMoveTo(x - 1, y) && grid[y][x - 1] == 'air';
+                    let incrementRight = canMoveTo(x + 1, y) && grid[y][x + 1] == 'air';
+                    while (incrementLeft || incrementRight) {
+                        if (incrementLeft) {
+                            if (grid[y][left] != 'air') {
+                                if (grid[y][left] != 'lava' || (y > 0 && grid[y - 1][left] != 'air')) slideLeft = x - left;
+                                incrementLeft = false;
                             }
-                        } else {
-                            break;
+                            if (grid[y + 1][left] == 'air') {
+                                slideLeft = x - left;
+                                foundLeftDrop = true;
+                                incrementLeft = false;
+                            }
+                            left--;
+                            if (left < 0) incrementLeft = false;
                         }
-                        leftX--;
+                        if (incrementRight) {
+                            if (grid[y][right] != 'air') {
+                                if (grid[y][right] != 'lava' || (y > 0 && grid[y - 1][right] != 'air')) slideRight = right - x;
+                                incrementRight = false;
+                            }
+                            if (grid[y + 1][right] == 'air') {
+                                slideRight = right - x;
+                                foundRightDrop = true;
+                                incrementRight = false;
+                            }
+                            right++;
+                            if (right >= gridSize) incrementRight = false;
+                        }
                     }
-                    let rightX = 0;
-                    while (x + rightX < gridSize - 1) {
-                        if (grid[y][x + rightX + 1] == 'air' || grid[y][x + rightX + 1] == 'concrete') {
-                            if (grid[y + 1][x + rightX + 1] == 'air') {
-                                validSlidingPositions.push(rightX + 1);
-                                break;
+                    let toSlide = 0;
+                    if (foundLeftDrop && foundRightDrop) {
+                        if (slideLeft > slideRight) {
+                            toSlide = -1;
+                        } else if (slideLeft < slideRight) {
+                            toSlide = 1;
+                        } else {// implies both slides are not 0
+                            if (random() <= 0.5) {
+                                toSlide = -1;
+                            } else {
+                                toSlide = 1;
                             }
+                        }
+                    } else if (foundLeftDrop) {
+                        toSlide = -1;
+                    } else if (foundRightDrop) {
+                        toSlide = 1;
+                    } else if (slideLeft > slideRight) {
+                        toSlide = -1;
+                    } else if (slideLeft < slideRight) {
+                        toSlide = 1;
+                    } else if (slideLeft != 0) { // implies slideRight also isn't 0
+                        if (random() <= 0.5) {
+                            toSlide = -1;
                         } else {
-                            break;
+                            toSlide = 1;
                         }
-                        rightX++;
                     }
-                    if (validSlidingPositions.length > 0) {
-                        let slidePosition;
-                        for (let i = 0; i < validSlidingPositions.length; i++) {
-                            if (slidePosition == undefined) {
-                                slidePosition = validSlidingPositions[i];
-                            } else if (abs(validSlidingPositions[i]) < abs(slidePosition)) {
-                                slidePosition = validSlidingPositions[i];
-                            } else if (abs(validSlidingPositions[i]) == abs(slidePosition)) {
-                                if (random() < 0.5) {
-                                    slidePosition = validSlidingPositions[i];
-                                }
-                            }
+                    if (toSlide > 0) {
+                        if (foundRightDrop && grid[y + 1][x + 1] == 'air') {
+                            move(x, y, x + 1, y + 1);
+                        } else {
+                            move(x, y, x + 1, y);
                         }
-                        if (nextGrid[y][x] == null && random() < 0.5) {
-                            if (slidePosition == -1 && nextGrid[y + 1][x + slidePosition] == null) {
-                                nextGrid[y][x] = 'air';
-                                nextGrid[y + 1][x + slidePosition] = 'lava';
-                            } else if (slidePosition == 1 && nextGrid[y + 1][x + slidePosition] == null) {
-                                nextGrid[y][x] = 'air';
-                                nextGrid[y + 1][x + slidePosition] = 'lava';
-                            } else if (nextGrid[y][x + slidePosition / abs(slidePosition)] == null) {
-                                nextGrid[y][x] = grid[y][x + slidePosition / abs(slidePosition)];
-                                nextGrid[y][x + slidePosition / abs(slidePosition)] = 'lava';
-                            }
+                    } else if (toSlide < 0) {
+                        if (foundLeftDrop && grid[y + 1][x - 1] == 'air') {
+                            move(x, y, x - 1, y + 1);
+                        } else {
+                            move(x, y, x - 1, y);
                         }
                     }
                 }
@@ -1008,14 +1094,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 3,
+        animatedNoise: true,
+        animated: true,
+        above: false,
         pickable: true
     },
     concrete_powder: {
         name: 'Concrete Powder',
         description: 'Like sand, but hardens into concrete when in contact with water',
-        draw: function (x, y, width, height, opacity) {
-            fill(150, 150, 150, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(150, 150, 150, opacity * 255);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -1058,32 +1147,28 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 2,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     concrete: {
         name: 'Concrete',
         description: 'Hard stuff that doesn\'t move easily',
-        draw: function (x, y, width, height, opacity) {
-            fill(75, 75, 75, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(75, 75, 75, opacity * 255);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
             if (y > 0) {
                 if (grid[y - 1][x] == 'lava') {
-                    if (nextGrid[y][x] == null && nextGrid[y - 1][x] == null && random() < 0.25) {
+                    if (canMoveTo(x, y - 1) && random() < 0.25) {
                         nextGrid[y][x] = 'lava';
                         nextGrid[y - 1][x] = 'concrete_powder';
                     }
                 }
             }
-            // if(y < gridSize - 1){
-            //     if(grid[y + 1][x] == 'water'){
-            //         if(nextGrid[y][x] == null && nextGrid[y + 1][x] == null){
-            //             nextGrid[y][x] = 'water';
-            //             nextGrid[y + 1][x] = 'concrete';
-            //         }
-            //     }
-            // }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -1092,14 +1177,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 3,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     plant: {
         name: 'P.L.A.N.T.',
         description: '<span style="font-style: italic;">Persistent Loud Aesthetic Nail Tables.</span><br>No, it doesn\'t actually stand for anything. But it does consume concrete alarmingly fast',
-        draw: function (x, y, width, height, opacity) {
-            fill(125, 255, 75, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(125, 255, 75, opacity * 255);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -1126,14 +1214,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     sponge: {
         name: 'S.P.O.N.G.E.',
         description: '<span style="font-style: italic;">Sample Providing Oceanic Nucleolic Green Egg</span><br>Don\'t ask',
-        draw: function (x, y, width, height, opacity) {
-            fill(225, 255, 75, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(225, 255, 75, opacity * 255);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -1161,22 +1252,58 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: false,
+        above: false,
+        pickable: true
+    },
+    fire: {
+        name: 'Fire',
+        description: 'AAAAAA! It burns!',
+        draw: function (x, y, width, height, opacity, rend) {
+            if (noNoise) {
+                rend.fill(255, 180, 0, opacity * 127);
+                drawPixel(x, y, width, height, rend);
+            } else {
+                rend.fill(255, 100, 0, opacity * 127);
+                drawPixel(x, y, width, height, rend);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        rend.fill(255, 255, 0, noiseGrid[y + j][x + i] * opacity * 0.5);
+                        drawPixel(x + i, y + j, 1, 1, rend);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 180, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        key: Infinity,
+        updatePriority: 0,
+        animatedNoise: false,
+        animated: false,
+        above: true,
         pickable: true
     },
     gunpowder: {
         name: 'Gunpowder',
         description: 'A low explosive that explodes when lit on fire',
-        draw: function (x, y, width, height, opacity) {
+        draw: function (x, y, width, height, opacity, rend) {
             if (noNoise) {
-                fill(50, 25, 25, opacity * 255);
-                drawPixel(x, y, width, height);
+                rend.fill(50, 25, 25, opacity * 255);
+                drawPixel(x, y, width, height, rend);
             } else {
-                fill(30, 20, 20, opacity * 255);
-                drawPixel(x, y, width, height);
+                rend.fill(30, 20, 20, opacity * 255);
+                drawPixel(x, y, width, height, rend);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        fill(55, 40, 40, noiseGrid[y + j][x + i] * opacity);
-                        drawPixel(x + i, y + j, 1, 1);
+                        rend.fill(55, 40, 40, noiseGrid[y + j][x + i] * opacity);
+                        drawPixel(x + i, y + j, 1, 1, rend);
                     }
                 }
             }
@@ -1186,9 +1313,8 @@ const pixels = {
             if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
-            let explosion = updateTouchingPixel(x, y, 'lava');
+            let explosion = updateTouchingPixel(x, y, 'lava') || fireGrid[y][x];
             if (explosion) explode(x, y, 5, 1);
-            // detect fire and explode
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -1197,14 +1323,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     c4: {
         name: 'C-4',
         description: 'A high explosive that can only be triggered by other explosions',
-        draw: function (x, y, width, height, opacity) {
-            fill(245, 245, 200, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(245, 245, 200, opacity * 255);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -1214,19 +1343,22 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     pump: {
         name: 'Water Pump',
         description: 'Violates the Laws of Thermodynamics to create water',
-        draw: function (x, y, width, height, opacity) {
-            fill(25, 125, 75, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(75, 100, 255, opacity * 255);
-            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3);
-            fill(25, 125, 75, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(25, 125, 75, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(75, 100, 255, opacity * 255);
+            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, rend);
+            rend.fill(25, 125, 75, opacity * 255);
             for (let i = 0; i < width - 1; i++) {
-                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3)
+                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, rend);
             }
         },
         update: function (x, y) {
@@ -1250,19 +1382,22 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     lava_generator: {
         name: 'Lava Heater',
         description: 'Violates the Laws of Thermodynamics to create lava',
-        draw: function (x, y, width, height, opacity) {
-            fill(25, 125, 75, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(255, 125, 0, opacity * 255);
-            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3);
-            fill(25, 125, 75, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(25, 125, 75, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(255, 125, 0, opacity * 255);
+            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, rend);
+            rend.fill(25, 125, 75, opacity * 255);
             for (let i = 0; i < width - 1; i++) {
-                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3)
+                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, rend);
             }
         },
         update: function (x, y) {
@@ -1294,24 +1429,27 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     cloner_up: {
         name: 'Cloner (Up)',
         description: 'Copies stuff from below it to above it',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
-            fill(255, 255, 0, opacity * 255);
+            rend.fill(255, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, rend);
                 }
             }
         },
@@ -1334,24 +1472,27 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     cloner_down: {
         name: 'Cloner (Down)',
         description: 'Copies stuff from above it to below it',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, rend);
                 }
             }
-            fill(255, 255, 0, opacity * 255);
+            rend.fill(255, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
         },
@@ -1374,24 +1515,27 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     cloner_right: {
         name: 'Cloner (Right)',
         description: 'Copies stuff from its left to its right',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
-            fill(255, 255, 0, opacity * 255);
+            rend.fill(255, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
         },
@@ -1414,24 +1558,27 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     cloner_left: {
         name: 'Cloner (Left)',
         description: 'Copies stuff from its right to its left',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
-            fill(255, 255, 0, opacity * 255);
+            rend.fill(255, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
         },
@@ -1454,24 +1601,27 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     super_cloner_up: {
         name: 'Super Cloner (Up)',
         description: 'Copies stuff from below it to above it, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
-            fill(255, 255, 0, opacity * 255);
+            rend.fill(255, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, rend);
                 }
             }
         },
@@ -1492,24 +1642,27 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: false
     },
     super_cloner_down: {
         name: 'Super Cloner (Down)',
         description: 'Copies stuff from above it to below it, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, rend);
                 }
             }
-            fill(255, 255, 0, opacity * 255);
+            rend.fill(255, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
         },
@@ -1530,24 +1683,27 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: false
     },
     super_cloner_left: {
         name: 'Super Cloner (Left)',
         description: 'Copies stuff from its right to its left, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
-            fill(255, 255, 0, opacity * 255);
+            rend.fill(255, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
         },
@@ -1568,24 +1724,27 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: false
     },
     super_cloner_right: {
         name: 'Super Cloner (Right)',
         description: 'Copies stuff from its left to its right, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
-            fill(255, 255, 0, opacity * 255);
+            rend.fill(255, 255, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3);
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, rend);
                 }
             }
         },
@@ -1606,18 +1765,21 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: false
     },
     piston_up: {
         name: 'Piston (Up)',
         description: 'Closer to a flying machine, it pushes stuff',
-        draw: function (x, y, width, height, opacity) {
-            fill(75, 255, 255, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(75, 255, 255, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2);
+                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, rend);
                 }
             }
         },
@@ -1670,18 +1832,21 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     piston_down: {
         name: 'Piston (Down)',
         description: 'Closer to a flying machine, it pushes stuff',
-        draw: function (x, y, width, height, opacity) {
-            fill(75, 255, 255, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(75, 255, 255, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2);
+                    drawPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, rend);
                 }
             }
         },
@@ -1734,18 +1899,21 @@ const pixels = {
         },
         key: 'k',
         updatePriority: 1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     piston_left: {
         name: 'Piston (Left)',
         description: 'Closer to a flying machine, it pushes stuff',
-        draw: function (x, y, width, height, opacity) {
-            fill(75, 255, 255, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(75, 255, 255, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3);
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, rend);
                 }
             }
         },
@@ -1798,18 +1966,21 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     piston_right: {
         name: 'Piston (Right)',
         description: 'Closer to a flying machine, it pushes stuff',
-        draw: function (x, y, width, height, opacity) {
-            fill(75, 255, 255, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(0, 125, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(75, 255, 255, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(0, 125, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3);
+                    drawPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, rend);
                 }
             }
         },
@@ -1862,18 +2033,21 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     rotator_up: {
         name: 'Piston Rotator (Up)',
         description: 'Rotates directional pixels to face up',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(75, 255, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(75, 255, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2);
+                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, rend);
                 }
             }
         },
@@ -1887,18 +2061,21 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 5,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     rotator_down: {
         name: 'Piston Rotator (Down)',
         description: 'Rotates directional pixels to face down',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(75, 255, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(75, 255, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2);
+                    drawPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, rend);
                 }
             }
         },
@@ -1912,18 +2089,21 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 5,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     rotator_left: {
         name: 'Piston Rotator (Left)',
         description: 'Rotates directional pixels to face left',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(75, 255, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(75, 255, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3);
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, rend);
                 }
             }
         },
@@ -1937,18 +2117,21 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 5,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     rotator_right: {
         name: 'Piston Rotator (Right)',
         description: 'Rotates directional pixels to face right',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(75, 255, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(75, 255, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3);
+                    drawPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, rend);
                 }
             }
         },
@@ -1962,33 +2145,36 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 5,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     rotator_clockwise: {
         name: 'Rotator (Clockwise)',
         description: 'Rotates directional pixels clockwise',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(75, 255, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(75, 255, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     switch (floor(animationTime / 10) % 4) {
                         case 0:
-                            drawPixel(x + i, y + j, 2 / 3, 1 / 3);
-                            drawPixel(x + i + 1 / 3, y + j + 2 / 3, 2 / 3, 1 / 3);
+                            drawPixel(x + i, y + j, 2 / 3, 1 / 3, rend);
+                            drawPixel(x + i + 1 / 3, y + j + 2 / 3, 2 / 3, 1 / 3, rend);
                             break;
                         case 1:
-                            drawPixel(x + i + 1 / 3, y + j, 2 / 3, 1 / 3);
-                            drawPixel(x + i, y + j + 2 / 3, 2 / 3, 1 / 3);
+                            drawPixel(x + i + 1 / 3, y + j, 2 / 3, 1 / 3, rend);
+                            drawPixel(x + i, y + j + 2 / 3, 2 / 3, 1 / 3, rend);
                             break;
                         case 2:
-                            drawPixel(x + i + 2 / 3, y + j, 1 / 3, 2 / 3);
-                            drawPixel(x + i, y + j + 1 / 3, 1 / 3, 2 / 3);
+                            drawPixel(x + i + 2 / 3, y + j, 1 / 3, 2 / 3, rend);
+                            drawPixel(x + i, y + j + 1 / 3, 1 / 3, 2 / 3, rend);
                             break;
                         case 3:
-                            drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 2 / 3);
-                            drawPixel(x + i, y + j, 1 / 3, 2 / 3);
+                            drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 2 / 3, rend);
+                            drawPixel(x + i, y + j, 1 / 3, 2 / 3, rend);
                             break;
                     }
                 }
@@ -2014,33 +2200,36 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animated: true,
+        above: false,
         pickable: true
     },
     rotator_counterclockwise: {
         name: 'Rotator (Counterclockwise)',
         description: 'Rotates directional pixels counterclockwise',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 100, 100, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(75, 255, 255, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 100, 100, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(75, 255, 255, opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     switch (floor(animationTime / 10) % 4) {
                         case 3:
-                            drawPixel(x + i + 2 / 3, y + j, 1 / 3, 2 / 3);
-                            drawPixel(x + i, y + j + 1 / 3, 1 / 3, 2 / 3);
+                            drawPixel(x + i + 2 / 3, y + j, 1 / 3, 2 / 3, rend);
+                            drawPixel(x + i, y + j + 1 / 3, 1 / 3, 2 / 3, rend);
                             break;
                         case 2:
-                            drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 2 / 3);
-                            drawPixel(x + i, y + j, 1 / 3, 2 / 3);
+                            drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 2 / 3, rend);
+                            drawPixel(x + i, y + j, 1 / 3, 2 / 3, rend);
                             break;
                         case 1:
-                            drawPixel(x + i, y + j, 2 / 3, 1 / 3);
-                            drawPixel(x + i + 1 / 3, y + j + 2 / 3, 2 / 3, 1 / 3);
+                            drawPixel(x + i, y + j, 2 / 3, 1 / 3, rend);
+                            drawPixel(x + i + 1 / 3, y + j + 2 / 3, 2 / 3, 1 / 3, rend);
                             break;
                         case 0:
-                            drawPixel(x + i + 1 / 3, y + j, 2 / 3, 1 / 3);
-                            drawPixel(x + i, y + j + 2 / 3, 2 / 3, 1 / 3);
+                            drawPixel(x + i + 1 / 3, y + j, 2 / 3, 1 / 3, rend);
+                            drawPixel(x + i, y + j + 2 / 3, 2 / 3, 1 / 3, rend);
                             break;
                     }
                 }
@@ -2066,17 +2255,20 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animated: true,
+        above: false,
         pickable: true
     },
     slider_horizontal: {
         name: 'Horizontal Slider',
         description: 'Can only be pushed left and right',
-        draw: function (x, y, width, height, opacity) {
-            fill(255, 180, 0, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(200, 100, 0, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(255, 180, 0, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(200, 100, 0, opacity * 255);
             for (let i = 0; i < height; i++) {
-                drawPixel(x, y + i + 1 / 4, width, 1 / 2);
+                drawPixel(x, y + i + 1 / 4, width, 1 / 2, rend);
             }
         },
         update: function (x, y) { },
@@ -2089,17 +2281,20 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     slider_vertical: {
         name: 'Vertical Slider',
         description: 'Can only be pushed up and down',
-        draw: function (x, y, width, height, opacity) {
-            fill(250, 180, 0, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(200, 100, 0, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(250, 180, 0, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(200, 100, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
-                drawPixel(x + i + 1 / 4, y, 1 / 2, height);
+                drawPixel(x + i + 1 / 4, y, 1 / 2, height, rend);
             }
         },
         update: function (x, y) { },
@@ -2112,22 +2307,25 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     collapsible: {
         name: 'Collapsible Box',
         description: 'A box that will disintegrate when squished',
-        draw: function (x, y, width, height, opacity) {
+        draw: function (x, y, width, height, opacity, rend) {
             if (noNoise) {
-                fill(255, 120, 210, opacity * 255);
-                drawPixel(x, y, width, height);
+                rend.fill(255, 120, 210, opacity * 255);
+                drawPixel(x, y, width, height, rend);
             } else {
-                fill(255, 100, 200, opacity * 255);
-                drawPixel(x, y, width, height);
+                rend.fill(255, 100, 200, opacity * 255);
+                drawPixel(x, y, width, height, rend);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        fill(255, 140, 255, noiseGrid[y + j][x + i] * opacity);
-                        drawPixel(x + i, y + j, 1, 1);
+                        rend.fill(255, 140, 255, noiseGrid[y + j][x + i] * opacity);
+                        drawPixel(x + i, y + j, 1, 1, rend);
                     }
                 }
             }
@@ -2144,20 +2342,23 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 2,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     nuke_diffuser: {
         name: 'Nuke Diffuser',
         description: 'Doesn\'t cause diffusion, but will defuse nukes touching it',
-        draw: function (x, y, width, height, opacity) {
-            fill(175, 50, 0, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(225, 125, 0, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(175, 50, 0, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(225, 125, 0, opacity * 255);
             for (let i = 0; i < width; i++) {
-                drawPixel(x + i + 1 / 3, y, 1 / 3, height);
+                drawPixel(x + i + 1 / 3, y, 1 / 3, height, rend);
             }
             for (let i = 0; i < height; i++) {
-                drawPixel(x, y + i + 1 / 3, width, 1 / 3);
+                drawPixel(x, y + i + 1 / 3, width, 1 / 3, rend);
             }
         },
         update: function (x, y) { },
@@ -2171,18 +2372,21 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     laser_scatterer: {
         name: 'Laser Scatterer',
         description: 'Scatters lasers that pass through it and makes them useless',
-        draw: function (x, y, width, height, opacity) {
-            fill(220, 220, 255, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(210, 210, 220, opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(220, 220, 255, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(210, 210, 220, opacity * 255, rend);
             for (let i = 0; i < width; i++) {
-                drawPixel(x + i, y, 1 / 4, height);
-                drawPixel(x + i + 1 / 2, y, 1 / 4, height);
+                drawPixel(x + i, y, 1 / 4, height, rend);
+                drawPixel(x + i + 1 / 2, y, 1 / 4, height, rend);
             }
         },
         update: function (x, y) { },
@@ -2196,28 +2400,32 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
+        above: false,
         pickable: true
     },
     laser_up: {
         name: "L.A.S.E.R. (Up)",
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
-        draw: function (x, y, width, height, opacity) {
-            fill(90, 0, 120, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(90, 0, 120, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2);
+                    drawPixel(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2, rend);
                 }
             }
-            fill(71, 216, 159, opacity * 255);
+            rend.fill(71, 216, 159, opacity * 255);
             for (let i = 0; i < width; i++) {
                 let endY = y;
                 while (endY >= 0) {
                     endY--;
                     if (endY >= 0 && grid[endY][x + i] != 'air') break;
                 }
-                drawPixel(x + 1 / 3 + i, endY + 1, 1 / 3, y - endY - 1);
+                drawPixel(x + 1 / 3 + i, endY + 1, 1 / 3, y - endY - 1, rend);
             }
         },
         update: function (x, y) {
@@ -2243,28 +2451,31 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: true,
+        above: false,
         pickable: true
     },
     laser_down: {
         name: "L.A.S.E.R. (Down)",
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
-        draw: function (x, y, width, height, opacity) {
-            fill(90, 0, 120, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(90, 0, 120, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2);
+                    drawPixel(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2, rend);
                 }
             }
-            fill(71, 216, 159, opacity * 255);
+            rend.fill(71, 216, 159, opacity * 255);
             for (let i = 0; i < width; i++) {
                 let endY = y + height - 1;
                 while (endY < gridSize) {
                     endY++;
                     if (endY < gridSize && grid[endY][x + i] != 'air') break;
                 }
-                drawPixel(x + 1 / 3 + i, y + height, 1 / 3, endY - y - height);
+                drawPixel(x + 1 / 3 + i, y + height, 1 / 3, endY - y - height, rend);
             }
         },
         update: function (x, y) {
@@ -2290,28 +2501,31 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: true,
+        above: false,
         pickable: true
     },
     laser_left: {
         name: "L.A.S.E.R. (Left)",
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
-        draw: function (x, y, width, height, opacity) {
-            fill(90, 0, 120, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(90, 0, 120, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3);
+                    drawPixel(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3, rend);
                 }
             }
-            fill(71, 216, 159, opacity * 255);
+            rend.fill(71, 216, 159, opacity * 255);
             for (let i = 0; i < height; i++) {
                 let endX = x;
                 while (endX >= 0) {
                     endX--;
                     if (grid[y + i][endX] != 'air') break;
                 }
-                drawPixel(endX + 1, y + 1 / 3 + i, x - endX - 1, 1 / 3);
+                drawPixel(endX + 1, y + 1 / 3 + i, x - endX - 1, 1 / 3, rend);
             }
         },
         update: function (x, y) {
@@ -2337,28 +2551,31 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: true,
+        above: false,
         pickable: true
     },
     laser_right: {
         name: "L.A.S.E.R. (Right)",
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
-        draw: function (x, y, width, height, opacity) {
-            fill(90, 0, 120, opacity * 255);
-            drawPixel(x, y, width, height);
-            fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(90, 0, 120, opacity * 255);
+            drawPixel(x, y, width, height, rend);
+            rend.fill(...colorAnimate(255, 0, 144, 60, 112, 255, 18), opacity * 255);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3);
+                    drawPixel(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3, rend);
                 }
             }
-            fill(71, 216, 159, opacity * 255);
+            rend.fill(71, 216, 159, opacity * 255);
             for (let i = 0; i < height; i++) {
                 let endX = x + width - 1;
                 while (endX < gridSize) {
                     endX++;
                     if (grid[y + i][endX] != 'air') break;
                 }
-                drawPixel(x + width, y + 1 / 3 + i, endX - x - width, 1 / 3);
+                drawPixel(x + width, y + 1 / 3 + i, endX - x - width, 1 / 3, rend);
             }
         },
         update: function (x, y) {
@@ -2384,14 +2601,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: true,
+        above: false,
         pickable: true
     },
     nuke: {
         name: 'Nuke',
         description: 'TBH, kinda weak',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 255, 75, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 255, 75, opacity * 255);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -2418,14 +2638,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     huge_nuke: {
         name: 'Huge Nuke',
         description: 'KABOOM!',
-        draw: function (x, y, width, height, opacity) {
-            fill(100, 60, 255, 255 * opacity);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(100, 60, 255, 255 * opacity);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -2452,14 +2675,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     very_huge_nuke: {
         name: 'Very Huge Nuke',
         description: 'AAAAAAAAAAAAAAAAAAAAA',
-        draw: function (x, y, width, height, opacity) {
-            fill(255, 0, 70, 255 * opacity);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(255, 0, 70, 255 * opacity);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -2486,18 +2712,21 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 0,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: true
     },
     lag_spike_generator: {
         name: 'lag_spike_generator',
         description: 'Not that laggy',
-        draw: function (x, y, width, height, opacity) {
+        draw: function (x, y, width, height, opacity, rend) {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(255, 255, 255, opacity * 255);
-                    drawPixel(x + i, y + j, 1, 1);
-                    fill(125, 255, 0, (random(225) + 30) * opacity);
-                    drawPixel(x + i, y + j, 1, 1);
+                    rend.fill(255, 255, 255, opacity * 255);
+                    drawPixel(x + i, y + j, 1, 1, rend);
+                    rend.fill(125, 255, 0, (random(225) + 30) * opacity);
+                    drawPixel(x + i, y + j, 1, 1, rend);
                 }
             }
         },
@@ -2526,69 +2755,72 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 5,
+        animatedNoise: false,
+        animated: true,
+        above: false,
         pickable: true
     },
     corruption: {
         name: '�',
         description: '<span style="color: red">�</span>',
-        draw: function (x, y, width, height, opacity) {
+        draw: function (x, y, width, height, opacity, rend) {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     for (let k = 0; k < random(1, 5); k++) {
                         let rotationAmount = floor(random(0, 360));
-                        translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
+                        rend.translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
                         let translateX = random(-10 * xScale, 10 * xScale);
                         let translateY = random(-10 * yScale, 10 * yScale);
                         let skewX = random(-PI / 6, PI / 6);
                         let skewY = random(-PI / 6, PI / 6);
-                        translate(translateX, translateY);
-                        rotate(rotationAmount);
-                        shearX(skewX);
-                        shearY(skewY);
+                        rend.translate(translateX, translateY);
+                        rend.rotate(rotationAmount);
+                        rend.shearX(skewX);
+                        rend.shearY(skewY);
                         let borkXScale = random(0, 4);
                         let borkYScale = random(0, 2);
-                        fill(0, 0, 0, opacity * 255);
-                        drawPixel(0, 0, borkXScale, borkYScale);
-                        fill(100, 255, 0, (random(155) + 100) * opacity);
-                        drawPixel(0, 0, borkXScale, borkYScale);
-                        shearY(-skewY);
-                        shearX(-skewX);
-                        rotate(-rotationAmount);
-                        translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
+                        rend.fill(0, 0, 0, opacity * 255);
+                        drawPixel(0, 0, borkXScale, borkYScale, rend);
+                        rend.fill(100, 255, 0, (random(155) + 100) * opacity);
+                        drawPixel(0, 0, borkXScale, borkYScale, rend);
+                        rend.shearY(-skewY);
+                        rend.shearX(-skewX);
+                        rend.rotate(-rotationAmount);
+                        rend.translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
                     }
                     if (random(1, 5) < 1.2) {
                         for (let k = 0; k < random(1, 10); k++) {
                             let rotationAmount = floor(random(0, 360));
-                            translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
+                            rend.translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
                             let translateX = random(-20 * xScale, 20 * xScale);
                             let translateY = random(-20 * yScale, 20 * yScale);
-                            translate(translateX, translateY);
-                            rotate(rotationAmount);
+                            rend.translate(translateX, translateY);
+                            rend.rotate(rotationAmount);
                             drawPixels(0, 0, 1, 1, 'missing', opacity);
-                            rotate(-rotationAmount);
-                            translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
+                            rend.rotate(-rotationAmount);
+                            rend.translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
                         }
                         let rotationAmount = floor(random(0, 360));
-                        translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
+                        rend.translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
                         let translateX = random(-gridSize * xScale, gridSize * xScale);
                         let translateY = random(-gridSize * yScale, gridSize * yScale);
                         let skewX = random(-PI / 6, PI / 6);
                         let skewY = random(-PI / 6, PI / 6);
-                        translate(translateX, translateY);
-                        rotate(rotationAmount);
-                        shearX(skewX);
-                        shearY(skewY);
-                        fill(255, 0, 0, opacity * 255);
-                        rect(0, 0, 90, 90);
-                        fill(255, 255, 0, opacity * 255);
-                        rect(10, 10, 70, 70);
-                        fill(255, 0, 0, opacity * 255);
-                        rect(40, 20, 10, 30);
-                        rect(40, 60, 10, 10);
-                        shearY(-skewY);
-                        shearX(-skewX);
-                        rotate(-rotationAmount);
-                        translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
+                        rend.translate(translateX, translateY);
+                        rend.rotate(rotationAmount);
+                        rend.shearX(skewX);
+                        rend.shearY(skewY);
+                        rend.fill(255, 0, 0, opacity * 255);
+                        rend.rect(0, 0, 90, 90);
+                        rend.fill(255, 255, 0, opacity * 255);
+                        rend.rect(10, 10, 70, 70);
+                        rend.fill(255, 0, 0, opacity * 255);
+                        rend.rect(40, 20, 10, 30);
+                        rend.rect(40, 60, 10, 10);
+                        rend.shearY(-skewY);
+                        rend.shearX(-skewX);
+                        rend.rotate(-rotationAmount);
+                        rend.translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
                     }
                 }
             }
@@ -2598,7 +2830,7 @@ const pixels = {
                     noStroke();
                     cursor();
                     noCursor();
-                    fill(color(255, 255, 255, 255));
+                    rend.fill(color(255, 255, 255, 255));
                     noFill();
                     let string = '';
                     let number = 0;
@@ -2694,20 +2926,23 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: 5,
+        animatedNoise: false,
+        animated: true,
+        above: false,
         pickable: true
     },
     spin: {
         name: 'Spin',
         description: 'SPINNY CARRIER GO WEEEEEEEEEEEEEEEEEEEEEEEEE!!',
-        draw: function (x, y, width, height, opacity) {
+        draw: function (x, y, width, height, opacity, rend) {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
+                    rend.translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
                     let translateX = random(-10 * xScale, 10 * xScale);
                     let translateY = random(-10 * yScale, 10 * yScale);
-                    translate(translateX, translateY);
+                    rend.translate(translateX, translateY);
                     let rotationAmount = floor(random(0, 360));
-                    rotate(rotationAmount);
+                    rend.rotate(rotationAmount);
                 }
             }
         },
@@ -2717,14 +2952,17 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animated: true,
+        above: false,
         pickable: false
     },
     remove: {
         name: "Remove (brush only)",
         description: `<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&rel=0&controls=0&disablekb=1" width=${window.innerWidth} height=${window.innerHeight} style="position: absolute; top: -2px; left: -2px; pointer-events: none;"></iframe><div style="position: absolute; top: 0px, left: 0px; width: 100vw; height: 100vh; z-index: 100;"></div>`,
-        draw: function (x, y, width, height, opacity) {
-            fill(255, 0, 0);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(255, 0, 0);
+            drawPixel(x, y, width, height, rend);
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -2734,19 +2972,22 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: false
     },
     missing: {
         name: 'Missing Pixel',
         description: 'Check your save code, it probably has pixels that don\'t exist in it',
-        draw: function (x, y, width, height, opacity) {
-            fill(0, 0, 0, opacity * 255);
-            drawPixel(x, y, width, height);
+        draw: function (x, y, width, height, opacity, rend) {
+            rend.fill(0, 0, 0, opacity * 255);
+            drawPixel(x, y, width, height, rend);
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    fill(255, 0, 255, opacity * 255);
-                    drawPixel(x + i, y + j, 1 / 2, 1 / 2);
-                    drawPixel(x + 1 / 2 + i, y + 1 / 2 + j, 1 / 2, 1 / 2);
+                    rend.fill(255, 0, 255, opacity * 255);
+                    drawPixel(x + i, y + j, 1 / 2, 1 / 2, rend);
+                    drawPixel(x + 1 / 2 + i, y + 1 / 2 + j, 1 / 2, 1 / 2, rend);
                 }
             }
         },
@@ -2761,6 +3002,10 @@ const pixels = {
         },
         key: Infinity,
         updatePriority: -1,
+        animatedNoise: false,
+        animatedNoise: false,
+        animated: false,
+        above: false,
         pickable: false
     }
 };
@@ -2773,12 +3018,19 @@ function clickLine(startX, startY, endX, endY, remove) {
     for (let i = 0; i <= distance; i++) {
         let gridX = floor(x);
         let gridY = floor(y);
-        for (let j = gridX - clickSize + 1; j <= gridX + clickSize - 1; j++) {
-            if (j >= 0 && j <= gridSize - 1) {
-                for (let k = gridY - clickSize + 1; k <= gridY + clickSize - 1; k++) {
-                    if (k >= 0 && k <= gridSize - 1) {
-                        grid[k][j] = remove ? 'air' : clickPixel;
-                    }
+        let xmin = Math.max(0, Math.min(gridX - clickSize + 1, gridSize - 1));
+        let xmax = Math.max(0, Math.min(gridX + clickSize - 1, gridSize - 1));
+        let ymin = Math.max(0, Math.min(gridY - clickSize + 1, gridSize - 1));
+        let ymax = Math.max(0, Math.min(gridY + clickSize - 1, gridSize - 1));
+        for (let j = xmin; j <= xmax; j++) {
+            for (let k = ymin; k <= ymax; k++) {
+                if (remove) {
+                    nextGrid[k][j] = 'air';
+                    fireGrid[k][j] = false;
+                } else if (clickPixel == 'fire') {
+                    fireGrid[k][j] = true;
+                } else {
+                    nextGrid[k][j] = clickPixel;
                 }
             }
         }
@@ -2792,20 +3044,6 @@ function draw() {
     let y = floor(mouseY * gridSize / height);
     mouseOver = x >= 0 && x <= gridSize && y >= 0 && y <= gridSize;
 
-    // place pixels
-    if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs) {
-        // lastGrids.push([]);
-        // for (let i = 0; i < gridSize; i++) {
-        //     lastGrids[lastGrids.length - 1].push([]);
-        //     for (let j = 0; j < gridSize; j++) {
-        //         lastGrids[lastGrids.length - 1][i].push(grid[i][j]);
-        //     }
-        // }
-        // if (lastGrids.length > 20) {
-        //     lastGrids.shift(1);
-        // }
-        if (mouseOver) clickLine(x, y, floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT || removing);
-    }
     // draw pixels
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
         let r = parseInt(backgroundColor.substring(0, 2), 16);
@@ -2813,30 +3051,53 @@ function draw() {
         let b = parseInt(backgroundColor.substring(4, 6), 16);
         fill(r, g, b, 255 - fadeEffect);
         rect(0, 0, width, height);
+        above.clear();
         for (let i = 0; i < gridSize; i++) {
-            let string = '';
-            let number = 0;
+            let curr = 'air';
+            let redrawing = redrawGrid[i][0];
+            let amount = 0;
+            let j;
+            for (j = 0; j < gridSize; j++) {
+                amount++;
+                if (grid[i][j] != curr || redrawGrid[i][j] != redrawing) {
+                    if (curr != 'air' && (redrawing || forceRedraw)) drawPixels(j - amount, i , amount, 1, curr, 1, pixels[curr].above ? above : below);
+                    else if (curr == 'air') clearPixels(j - amount, i, amount, 1, pixels[curr].above ? above : below);
+                    curr = grid[i][j]
+                    redrawing = redrawGrid[i][j];
+                    amount = 0;
+                }
+            }
+            if (curr != 'air' && (redrawing || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixels[curr].above ? above : below);
+            else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixels[curr].above ? above : below);
+        }
+        for (let i = 0; i < gridSize; i++) {
             let j = 0;
+            let fire = false;
+            let number = 0;
             while (j < gridSize) {
                 number++;
-                if (grid[i][j] != string) {
-                    if (string != '' && string != 'air' && number != 0) {
-                        drawPixels(j - number, i, number, 1, string, 1);
+                if (fireGrid[i][j] != fire) {
+                    if (fire) {
+                        drawPixels(j - number, i, number, 1, 'fire', 1, above);
                     }
-                    string = grid[i][j];
+                    fire = fireGrid[i][j];
                     number = 0;
                 }
                 j++;
             }
             number++;
-            if (string != '') {
-                drawPixels(j - number, i, number, 1, string, 1);
+            if (fire) {
+                drawPixels(j - number, i, number, 1, 'fire', 1, above);
             }
         }
+        forceRedraw = false;
     }
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
         frames.push(millis());
     }
+    // copy layers
+    image(below, 0, 0);
+    image(above, 0, 0);
     // draw brush
     if (!gridPaused || !simulatePaused) {
         stroke(color(0, 0, 0));
@@ -2844,10 +3105,14 @@ function draw() {
         let x2 = min(gridSize - 1, floor(mouseX * gridSize / width) + clickSize - 1);
         let y1 = max(0, floor(mouseY * gridSize / height) - clickSize + 1);
         let y2 = min(gridSize - 1, floor(mouseY * gridSize / height) + clickSize - 1);
-        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5);
+        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5, main);
         noStroke();
     }
 
+    // place pixels
+    if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && mouseOver) {
+        clickLine(x, y, floor(pmouseX * gridSize / width), floor(pmouseY * gridSize / height), mouseButton == RIGHT || removing);
+    }
     // simulate pixels
     if (!gridPaused || runTicks > 0 || simulatePaused) {
         let max = simulatePaused ? 10 : 1;
@@ -2855,13 +3120,25 @@ function draw() {
             runTicks--;
             /*
             update priority:
-            0: nukes, plants, sponges, and lasers
+            -: fire
+            0: nukes, plants, sponges, gunpowder, and lasers
             1: pistons
             2: gravity pixels
             3: liquids and concrete
             4: pumps and cloners
             5: lag
             */
+            for (let j = 0; j < gridSize; j++) {
+                for (let k = 0; k < gridSize; k++) {
+                    if (fireGrid[k][j]) pixels['fire'].update(j, k);
+                }
+            }
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    lastFireGrid[i][j] = fireGrid[i][j];
+                    redrawGrid[i][j] = false;
+                }
+            }
             for (let j = 0; j <= 5; j++) {
                 if (ticks % 2 == 0) {
                     for (let k = 0; k < gridSize; k++) {
@@ -2879,14 +3156,29 @@ function draw() {
                 for (let i = 0; i < gridSize; i++) {
                     for (let j = 0; j < gridSize; j++) {
                         if (nextGrid[i][j] != null) {
+                            redrawGrid[i][j] = grid[i][j] != nextGrid[i][j] || redrawGrid[i][j] || pixels[nextGrid[i][j]].animated;
                             grid[i][j] = nextGrid[i][j];
                             nextGrid[i][j] = null;
+                        } else {
+                            redrawGrid[i][j] = pixels[grid[i][j]].animated || redrawGrid[i][j];
                         }
                     }
                 }
             }
             frames.push(millis());
             ticks++;
+        }
+    } else if (gridPaused) {
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                if (nextGrid[i][j] != null) {
+                    redrawGrid[i][j] = grid[i][j] != nextGrid[i][j] || pixels[nextGrid[i][j]].animated;
+                    grid[i][j] = nextGrid[i][j];
+                    nextGrid[i][j] = null;
+                } else {
+                    redrawGrid[i][j] = pixels[grid[i][j]].animated;
+                }
+            }
         }
     }
 
@@ -2948,13 +3240,20 @@ function mouseWheel(e) {
 };
 
 function windowResized() {
-    xScale = 600 / gridSize;
-    yScale = 600 / gridSize;
-    resizeCanvas(600, 600);
-    canvasScale = Math.min(window.innerWidth / 600, window.innerHeight / 600);
-    document.querySelector('.p5Canvas').style.width = 600 * canvasScale - 20 + 'px';
-    document.querySelector('.p5Canvas').style.height = 600 * canvasScale - 20 + 'px';
-    if (window.innerWidth - 600 * canvasScale < 300) {
+    xScale = gridResolution / gridSize;
+    yScale = gridResolution / gridSize;
+    resizeCanvas(gridResolution, gridResolution);
+    below.remove();
+    above.remove();
+    below = createGraphics(gridResolution, gridResolution);
+    above = createGraphics(gridResolution, gridResolution);
+    below.noStroke();
+    above.noStroke();
+    forceRedraw = true;
+    canvasScale = Math.min(window.innerWidth / gridResolution, window.innerHeight / gridResolution);
+    document.querySelector('.p5Canvas').style.width = gridResolution * canvasScale - 20 + 'px';
+    document.querySelector('.p5Canvas').style.height = gridResolution * canvasScale - 20 + 'px';
+    if (window.innerWidth - gridResolution * canvasScale < 300) {
         document.getElementById('sidebar').style.top = Math.min(window.innerWidth, window.innerHeight) + 'px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 20 + 'px');
         let pickerWidth = (Math.round((window.innerWidth - 20) / 62) - 1) * 62;
@@ -2962,8 +3261,8 @@ function windowResized() {
         document.getElementById('pixelPickerDescription').style.width = pickerWidth - 14 + 'px';
     } else {
         document.getElementById('sidebar').style.top = '0px';
-        document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 600 * canvasScale - 20 + 'px');
-        let pickerWidth = (Math.round((window.innerWidth - 600 * canvasScale - 20) / 62) - 1) * 62;
+        document.body.style.setProperty('--max-sidebar-width', window.innerWidth - gridResolution * canvasScale - 20 + 'px');
+        let pickerWidth = (Math.round((window.innerWidth - gridResolution * canvasScale - 20) / 62) - 1) * 62;
         document.getElementById('pixelPicker').style.width = pickerWidth + 'px';
         document.getElementById('pixelPickerDescription').style.width = pickerWidth - 14 + 'px';
     }
