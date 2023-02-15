@@ -21,6 +21,14 @@ main {
     scroll-snap-stop: always;
 }
 
+#canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    margin: 8px 8px;
+    border: 2px solid black;
+}
+
 #sidebar {
     position: absolute;
     top: 0px;
