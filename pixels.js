@@ -593,7 +593,7 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
             let removedWater = false;
-            if (updateTouchingPixel(x, y, 'water', function(actionX, actionY) {
+            if (updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
                 if (!removedWater && validMovingPixel(actionX, actionY) && random() < 0.2) {
                     nextGrid[actionY][actionX] = 'air';
                     removedWater = true;
@@ -804,7 +804,7 @@ const pixels = {
                 nextFireGrid[y][x] = false;
             });
             let aerated = updateTouchingPixel(x, y, 'air');
-            if (random() < (20 - flammability) / (aerated ? 240 : 100)) {
+            if (random() < (20 - flammability) / (aerated ? 360 : 100)) {
                 nextFireGrid[y][x] = false;
             }
             if (random() < flammability / 500 && nextGrid[y][x] == null) {
@@ -1362,15 +1362,6 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            let validPiston = true;
-            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
-                validPiston = false;
-                if (nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = 'air';
-                    nextGrid[actionY][actionX] = 'air';
-                }
-            });
-            if (!validPiston) return;
             let moveY = null;
             let lastCollapsible = null;
             for (let i = y; i >= 0; i--) {
@@ -1430,15 +1421,6 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            let validPiston = true;
-            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
-                validPiston = false;
-                if (nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = 'air';
-                    nextGrid[actionY][actionX] = 'air';
-                }
-            });
-            if (!validPiston) return;
             let moveY = null;
             let lastCollapsible = null;
             for (let i = y; i <= gridSize - 1; i++) {
@@ -1498,15 +1480,6 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            let validPiston = true;
-            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
-                validPiston = false;
-                if (nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = 'air';
-                    nextGrid[actionY][actionX] = 'air';
-                }
-            });
-            if (!validPiston) return;
             let moveX = null;
             let lastCollapsible = null;
             for (let i = x; i >= 0; i--) {
@@ -1566,15 +1539,6 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            let validPiston = true;
-            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
-                validPiston = false;
-                if (nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = 'air';
-                    nextGrid[actionY][actionX] = 'air';
-                }
-            });
-            if (!validPiston) return;
             let moveX = null;
             let lastCollapsible = null;
             for (let i = x; i <= gridSize - 1; i++) {
