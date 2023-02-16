@@ -803,11 +803,12 @@ const pixels = {
             updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
                 nextFireGrid[y][x] = false;
             });
-            if (random() < (20 - flammability) / 180) {
+            let aerated = updateTouchingPixel(x, y, 'air');
+            if (random() < (20 - flammability) / (aerated ? 240 : 100)) {
                 nextFireGrid[y][x] = false;
             }
             if (random() < flammability / 500 && nextGrid[y][x] == null) {
-                if (grid[y][x] != 'ash') {
+                if (grid[y][x] != 'ash' && random() < 0.8) {
                     nextGrid[y][x] = 'ash';
                 } else {
                     nextGrid[y][x] = 'air';
@@ -2612,6 +2613,9 @@ const pixels = {
     }
 };
 
+function generateDescription(id) {
+    return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Flammability: ${pixels[id].flammability}/20`;
+}
 const canvas2 = document.createElement('canvas');
 const ctx2 = canvas2.getContext('2d');
 canvas2.width = 50;
@@ -2625,13 +2629,13 @@ for (const id in pixels) {
             clickPixel = id;
             pixelPicker.children.forEach(div => div.classList.remove('pickerPixelSelected'));
             box.classList.add('pickerPixelSelected');
-            pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}`;
+            pixelPickerDescription.innerHTML = generateDescription(id);
         };
         box.onmouseover = (e) => {
-            pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}`;
+            pixelPickerDescription.innerHTML = generateDescription(id);
         };
         box.onmouseout = (e) => {
-            pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[clickPixel].name}</span><br>${pixels[clickPixel].description}`;
+            pixelPickerDescription.innerHTML = generateDescription(clickPixel);
         };
         const img = new Image(50, 50);
         pixels[id].drawPreview(ctx2);
@@ -2641,4 +2645,4 @@ for (const id in pixels) {
     }
 }
 document.getElementById(`picker-${clickPixel})`).classList.add('pickerPixelSelected');
-pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[clickPixel].name}</span><br>${pixels[clickPixel].description}`;
+pixelPickerDescription.innerHTML = generateDescription(clickPixel);
