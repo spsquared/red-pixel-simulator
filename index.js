@@ -12,7 +12,6 @@ let saveCode = window.localStorage.getItem('saveCode') ?? '100;air-16:wall:rotat
 let startPaused = false;
 let backgroundColor = '#ffffff';
 
-
 let noNoise = false;
 let optimizedLags = false;
 let fadeEffect = 127;
@@ -73,6 +72,7 @@ const lastGrid = [];
 const nextGrid = [];
 const noiseGrid = [];
 const fireGrid = [];
+const nextFireGrid = [];
 let pendingExplosions = [];
 let gridPaused = startPaused;
 let simulatePaused = false;
@@ -93,18 +93,21 @@ function createGrid() {
     nextGrid.length = 0;
     noiseGrid.length = 0;
     fireGrid.length = 0;
+    nextFireGrid.length = 0;
     for (let i = 0; i < gridSize; i++) {
         grid[i] = [];
         lastGrid[i] = [];
         nextGrid[i] = [];
         noiseGrid[i] = [];
         fireGrid[i] = [];
+        nextFireGrid[i] = [];
         for (let j = 0; j < gridSize; j++) {
             grid[i][j] = 'air';
             lastGrid[i][j] = null;
             nextGrid[i][j] = null;
             noiseGrid[i][j] = noise(j / 2, i / 2);
             fireGrid[i][j] = false;
+            nextFireGrid[i][j] = false;
         }
     }
 };
@@ -353,7 +356,7 @@ function setup() {
 
     setInterval(() => {
         window.localStorage.setItem('saveCode', generateSaveCode());
-    });
+    }, 30000);
 
     lastFpsList = millis();
 };
@@ -559,6 +562,9 @@ function clickLine(startX, startY, endX, endY, remove) {
 };
 
 function draw() {
+    ctx.resetTransform();
+    belowctx.resetTransform();
+    abovectx.resetTransform();
     let x = Math.floor((mouseX - 10) * gridSize / canvasSize);
     let y = Math.floor((mouseY - 10) * gridSize / canvasSize);
     mouseOver = x >= 0 && x < gridSize && y >= 0 && y < gridSize;
@@ -664,6 +670,14 @@ function draw() {
             for (let j = 0; j < gridSize; j++) {
                 for (let k = 0; k < gridSize; k++) {
                     if (fireGrid[k][j]) firePixelType.update(j, k);
+                }
+            }
+            for (let j = 0; j < gridSize; j++) {
+                for (let k = 0; k < gridSize; k++) {
+                    if (nextFireGrid[k][j] != null) {
+                        fireGrid[k][j] = nextFireGrid[k][j];
+                        nextFireGrid[k][j] = null;
+                    }
                 }
             }
             let currentExplosions = pendingExplosions;
