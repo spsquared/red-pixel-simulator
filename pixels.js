@@ -2224,16 +2224,15 @@ const pixels = {
                         let skewY = random(-PI / 6, PI / 6);
                         ctx.translate(translateX, translateY);
                         ctx.rotate(rotationAmount);
-                        ctx.shearX(skewX);
-                        ctx.shearY(skewY);
+                        ctx.save();
+                        ctx.transform(1, skewY, skewX, 1, 0, 0);
                         let borkXScale = random(0, 4);
                         let borkYScale = random(0, 2);
                         ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
                         drawPixel(0, 0, borkXScale, borkYScale, ctx);
                         ctx.fillStyle = `rgba(100, 255, 0, ${(random(155) + 100) * opacity})`;
                         drawPixel(0, 0, borkXScale, borkYScale, ctx);
-                        ctx.shearY(-skewY);
-                        ctx.shearX(-skewX);
+                        ctx.restore();
                         ctx.rotate(-rotationAmount);
                         ctx.translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
                     }
@@ -2245,7 +2244,7 @@ const pixels = {
                             let translateY = random(-20 * yScale, 20 * yScale);
                             ctx.translate(translateX, translateY);
                             ctx.rotate(rotationAmount);
-                            drawPixels(0, 0, 1, 1, 'missing', opacity);
+                            drawPixels(0, 0, 1, 1, 'missing', opacity, ctx);
                             ctx.rotate(-rotationAmount);
                             ctx.translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
                         }
@@ -2257,8 +2256,8 @@ const pixels = {
                         let skewY = random(-PI / 6, PI / 6);
                         ctx.translate(translateX, translateY);
                         ctx.rotate(rotationAmount);
-                        ctx.shearX(skewX);
-                        ctx.shearY(skewY);
+                        ctx.save();
+                        ctx.transform(1, skewY, skewX, 1, 0, 0);
                         ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
                         ctx.fillRect(0, 0, 90, 90);
                         ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
@@ -2266,41 +2265,34 @@ const pixels = {
                         ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
                         ctx.fillRect(40, 20, 10, 30);
                         ctx.fillRect(40, 60, 10, 10);
-                        ctx.shearY(-skewY);
-                        ctx.shearX(-skewX);
+                        ctx.restore();
                         ctx.rotate(-rotationAmount);
                         ctx.translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
                     }
                 }
             }
-            if (!optimizedLags) {
-                for (let i = 0; i < gridSize; i++) {
-                    stroke(color(255, 255, 255, 255));
-                    noStroke();
-                    cursor();
-                    noCursor();
-                    ctx.fillStyle = `rgba(255, 255, 255, 255)`;
-                    noFill();
-                    let string = '';
-                    let number = 0;
-                    let j = 0;
-                    while (j < gridSize) {
-                        number++;
-                        if (grid[i][j] != string) {
-                            if (string != '' && string != 'air' && number != 0) {
-                                if (random() < 0.0001) drawPixels(j - number, i, number, 1, string, 1);
-                            }
-                            string = grid[i][j];
-                            number = 0;
-                        }
-                        j++;
-                    }
-                    number++;
-                    if (string != '') {
-                        if (random() < 0.0001) drawPixels(j - number, i, number, 1, string, 1);
-                    }
-                }
-            }
+            // if (!optimizedLags) {
+            //     for (let i = 0; i < gridSize; i++) {
+            //         let curr = 'air';
+            //         let redrawing = grid[i][0] != lastGrid[i][0];
+            //         let amount = 0;
+            //         let j;
+            //         for (j = 0; j < gridSize; j++) {
+            //             amount++;
+            //             if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
+            //                 let pixelType = pixels[curr];
+            //                 if (curr != 'air' && curr != 'corruption' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forcedRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, pixelType.above ? abovectx : belowctx);
+            //                 else if (curr == 'air') clearPixels(j - amount, i, amount, 1, pixelType.above ? abovectx : belowctx);
+            //                 curr = grid[i][j]
+            //                 redrawing = grid[i][j] != lastGrid[i][j];
+            //                 amount = 0;
+            //             }
+            //         }
+            //         let pixelType = pixels[curr];
+            //         if (curr != 'air' && curr != 'corruption' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forcedRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? abovectx : belowctx);
+            //         else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixelType.above ? abovectx : belowctx);
+            //     }
+            // }
         },
         update: function (x, y) {
             function chaos(actionX, actionY) {
