@@ -351,6 +351,10 @@ const pixels = {
             });
             if (random() < 0.0001 * cooldownSpeed) {
                 nextGrid[y][x] = 'concrete_powder';
+                return;
+            }
+            if (random() < 0.5) {
+                fireGrid[y][x] = true;
             }
             if (y < gridSize - 1 && random() < 0.5) {
                 if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'collapsible') {
@@ -671,6 +675,9 @@ const pixels = {
                 nextFireGrid[y][x] = false;
                 return;
             }
+            updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
+                nextFireGrid[y][x] = false;
+            });
             if (random() < (20 - flammability) / 180) {
                 nextFireGrid[y][x] = false;
             }
