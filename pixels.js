@@ -627,7 +627,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(100, 110, 120)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        flammability: 1,
+        flammability: 2,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -750,17 +750,10 @@ const pixels = {
                 nextGrid[y][x] = 'air';
                 nextGrid[actionY][actionX] = 'sponge';
             });
-            let validSponge = false;
             if (y < gridSize - 1) {
                 if ((isPassableNonLavaFluid(x, y + 1) || (grid[y + 1][x] == 'lava' && random() < 0.25)) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
                 }
-                if (grid[y + 1][x] == 'sand') {
-                    validSponge = true;
-                }
-            }
-            if (!validSponge && random() < 0.125) {
-                nextGrid[y][x] = 'air';
             }
         },
         drawPreview: function (ctx) {
@@ -807,7 +800,7 @@ const pixels = {
             if (random() < (20 - flammability) / (aerated ? 360 : 100)) {
                 nextFireGrid[y][x] = false;
             }
-            if (random() < flammability / 500 && nextGrid[y][x] == null) {
+            if (random() < flammability / 1200 && nextGrid[y][x] == null) {
                 if (grid[y][x] != 'ash' && random() < 0.8) {
                     nextGrid[y][x] = 'ash';
                 } else {
