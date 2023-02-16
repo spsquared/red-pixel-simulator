@@ -353,9 +353,7 @@ const pixels = {
                 nextGrid[y][x] = 'concrete_powder';
                 return;
             }
-            if (random() < 0.5) {
-                fireGrid[y][x] = true;
-            }
+            nextFireGrid[y][x] = true;
             if (y < gridSize - 1 && random() < 0.5) {
                 if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'collapsible') {
                     if (canMoveTo(x, y + 1)) {
@@ -773,6 +771,7 @@ const pixels = {
         name: 'Fire',
         description: 'AAAAAA! It burns!',
         draw: function (x, y, width, height, opacity, ctx) {
+            if (grid[y][x] == 'lava') return;
             if (noNoise) {
                 ctx.fillStyle = `rgba(255, 180, 0, ${opacity / 2})`;
                 drawPixel(x, y, width, height, ctx);
