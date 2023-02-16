@@ -684,15 +684,13 @@ const pixels = {
             if (random() < flammability / 500 && nextGrid[y][x] == null) {
                 nextGrid[y][x] = 'air';
             }
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (nextFireGrid[actionY][actionX]) return;
-                let flammability = (pixels[grid[actionY][actionX]] ?? pixels['missing']).flammability;
-                if (random() < flammability / 20 + (actionY < y ? 0.3 : 0)) nextFireGrid[actionY][actionX] = true;
-            });
-            updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
-                if (nextFireGrid[actionY][actionX]) return;
-                if (random() < pixels['air'].flammability / 20 + (actionY < y ? 0.4 : 0)) nextFireGrid[actionY][actionX] = true;
-            });
+            for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridSize - 1); i++) {
+                for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridSize - 1); j++) {
+                    if (nextFireGrid[j][i] || (i == x && j == y)) return;
+                    let flammability = (pixels[grid[j][i]] ?? pixels['missing']).flammability;
+                    if (random() < flammability / 20 + (j < y ? 0.3 : 0)) nextFireGrid[j][i] = true;
+                }
+            }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
