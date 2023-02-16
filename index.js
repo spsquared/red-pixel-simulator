@@ -8,7 +8,7 @@ window.addEventListener('error', (e) => {
 });
 
 let gridSize = 100;
-let saveCode = '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
+let saveCode = window.localStorage.getItem('saveCode') ?? '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
 let startPaused = false;
 let backgroundColor = '#ffffff';
 
@@ -57,6 +57,7 @@ below.height = canvasResolution;
 above.width = canvasResolution;
 above.height = canvasResolution;
 resetCanvases();
+canvas.addEventListener('contextmenu', e => e.preventDefault());
 
 let xScale = canvasResolution / gridSize;
 let yScale = canvasResolution / gridSize;
@@ -72,6 +73,7 @@ const lastGrid = [];
 const nextGrid = [];
 const noiseGrid = [];
 const fireGrid = [];
+let pendingExplosions = [];
 let gridPaused = startPaused;
 let simulatePaused = false;
 let clickPixel = 'wall';
@@ -85,6 +87,7 @@ let forcedRedraw = true;
 function createGrid() {
     xScale = canvasResolution / gridSize;
     yScale = canvasResolution / gridSize;
+    pendingExplosions = [];
     grid.length = 0;
     lastGrid.length = 0;
     nextGrid.length = 0;
@@ -191,6 +194,7 @@ function loadSaveCode() {
         gridPaused = startPaused;
         updateTimeControlButtons();
     }
+    window.localStorage.setItem('saveCode', saveCode);
 };
 function generateSaveCode() {
     let saveCode = '';
@@ -279,7 +283,77 @@ function setup() {
     createGrid();
     loadSaveCode();
     saveCodeText.value = saveCode;
-    // store in local storage
+
+    document.onkeydown = (e) => {
+        if (e.ctrlKey || e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs) return;
+        const key = e.key.toLowerCase();
+        for (let i in pixels) {
+            if (pixels[i].key == key) {
+                clickPixel = i;
+                document.getElementById('pixelPicker').children.forEach(div => div.classList.remove('pickerPixelSelected'));
+                document.getElementById(`picker-${i}`).classList.add('pickerPixelSelected');
+                pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[i].name}</span><br>${pixels[i].description}`;
+            }
+        }
+        if (key == 'arrowup') {
+            clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
+        } else if (key == 'arrowdown') {
+            clickSize = Math.max(1, clickSize - 1);
+        } else if (key == 'r') {
+            for (let i = 0; i < gridSize; i++) {
+                if (grid[0][i] == 'air' && random() < 0.25) {
+                    grid[0][i] = 'water';
+                }
+            }
+        } else if (key == 'e') {
+            for (let i = 0; i < gridSize; i++) {
+                if (grid[0][i] == 'air' && random() < 0.25) {
+                    grid[0][i] = 'lava';
+                }
+            }
+        } else if (key == 'b') {
+            for (let i = 0; i < gridSize; i++) {
+                grid[0][i] = 'nuke';
+            }
+        } else if (key == 'n') {
+            for (let i = 0; i < gridSize; i += 5) {
+                for (let j = 0; j < gridSize; j += 5) {
+                    grid[j][i] = 'very_huge_nuke';
+                }
+            }
+        } else if (key == 'enter') {
+            runTicks = 1;
+        } else if (key == 'shift') {
+            removing = true;
+        }
+        if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11') e.preventDefault();
+        if (e.target.matches('button')) e.target.blur();
+    };
+    document.onkeyup = (e) => {
+        if (e.ctrlKey || e.target.matches('#saveCode') || !acceptInputs) return;
+        const key = e.key.toLowerCase();
+        if (key == 'alt') {
+            debugInfo = !debugInfo;
+        } else if (key == 'p') {
+            gridPaused = !gridPaused;
+            simulatePaused = false;
+            updateTimeControlButtons();
+        } else if (key == 'shift') {
+            removing = false;
+        }
+        e.preventDefault();
+    };
+    document.onwheel = (e) => {
+        if (e.deltaY > 0) {
+            clickSize = Math.max(1, clickSize - 1);
+        } else {
+            clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
+        }
+    };
+
+    setInterval(() => {
+        window.localStorage.setItem('saveCode', generateSaveCode());
+    });
 
     lastFpsList = millis();
 };
@@ -419,19 +493,24 @@ function explode(x, y, size, chain) {
                     nextGrid[i][j] = 'air';
                     if (chain > 0 && !chained) {
                         if (grid[i][j] == 'nuke') {
-                            explode(j, i, 10, chain - 1);
+                            pendingExplosions.push([j, i, 10, chain - 1]);
+                            grid[i][j] = 'air';
                             chained = true;
                         } else if (grid[i][j] == 'huge_nuke') {
-                            explode(j, i, 20, chain - 1);
+                            pendingExplosions.push([j, i, 20, chain - 1]);
+                            grid[i][j] = 'air';
                             chained = true;
                         } else if (grid[i][j] == 'very_huge_nuke') {
-                            explode(j, i, 40, chain - 1);
+                            pendingExplosions.push([j, i, 40, chain - 1]);
+                            grid[i][j] = 'air';
                             chained = true;
                         } else if (grid[i][j] == 'gunpowder') {
-                            explode(j, i, 5, 1);
+                            pendingExplosions.push([j, i, 5, 1]);
+                            grid[i][j] = 'air';
                             // chained = true;
                         } else if (grid[i][j] == 'c4') {
-                            explode(j, i, 15, 1);
+                            pendingExplosions.push([j, i, 15, 1]);
+                            grid[i][j] = 'air';
                             // chained = true;
                         }
                     }
@@ -465,12 +544,12 @@ function clickLine(startX, startY, endX, endY, remove) {
         for (let j = xmin; j <= xmax; j++) {
             for (let k = ymin; k <= ymax; k++) {
                 if (remove) {
-                    nextGrid[k][j] = 'air';
+                    grid[k][j] = 'air';
                     fireGrid[k][j] = false;
                 } else if (clickPixel == 'fire') {
                     fireGrid[k][j] = true;
                 } else {
-                    nextGrid[k][j] = clickPixel;
+                    grid[k][j] = clickPixel;
                 }
             }
         }
@@ -509,26 +588,26 @@ function draw() {
             if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forcedRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? abovectx : belowctx);
             else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixelType.above ? abovectx : belowctx);
         }
-        // for (let i = 0; i < gridSize; i++) {
-        //     let j = 0;
-        //     let fire = false;
-        //     let number = 0;
-        //     while (j < gridSize) {
-        //         number++;
-        //         if (fireGrid[i][j] != fire) {
-        //             if (fire) {
-        //                 drawPixels(j - number, i, number, 1, 'fire', 1, above);
-        //             }
-        //             fire = fireGrid[i][j];
-        //             number = 0;
-        //         }
-        //         j++;
-        //     }
-        //     number++;
-        //     if (fire) {
-        //         drawPixels(j - number, i, number, 1, 'fire', 1, above);
-        //     }
-        // }
+        for (let i = 0; i < gridSize; i++) {
+            let j = 0;
+            let fire = false;
+            let number = 0;
+            while (j < gridSize) {
+                number++;
+                if (fireGrid[i][j] != fire) {
+                    if (fire) {
+                        drawPixels(j - number, i, number, 1, 'fire', 1, abovectx);
+                    }
+                    fire = fireGrid[i][j];
+                    number = 0;
+                }
+                j++;
+            }
+            number++;
+            if (fire) {
+                drawPixels(j - number, i, number, 1, 'fire', 1, abovectx);
+            }
+        }
         for (let i = 0; i < gridSize; i++) {
             for (let j = 0; j < gridSize; j++) {
                 lastGrid[i][j] = grid[i][j];
@@ -587,6 +666,11 @@ function draw() {
                     if (fireGrid[k][j]) firePixelType.update(j, k);
                 }
             }
+            let currentExplosions = pendingExplosions;
+            pendingExplosions = [];
+            for (let explosion of currentExplosions) {
+                explode(...explosion);
+            }
             for (let j = 0; j <= 5; j++) {
                 if (ticks % 2 == 0) {
                     for (let k = 0; k < gridSize; k++) {
@@ -621,17 +705,24 @@ function draw() {
     }
 
     // ui
-    if (gridPaused && simulatePaused) {
-        ctx.fillStyle = '#FFF';
-        ctx.fillRect(1, 1, 70, 14);
-        if (debugInfo) {
-            ctx.fillRect(5, 0, 200, 120);
-        }
-    }
     ctx.fillStyle = '#000';
     ctx.font = '20px Arial';
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
+    if (debugInfo) {
+        if (gridPaused && simulatePaused) ctx.fillStyle = '#FFF';
+        else ctx.fillStyle = '#0000004B';
+        ctx.fillRect(5, 20, 200, 100);
+        ctx.fillStyle = '#000';
+        for (let i = 0; i < 100; i++) {
+            ctx.fillRect(5 + i * 2, 120 - fpsList[i], 2, fpsList[i]);
+        }
+        ctx.fillText('Last 10 seconds:', 10, 24);
+    }
+    if (gridPaused && simulatePaused) {
+        ctx.fillStyle = '#FFF';
+        ctx.fillRect(1, 1, 90, 18);
+    }
     ctx.fillText(`FPS: ${frames.length}`, 3, 1);
     while (lastFpsList + 100 < millis()) {
         lastFpsList += 100;
@@ -640,99 +731,21 @@ function draw() {
             fpsList.shift(1);
         }
     }
-    if (debugInfo) {
-        ctx.fillStyle = '#0000004B';
-        ctx.fillRect(5, 20, 200, 100);
-        for (let i = 0; i < 100; i++) {
-            ctx.fillStyle = '#000';
-            ctx.fillRect(5 + i * 2, 120 - fpsList[i], 2, fpsList[i]);
-        }
-        ctx.fillText('Last 10 seconds:', 10, 24);
-    }
     ctx.textAlign = 'right';
     ctx.fillText(`Brush Size: ${clickSize * 2 - 1}`, canvasResolution - 3, 1);
     ctx.fillText(`Brush Pixel: ${(pixels[clickPixel] ?? pixels['missing']).name}`, canvasResolution - 3, 22);
     if (gridPaused) {
         ctx.fillStyle = '#000';
-        ctx.fillText('PAUSED', canvasResolution - 3, 33);
+        ctx.fillText('PAUSED', canvasResolution - 3, 43);
         if (simulatePaused) {
             ctx.font = '60px Arial';
             ctx.textAlign = 'center';
-            ctx.textBaseline = 'center';
+            ctx.textBaseline = 'middle';
             ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
         }
     }
 
     animationTime++;
-};
-
-canvas.addEventListener('contextmenu', e => e.preventDefault());
-
-document.onkeydown = (e) => {
-    if (e.ctrlKey || e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs) return;
-    const key = e.key.toLowerCase();
-    for (let i in pixels) {
-        if (pixels[i].key == key) {
-            clickPixel = i;
-            document.getElementById('pixelPicker').children.forEach(div => div.classList.remove('pickerPixelSelected'));
-            document.getElementById(`picker-${i}`).classList.add('pickerPixelSelected');
-            pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[i].name}</span><br>${pixels[i].description}`;
-        }
-    }
-    if (key == 'arrowup') {
-        clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
-    } else if (key == 'arrowdown') {
-        clickSize = Math.max(1, clickSize - 1);
-    } else if (key == 'r') {
-        for (let i = 0; i < gridSize; i++) {
-            if (grid[0][i] == 'air' && random() < 0.25) {
-                grid[0][i] = 'water';
-            }
-        }
-    } else if (key == 'e') {
-        for (let i = 0; i < gridSize; i++) {
-            if (grid[0][i] == 'air' && random() < 0.25) {
-                grid[0][i] = 'lava';
-            }
-        }
-    } else if (key == 'b') {
-        for (let i = 0; i < gridSize; i++) {
-            grid[0][i] = 'nuke';
-        }
-    } else if (key == 'n') {
-        for (let i = 0; i < gridSize; i += 5) {
-            for (let j = 0; j < gridSize; j += 5) {
-                grid[j][i] = 'very_huge_nuke';
-            }
-        }
-    } else if (key == 'enter') {
-        runTicks = 1;
-    } else if (key == 'shift') {
-        removing = true;
-    }
-    if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11') e.preventDefault();
-    if (e.target.matches('button')) e.target.blur();
-};
-document.onkeyup = (e) => {
-    if (e.ctrlKey || e.target.matches('#saveCode') || !acceptInputs) return;
-    const key = e.key.toLowerCase();
-    if (key == 'alt') {
-        debugInfo = !debugInfo;
-    } else if (key == 'p') {
-        gridPaused = !gridPaused;
-        simulatePaused = false;
-        updateTimeControlButtons();
-    } else if (key == 'shift') {
-        removing = false;
-    }
-    e.preventDefault();
-};
-document.onwheel = (e) => {
-    if (e.deltaY > 0) {
-        clickSize = Math.max(1, clickSize - 1);
-    } else {
-        clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
-    }
 };
 
 document.getElementById('copySave').onclick = (e) => {
@@ -863,5 +876,5 @@ const preventMotion = (e) => {
         e.stopPropagation();
     }
 };
-window.addEventListener("scroll", preventMotion, false);
-window.addEventListener("touchmove", preventMotion, false);
+window.addEventListener("scroll", preventMotion, true);
+window.addEventListener("touchmove", preventMotion, true);

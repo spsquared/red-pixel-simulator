@@ -50,6 +50,7 @@ button {
     font: 16px Arial;
     font-weight: bolder;
     border: 5px outset #AAAAAA;
+    transition: 100ms linear background-color;
     cursor: pointer;
 }
 button:active {

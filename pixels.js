@@ -9,6 +9,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 15,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -29,6 +30,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 0, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -70,6 +72,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(125, 75, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 1,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -133,6 +136,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(25, 175, 25)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 10,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -174,6 +178,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 225, 125)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -298,6 +303,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 100, 255)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 3,
         animatedNoise: true,
@@ -471,6 +477,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 125, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 15,
         key: Infinity,
         updatePriority: 3,
         animatedNoise: true,
@@ -524,6 +531,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(150, 150, 150)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -554,6 +562,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 75, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 3,
         animatedNoise: false,
@@ -591,6 +600,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 15,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -629,6 +639,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(225, 255, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 10,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -655,13 +666,33 @@ const pixels = {
             }
         },
         update: function (x, y) {
-
+            // flammability is a rating out of 20
+            // (20 - flammability) / 20 is the chances the fire extinguishes itself on that pixel
+            // flammability / 20 is the chances that fire will spread to that pixel (0.2 is added if it is above the fire)
+            // flammability / 20 is the chances that that pixel will be destroyed by the fire
+            let flammability = (pixels[grid[y][x]] ?? pixels['missing']).flammability;
+            if (random() < (20 - flammability) / 20) {
+                fireGrid[y][x] = false;
+            } else if (random() < flammability / 40 && nextGrid[y][x] == null) {
+                nextGrid[y][x] = 'air';
+            } else {
+                updateTouchingAnything(x, y, function (actionX, actionY) {
+                    if (fireGrid[actionY][actionX]) return;
+                    let flammability = (pixels[grid[actionY][actionX]] ?? pixels['missing']).flammability;
+                    if (random() < flammability / 20) fireGrid[actionY][actionX] = true;
+                });
+                updatePixel(x, y, 'air', function (actionX, actionY) {
+                    if (fireGrid[actionY][actionX]) return;
+                    if (random() < pixels['air'].flammability / 20) fireGrid[actionY][actionX] = true;
+                });
+            }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(255, 180, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 20,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -700,6 +731,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(50, 25, 25)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 20,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -720,6 +752,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(245, 245, 200)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 4,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -759,6 +792,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 100, 255)';
             ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -806,6 +840,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 125, 0)';
             ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -849,6 +884,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
+        flammability: 12,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -892,6 +928,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
+        flammability: 12,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -935,6 +972,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
+        flammability: 12,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -978,6 +1016,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
+        flammability: 12,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1019,6 +1058,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
+        flammability: 12,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1060,6 +1100,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
+        flammability: 12,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1101,6 +1142,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
+        flammability: 12,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1142,6 +1184,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
+        flammability: 12,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1209,6 +1252,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
+        flammability: 6,
         key: Infinity,
         updatePriority: 1,
         animatedNoise: false,
@@ -1276,6 +1320,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
+        flammability: 6,
         key: 'k',
         updatePriority: 1,
         animatedNoise: false,
@@ -1343,6 +1388,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
+        flammability: 6,
         key: Infinity,
         updatePriority: 1,
         animatedNoise: false,
@@ -1410,6 +1456,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
+        flammability: 6,
         key: Infinity,
         updatePriority: 1,
         animatedNoise: false,
@@ -1438,6 +1485,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
+        flammability: 6,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -1466,6 +1514,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
+        flammability: 6,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -1494,6 +1543,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
+        flammability: 6,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -1522,6 +1572,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
+        flammability: 6,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -1577,6 +1628,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50 / 3, 50 / 3);
             ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
+        flammability: 6,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -1632,6 +1684,7 @@ const pixels = {
             ctx.fillRect(100 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
         },
+        flammability: 6,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -1658,6 +1711,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(200, 100, 0)';
             ctx.fillRect(0, 25 / 2, 50, 25);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -1684,6 +1738,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(200, 100, 0)';
             ctx.fillRect(25 / 2, 0, 25, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -1719,6 +1774,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 120, 210)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 18,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -1749,6 +1805,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50, 50 / 3);
             ctx.fillRect(50 / 3, 0, 50 / 3, 50);
         },
+        flammability: 5,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -1777,6 +1834,7 @@ const pixels = {
             ctx.fillRect(0, 0, 25 / 2, 50);
             ctx.fillRect(25, 0, 25 / 2, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -1829,6 +1887,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
+        flammability: 20,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -1880,6 +1939,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
+        flammability: 20,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -1931,6 +1991,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
+        flammability: 20,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -1982,6 +2043,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
+        flammability: 20,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2019,6 +2081,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(100, 255, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2056,6 +2119,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(100, 60, 255)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2093,6 +2157,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 0, 70)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2136,6 +2201,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(125, 255, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -2292,6 +2358,9 @@ const pixels = {
                 if (nextGrid[actionY][actionX] == null && random() < 0.001) {
                     nextGrid[actionY][actionX] = 'spin';
                 }
+                if (random() < 0.1) {
+                    fireGrid[actionY][actionX] = true;
+                }
                 move(Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridSize - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridSize - 1), Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridSize - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridSize - 1));
             };
             updateTouchingPixel(x, y, 'air', chaos);
@@ -2307,6 +2376,7 @@ const pixels = {
             ctx.fillRect(22, 8, 6, 22);
             ctx.fillRect(22, 36, 6, 6);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -2333,6 +2403,7 @@ const pixels = {
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -2353,6 +2424,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 0, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -2383,6 +2455,7 @@ const pixels = {
             ctx.fillRect(0, 0, 25, 25);
             ctx.fillRect(25, 25, 25, 25);
         },
+        flammability: 0,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
