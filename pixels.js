@@ -2478,13 +2478,13 @@ for (const id in pixels) {
             clickPixel = id;
             pixelPicker.children.forEach(div => div.classList.remove('pickerPixelSelected'));
             box.classList.add('pickerPixelSelected');
-            pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description})`;
+            pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}`;
         };
         box.onmouseover = (e) => {
-            pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description})`;
+            pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}`;
         };
         box.onmouseout = (e) => {
-            pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[clickPixel].name}</span><br>${pixels[clickPixel].description})`;
+            pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[clickPixel].name}</span><br>${pixels[clickPixel].description}`;
         };
         const img = new Image(50, 50);
         pixels[id].drawPreview(ctx2);
@@ -2494,4 +2494,4 @@ for (const id in pixels) {
     }
 }
 document.getElementById(`picker-${clickPixel})`).classList.add('pickerPixelSelected');
-pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[clickPixel].name}</span><br>${pixels[clickPixel].description})`;
+pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[clickPixel].name}</span><br>${pixels[clickPixel].description}`;
