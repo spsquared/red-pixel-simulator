@@ -498,12 +498,10 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            let ret = false;
-            updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
+            if (updateTouchingPixel(x, y, 'water')) {
                 nextGrid[y][x] = 'concrete';
-                ret = true;
-            });
-            if (ret) return;
+                return;
+            }
             if (y > 0 && grid[y - 1][x] == 'lava') {
                 if (canMoveTo(x, y - 1) && random() < 0.5) {
                     nextGrid[y][x] = 'lava';
@@ -569,6 +567,133 @@ const pixels = {
         flammability: 0,
         key: Infinity,
         updatePriority: 3,
+        animatedNoise: false,
+        animated: false,
+        above: false,
+        pickable: true
+    },
+    ash: {
+        name: 'Ash',
+        description: 'Burnt stuff, doesn\'t burn easily',
+        draw: function (x, y, width, height, opacity, ctx) {
+            if (noNoise) {
+                ctx.fillStyle = `rgba(100, 110, 120, ${opacity})`;
+                drawPixel(x, y, width, height, ctx);
+            } else {
+                ctx.fillStyle = `rgba(80, 85, 90, ${opacity})`;
+                drawPixel(x, y, width, height, ctx);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = `rgba(120, 130, 140, ${noiseGrid[y + j][x + i] * opacity})`;
+                        drawPixel(x + i, y + j, 1, 1, ctx);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            let removedWater = false;
+            if (updateTouchingPixel(x, y, 'water', function(actionX, actionY) {
+                if (!removedWater && validMovingPixel(actionX, actionY) && random() < 0.2) {
+                    nextGrid[actionY][actionX] = 'air';
+                    removedWater = true;
+                }
+            })) {
+                nextGrid[y][x] = 'wet_ash';
+                return;
+            }
+            if (y < gridSize - 1) {
+                if (isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+                    move(x, y, x, y + 1);
+                } else if (y < gridSize - 2) {
+                    let slideLeft = x > 0 && isPassableFluid(x - 1, y) && isPassableFluid(x - 1, y + 1) && isPassableFluid(x - 1, y + 2);
+                    let slideRight = x < gridSize - 1 && isPassableFluid(x + 1, y) && isPassableFluid(x + 1, y + 1) && isPassableFluid(x + 1, y + 2);
+                    if (slideLeft && slideRight) {
+                        if (ticks % 2 == 0) {
+                            move(x, y, x - 1, y + 1);
+                        } else {
+                            move(x, y, x + 1, y + 1);
+                        }
+                    } else if (slideLeft) {
+                        move(x, y, x - 1, y + 1);
+                    } else if (slideRight) {
+                        move(x, y, x + 1, y + 1);
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 110, 120)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        flammability: 1,
+        key: Infinity,
+        updatePriority: 2,
+        animatedNoise: false,
+        animated: false,
+        above: false,
+        pickable: true
+    },
+    wet_ash: {
+        name: 'Wet Ash',
+        description: 'Almost silt, it\'s nearly fluid',
+        draw: function (x, y, width, height, opacity, ctx) {
+            if (noNoise) {
+                ctx.fillStyle = `rgba(80, 80, 90, ${opacity})`;
+                drawPixel(x, y, width, height, ctx);
+            } else {
+                ctx.fillStyle = `rgba(70, 70, 80, ${opacity})`;
+                drawPixel(x, y, width, height, ctx);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = `rgba(85, 85, 90, ${noiseGrid[y + j][x + i] * opacity})`;
+                        drawPixel(x + i, y + j, 1, 1, ctx);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (fireGrid[y][x] && random() < 0.1) {
+                nextGrid[y][x] = 'ash';
+                return;
+            }
+            function isPassableAshFluid(x, y) {
+                return isPassableFluid(x, y) || grid[y][x] == 'ash';
+            };
+            if (y < gridSize - 1) {
+                if (isPassableAshFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+                    move(x, y, x, y + 1);
+                } else {
+                    let slideLeft = isPassableAshFluid(x - 1, y) && ((isPassableAshFluid(x - 2, y) && isPassableAshFluid(x - 2, y + 1) && canMoveTo(x - 1, y)) || (isPassableAshFluid(x - 1, y + 1) && canMoveTo(x - 1, y + 1)));
+                    let slideRight = isPassableAshFluid(x + 1, y) && ((isPassableAshFluid(x + 2, y) && isPassableAshFluid(x + 2, y + 1) && canMoveTo(x + 1, y)) || (isPassableAshFluid(x + 1, y + 1) && canMoveTo(x + 1, y + 1)));
+                    if (slideLeft && slideRight) {
+                        if (ticks % 2 == 0) {
+                            if (isPassableAshFluid(x - 1, y + 1)) move(x, y, x - 1, y + 1);
+                            else move(x, y, x - 1, y);
+                        } else {
+                            if (isPassableAshFluid(x + 1, y + 1)) move(x, y, x + 1, y + 1);
+                            else move(x, y, x + 1, y);
+                        }
+                    } else if (slideLeft) {
+                        if (isPassableAshFluid(x - 1, y + 1)) move(x, y, x - 1, y + 1);
+                        else move(x, y, x - 1, y);
+                    } else if (slideRight) {
+                        if (isPassableAshFluid(x + 1, y + 1)) move(x, y, x + 1, y + 1);
+                        else move(x, y, x + 1, y);
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(80, 80, 90)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        flammability: 1,
+        key: Infinity,
+        updatePriority: 2,
         animatedNoise: false,
         animated: false,
         above: false,
@@ -659,11 +784,11 @@ const pixels = {
                 ctx.fillStyle = `rgba(255, 180, 0, ${opacity / 2})`;
                 drawPixel(x, y, width, height, ctx);
             } else {
-                ctx.fillStyle = `rgba(255, 100, 0, ${opacity / 2})`;
+                ctx.fillStyle = `rgba(255, 100, 0, ${opacity / 3})`;
                 drawPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(255, 255, 0, ${noiseGrid[y + j][x + i] * opacity / 2})`;
+                        ctx.fillStyle = `rgba(255, 255, 0, ${noiseGrid[y + j][x + i] * opacity / 3})`;
                         drawPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -682,7 +807,11 @@ const pixels = {
                 nextFireGrid[y][x] = false;
             }
             if (random() < flammability / 500 && nextGrid[y][x] == null) {
-                nextGrid[y][x] = 'air';
+                if (grid[y][x] != 'ash') {
+                    nextGrid[y][x] = 'ash';
+                } else {
+                    nextGrid[y][x] = 'air';
+                }
             }
             for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridSize - 1); i++) {
                 for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridSize - 1); j++) {
@@ -729,11 +858,27 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
-                move(x, y, x, y + 1);
-            }
             let explosion = updateTouchingPixel(x, y, 'lava') || fireGrid[y][x];
             if (explosion) explode(x, y, 5, 1);
+            else if (y < gridSize - 1) {
+                if (isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+                    move(x, y, x, y + 1);
+                } else {
+                    let slideLeft = x > 0 && canMoveTo(x - 1, y + 1) && isPassableFluid(x - 1, y) && isPassableFluid(x - 1, y + 1);
+                    let slideRight = x < gridSize - 1 && canMoveTo(x + 1, y + 1) && isPassableFluid(x + 1, y) && isPassableFluid(x + 1, y + 1);
+                    if (slideLeft && slideRight) {
+                        if (ticks % 2 == 0) {
+                            move(x, y, x - 1, y + 1);
+                        } else {
+                            move(x, y, x + 1, y + 1);
+                        }
+                    } else if (slideLeft) {
+                        move(x, y, x - 1, y + 1);
+                    } else if (slideRight) {
+                        move(x, y, x + 1, y + 1);
+                    }
+                }
+            }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -1474,7 +1619,7 @@ const pixels = {
         pickable: true
     },
     rotator_up: {
-        name: 'Piston Rotator (Up)',
+        name: 'Rotator (Up)',
         description: 'Rotates directional pixels to face up',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
@@ -1503,7 +1648,7 @@ const pixels = {
         pickable: true
     },
     rotator_down: {
-        name: 'Piston Rotator (Down)',
+        name: 'Rotator (Down)',
         description: 'Rotates directional pixels to face down',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
@@ -1532,7 +1677,7 @@ const pixels = {
         pickable: true
     },
     rotator_left: {
-        name: 'Piston Rotator (Left)',
+        name: 'Rotator (Left)',
         description: 'Rotates directional pixels to face left',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
@@ -1561,7 +1706,7 @@ const pixels = {
         pickable: true
     },
     rotator_right: {
-        name: 'Piston Rotator (Right)',
+        name: 'Rotator (Right)',
         description: 'Rotates directional pixels to face right',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
@@ -1883,7 +2028,7 @@ const pixels = {
                     removeY--;
                     if (grid[removeY][x] != 'air') {
                         if (grid[removeY][x] != 'laser_scatterer') nextGrid[removeY][x] = 'air';
-                        if (grid[removeY][x] == 'gunpowder') explode(x, removeY, 5, 1);
+                        if (!grid[removeY][x].includes('laser')) nextFireGrid[removeY][x] = true;
                         break;
                     }
                 }
@@ -1935,7 +2080,7 @@ const pixels = {
                     removeY++;
                     if (grid[removeY][x] != 'air') {
                         if (grid[removeY][x] != 'laser_scatterer') nextGrid[removeY][x] = 'air';
-                        if (grid[removeY][x] == 'gunpowder') explode(x, removeY, 5, 1);
+                        if (!grid[removeY][x].includes('laser')) nextFireGrid[removeY][x] = true;
                         break;
                     }
                 }
@@ -1987,7 +2132,7 @@ const pixels = {
                     removeX--;
                     if (grid[y][removeX] != 'air') {
                         if (grid[y][removeX] != 'laser_scatterer') nextGrid[y][removeX] = 'air';
-                        if (grid[y][removeX] == 'gunpowder') explode(removeX, y, 5, 1);
+                        if (!grid[y][removeX].includes('laser')) nextFireGrid[y][removeX] = true;
                         break;
                     }
                 }
@@ -2039,7 +2184,7 @@ const pixels = {
                     removeX++;
                     if (grid[y][removeX] != 'air') {
                         if (grid[y][removeX] != 'laser_scatterer') nextGrid[y][removeX] = 'air';
-                        if (grid[y][removeX] == 'gunpowder') explode(removeX, y, 5, 1);
+                        if (!grid[y][removeX].includes('laser')) nextFireGrid[y][removeX] = true;
                         break;
                     }
                 }

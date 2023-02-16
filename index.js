@@ -110,6 +110,7 @@ function createGrid() {
             nextFireGrid[i][j] = false;
         }
     }
+    document.getElementById('gridSize').value = gridSize;
 };
 function loadSaveCode() {
     if (saveCode.length != 0) {
@@ -220,6 +221,7 @@ function generateSaveCode() {
             }
         }
     }
+    number++;
     if (string != '' && number != 0) {
         if (number == 1) {
             saveCode += string + ':';
@@ -448,6 +450,8 @@ function canMoveTo(x, y) {
 function move(x1, y1, x2, y2) {
     nextGrid[y1][x1] = grid[y2][x2];
     nextGrid[y2][x2] = grid[y1][x1];
+    nextFireGrid[y2][x2] = fireGrid[y1][x1];
+    nextFireGrid[y2][x2] = fireGrid[y1][x1];
 };
 function detectRotate(x, y) {
     return updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -839,6 +843,7 @@ document.getElementById('noNoise').onclick = (e) => {
     noNoise = !noNoise;
     if (noNoise) document.getElementById('noNoise').style.backgroundColor = 'lime';
     else document.getElementById('noNoise').style.backgroundColor = 'red';
+    forcedRedraw = true;
 };
 document.getElementById('fadeEffect').onclick = (e) => {
     fadeEffect = fadeEffect ? 0 : 127;
@@ -905,5 +910,5 @@ const preventMotion = (e) => {
         e.stopPropagation();
     }
 };
-window.addEventListener("scroll", preventMotion, true);
-window.addEventListener("touchmove", preventMotion, true);
+// window.addEventListener("scroll", preventMotion, false);
+// window.addEventListener("touchmove", preventMotion, false);
