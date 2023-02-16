@@ -2196,7 +2196,7 @@ const pixels = {
                     nextGrid[actionY][actionX] = 'pump';
                 }
                 if (nextGrid[actionY][actionX] == null && random() < 0.025) {
-                    nextGrid[actionY][actionX] = 'cloner';
+                    nextGrid[actionY][actionX] = 'cloner_down';
                 }
             });
             updateTouchingPixel(x, y, 'lag_spike_generator', function (actionX, actionY) {

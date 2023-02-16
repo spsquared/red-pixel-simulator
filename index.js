@@ -597,7 +597,7 @@ function draw() {
             for (j = 0; j < gridSize; j++) {
                 amount++;
                 if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
-                    let pixelType = pixels[curr];
+                    let pixelType = pixels[curr] ?? pixels['missing'];
                     if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forcedRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, pixelType.above ? abovectx : belowctx);
                     else if (curr == 'air') clearPixels(j - amount, i, amount, 1, pixelType.above ? abovectx : belowctx);
                     curr = grid[i][j]
@@ -605,7 +605,7 @@ function draw() {
                     amount = 0;
                 }
             }
-            let pixelType = pixels[curr];
+            let pixelType = pixels[curr] ?? pixels['missing'];
             if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forcedRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? abovectx : belowctx);
             else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixelType.above ? abovectx : belowctx);
         }
