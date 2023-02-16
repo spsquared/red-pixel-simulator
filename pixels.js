@@ -689,9 +689,9 @@ const pixels = {
                     if (nextFireGrid[j][i] || (i == x && j == y)) continue;
                     let flammability = (pixels[grid[j][i]] ?? pixels['missing']).flammability;
                     if (grid[j][i] == 'air') {
-                        if (random() < flammability / 20 + (j < y ? 0.3 : 0) - ((i != x && j != y) ? 0.2 : 0)) nextFireGrid[j][i] = true;
+                        if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.6 : 0)) nextFireGrid[j][i] = true;
                     } else {
-                        if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.3 : 0)) nextFireGrid[j][i] = true;
+                        if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0)) nextFireGrid[j][i] = true;
                     }
                 }
             }
@@ -945,50 +945,6 @@ const pixels = {
         above: false,
         pickable: true
     },
-    cloner_right: {
-        name: 'Cloner (Right)',
-        description: 'Copies stuff from its left to its right',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (detectRotate(x, y)) return;
-            if (x > 0 && x < gridSize - 1
-                && grid[y][x - 1] != 'air' && !grid[y][x - 1].includes('cloner')
-                && grid[y][x + 1] == 'air' && canMoveTo(x + 1, y)) {
-                nextGrid[y][x + 1] = grid[y][x - 1];
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(255, 255, 0)';
-            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
-        },
-        flammability: 8,
-        key: Infinity,
-        updatePriority: 4,
-        animatedNoise: false,
-        animated: false,
-        above: false,
-        pickable: true
-    },
     cloner_left: {
         name: 'Cloner (Left)',
         description: 'Copies stuff from its right to its left',
@@ -1024,6 +980,50 @@ const pixels = {
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+        },
+        flammability: 8,
+        key: Infinity,
+        updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
+        pickable: true
+    },
+    cloner_right: {
+        name: 'Cloner (Right)',
+        description: 'Copies stuff from its left to its right',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+                }
+            }
+            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (detectRotate(x, y)) return;
+            if (x > 0 && x < gridSize - 1
+                && grid[y][x - 1] != 'air' && !grid[y][x - 1].includes('cloner')
+                && grid[y][x + 1] == 'air' && canMoveTo(x + 1, y)) {
+                nextGrid[y][x + 1] = grid[y][x - 1];
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         flammability: 8,
         key: Infinity,
