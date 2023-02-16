@@ -589,6 +589,86 @@ function draw() {
     mouseOver = x >= 0 && x < gridSize && y >= 0 && y < gridSize;
 
     // draw pixels
+    drawFrame();
+    // copy layers
+    ctx.drawImage(below, 0, 0);
+    ctx.drawImage(above, 0, 0);
+    // draw brush
+    if (!gridPaused || !simulatePaused) {
+        let x1 = Math.min(gridSize, Math.max(0, x - clickSize + 1));
+        let x2 = Math.min(gridSize - 1, Math.max(-1, x + clickSize - 1));
+        let y1 = Math.min(gridSize, Math.max(0, y - clickSize + 1));
+        let y2 = Math.min(gridSize - 1, Math.max(-1, y + clickSize - 1));
+        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5, ctx);
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 2;
+        ctx.lineJoin = 'miter';
+        ctx.beginPath();
+        ctx.moveTo(x1 * xScale, y1 * yScale);
+        ctx.lineTo((x2 + 1) * xScale, y1 * yScale);
+        ctx.lineTo((x2 + 1) * xScale, (y2 + 1) * yScale);
+        ctx.lineTo(x1 * xScale, (y2 + 1) * yScale);
+        ctx.lineTo(x1 * xScale, y1 * yScale);
+        ctx.lineTo((x2 + 1) * xScale, y1 * yScale);
+        ctx.stroke();
+    }
+
+    // place pixels
+    if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && mouseOver) {
+        clickLine(x, y, Math.floor((pmouseX - 10) * gridSize / canvasSize), Math.floor((pmouseY - 10) * gridSize / canvasSize), mouseButton == RIGHT || removing);
+    }
+    // simulate pixels
+    updateFrame();
+
+    // fps
+    while (frames[0] + 1000 < millis()) {
+        frames.shift(1);
+    }
+
+    // ui
+    ctx.fillStyle = '#000';
+    ctx.font = '20px Arial';
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    if (debugInfo) {
+        if (gridPaused && simulatePaused) ctx.fillStyle = '#FFF';
+        else ctx.fillStyle = '#0000004B';
+        ctx.fillRect(5, 20, 200, 100);
+        ctx.fillStyle = '#000';
+        for (let i = 0; i < 100; i++) {
+            ctx.fillRect(5 + i * 2, 120 - fpsList[i], 2, fpsList[i]);
+        }
+        ctx.fillText('Last 10 seconds:', 10, 24);
+    }
+    if (gridPaused && simulatePaused) {
+        ctx.fillStyle = '#FFF';
+        ctx.fillRect(1, 1, 90, 18);
+    }
+    ctx.fillText(`FPS: ${frames.length}`, 3, 1);
+    while (lastFpsList + 100 < millis()) {
+        lastFpsList += 100;
+        fpsList.push(frames.length);
+        while (fpsList.length > 100) {
+            fpsList.shift(1);
+        }
+    }
+    ctx.textAlign = 'right';
+    ctx.fillText(`Brush Size: ${clickSize * 2 - 1}`, canvasResolution - 3, 1);
+    ctx.fillText(`Brush Pixel: ${(pixels[clickPixel] ?? pixels['missing']).name}`, canvasResolution - 3, 22);
+    if (gridPaused) {
+        ctx.fillStyle = '#000';
+        ctx.fillText('PAUSED', canvasResolution - 3, 43);
+        if (simulatePaused) {
+            ctx.font = '60px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
+        }
+    }
+
+    animationTime++;
+};
+function drawFrame() {
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
         ctx.fillStyle = backgroundColor + (255 - fadeEffect).toString(16);
         ctx.fillRect(0, 0, canvasResolution, canvasResolution);
@@ -643,34 +723,8 @@ function draw() {
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
         frames.push(millis());
     }
-    // copy layers
-    ctx.drawImage(below, 0, 0);
-    ctx.drawImage(above, 0, 0);
-    // draw brush
-    if (!gridPaused || !simulatePaused) {
-        let x1 = Math.min(gridSize, Math.max(0, x - clickSize + 1));
-        let x2 = Math.min(gridSize - 1, Math.max(-1, x + clickSize - 1));
-        let y1 = Math.min(gridSize, Math.max(0, y - clickSize + 1));
-        let y2 = Math.min(gridSize - 1, Math.max(-1, y + clickSize - 1));
-        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5, ctx);
-        ctx.strokeStyle = 'rgb(0, 0, 0)';
-        ctx.lineWidth = 2;
-        ctx.lineJoin = 'miter';
-        ctx.beginPath();
-        ctx.moveTo(x1 * xScale, y1 * yScale);
-        ctx.lineTo((x2 + 1) * xScale, y1 * yScale);
-        ctx.lineTo((x2 + 1) * xScale, (y2 + 1) * yScale);
-        ctx.lineTo(x1 * xScale, (y2 + 1) * yScale);
-        ctx.lineTo(x1 * xScale, y1 * yScale);
-        ctx.lineTo((x2 + 1) * xScale, y1 * yScale);
-        ctx.stroke();
-    }
-
-    // place pixels
-    if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && mouseOver) {
-        clickLine(x, y, Math.floor((pmouseX - 10) * gridSize / canvasSize), Math.floor((pmouseY - 10) * gridSize / canvasSize), mouseButton == RIGHT || removing);
-    }
-    // simulate pixels
+};
+function updateFrame() {
     if (!gridPaused || runTicks > 0 || simulatePaused) {
         let max = simulatePaused ? 10 : 1;
         for (let i = 0; i < max; i++) {
@@ -731,54 +785,6 @@ function draw() {
             ticks++;
         }
     }
-
-    // fps
-    while (frames[0] + 1000 < millis()) {
-        frames.shift(1);
-    }
-
-    // ui
-    ctx.fillStyle = '#000';
-    ctx.font = '20px Arial';
-    ctx.textBaseline = 'top';
-    ctx.textAlign = 'left';
-    if (debugInfo) {
-        if (gridPaused && simulatePaused) ctx.fillStyle = '#FFF';
-        else ctx.fillStyle = '#0000004B';
-        ctx.fillRect(5, 20, 200, 100);
-        ctx.fillStyle = '#000';
-        for (let i = 0; i < 100; i++) {
-            ctx.fillRect(5 + i * 2, 120 - fpsList[i], 2, fpsList[i]);
-        }
-        ctx.fillText('Last 10 seconds:', 10, 24);
-    }
-    if (gridPaused && simulatePaused) {
-        ctx.fillStyle = '#FFF';
-        ctx.fillRect(1, 1, 90, 18);
-    }
-    ctx.fillText(`FPS: ${frames.length}`, 3, 1);
-    while (lastFpsList + 100 < millis()) {
-        lastFpsList += 100;
-        fpsList.push(frames.length);
-        while (fpsList.length > 100) {
-            fpsList.shift(1);
-        }
-    }
-    ctx.textAlign = 'right';
-    ctx.fillText(`Brush Size: ${clickSize * 2 - 1}`, canvasResolution - 3, 1);
-    ctx.fillText(`Brush Pixel: ${(pixels[clickPixel] ?? pixels['missing']).name}`, canvasResolution - 3, 22);
-    if (gridPaused) {
-        ctx.fillStyle = '#000';
-        ctx.fillText('PAUSED', canvasResolution - 3, 43);
-        if (simulatePaused) {
-            ctx.font = '60px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
-        }
-    }
-
-    animationTime++;
 };
 
 document.getElementById('copySave').onclick = (e) => {

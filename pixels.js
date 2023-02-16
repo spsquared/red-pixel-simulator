@@ -316,7 +316,7 @@ const pixels = {
         description: 'Try not to get burned, it also melts stuff and sets things on fire',
         draw: function (x, y, width, height, opacity, ctx) {
             if (noNoise) {
-                ctx.fillStyle = `rgba(255, 125, 0, ${opacity})`;
+                ctx.fillStyle = `rgba(255, 100, 0, ${opacity})`;
                 drawPixel(x, y, width, height, ctx);
             } else {
                 ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
@@ -476,7 +476,7 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillStyle = 'rgb(255, 100, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
@@ -771,7 +771,6 @@ const pixels = {
         name: 'Fire',
         description: 'AAAAAA! It burns!',
         draw: function (x, y, width, height, opacity, ctx) {
-            if (grid[y][x] == 'lava') return;
             if (noNoise) {
                 ctx.fillStyle = `rgba(255, 180, 0, ${opacity / 2})`;
                 drawPixel(x, y, width, height, ctx);
@@ -788,7 +787,8 @@ const pixels = {
         },
         update: function (x, y) {
             let flammability = (pixels[grid[y][x]] ?? pixels['missing']).flammability;
-            if (flammability == 0 && (grid[y][x] != 'air' || random() < 0.4)) {
+            let isLava = grid[y][x] == 'lava';
+            if (flammability == 0 && !isLava && (grid[y][x] != 'air' || random() < 0.4)) {
                 nextFireGrid[y][x] = false;
                 return;
             }
@@ -799,7 +799,7 @@ const pixels = {
             if (random() < (20 - flammability) / (aerated ? 360 : 100)) {
                 nextFireGrid[y][x] = false;
             }
-            if (random() < flammability / 1200 && nextGrid[y][x] == null) {
+            if (random() < flammability / 1200 && nextGrid[y][x] == null && !isLava) {
                 if (grid[y][x] != 'ash' && random() < 0.8) {
                     nextGrid[y][x] = 'ash';
                 } else {
