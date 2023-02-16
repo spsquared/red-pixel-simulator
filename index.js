@@ -358,10 +358,12 @@ function setup() {
         e.preventDefault();
     };
     document.onwheel = (e) => {
-        if (e.deltaY > 0) {
-            clickSize = Math.max(1, clickSize - 1);
-        } else {
-            clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
+        if (mouseOver) {
+            if (e.deltaY > 0) {
+                clickSize = Math.max(1, clickSize - 1);
+            } else {
+                clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
+            }
         }
     };
 

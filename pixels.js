@@ -313,7 +313,7 @@ const pixels = {
     },
     lava: {
         name: 'Lava',
-        description: 'Try not to get burned, it also melts concrete and other things',
+        description: 'Try not to get burned, it also melts stuff and sets things on fire',
         draw: function (x, y, width, height, opacity, ctx) {
             if (noNoise) {
                 ctx.fillStyle = `rgba(255, 125, 0, ${opacity})`;
@@ -671,7 +671,7 @@ const pixels = {
         },
         update: function (x, y) {
             let flammability = (pixels[grid[y][x]] ?? pixels['missing']).flammability;
-            if (flammability == 0 && (grid[y][x] != 'air' || random() < 0.2)) {
+            if (flammability == 0 && (grid[y][x] != 'air' || random() < 0.4)) {
                 nextFireGrid[y][x] = false;
                 return;
             }
@@ -686,9 +686,13 @@ const pixels = {
             }
             for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridSize - 1); i++) {
                 for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridSize - 1); j++) {
-                    if (nextFireGrid[j][i] || (i == x && j == y)) return;
+                    if (nextFireGrid[j][i] || (i == x && j == y)) continue;
                     let flammability = (pixels[grid[j][i]] ?? pixels['missing']).flammability;
-                    if (random() < flammability / 20 + (j < y ? 0.3 : 0)) nextFireGrid[j][i] = true;
+                    if (grid[j][i] == 'air') {
+                        if (random() < flammability / 20 + (j < y ? 0.3 : 0) - ((i != x && j != y) ? 0.2 : 0)) nextFireGrid[j][i] = true;
+                    } else {
+                        if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.3 : 0)) nextFireGrid[j][i] = true;
+                    }
                 }
             }
         },
