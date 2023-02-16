@@ -643,6 +643,7 @@ function draw() {
     if (gridPaused && simulatePaused) {
         ctx.fillStyle = '#FFF';
         ctx.fillRect(1, 1, 90, 18);
+        ctx.fillStyle = '#000';
     }
     ctx.fillText(`FPS: ${frames.length}`, 3, 1);
     while (lastFpsList + 100 < millis()) {
@@ -656,13 +657,14 @@ function draw() {
     ctx.fillText(`Brush Size: ${clickSize * 2 - 1}`, canvasResolution - 3, 1);
     ctx.fillText(`Brush Pixel: ${(pixels[clickPixel] ?? pixels['missing']).name}`, canvasResolution - 3, 22);
     if (gridPaused) {
-        ctx.fillStyle = '#000';
-        ctx.fillText('PAUSED', canvasResolution - 3, 43);
         if (simulatePaused) {
             ctx.font = '60px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
+        } else {
+            ctx.fillStyle = '#000';
+            ctx.fillText('PAUSED', canvasResolution - 3, 43);
         }
     }
 
