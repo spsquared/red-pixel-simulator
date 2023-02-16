@@ -518,16 +518,18 @@ function explode(x, y, size, chain) {
                             pendingExplosions.push([j, i, 40, chain - 1]);
                             grid[i][j] = 'air';
                             chained = true;
-                        } else if (grid[i][j] == 'gunpowder') {
-                            pendingExplosions.push([j, i, 5, 1]);
-                            grid[i][j] = 'air';
-                            // chained = true;
-                        } else if (grid[i][j] == 'c4') {
-                            pendingExplosions.push([j, i, 15, 1]);
-                            grid[i][j] = 'air';
-                            // chained = true;
                         }
                     }
+                    if (grid[i][j] == 'gunpowder') {
+                        pendingExplosions.push([j, i, 5, 1]);
+                        grid[i][j] = 'wall';
+                    } else if (grid[i][j] == 'c4') {
+                        pendingExplosions.push([j, i, 15, 1]);
+                        grid[i][j] = 'wall';
+                    }
+                }
+                if (random() < 0.5 - (dist(x, y, j, i) / (size * 1.2))) {
+                    fireGrid[i][j] = true;
                 }
             }
         }
