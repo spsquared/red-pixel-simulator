@@ -188,6 +188,13 @@ td {
 .save {
     font-weight: lighter;
 }
+.loadSave {
+    font-size: 12px;
+    border-width: 3px;
+    font: 14px Arial;
+    padding: 2px 4px;
+    background-color: lime;
+}
 
 #confirmationModalContainer {
     position: absolute;

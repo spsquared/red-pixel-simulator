@@ -229,6 +229,17 @@ function generateSaveCode() {
     }
     return saveCode;
 };
+async function loadPremade(id) {
+    if (await confirmationModal()) {
+        document.querySelectorAll('save').forEach(e => {
+            if (e.getAttribute('save-id') == id) {
+                saveCode = e.innerHTML;
+                saveCodeText.value = saveCode;
+                loadSaveCode();
+            }
+        });
+    }
+};
 
 function updateTimeControlButtons() {
     if (gridPaused) {

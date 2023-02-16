@@ -1863,14 +1863,14 @@ const pixels = {
                     drawPixel(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2, ctx);
                 }
             }
-            ctx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
+            abovectx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
             for (let i = 0; i < width; i++) {
                 let endY = y;
                 while (endY >= 0) {
                     endY--;
                     if (endY >= 0 && grid[endY][x + i] != 'air') break;
                 }
-                drawPixel(x + 1 / 3 + i, endY + 1, 1 / 3, y - endY - 1, ctx);
+                drawPixel(x + 1 / 3 + i, endY + 1, 1 / 3, y - endY - 1, abovectx);
             }
         },
         update: function (x, y) {
@@ -1915,14 +1915,14 @@ const pixels = {
                     drawPixel(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2, ctx);
                 }
             }
-            ctx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
+            abovectx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
             for (let i = 0; i < width; i++) {
                 let endY = y + height - 1;
                 while (endY < gridSize) {
                     endY++;
                     if (endY < gridSize && grid[endY][x + i] != 'air') break;
                 }
-                drawPixel(x + 1 / 3 + i, y + height, 1 / 3, endY - y - height, ctx);
+                drawPixel(x + 1 / 3 + i, y + height, 1 / 3, endY - y - height, abovectx);
             }
         },
         update: function (x, y) {
@@ -1967,14 +1967,14 @@ const pixels = {
                     drawPixel(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
                 }
             }
-            ctx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
+            abovectx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
             for (let i = 0; i < height; i++) {
                 let endX = x;
                 while (endX >= 0) {
                     endX--;
                     if (grid[y + i][endX] != 'air') break;
                 }
-                drawPixel(endX + 1, y + 1 / 3 + i, x - endX - 1, 1 / 3, ctx);
+                drawPixel(endX + 1, y + 1 / 3 + i, x - endX - 1, 1 / 3, abovectx);
             }
         },
         update: function (x, y) {
@@ -2019,14 +2019,14 @@ const pixels = {
                     drawPixel(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
                 }
             }
-            ctx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
+            abovectx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
             for (let i = 0; i < height; i++) {
                 let endX = x + width - 1;
                 while (endX < gridSize) {
                     endX++;
                     if (grid[y + i][endX] != 'air') break;
                 }
-                drawPixel(x + width, y + 1 / 3 + i, endX - x - width, 1 / 3, ctx);
+                drawPixel(x + width, y + 1 / 3 + i, endX - x - width, 1 / 3, abovectx);
             }
         },
         update: function (x, y) {
