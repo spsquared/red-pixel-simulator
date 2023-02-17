@@ -10,6 +10,8 @@
     <script src="./game.js" defer></script>
     <script src="./pixels.js" defer></script>
     <link rel="stylesheet" href="./style.css">
+    <script src="./animation.js"></script>
+    <link rel="stylesheet" href="./animation.css">
 </head>
 <body>
     <canvas id="canvas"></canvas>
@@ -184,7 +186,7 @@
                 <tr><td class="save">
                     <span style="font-weight: bold">missiles</span>
                     <button class="loadSave" onclick="loadPremade('missiles');">Load</button><br>
-                    <save save-id="missiles">99;{air-99:}74|wall-3:{air-2:wall-5:}13|air-2:wall-3:{wall:collapsible:cloner_right:air-2:cloner_left:concrete:}14|wall:{nuke_diffuser-2:cloner_right:air-2:cloner_left:huge_nuke:}14|nuke_diffuser:{wall:concrete:cloner_right:air-2:cloner_left:concrete:}14|wall:{wall:concrete:cloner_right:air-2:cloner_left:collapsible:}14|wall:{nuke_diffuser:huge_nuke:cloner_right:air-2:cloner_left:nuke_diffuser:}14|wall:{wall:concrete:cloner_right:air-2:cloner_left:concrete:}14|wall:{wall-3:air-2:wall-2:}14|wall:{rotator_down:air:super_cloner_right:air-2:super_cloner_left:air:}14|rotator_down:{{wall:air:wall-4:air:}14|wall:}15|{rotator_up:piston_up:wall-4:piston_up:}14|rotator_up:</save>
+                    <save save-id="missiles">99;{air-99:}74|wall-3:{air-2:wall-5:}13|air-2:wall-3:{wall:collapsible:cloner_right:air-2:cloner_left:c4:}14|wall:{nuke_diffuser-2:cloner_right:air-2:cloner_left:huge_nuke:}14|nuke_diffuser:{wall:c4:cloner_right:air-2:cloner_left:c4:}14|wall:{wall:c4:cloner_right:air-2:cloner_left:collapsible:}14|wall:{nuke_diffuser:huge_nuke:cloner_right:air-2:cloner_left:nuke_diffuser:}14|wall:{wall:c4:cloner_right:air-2:cloner_left:c4:}14|wall:{wall-3:air-2:wall-2:}14|wall:{rotator_down:air:super_cloner_right:air-2:super_cloner_left:air:}14|rotator_down:{{wall:air:wall-4:air:}14|wall:}15|{rotator_up:piston_up:wall-4:piston_up:}14|rotator_up:</save>
                 </td></tr>
                 <tr><td class="save">
                     <span style="font-weight: bold">it's a small world</span>
@@ -241,6 +243,10 @@
             <button id="confirmationModalYes">YES</button>
             <button id="confirmationModalNo">NO</button>
         </div>
+    </div>
+    <div id="transitionScreen">
+        <div id="slideTop"></div>
+        <div id="slideBottom"></div>
     </div>
 </body>
 </html>

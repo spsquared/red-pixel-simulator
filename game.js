@@ -75,12 +75,23 @@ const nextFireGrid = [];
 let pendingExplosions = [];
 let gridPaused = true;
 let simulatePaused = false;
+let runTicks = 0;
 let clickPixel = 'wall';
 let clickSize = 5;
+let mX = 0;
+let mY = 0;
+let mXGrid = 0;
+let mYGrid = 0;
 let removing = false;
+let zooming = false;
+let camera = {
+    x: 0,
+    y: 0,
+    scale: 1
+};
 let acceptInputs = true;
 let mouseOver = false;
-let forcedRedraw = true;
+let forceRedraw = true;
 
 function createGrid() {
     gridScale = canvasResolution / gridSize;
@@ -114,7 +125,7 @@ function loadSaveCode() {
         gridPaused = true;
         simulatePaused = false;
         runTicks = 0;
-        forcedRedraw = true;
+        forceRedraw = true;
         try {
             let x = 0;
             let y = 0;
@@ -305,7 +316,7 @@ function setup() {
     updateTimeControlButtons();
 
     document.onkeydown = (e) => {
-        if (e.ctrlKey || e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs) return;
+        if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || window.inTransitionScreen) return;
         const key = e.key.toLowerCase();
         for (let i in pixels) {
             if (pixels[i].key == key) {
@@ -345,12 +356,14 @@ function setup() {
             runTicks = 1;
         } else if (key == 'shift') {
             removing = true;
+        } else if (key == 'control') {
+            zooming = true;
         }
         if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11') e.preventDefault();
         if (e.target.matches('button')) e.target.blur();
     };
     document.onkeyup = (e) => {
-        if (e.ctrlKey || e.target.matches('#saveCode') || !acceptInputs) return;
+        if (e.target.matches('#saveCode') || !acceptInputs || window.inTransitionScreen) return;
         const key = e.key.toLowerCase();
         if (key == 'alt') {
             debugInfo = !debugInfo;
@@ -360,18 +373,40 @@ function setup() {
             updateTimeControlButtons();
         } else if (key == 'shift') {
             removing = false;
+        } else if (key == 'control') {
+            zooming = false;
         }
         e.preventDefault();
     };
-    document.onwheel = (e) => {
-        if (mouseOver) {
-            if (e.deltaY > 0) {
-                clickSize = Math.max(1, clickSize - 1);
+    document.addEventListener('wheel', (e) => {
+        if (mouseOver && !window.inTransitionScreen) {
+            if (zooming) {
+                // let mouseX = mX * canvasSize / gridSize;
+                // let mouseY = mY * canvasSize / gridSize;
+                // let percentX = (mouseX - camera.x) / (canvasSize * camera.scale);
+                // let percentY = (mouseY - camera.y) / (canvasSize * camera.scale);
+                // camera.scale = Math.max(1, Math.min(camera.scale * 1 - (e.deltaY / 1000), 5));
+                // // camera.x = Math.max(0, Math.min((canvasSize * camera.scale * percentX) - mouseX, (canvasSize * camera.scale) - canvasSize));
+                // // camera.y = Math.max(0, Math.min((canvasSize * camera.scale * percentY) - mouseY, (canvasSize * camera.scale) - canvasSize));
+                // forceRedraw = true;
+                // e.preventDefault();
             } else {
-                clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
+                if (e.deltaY > 0) {
+                    clickSize = Math.max(1, clickSize - 1);
+                } else {
+                    clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
+                }
             }
         }
-    };
+    }, { passive: false });
+    hasFocus = false;
+    setInterval(function () {
+        if (hasFocus && !document.hasFocus()) {
+            removing = false;
+            zooming = false;
+        }
+        hasFocus = document.hasFocus();
+    }, 500);
 
     setInterval(() => {
         window.localStorage.setItem('saveCode', generateSaveCode());
@@ -389,10 +424,12 @@ function drawPixels(x, y, width, height, type, opacity, ctx) {
     }
 };
 function clearPixels(x, y, width, height, ctx) {
-    ctx.clearRect(x * gridScale, y * gridScale, gridScale * width, gridScale * height);
+    let scale = gridScale * camera.scale;
+    ctx.clearRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
 };
 function drawPixel(x, y, width, height, ctx) {
-    ctx.fillRect(x * gridScale, y * gridScale, gridScale * width, gridScale * height);
+    let scale = gridScale * camera.scale;
+    ctx.fillRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
 };
 function updatePixel(x, y, i) {
     let pixelType = pixels[grid[y][x]];
@@ -586,21 +623,31 @@ function clickLine(startX, startY, endX, endY, remove) {
 };
 
 function draw() {
+    if (window.inTransitionScreen) return;
+
     ctx.resetTransform();
     belowctx.resetTransform();
     abovectx.resetTransform();
-    let x = Math.floor((mouseX - 10) * gridSize / canvasSize);
-    let y = Math.floor((mouseY - 10) * gridSize / canvasSize);
-    mouseOver = x >= 0 && x < gridSize && y >= 0 && y < gridSize;
+    mX = mouseX - 10;
+    mY = mouseY - 10;
+    let prevMXGrid = mXGrid;
+    let prevMYGrid = mYGrid;
+    let scale = gridSize / canvasSize / camera.scale;
+    mXGrid = Math.floor((mouseX - 10 + camera.x) * scale);
+    mYGrid = Math.floor((mouseY - 10 + camera.y) * scale);
+    mouseOver = mX >= 0 && mX < canvasSize && mY >= 0 && mY < canvasSize;
+
+    // update camera
+    updateCamera();
 
     // draw pixels
     drawFrame();
     // draw brush
     if (!gridPaused || !simulatePaused) {
-        let x1 = Math.min(gridSize, Math.max(0, x - clickSize + 1));
-        let x2 = Math.min(gridSize - 1, Math.max(-1, x + clickSize - 1));
-        let y1 = Math.min(gridSize, Math.max(0, y - clickSize + 1));
-        let y2 = Math.min(gridSize - 1, Math.max(-1, y + clickSize - 1));
+        let x1 = Math.min(gridSize, Math.max(0, mXGrid - clickSize + 1));
+        let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + clickSize - 1));
+        let y1 = Math.min(gridSize, Math.max(0, mYGrid - clickSize + 1));
+        let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + clickSize - 1));
         drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5, ctx);
         ctx.strokeStyle = 'rgb(0, 0, 0)';
         ctx.lineWidth = 2;
@@ -614,10 +661,13 @@ function draw() {
         ctx.lineTo((x2 + 1) * gridScale, y1 * gridScale);
         ctx.stroke();
     }
+    // copy layers
+    ctx.drawImage(below, 0, 0);
+    ctx.drawImage(above, 0, 0);
 
     // place pixels
     if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && mouseOver) {
-        clickLine(x, y, Math.floor((pmouseX - 10) * gridSize / canvasSize), Math.floor((pmouseY - 10) * gridSize / canvasSize), mouseButton == RIGHT || removing);
+        clickLine(mXGrid, mYGrid, prevMXGrid, prevMYGrid, mouseButton == RIGHT || removing);
     }
     // simulate pixels
     updateFrame();
@@ -672,6 +722,10 @@ function draw() {
 
     animationTime++;
 };
+function updateCamera() {
+    // camera mode 1 - camera follows mouse and clamps to edges, mouse is always in center of camera unless clamped to edge
+    // camera mode 2 - fixed camera, mouse zoom and middle click moves
+};
 function drawFrame() {
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
         ctx.fillStyle = backgroundColor + (255 - fadeEffect).toString(16);
@@ -686,16 +740,16 @@ function drawFrame() {
                 amount++;
                 if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
                     let pixelType = pixels[curr] ?? pixels['missing'];
-                    if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forcedRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, pixelType.above ? abovectx : belowctx);
+                    if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, pixelType.above ? abovectx : belowctx);
                     else if (curr == 'air') clearPixels(j - amount, i, amount, 1, pixelType.above ? abovectx : belowctx);
-                    curr = grid[i][j]
+                    curr = grid[i][j];
                     redrawing = grid[i][j] != lastGrid[i][j];
                     amount = 0;
                 }
             }
             let pixelType = pixels[curr] ?? pixels['missing'];
-            if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forcedRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? abovectx : belowctx);
-            else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixelType.above ? abovectx : belowctx);
+            if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? abovectx : belowctx);
+            else if (curr == 'air' && (redrawing || forceRedraw)) clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixelType.above ? abovectx : belowctx);
         }
         for (let i = 0; i < gridSize; i++) {
             let j = 0;
@@ -722,14 +776,11 @@ function drawFrame() {
                 lastGrid[i][j] = grid[i][j];
             }
         }
-        forcedRedraw = false;
+        forceRedraw = false;
     }
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
         frames.push(millis());
     }
-    let scale = camera.scale * gridScale;
-    ctx.drawImage(below, -camera.x * scale, -camera.y * scale, scale * gridSize, scale * gridSize);
-    ctx.drawImage(above, -camera.x * scale, -camera.y * scale, scale * gridSize, scale * gridSize);
 };
 function updateFrame() {
     if (!gridPaused || runTicks > 0 || simulatePaused) {
@@ -867,7 +918,7 @@ document.getElementById('noNoise').onclick = (e) => {
     noNoise = !noNoise;
     if (noNoise) document.getElementById('noNoise').style.backgroundColor = 'lime';
     else document.getElementById('noNoise').style.backgroundColor = 'red';
-    forcedRedraw = true;
+    forceRedraw = true;
 };
 document.getElementById('fadeEffect').onclick = (e) => {
     fadeEffect = fadeEffect ? 0 : 127;
@@ -925,7 +976,7 @@ window.onresize = (e) => {
         pixelPicker.style.width = pickerWidth + 'px';
         pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
     }
-    forcedRedraw = true;
+    forceRedraw = true;
 };
 const preventMotion = (e) => {
     if (mouseOver) {

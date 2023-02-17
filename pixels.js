@@ -788,7 +788,7 @@ const pixels = {
         update: function (x, y) {
             let flammability = (pixels[grid[y][x]] ?? pixels['missing']).flammability;
             let isLava = grid[y][x] == 'lava';
-            if (flammability == 0 && !isLava && (grid[y][x] != 'air' || random() < 0.4)) {
+            if (flammability == 0 && !isLava && (grid[y][x] != 'air' || random() < 0.3)) {
                 nextFireGrid[y][x] = false;
                 return;
             }
@@ -813,11 +813,7 @@ const pixels = {
                 for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridSize - 1); j++) {
                     if (nextFireGrid[j][i] || (i == x && j == y)) continue;
                     let flammability = (pixels[grid[j][i]] ?? pixels['missing']).flammability;
-                    if (grid[j][i] == 'air') {
-                        if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.6 : 0)) nextFireGrid[j][i] = true;
-                    } else {
-                        if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0)) nextFireGrid[j][i] = true;
-                    }
+                    if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0)) nextFireGrid[j][i] = true;
                 }
             }
         },
@@ -2419,7 +2415,7 @@ const pixels = {
             //             amount++;
             //             if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
             //                 let pixelType = pixels[curr];
-            //                 if (curr != 'air' && curr != 'corruption' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forcedRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, pixelType.above ? abovectx : belowctx);
+            //                 if (curr != 'air' && curr != 'corruption' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, pixelType.above ? abovectx : belowctx);
             //                 else if (curr == 'air') clearPixels(j - amount, i, amount, 1, pixelType.above ? abovectx : belowctx);
             //                 curr = grid[i][j]
             //                 redrawing = grid[i][j] != lastGrid[i][j];
@@ -2427,7 +2423,7 @@ const pixels = {
             //             }
             //         }
             //         let pixelType = pixels[curr];
-            //         if (curr != 'air' && curr != 'corruption' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forcedRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? abovectx : belowctx);
+            //         if (curr != 'air' && curr != 'corruption' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? abovectx : belowctx);
             //         else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixelType.above ? abovectx : belowctx);
             //     }
             // }
