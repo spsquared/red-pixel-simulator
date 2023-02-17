@@ -381,15 +381,12 @@ function setup() {
     document.addEventListener('wheel', (e) => {
         if (mouseOver && !window.inTransitionScreen) {
             if (zooming) {
-                // let mouseX = mX * canvasSize / gridSize;
-                // let mouseY = mY * canvasSize / gridSize;
-                // let percentX = (mouseX - camera.x) / (canvasSize * camera.scale);
-                // let percentY = (mouseY - camera.y) / (canvasSize * camera.scale);
-                // camera.scale = Math.max(1, Math.min(camera.scale * 1 - (e.deltaY / 1000), 5));
-                // // camera.x = Math.max(0, Math.min((canvasSize * camera.scale * percentX) - mouseX, (canvasSize * camera.scale) - canvasSize));
-                // // camera.y = Math.max(0, Math.min((canvasSize * camera.scale * percentY) - mouseY, (canvasSize * camera.scale) - canvasSize));
-                // forceRedraw = true;
-                // e.preventDefault();
+                let percentX = (mX + camera.x) / (canvasSize * camera.scale);
+                let percentY = (mY + camera.y) / (canvasSize * camera.scale);
+                camera.scale = Math.max(1, Math.min(camera.scale * 1 - (e.deltaY / 1000), 5));
+                camera.x = Math.max(0, Math.min((canvasSize * camera.scale * percentX) - mX, (canvasSize * camera.scale) - canvasSize));
+                camera.y = Math.max(0, Math.min((canvasSize * camera.scale * percentY) - mY, (canvasSize * camera.scale) - canvasSize));
+                forceRedraw = true;
             } else {
                 if (e.deltaY > 0) {
                     clickSize = Math.max(1, clickSize - 1);
@@ -398,6 +395,7 @@ function setup() {
                 }
             }
         }
+        if (zooming) {e.preventDefault();}
     }, { passive: false });
     hasFocus = false;
     setInterval(function () {
@@ -633,8 +631,8 @@ function draw() {
     let prevMXGrid = mXGrid;
     let prevMYGrid = mYGrid;
     let scale = gridSize / canvasSize / camera.scale;
-    mXGrid = Math.floor((mouseX - 10 + camera.x) * scale);
-    mYGrid = Math.floor((mouseY - 10 + camera.y) * scale);
+    mXGrid = Math.floor((mX) * scale);
+    mYGrid = Math.floor((mY) * scale);
     mouseOver = mX >= 0 && mX < canvasSize && mY >= 0 && mY < canvasSize;
 
     // update camera
@@ -653,12 +651,12 @@ function draw() {
         ctx.lineWidth = 2;
         ctx.lineJoin = 'miter';
         ctx.beginPath();
-        ctx.moveTo(x1 * gridScale, y1 * gridScale);
-        ctx.lineTo((x2 + 1) * gridScale, y1 * gridScale);
-        ctx.lineTo((x2 + 1) * gridScale, (y2 + 1) * gridScale);
-        ctx.lineTo(x1 * gridScale, (y2 + 1) * gridScale);
-        ctx.lineTo(x1 * gridScale, y1 * gridScale);
-        ctx.lineTo((x2 + 1) * gridScale, y1 * gridScale);
+        ctx.moveTo(x1 * gridScale * camera.scale - camera.x, y1 * gridScale * camera.scale - camera.y);
+        ctx.lineTo((x2 + 1) * gridScale * camera.scale - camera.x, y1 * gridScale * camera.scale - camera.y);
+        ctx.lineTo((x2 + 1) * gridScale * camera.scale - camera.x, (y2 + 1) * gridScale * camera.scale - camera.y);
+        ctx.lineTo(x1 * gridScale * camera.scale - camera.x, (y2 + 1) * gridScale * camera.scale - camera.y);
+        ctx.lineTo(x1 * gridScale * camera.scale - camera.x, y1 * gridScale * camera.scale - camera.y);
+        ctx.lineTo((x2 + 1) * gridScale * camera.scale - camera.x, y1 * gridScale * camera.scale - camera.y);
         ctx.stroke();
     }
     // copy layers
