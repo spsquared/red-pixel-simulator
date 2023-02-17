@@ -1,8 +1,5 @@
 .p5Canvas {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    border: 2px solid black;
+    display: none;
 }
 body {
     --max-sidebar-width: 600px;
@@ -16,9 +13,8 @@ body::-webkit-scrollbar {
     width: 0px;
 }
 
-main {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+img {
+    -webkit-user-drag: none;
 }
 
 #canvas {
@@ -28,6 +24,8 @@ main {
     margin: 8px 8px;
     border: 2px solid black;
     /* image-rendering: pixelated; */
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
     cursor: none;
 }
 
@@ -77,11 +75,18 @@ td {
 #gameControls {
     width: 100%;
 }
+#sizeUp, #sizeDown {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+}
 #pause {
     background-color: lime;
 }
-#simulatePaused {
+#pause, #simulatePaused, #advanceTick {
     background-color: gray;
+    width: 100px;
+    height: 40px;
 }
 
 #pixelPicker {
@@ -134,8 +139,10 @@ td {
     min-height: 150px;
     max-height: 500px;
     resize: vertical;
+    word-wrap: break-word;
+    word-break: break-all;
 }
-#copySave {
+#generateSave {
     width: 95px;
     height: 50px;
     font-size: 12px;

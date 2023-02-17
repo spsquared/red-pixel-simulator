@@ -800,7 +800,10 @@ const pixels = {
                 nextFireGrid[y][x] = false;
             }
             if (random() < flammability / 1200 && nextGrid[y][x] == null && !isLava) {
-                if (grid[y][x] != 'ash' && random() < 0.8) {
+                if (grid[y][x].includes('laser_')) {
+                    nextGrid[y][x] = 'air';
+                    explode(x, y, 3);
+                } else if (grid[y][x] != 'ash' && random() < 0.8) {
                     nextGrid[y][x] = 'ash';
                 } else {
                     nextGrid[y][x] = 'air';
@@ -1354,6 +1357,12 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
+                nextGrid[y][x] = 'air';
+            })) {
+                nextGrid[y][x] = 'ash';
+                return;
+            }
             let moveY = null;
             let lastCollapsible = null;
             for (let i = y; i >= 0; i--) {
@@ -1413,6 +1422,12 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
+                nextGrid[y][x] = 'air';
+            })) {
+                nextGrid[y][x] = 'ash';
+                return;
+            }
             let moveY = null;
             let lastCollapsible = null;
             for (let i = y; i <= gridSize - 1; i++) {
@@ -1472,6 +1487,12 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
+                nextGrid[y][x] = 'air';
+            })) {
+                nextGrid[y][x] = 'ash';
+                return;
+            }
             let moveX = null;
             let lastCollapsible = null;
             for (let i = x; i >= 0; i--) {
@@ -1531,6 +1552,12 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
+                nextGrid[y][x] = 'air';
+            })) {
+                nextGrid[y][x] = 'ash';
+                return;
+            }
             let moveX = null;
             let lastCollapsible = null;
             for (let i = x; i <= gridSize - 1; i++) {
@@ -2328,9 +2355,9 @@ const pixels = {
                 for (let j = 0; j < height; j++) {
                     for (let k = 0; k < random(1, 5); k++) {
                         let rotationAmount = Math.floor(random(0, 360));
-                        ctx.translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
-                        let translateX = random(-10 * xScale, 10 * xScale);
-                        let translateY = random(-10 * yScale, 10 * yScale);
+                        ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
+                        let translateX = random(-10 * gridScale, 10 * gridScale);
+                        let translateY = random(-10 * gridScale, 10 * gridScale);
                         let skewX = random(-PI / 6, PI / 6);
                         let skewY = random(-PI / 6, PI / 6);
                         ctx.translate(translateX, translateY);
@@ -2345,24 +2372,24 @@ const pixels = {
                         drawPixel(0, 0, borkXScale, borkYScale, ctx);
                         ctx.restore();
                         ctx.rotate(-rotationAmount);
-                        ctx.translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
+                        ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
                     }
                     if (random(1, 5) < 1.2) {
                         for (let k = 0; k < random(1, 10); k++) {
                             let rotationAmount = Math.floor(random(0, 360));
-                            ctx.translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
-                            let translateX = random(-20 * xScale, 20 * xScale);
-                            let translateY = random(-20 * yScale, 20 * yScale);
+                            ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
+                            let translateX = random(-20 * gridScale, 20 * gridScale);
+                            let translateY = random(-20 * gridScale, 20 * gridScale);
                             ctx.translate(translateX, translateY);
                             ctx.rotate(rotationAmount);
                             drawPixels(0, 0, 1, 1, 'missing', opacity, ctx);
                             ctx.rotate(-rotationAmount);
-                            ctx.translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
+                            ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
                         }
                         let rotationAmount = Math.floor(random(0, 360));
-                        ctx.translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
-                        let translateX = random(-gridSize * xScale, gridSize * xScale);
-                        let translateY = random(-gridSize * yScale, gridSize * yScale);
+                        ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
+                        let translateX = random(-gridSize * gridScale, gridSize * gridScale);
+                        let translateY = random(-gridSize * gridScale, gridSize * gridScale);
                         let skewX = random(-PI / 6, PI / 6);
                         let skewY = random(-PI / 6, PI / 6);
                         ctx.translate(translateX, translateY);
@@ -2378,7 +2405,7 @@ const pixels = {
                         ctx.fillRect(40, 60, 10, 10);
                         ctx.restore();
                         ctx.rotate(-rotationAmount);
-                        ctx.translate(-(x + i + 1 / 2) * xScale - translateX, -(y + j + 1 / 2) * yScale - translateY);
+                        ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
                     }
                 }
             }
@@ -2493,9 +2520,9 @@ const pixels = {
         draw: function (x, y, width, height, opacity, ctx) {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    ctx.translate((x + i + 1 / 2) * xScale, (y + j + 1 / 2) * yScale);
-                    let translateX = random(-10 * xScale, 10 * xScale);
-                    let translateY = random(-10 * yScale, 10 * yScale);
+                    ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
+                    let translateX = random(-10 * gridScale, 10 * gridScale);
+                    let translateY = random(-10 * gridScale, 10 * gridScale);
                     ctx.translate(translateX, translateY);
                     let rotationAmount = Math.floor(random(0, 360));
                     ctx.rotate(rotationAmount);

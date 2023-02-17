@@ -58,8 +58,7 @@ above.height = canvasResolution;
 resetCanvases();
 canvas.addEventListener('contextmenu', e => e.preventDefault());
 
-let xScale = canvasResolution / gridSize;
-let yScale = canvasResolution / gridSize;
+let gridScale = canvasResolution / gridSize;
 let canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;
 let debugInfo = false;
 let animationTime = 0;
@@ -74,19 +73,17 @@ const noiseGrid = [];
 const fireGrid = [];
 const nextFireGrid = [];
 let pendingExplosions = [];
-let gridPaused = startPaused;
+let gridPaused = true;
 let simulatePaused = false;
 let clickPixel = 'wall';
 let clickSize = 5;
 let removing = false;
-let runTicks = 0;
 let acceptInputs = true;
 let mouseOver = false;
 let forcedRedraw = true;
 
 function createGrid() {
-    xScale = canvasResolution / gridSize;
-    yScale = canvasResolution / gridSize;
+    gridScale = canvasResolution / gridSize;
     pendingExplosions = [];
     grid.length = 0;
     lastGrid.length = 0;
@@ -246,16 +243,20 @@ async function loadPremade(id) {
 function updateTimeControlButtons() {
     if (gridPaused) {
         document.getElementById('pause').style.backgroundColor = 'red';
+        document.getElementById('pause').innerText = '▶';
+        document.getElementById('pause').style.fontSize = '20px';
         if (simulatePaused) {
             document.getElementById('simulatePaused').style.backgroundColor = 'lime';
         } else {
             document.getElementById('simulatePaused').style.backgroundColor = 'red';
         }
-        document.getElementById('advanceTick').style.backgroundColor = '';
+        document.getElementById('advanceTick').style.backgroundColor = 'lightgray';
         document.getElementById('simulatePaused').style.cursor = '';
         document.getElementById('advanceTick').style.cursor = '';
     } else {
         document.getElementById('pause').style.backgroundColor = 'lime';
+        document.getElementById('pause').innerText = '▐ ▌';
+        document.getElementById('pause').style.fontSize = '';
         document.getElementById('simulatePaused').style.backgroundColor = 'grey';
         document.getElementById('advanceTick').style.backgroundColor = 'grey';
         document.getElementById('simulatePaused').style.cursor = 'not-allowed';
@@ -298,7 +299,10 @@ function setup() {
 
     createGrid();
     loadSaveCode();
+    saveCode = window.localStorage.getItem(('saveCodeText')) ?? saveCode;
     saveCodeText.value = saveCode;
+    gridPaused = true;
+    updateTimeControlButtons();
 
     document.onkeydown = (e) => {
         if (e.ctrlKey || e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs) return;
@@ -371,6 +375,7 @@ function setup() {
 
     setInterval(() => {
         window.localStorage.setItem('saveCode', generateSaveCode());
+        window.localStorage.setItem('saveCodeText', saveCode);
     }, 30000);
 
     lastFpsList = millis();
@@ -384,10 +389,10 @@ function drawPixels(x, y, width, height, type, opacity, ctx) {
     }
 };
 function clearPixels(x, y, width, height, ctx) {
-    ctx.clearRect(x * xScale, y * yScale, xScale * width, yScale * height);
+    ctx.clearRect(x * gridScale, y * gridScale, gridScale * width, gridScale * height);
 };
 function drawPixel(x, y, width, height, ctx) {
-    ctx.fillRect(x * xScale, y * yScale, xScale * width, yScale * height);
+    ctx.fillRect(x * gridScale, y * gridScale, gridScale * width, gridScale * height);
 };
 function updatePixel(x, y, i) {
     let pixelType = pixels[grid[y][x]];
@@ -590,9 +595,6 @@ function draw() {
 
     // draw pixels
     drawFrame();
-    // copy layers
-    ctx.drawImage(below, 0, 0);
-    ctx.drawImage(above, 0, 0);
     // draw brush
     if (!gridPaused || !simulatePaused) {
         let x1 = Math.min(gridSize, Math.max(0, x - clickSize + 1));
@@ -604,12 +606,12 @@ function draw() {
         ctx.lineWidth = 2;
         ctx.lineJoin = 'miter';
         ctx.beginPath();
-        ctx.moveTo(x1 * xScale, y1 * yScale);
-        ctx.lineTo((x2 + 1) * xScale, y1 * yScale);
-        ctx.lineTo((x2 + 1) * xScale, (y2 + 1) * yScale);
-        ctx.lineTo(x1 * xScale, (y2 + 1) * yScale);
-        ctx.lineTo(x1 * xScale, y1 * yScale);
-        ctx.lineTo((x2 + 1) * xScale, y1 * yScale);
+        ctx.moveTo(x1 * gridScale, y1 * gridScale);
+        ctx.lineTo((x2 + 1) * gridScale, y1 * gridScale);
+        ctx.lineTo((x2 + 1) * gridScale, (y2 + 1) * gridScale);
+        ctx.lineTo(x1 * gridScale, (y2 + 1) * gridScale);
+        ctx.lineTo(x1 * gridScale, y1 * gridScale);
+        ctx.lineTo((x2 + 1) * gridScale, y1 * gridScale);
         ctx.stroke();
     }
 
@@ -725,6 +727,9 @@ function drawFrame() {
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
         frames.push(millis());
     }
+    let scale = camera.scale * gridScale;
+    ctx.drawImage(below, -camera.x * scale, -camera.y * scale, scale * gridSize, scale * gridSize);
+    ctx.drawImage(above, -camera.x * scale, -camera.y * scale, scale * gridSize, scale * gridSize);
 };
 function updateFrame() {
     if (!gridPaused || runTicks > 0 || simulatePaused) {
@@ -789,13 +794,25 @@ function updateFrame() {
     }
 };
 
-document.getElementById('copySave').onclick = (e) => {
+let writeSaveTimeout = setTimeout(() => { });
+document.getElementById('saveCode').oninput = (e) => {
+    let index = saveCodeText.value.indexOf(';');
+    if (index > 0) {
+        document.getElementById('gridSize').value = saveCodeText.value.substring(0, index);
+    }
+    saveCode = saveCodeText.value.replace('\n', '');
+    clearTimeout(writeSaveTimeout);
+    writeSaveTimeout = setTimeout(() => {
+        window.localStorage.setItem('saveCodeText', saveCode);
+    }, 1000);
+};
+document.getElementById('generateSave').onclick = (e) => {
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
     saveCode = generateSaveCode();
+    window.localStorage.setItem('saveCodeText', saveCode);
     saveCodeText.value = saveCode;
-    window.navigator.clipboard.writeText(saveCode);
 };
 document.getElementById('uploadSave').onclick = (e) => {
     gridPaused = true;
@@ -823,8 +840,7 @@ document.getElementById('downloadSave').onclick = (e) => {
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
-    saveCode = generateSaveCode();
-    saveCodeText.value = saveCode;
+    saveCode = saveCodeText.value;
     const encoded = `data:text/redpixel;base64,${btoa(saveCode)}`;
     const a = document.createElement('a');
     a.href = encoded;
@@ -838,7 +854,7 @@ document.getElementById('startPaused').onclick = (e) => {
 };
 document.getElementById('reset').onclick = async (e) => {
     if (await confirmationModal()) {
-        saveCode = saveCodeText.value;
+        saveCode = saveCodeText.value.replace('\n', '');
         loadSaveCode();
     }
 };
