@@ -60,6 +60,7 @@ canvas.addEventListener('contextmenu', e => e.preventDefault());
 
 let gridScale = canvasResolution / gridSize;
 let canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;
+let canvasScale = canvasResolution / canvasSize;
 let debugInfo = false;
 let animationTime = 0;
 let ticks = 0;
@@ -383,7 +384,7 @@ function setup() {
             if (zooming) {
                 let percentX = (mX + camera.x) / (canvasSize * camera.scale);
                 let percentY = (mY + camera.y) / (canvasSize * camera.scale);
-                camera.scale = Math.max(1, Math.min(camera.scale * 1 - (e.deltaY / 1000), 5));
+                camera.scale = Math.max(1, Math.min(camera.scale * (1 - (e.deltaY / 1000)), 5));
                 camera.x = Math.max(0, Math.min((canvasSize * camera.scale * percentX) - mX, (canvasSize * camera.scale) - canvasSize));
                 camera.y = Math.max(0, Math.min((canvasSize * camera.scale * percentY) - mY, (canvasSize * camera.scale) - canvasSize));
                 forceRedraw = true;
@@ -395,7 +396,7 @@ function setup() {
                 }
             }
         }
-        if (zooming) {e.preventDefault();}
+        if (zooming) { e.preventDefault(); }
     }, { passive: false });
     hasFocus = false;
     setInterval(function () {
@@ -626,13 +627,13 @@ function draw() {
     ctx.resetTransform();
     belowctx.resetTransform();
     abovectx.resetTransform();
-    mX = mouseX - 10;
-    mY = mouseY - 10;
+    mX = (mouseX - 10) * canvasScale;
+    mY = (mouseY - 10) * canvasScale;
     let prevMXGrid = mXGrid;
     let prevMYGrid = mYGrid;
-    let scale = gridSize / canvasSize / camera.scale;
-    mXGrid = Math.floor((mX) * scale);
-    mYGrid = Math.floor((mY) * scale);
+    let scale = gridSize / canvasSize / camera.scale / canvasScale;
+    mXGrid = Math.floor((mX + camera.x) * scale);
+    mYGrid = Math.floor((mY + camera.y) * scale);
     mouseOver = mX >= 0 && mX < canvasSize && mY >= 0 && mY < canvasSize;
 
     // update camera
@@ -706,6 +707,7 @@ function draw() {
     ctx.textAlign = 'right';
     ctx.fillText(`Brush Size: ${clickSize * 2 - 1}`, canvasResolution - 3, 1);
     ctx.fillText(`Brush Pixel: ${(pixels[clickPixel] ?? pixels['missing']).name}`, canvasResolution - 3, 22);
+    ctx.fillText(`Zoom: ${Math.round(camera.scale * 10) / 10}`, canvasResolution - 3, 43);
     if (gridPaused) {
         if (simulatePaused) {
             ctx.font = '60px Arial';
@@ -714,7 +716,7 @@ function draw() {
             ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
         } else {
             ctx.fillStyle = '#000';
-            ctx.fillText('PAUSED', canvasResolution - 3, 43);
+            ctx.fillText('PAUSED', canvasResolution - 3, 64);
         }
     }
 
@@ -952,6 +954,7 @@ document.getElementById('advanceTick').onclick = (e) => {
 
 window.onresize = (e) => {
     canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;
+    canvasScale = canvasResolution / canvasSize;
     canvas.width = canvasResolution;
     canvas.height = canvasResolution;
     below.width = canvasResolution;
