@@ -2299,6 +2299,29 @@ const pixels = {
         above: false,
         pickable: true
     },
+    deleter: {
+        name: 'Deleter',
+        description: 'undefined',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(255, 0, 70, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+        },
+        update: function (x, y) {
+            grid[y][x] = 'air';
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 70)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        flammability: 0,
+        key: Infinity,
+        updatePriority: 0,
+        animatedNoise: false,
+        animated: false,
+        above: true,
+        pickable: false
+    },
     lag_spike_generator: {
         name: 'lag_spike_generator',
         description: 'Not that laggy',

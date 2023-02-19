@@ -73,6 +73,7 @@ const nextGrid = [];
 const noiseGrid = [];
 const fireGrid = [];
 const nextFireGrid = [];
+const deleterGrid = [];
 let pendingExplosions = [];
 let gridPaused = true;
 let simulatePaused = false;
@@ -103,6 +104,7 @@ function createGrid() {
     noiseGrid.length = 0;
     fireGrid.length = 0;
     nextFireGrid.length = 0;
+    deleterGrid.length = 0;
     for (let i = 0; i < gridSize; i++) {
         grid[i] = [];
         lastGrid[i] = [];
@@ -110,6 +112,7 @@ function createGrid() {
         noiseGrid[i] = [];
         fireGrid[i] = [];
         nextFireGrid[i] = [];
+        deleterGrid[i] = [];
         for (let j = 0; j < gridSize; j++) {
             grid[i][j] = 'air';
             lastGrid[i][j] = null;
@@ -117,6 +120,7 @@ function createGrid() {
             noiseGrid[i][j] = noise(j / 2, i / 2);
             fireGrid[i][j] = false;
             nextFireGrid[i][j] = false;
+            deleterGrid[i][j] = false;
         }
     }
     document.getElementById('gridSize').value = gridSize;
@@ -317,7 +321,7 @@ function setup() {
     updateTimeControlButtons();
 
     document.onkeydown = (e) => {
-        if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || window.inTransitionScreen) return;
+        if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || window.inMenuScreen) return;
         const key = e.key.toLowerCase();
         for (let i in pixels) {
             if (pixels[i].key == key) {
@@ -364,7 +368,7 @@ function setup() {
         if (e.target.matches('button')) e.target.blur();
     };
     document.onkeyup = (e) => {
-        if (e.target.matches('#saveCode') || !acceptInputs || window.inTransitionScreen) return;
+        if (e.target.matches('#saveCode') || !acceptInputs || window.inMenuScreen) return;
         const key = e.key.toLowerCase();
         if (key == 'alt') {
             debugInfo = !debugInfo;
@@ -380,7 +384,7 @@ function setup() {
         e.preventDefault();
     };
     document.addEventListener('wheel', (e) => {
-        if (mouseOver && !window.inTransitionScreen) {
+        if (mouseOver && !window.inMenuScreen) {
             if (zooming) {
                 let percentX = (mX + camera.x) / (canvasSize * camera.scale);
                 let percentY = (mY + camera.y) / (canvasSize * camera.scale);
@@ -609,8 +613,11 @@ function clickLine(startX, startY, endX, endY, remove) {
                 if (remove) {
                     grid[k][j] = 'air';
                     fireGrid[k][j] = false;
+                    deleterGrid[k][j] = false;
                 } else if (clickPixel == 'fire') {
                     fireGrid[k][j] = true;
+                } else if (clickPixel == 'deleter') {
+                    deleterGrid[k][j] = true;
                 } else {
                     grid[k][j] = clickPixel;
                 }
@@ -622,7 +629,7 @@ function clickLine(startX, startY, endX, endY, remove) {
 };
 
 function draw() {
-    if (window.inTransitionScreen) return;
+    if (window.inMenuScreen) return;
 
     ctx.resetTransform();
     belowctx.resetTransform();
@@ -634,7 +641,7 @@ function draw() {
     let scale = gridSize / canvasSize / camera.scale / canvasScale;
     mXGrid = Math.floor((mX + camera.x) * scale);
     mYGrid = Math.floor((mY + camera.y) * scale);
-    mouseOver = mX >= 0 && mX < canvasSize && mY >= 0 && mY < canvasSize;
+    mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
 
     // update camera
     updateCamera();
@@ -772,6 +779,26 @@ function drawFrame() {
             }
         }
         for (let i = 0; i < gridSize; i++) {
+            let j = 0;
+            let deleter = false;
+            let number = 0;
+            while (j < gridSize) {
+                number++;
+                if (deleterGrid[i][j] != deleter) {
+                    if (deleter) {
+                        drawPixels(j - number, i, number, 1, 'deleter', 1, abovectx);
+                    }
+                    deleter = deleterGrid[i][j];
+                    number = 0;
+                }
+                j++;
+            }
+            number++;
+            if (deleter) {
+                drawPixels(j - number, i, number, 1, 'deleter', 1, abovectx);
+            }
+        }
+        for (let i = 0; i < gridSize; i++) {
             for (let j = 0; j < gridSize; j++) {
                 lastGrid[i][j] = grid[i][j];
             }
@@ -837,6 +864,12 @@ function updateFrame() {
                             nextGrid[i][j] = null;
                         }
                     }
+                }
+            }
+            let deleterPixelType = pixels['deleter'];
+            for (let j = 0; j < gridSize; j++) {
+                for (let k = 0; k < gridSize; k++) {
+                    if (deleterGrid[k][j]) deleterPixelType.update(j, k);
                 }
             }
             frames.push(millis());

@@ -3,7 +3,7 @@
 }
 body {
     --max-sidebar-width: 600px;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     font-size: 14px;
     user-select: none;
     word-wrap: break-word;

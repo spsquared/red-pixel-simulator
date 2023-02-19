@@ -10,8 +10,8 @@
     <script src="./game.js" defer></script>
     <script src="./pixels.js" defer></script>
     <link rel="stylesheet" href="./style.css">
-    <script src="./animation.js"></script>
-    <link rel="stylesheet" href="./animation.css">
+    <script src="./menu.js"></script>
+    <link rel="stylesheet" href="./menu.css">
 </head>
 <body>
     <canvas id="canvas"></canvas>
@@ -245,9 +245,17 @@
             <button id="confirmationModalNo">NO</button>
         </div>
     </div>
-    <div id="transitionScreen">
-        <div id="slideTop"></div>
-        <div id="slideBottom"></div>
+    <div id="transitionScreen" style="background-color: black;">
+        <div id="titleContainer">
+            <div id="t_redpixel"></div>
+            <div id="t_textRed">Red</div>
+            <div id="t_textPixel">Pixel</div>
+            <div id="t_textSimulator">Simulator</div>
+        </div>
+        <div id="t_bottom"></div>
+        <div id="t_top"></div>
+        <button id="sandboxButton">SANDBOX</button>
+        <button id="challengeButton">CHALLENGES</button>
     </div>
 </body>
 </html>
