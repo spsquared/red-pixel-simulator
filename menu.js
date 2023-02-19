@@ -35,6 +35,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
     }, 1000);
     setTimeout(() => {
         titleContainer.style.transform = 'translateY(-20vh)';
+        titleContainer.style.animationName = 'titleBob';
     }, 1500);
     setTimeout(() => {
         sandboxButton.style.transform = 'translateY(-40vh)';

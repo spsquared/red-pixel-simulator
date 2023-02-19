@@ -2377,7 +2377,7 @@ const pixels = {
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
-        animated: false,
+        animated: true,
         above: true,
         pickable: true
     },
@@ -2694,7 +2694,7 @@ for (const id in pixels) {
         box.classList.add('pickerPixel');
         box.onclick = (e) => {
             clickPixel = id;
-            pixelPicker.children.forEach(div => div.classList.remove('pickerPixelSelected'));
+            pixelPicker.children.forEach(section => section.children.forEach(div => div.classList.remove('pickerPixelSelected')));
             box.classList.add('pickerPixelSelected');
             pixelPickerDescription.innerHTML = generateDescription(id);
         };

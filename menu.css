@@ -79,3 +79,12 @@
 #challengeButton:active {
     border-style: outset;
 }
+
+@keyframes titleBob {
+    from {
+        transform: translateY(-1vh);
+    }
+    to {
+        transform: translateY(1vh);
+    }
+}

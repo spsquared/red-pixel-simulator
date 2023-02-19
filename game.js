@@ -102,7 +102,9 @@ let acceptInputs = true;
 let mouseOver = false;
 let forceRedraw = true;
 
-function createGrid() {
+function createGrid(size) {
+    if (size < 1) return;
+    gridSize = size;
     gridScale = canvasResolution / gridSize;
     pendingExplosions = [];
     grid.length = 0;
@@ -138,82 +140,108 @@ function loadSaveCode() {
         simulatePaused = false;
         runTicks = 0;
         forceRedraw = true;
-        try {
+        let sections = saveCode.split(';');
+        if (isNaN(parseInt(sections[0]))) return;
+        function parseSaveCode(code) {
             let x = 0;
             let y = 0;
-            function incrementPosition() {
-                x++;
-                if (x == gridSize) {
-                    x = 0;
-                    y++;
+            let i = 0;
+            const loopedPixels = [];
+            function addPixels(pixel, amount) {
+                while (amount > 0) {
+                    grid[y][x++] = pixel;
+                    if (x == gridSize) {
+                        y++;
+                        x = 0;
+                        if (y == gridSize) return true;
+                    }
+                    amount--;
                 }
-                if (y == gridSize) {
-                    y--;
-                    x = gridSize - 1;
-                }
+                return false;
             };
-            function parseSaveCode(inputSaveCode) {
-                let stringStartIndex = 0;
-                let string = '';
-                let numberStartIndex = 0;
-                let loopedSaveCodeStartIndex = 0;
-                let loopTimesStartIndex = 0;
-                let inLoop = 0;
-                for (let i = 0; i < inputSaveCode.length; i++) {
-                    if (inputSaveCode[i] == ':' && inLoop == 0) {
-                        if (string == '') {
-                            string = inputSaveCode.substring(stringStartIndex, i);
-                            grid[y][x] = string;
-                            incrementPosition();
-                            string = '';
-                            stringStartIndex = i + 1;
-                        } else {
-                            for (let j = 0; j < parseInt(inputSaveCode.substring(numberStartIndex, i), 10); j++) {
-                                grid[y][x] = string;
-                                incrementPosition();
+            load: while (i < code.length) {
+                let nextDash = code.indexOf('-', i);
+                let nextColon = code.indexOf(':', i);
+                let nextOpenBracket = code.indexOf('{', i);
+                let nextCloseBracket = code.indexOf('}', i);
+                let nextPipeline = code.indexOf('|', i);
+                if (nextDash == -1) nextDash = Infinity;
+                if (nextColon == -1) nextColon = Infinity;
+                if (nextOpenBracket == -1) nextOpenBracket = Infinity;
+                if (nextCloseBracket == -1) nextCloseBracket = Infinity;
+                if (nextPipeline == -1) nextPipeline = Infinity;
+                let minNext = Math.min(nextDash, nextColon, nextOpenBracket, nextCloseBracket, nextPipeline);
+                if (minNext == Infinity) break load;
+                if (minNext == nextOpenBracket) {
+                    loopedPixels.push([]);
+                    i = nextOpenBracket + 1;
+                } else if (minNext == nextCloseBracket) {
+                    let loopedSection = loopedPixels.pop();
+                    let iterations = parseInt(code.substring(nextCloseBracket + 1, nextPipeline));
+                    if (loopedPixels.length) {
+                        for (let i = 0; i < iterations; i++) {
+                            loopedPixels[loopedPixels.length - 1].push(...loopedSection);
+                        }
+                    } else {
+                        for (let i = 0; i < iterations; i++) {
+                            for (let [pixel, amount] of loopedSection) {
+                                if (addPixels(pixel, amount)) break load;
                             }
-                            string = '';
-                            stringStartIndex = i + 1;
                         }
                     }
-                    if (inputSaveCode[i] == '-' && inLoop == 0) {
-                        string = inputSaveCode.substring(stringStartIndex, i);
-                        numberStartIndex = i + 1;
+                    i = nextPipeline + 1;
+                } else if (minNext == nextDash) {
+                    let pixel = code.substring(i, nextDash);
+                    let amount = parseInt(code.substring(nextDash + 1, nextColon));
+                    if (loopedPixels.length) {
+                        loopedPixels[loopedPixels.length - 1].push([pixel, amount])
+                    } else {
+                        if (addPixels(pixel, amount)) break load;
                     }
-                    if (inputSaveCode[i] == ';' && inLoop == 0) {
-                        gridSize = parseInt(inputSaveCode.substring(0, i), 10);
-                        createGrid();
-                        string = '';
-                        stringStartIndex = i + 1;
+                    i = nextColon + 1;
+                } else if (nextColon >= 0) {
+                    let pixel = code.substring(i, nextColon);
+                    if (loopedPixels.length) {
+                        loopedPixels[loopedPixels.length - 1].push([pixel, 1])
+                    } else {
+                        if (addPixels(pixel, 1)) break load;
                     }
-                    if (inputSaveCode[i] == '{') {
-                        if (inLoop == 0) {
-                            loopedSaveCodeStartIndex = i + 1;
-                        }
-                        inLoop++;
-                    }
-                    if (inputSaveCode[i] == '}') {
-                        inLoop--;
-                        if (inLoop == 0) {
-                            loopTimesStartIndex = i + 1;
-                        }
-                    }
-                    if (inputSaveCode[i] == '|') {
-                        if (inLoop == 0) {
-                            let loopTimes = parseInt(inputSaveCode.substring(loopTimesStartIndex, i), 10);
-                            for (let j = 0; j < loopTimes; j++) {
-                                parseSaveCode(inputSaveCode.substring(loopedSaveCodeStartIndex, loopTimesStartIndex - 1));
-                            }
-                            string = '';
-                            stringStartIndex = i + 1;
-                        }
-                    }
+                    i = nextColon + 1;
+                } else {
+                    break load;
                 }
+            }
+        };
+        function parseBooleanCode(grid, code) {
+            let x = 0;
+            let y = 0;
+            let i = 0;
+            function addPixels(pixel, amount) {
+                while (amount > 0) {
+                    grid[y][x++] = pixel;
+                    if (x == gridSize) {
+                        y++;
+                        x = 0;
+                        if (y == gridSize) return true;
+                    }
+                    amount--;
+                }
+                return false;
             };
-            parseSaveCode(saveCode);
-        } catch (error) {
-            throw new Error('Invalid Save Code');
-        }
+            let pixel = false;
+            while (i < code.length) {
+                let next = code.indexOf(':', i);
+                if (next == -1) break;
+                let amount = parseInt(code.substring(i, next));
+                if (addPixels(pixel, amount)) break;
+                pixel = !pixel;
+                i = next + 1;
+            }
+        };
+        if (sections[0]) createGrid(parseInt(sections[0]));
+        if (sections[1]) parseSaveCode(sections[1]);
+        if (sections[2]) parseBooleanCode(fireGrid, sections[2]);
+        if (sections[3]) parseBooleanCode(deleterGrid, sections[3]);
         gridPaused = startPaused;
         updateTimeControlButtons();
     }
@@ -221,33 +249,63 @@ function loadSaveCode() {
 };
 function generateSaveCode() {
     let saveCode = '';
-    let string = '';
-    let number = 0;
     saveCode += gridSize + ';';
+    let pixel = '';
+    let amount = 0;
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
-            number++;
-            if (grid[i][j] != string) {
-                if (string != '' && number != 0) {
-                    if (number == 1) {
-                        saveCode += string + ':';
+            amount++;
+            if (grid[i][j] != pixel) {
+                if (pixel != '' && amount != 0) {
+                    if (amount == 1) {
+                        saveCode += `${pixel}:`;
                     } else {
-                        saveCode += string + '-' + number + ':';
+                        saveCode += `${pixel}-${amount}:`;
                     }
                 }
-                string = grid[i][j];
-                number = 0;
+                pixel = grid[i][j];
+                amount = 0;
             }
         }
     }
-    number++;
-    if (string != '' && number != 0) {
-        if (number == 1) {
-            saveCode += string + ':';
+    amount++;
+    if (pixel != '') {
+        if (amount == 1) {
+            saveCode += `${pixel}:`;
         } else {
-            saveCode += string + '-' + number + ':';
+            saveCode += `${pixel}-${amount}:`;
         }
     }
+    function createBooleanCode(grid) {
+        saveCode += ';';
+        let pixel = grid[0][0];
+        amount = -1;
+        if (pixel) saveCode += '0:';
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                amount++;
+                if (grid[i][j] != pixel) {
+                    if (amount != 0) {
+                        if (amount == 1) {
+                            saveCode += `1:`;
+                        } else {
+                            saveCode += `${amount}:`;
+                        }
+                    }
+                    pixel = grid[i][j];
+                    amount = 0;
+                }
+            }
+        }
+        amount++;
+        if (amount == 1) {
+            saveCode += `1:`;
+        } else {
+            saveCode += `${amount}:`;
+        }
+    };
+    createBooleanCode(fireGrid);
+    createBooleanCode(deleterGrid);
     return saveCode;
 };
 async function loadPremade(id) {
@@ -319,7 +377,7 @@ function setup() {
 
     document.querySelectorAll('.p5Canvas').forEach(e => e.remove());
 
-    createGrid();
+    createGrid(100);
     loadSaveCode();
     saveCode = window.localStorage.getItem(('saveCodeText')) ?? saveCode;
     saveCodeText.value = saveCode;
@@ -765,46 +823,8 @@ function drawFrame() {
             if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? abovectx : belowctx);
             else if (curr == 'air' && (redrawing || forceRedraw)) clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixelType.above ? abovectx : belowctx);
         }
-        for (let i = 0; i < gridSize; i++) {
-            let j = 0;
-            let fire = false;
-            let number = 0;
-            while (j < gridSize) {
-                number++;
-                if (fireGrid[i][j] != fire) {
-                    if (fire) {
-                        drawPixels(j - number, i, number, 1, 'fire', 1, firectx);
-                    }
-                    fire = fireGrid[i][j];
-                    number = 0;
-                }
-                j++;
-            }
-            number++;
-            if (fire) {
-                drawPixels(j - number, i, number, 1, 'fire', 1, firectx);
-            }
-        }
-        for (let i = 0; i < gridSize; i++) {
-            let j = 0;
-            let deleter = false;
-            let number = 0;
-            while (j < gridSize) {
-                number++;
-                if (deleterGrid[i][j] != deleter) {
-                    if (deleter) {
-                        drawPixels(j - number, i, number, 1, 'deleter', 1, abovectx);
-                    }
-                    deleter = deleterGrid[i][j];
-                    number = 0;
-                }
-                j++;
-            }
-            number++;
-            if (deleter) {
-                drawPixels(j - number, i, number, 1, 'deleter', 1, abovectx);
-            }
-        }
+        drawBooleanGrid(fireGrid, 'fire', firectx);
+        drawBooleanGrid(deleterGrid, 'deleter', abovectx);
         for (let i = 0; i < gridSize; i++) {
             for (let j = 0; j < gridSize; j++) {
                 lastGrid[i][j] = grid[i][j];
@@ -814,6 +834,28 @@ function drawFrame() {
     }
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
         frames.push(millis());
+    }
+};
+function drawBooleanGrid(grid, type, ctx) {
+    for (let i = 0; i < gridSize; i++) {
+        let j = 0;
+        let pixel = false;
+        let number = 0;
+        while (j < gridSize) {
+            number++;
+            if (grid[i][j] != pixel) {
+                if (pixel) {
+                    drawPixels(j - number, i, number, 1, type, 1, ctx);
+                }
+                pixel = grid[i][j];
+                number = 0;
+            }
+            j++;
+        }
+        number++;
+        if (pixel) {
+            drawPixels(j - number, i, number, 1, type, 1, ctx);
+        }
     }
 };
 function updateFrame() {
