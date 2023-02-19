@@ -648,6 +648,9 @@ function draw() {
 
     // draw pixels
     drawFrame();
+    // copy layers
+    ctx.drawImage(below, 0, 0);
+    ctx.drawImage(above, 0, 0);
     // draw brush
     if (!gridPaused || !simulatePaused) {
         let x1 = Math.min(gridSize, Math.max(0, mXGrid - clickSize + 1));
@@ -667,9 +670,6 @@ function draw() {
         ctx.lineTo((x2 + 1) * gridScale * camera.scale - camera.x, y1 * gridScale * camera.scale - camera.y);
         ctx.stroke();
     }
-    // copy layers
-    ctx.drawImage(below, 0, 0);
-    ctx.drawImage(above, 0, 0);
 
     // place pixels
     if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && mouseOver) {
