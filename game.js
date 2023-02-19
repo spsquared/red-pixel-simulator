@@ -28,7 +28,23 @@ function createCanvas2(w, h) {
         return new OffscreenCanvas(w || 1, h || 1);
     }
 };
+const canvas = document.getElementById('canvas');
+const below = createCanvas2(canvasResolution, canvasResolution);
+const above = createCanvas2(canvasResolution, canvasResolution);
+const fire = createCanvas2(canvasResolution, canvasResolution);
+const ctx = canvas.getContext('2d');
+const belowctx = below.getContext('2d');
+const abovectx = above.getContext('2d');
+const firectx = above.getContext('2d');
 function resetCanvases() {
+    canvas.width = canvasResolution;
+    canvas.height = canvasResolution;
+    below.width = canvasResolution;
+    below.height = canvasResolution;
+    above.width = canvasResolution;
+    above.height = canvasResolution;
+    fire.width = canvasResolution;
+    fire.height = canvasResolution;
     ctx.imageSmoothingEnabled = false;
     ctx.webkitImageSmoothingEnabled = false;
     ctx.mozImageSmoothingEnabled = false;
@@ -38,23 +54,14 @@ function resetCanvases() {
     abovectx.imageSmoothingEnabled = false;
     abovectx.webkitImageSmoothingEnabled = false;
     abovectx.mozImageSmoothingEnabled = false;
+    firectx.imageSmoothingEnabled = false;
+    firectx.webkitImageSmoothingEnabled = false;
+    firectx.mozImageSmoothingEnabled = false;
 };
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const below = createCanvas2(canvasResolution, canvasResolution);
-const above = createCanvas2(canvasResolution, canvasResolution);
-const belowctx = below.getContext('2d');
-const abovectx = above.getContext('2d');
 const sidebar = document.getElementById('sidebar');
 const pixelPicker = document.getElementById('pixelPicker');
 const pixelPickerDescription = document.getElementById('pixelPickerDescription');
 const saveCodeText = document.getElementById('saveCode');
-canvas.width = canvasResolution;
-canvas.height = canvasResolution;
-below.width = canvasResolution;
-below.height = canvasResolution;
-above.width = canvasResolution;
-above.height = canvasResolution;
 resetCanvases();
 canvas.addEventListener('contextmenu', e => e.preventDefault());
 
@@ -204,9 +211,8 @@ function loadSaveCode() {
                 }
             };
             parseSaveCode(saveCode);
-        }
-        catch (error) {
-            throw 'Invalid Save Code';
+        } catch (error) {
+            throw new Error('Invalid Save Code');
         }
         gridPaused = startPaused;
         updateTimeControlButtons();
@@ -651,6 +657,7 @@ function draw() {
     // copy layers
     ctx.drawImage(below, 0, 0);
     ctx.drawImage(above, 0, 0);
+    ctx.drawImage(fire, 0, 0);
     // draw brush
     if (!gridPaused || !simulatePaused) {
         let x1 = Math.min(gridSize, Math.max(0, mXGrid - clickSize + 1));
@@ -731,7 +738,7 @@ function draw() {
 };
 function updateCamera() {
     // camera mode 1 - camera follows mouse and clamps to edges, mouse is always in center of camera unless clamped to edge
-    // camera mode 2 - fixed camera, mouse zoom and middle click moves
+    // camera mode 2 - fixed camera, mouse zoom and control middle click moves
 };
 function drawFrame() {
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
@@ -766,7 +773,7 @@ function drawFrame() {
                 number++;
                 if (fireGrid[i][j] != fire) {
                     if (fire) {
-                        drawPixels(j - number, i, number, 1, 'fire', 1, abovectx);
+                        drawPixels(j - number, i, number, 1, 'fire', 1, firectx);
                     }
                     fire = fireGrid[i][j];
                     number = 0;
@@ -775,7 +782,7 @@ function drawFrame() {
             }
             number++;
             if (fire) {
-                drawPixels(j - number, i, number, 1, 'fire', 1, abovectx);
+                drawPixels(j - number, i, number, 1, 'fire', 1, firectx);
             }
         }
         for (let i = 0; i < gridSize; i++) {

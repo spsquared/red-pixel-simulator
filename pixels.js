@@ -10,6 +10,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 0,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -31,6 +32,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 0,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -73,6 +75,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 1,
+        group: 0,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -137,6 +140,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 15,
+        group: 0,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -179,6 +183,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 0,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -206,6 +211,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
+            fireGrid[y][x] = false;
             updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = 'air';
@@ -304,6 +310,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 0,
         key: Infinity,
         updatePriority: 3,
         animatedNoise: true,
@@ -480,6 +487,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 0,
         key: Infinity,
         updatePriority: 3,
         animatedNoise: true,
@@ -532,6 +540,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 0,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -563,6 +572,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 0,
         key: Infinity,
         updatePriority: 3,
         animatedNoise: false,
@@ -626,6 +636,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 2,
+        group: 0,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -690,6 +701,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 1,
+        group: 0,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -728,6 +740,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 15,
+        group: 0,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -760,6 +773,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 10,
+        group: 0,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -823,6 +837,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 20,
+        group: 0,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -878,6 +893,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 20,
+        group: 0,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -899,96 +915,9 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 4,
+        group: 0,
         key: Infinity,
         updatePriority: 0,
-        animatedNoise: false,
-        animated: false,
-        above: false,
-        pickable: true
-    },
-    pump: {
-        name: 'Water Pump',
-        description: 'Violates the Laws of Thermodynamics to create water',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(75, 100, 255, ${opacity})`;
-            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
-            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
-            for (let i = 0; i < width - 1; i++) {
-                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
-            }
-        },
-        update: function (x, y) {
-            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
-                if (nextGrid[y][x] == null) {
-                    nextGrid[y][x] = 'water';
-                }
-            });
-            updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null && random() < 0.125) {
-                    nextGrid[actionY][actionX] = 'water';
-                }
-            });
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(25, 125, 75)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 100, 255)';
-            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
-        },
-        flammability: 0,
-        key: Infinity,
-        updatePriority: 4,
-        animatedNoise: false,
-        animated: false,
-        above: false,
-        pickable: true
-    },
-    lava_generator: {
-        name: 'Lava Heater',
-        description: 'Violates the Laws of Thermodynamics to create lava',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(255, 125, 0, ${opacity})`;
-            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
-            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
-            for (let i = 0; i < width - 1; i++) {
-                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
-            }
-        },
-        update: function (x, y) {
-            updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
-                explode(x, y, 5);
-            });
-            updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
-                    nextGrid[actionY][actionX] = 'lava';
-                }
-            });
-            updateTouchingPixel(x, y, 'concrete', function (actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
-                    nextGrid[actionY][actionX] = 'lava';
-                }
-            });
-            updateTouchingPixel(x, y, 'concrete_powder', function (actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
-                    nextGrid[actionY][actionX] = 'lava';
-                }
-            });
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(25, 125, 75)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
-            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
-        },
-        flammability: 0,
-        key: Infinity,
-        updatePriority: 4,
         animatedNoise: false,
         animated: false,
         above: false,
@@ -1031,6 +960,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
         flammability: 8,
+        group: 1,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1075,6 +1005,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         flammability: 8,
+        group: 1,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1119,6 +1050,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
         flammability: 8,
+        group: 1,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1163,6 +1095,7 @@ const pixels = {
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         flammability: 8,
+        group: 1,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1205,6 +1138,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
         flammability: 8,
+        group: 1,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1247,6 +1181,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         flammability: 8,
+        group: 1,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1289,6 +1224,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
         flammability: 8,
+        group: 1,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1331,6 +1267,7 @@ const pixels = {
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         flammability: 8,
+        group: 1,
         key: Infinity,
         updatePriority: 4,
         animatedNoise: false,
@@ -1396,6 +1333,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
         flammability: 6,
+        group: 1,
         key: Infinity,
         updatePriority: 1,
         animatedNoise: false,
@@ -1461,6 +1399,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
         flammability: 6,
+        group: 1,
         key: 'k',
         updatePriority: 1,
         animatedNoise: false,
@@ -1526,6 +1465,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
         flammability: 6,
+        group: 1,
         key: Infinity,
         updatePriority: 1,
         animatedNoise: false,
@@ -1591,6 +1531,7 @@ const pixels = {
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
         flammability: 6,
+        group: 1,
         key: Infinity,
         updatePriority: 1,
         animatedNoise: false,
@@ -1620,6 +1561,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
         flammability: 4,
+        group: 1,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -1649,6 +1591,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
         flammability: 4,
+        group: 1,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -1678,6 +1621,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
         flammability: 4,
+        group: 1,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -1707,6 +1651,7 @@ const pixels = {
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
         flammability: 4,
+        group: 1,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -1763,6 +1708,7 @@ const pixels = {
             ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         flammability: 4,
+        group: 1,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -1819,10 +1765,101 @@ const pixels = {
             ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
         },
         flammability: 4,
+        group: 1,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
         animated: true,
+        above: false,
+        pickable: true
+    },
+    pump: {
+        name: 'Water Pump',
+        description: 'Violates the Laws of Thermodynamics to create water',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(75, 100, 255, ${opacity})`;
+            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
+            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
+            for (let i = 0; i < width - 1; i++) {
+                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
+            }
+        },
+        update: function (x, y) {
+            updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
+                if (nextGrid[y][x] == null) {
+                    nextGrid[y][x] = 'water';
+                }
+            });
+            updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.125) {
+                    nextGrid[actionY][actionX] = 'water';
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(25, 125, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 100, 255)';
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
+        flammability: 0,
+        group: 2,
+        key: Infinity,
+        updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
+        above: false,
+        pickable: true
+    },
+    lava_generator: {
+        name: 'Lava Heater',
+        description: 'Violates the Laws of Thermodynamics to create lava',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(255, 125, 0, ${opacity})`;
+            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
+            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
+            for (let i = 0; i < width - 1; i++) {
+                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
+            }
+        },
+        update: function (x, y) {
+            updateTouchingPixel(x, y, 'water', function (actionX, actionY) {
+                explode(x, y, 5);
+            });
+            updateTouchingPixel(x, y, 'air', function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
+                    nextGrid[actionY][actionX] = 'lava';
+                }
+            });
+            updateTouchingPixel(x, y, 'concrete', function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
+                    nextGrid[actionY][actionX] = 'lava';
+                }
+            });
+            updateTouchingPixel(x, y, 'concrete_powder', function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
+                    nextGrid[actionY][actionX] = 'lava';
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(25, 125, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
+        flammability: 0,
+        group: 2,
+        key: Infinity,
+        updatePriority: 4,
+        animatedNoise: false,
+        animated: false,
         above: false,
         pickable: true
     },
@@ -1846,6 +1883,7 @@ const pixels = {
             ctx.fillRect(0, 25 / 2, 50, 25);
         },
         flammability: 0,
+        group: 2,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -1873,6 +1911,7 @@ const pixels = {
             ctx.fillRect(25 / 2, 0, 25, 50);
         },
         flammability: 0,
+        group: 2,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -1909,6 +1948,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 15,
+        group: 2,
         key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
@@ -1940,6 +1980,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50);
         },
         flammability: 2,
+        group: 2,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -1969,6 +2010,7 @@ const pixels = {
             ctx.fillRect(25, 0, 25 / 2, 50);
         },
         flammability: 0,
+        group: 2,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -2022,6 +2064,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
         flammability: 20,
+        group: 2,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2074,6 +2117,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
         flammability: 20,
+        group: 2,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2126,6 +2170,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
         flammability: 20,
+        group: 2,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2178,6 +2223,7 @@ const pixels = {
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
         flammability: 20,
+        group: 2,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2216,6 +2262,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 3,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2254,6 +2301,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 3,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2292,6 +2340,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 3,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
@@ -2303,24 +2352,34 @@ const pixels = {
         name: 'Deleter',
         description: 'undefined',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(255, 0, 70, ${opacity})`;
+            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
+            let color = colorAnimate(200, 0, 255, 255, 0, 255, 96);
+            ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + 1 / 4 + i, y + 1 / 4 + j, 1 / 2, 1 / 2, ctx);
+                }
+            }
         },
         update: function (x, y) {
             grid[y][x] = 'air';
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 0, 70)';
+            ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(200, 0, 255)';
+            ctx.fillRect(50 / 4, 50 / 4, 25, 25);
         },
         flammability: 0,
+        group: 3,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
         animated: false,
         above: true,
-        pickable: false
+        pickable: true
     },
     lag_spike_generator: {
         name: 'lag_spike_generator',
@@ -2359,6 +2418,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: 3,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -2525,7 +2585,8 @@ const pixels = {
             ctx.fillRect(22, 8, 6, 22);
             ctx.fillRect(22, 36, 6, 6);
         },
-        flammability: 0,
+        flammability: NaN,
+        group: 3,
         key: Infinity,
         updatePriority: 5,
         animatedNoise: false,
@@ -2553,6 +2614,7 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: -1,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -2574,6 +2636,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
+        group: -1,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -2605,6 +2668,7 @@ const pixels = {
             ctx.fillRect(25, 25, 25, 25);
         },
         flammability: 0,
+        group: -1,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -2622,6 +2686,7 @@ const canvas2 = document.createElement('canvas');
 const ctx2 = canvas2.getContext('2d');
 canvas2.width = 50;
 canvas2.height = 50;
+const groups = [];
 for (const id in pixels) {
     if (pixels[id].pickable) {
         const box = document.createElement('div');
@@ -2643,8 +2708,14 @@ for (const id in pixels) {
         pixels[id].drawPreview(ctx2);
         img.src = canvas2.toDataURL('image/png');
         box.appendChild(img);
-        pixelPicker.appendChild(box);
+        if (groups[pixels[id].group] == undefined) {
+            groups[pixels[id].group] = document.createElement('div');
+        }
+        groups[pixels[id].group].appendChild(box);
     }
+}
+for (let group of groups) {
+    pixelPicker.appendChild(group);
 }
 document.getElementById(`picker-${clickPixel})`).classList.add('pickerPixelSelected');
 pixelPickerDescription.innerHTML = generateDescription(clickPixel);
