@@ -1,7 +1,7 @@
 window.inMenuScreen = true;
 
 window.addEventListener('DOMContentLoaded', (e) => {
-    const transitionScreen = document.getElementById('transitionScreen');
+    const menuScreen = document.getElementById('menuScreen');
     const titleContainer = document.getElementById('titleContainer');
     const t_redpixel = document.getElementById('t_redpixel');
     const t_textRed = document.getElementById('t_textRed');
@@ -13,9 +13,9 @@ window.addEventListener('DOMContentLoaded', (e) => {
     const challengeButton = document.getElementById('challengeButton');
 
     window.addEventListener('resize', (e) => {
-        transitionScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
+        menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
     });
-    transitionScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
+    menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
 
     setTimeout(() => {
         t_redpixel.style.transition = '200ms ease-in transform';
@@ -43,7 +43,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         challengeButton.style.transform = 'translateY(-40vh)';
     }, 2600);
 
-    let titleBobController = setInterval(() => {});
+    let titleBobController = setInterval(() => { });
     function titleBob() {
         titleContainer.style.transitionDuration = '2s';
         let timer = false;
@@ -54,14 +54,66 @@ window.addEventListener('DOMContentLoaded', (e) => {
             else titleContainer.style.transform = 'translateY(-19vh)';
         }, 2000);
     };
-    setTimeout(titleBob, 3000);
+    let startTitleBob = setTimeout(titleBob, 3000);
 
-    document.getElementById('sandboxButton').onclick = (e) => {
+    sandboxButton.onclick = (e) => {
+        clearTimeout(startTitleBob);
         transitionToGame();
+        sandboxMode = true;
+        document.getElementById('restart').style.display = 'none';
+        document.getElementById('saveCode').disabled = false;
+        document.getElementById('saveCode').style.cursor = '';
+        document.getElementById('generateSave').style.backgroundColor = '';
+        document.getElementById('uploadSave').style.backgroundColor = '';
+        document.getElementById('downloadSave').style.backgroundColor = '';
+        document.getElementById('generateSave').style.cursor = '';
+        document.getElementById('uploadSave').style.cursor = '';
+        document.getElementById('downloadSave').style.cursor = '';
+        document.getElementById('gridSize').disabled = false;
+        document.getElementById('gridSize').style.cursor = '';
+    };
+    challengeButton.onclick = (e) => {
+        clearTimeout(startTitleBob);
+        sandboxMode = false;
+        document.getElementById('restart').style.display = '';
+        document.getElementById('saveCode').disabled = true;
+        document.getElementById('saveCode').style.cursor = 'not-allowed';
+        document.getElementById('generateSave').style.backgroundColor = 'grey';
+        document.getElementById('uploadSave').style.backgroundColor = 'grey';
+        document.getElementById('downloadSave').style.backgroundColor = 'grey';
+        document.getElementById('generateSave').style.cursor = 'not-allowed';
+        document.getElementById('uploadSave').style.cursor = 'not-allowed';
+        document.getElementById('downloadSave').style.cursor = 'not-allowed';
+        document.getElementById('gridSize').disabled = true;
+        document.getElementById('gridSize').style.cursor = 'not-allowed';
     };
 
     transitionToMenu = () => {
-        // bars do the chompy thing
+        menuScreen.style.transitionDuration = '0s';
+        menuScreen.style.backgroundColor = 'transparent';
+        menuScreen.style.opacity = '1';
+        menuScreen.style.visibility = '';
+        menuScreen.style.pointerEvents = '';
+        titleContainer.style.transitionDuration = '';
+        window.inMenuScreen = true;
+        t_bottom.style.transform = 'translateY(-50vh)';
+        t_top.style.transform = 'translateY(50vh)';
+        setTimeout(() => {
+            menuScreen.style.transitionDuration = '';
+            menuScreen.style.backgroundColor = '';
+            t_bottom.style.transform = '';
+            t_top.style.transform = '';
+        }, 800);
+        titleContainer.style.transform = 'translateY(-20vh)';
+        setTimeout(() => {
+            sandboxButton.style.transform = 'translateY(-40vh)';
+        }, 600);
+        setTimeout(() => {
+            challengeButton.style.transform = 'translateY(-40vh)';
+        }, 1000);
+        setTimeout(() => {
+            titleBob();
+        }, 1500);
     };
     transitionToGame = () => {
         clearInterval(titleBobController);
@@ -74,13 +126,12 @@ window.addEventListener('DOMContentLoaded', (e) => {
             sandboxButton.style.transform = 'translateY(100vh)';
         }, 300);
         setTimeout(() => {
-            transitionScreen.style.opacity = '0';
+            menuScreen.style.opacity = '0';
             window.inMenuScreen = false;
-            transitionScreen.style.pointerEvents = 'none';
+            menuScreen.style.pointerEvents = 'none';
         }, 600);
         setTimeout(() => {
-            transitionScreen.style.visibility = 'none';
+            menuScreen.style.visibility = 'none';
         }, 1600);
     };
-
 });

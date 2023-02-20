@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="title" content="Red Pixel Simulator">
+    <meta name="description" content="A puzzle-sandbox game based on interactions of pixels on a grid">
+    <meta name="url" content="https://red-pixel-simulator.radioactivestuf.repl.co/">
+    <meta name="image" content="https://red-pixel-simulator.radioactivestuf.repl.co/favicon.png">
+    <meta property="og:title" content="Red Pixel Simulator">
+    <meta property="og:description" content="A puzzle-sandbox game based on interactions of pixels on a grid">
+    <meta property="og:url" content="https://red-pixel-simulator.radioactivestuf.repl.co/">
+    <meta property="og:image" content="https://red-pixel-simulator.radioactivestuf.repl.co/favicon.png">
+    <meta property="og:image:width" content="26">
+    <meta property="og:image:height" content="26">
     <title>Red Pixel Simulator</title>
     <link rel="icon" href="./favicon.png" type="image/x-icon">
     <script src="./p5.min.js"></script>
@@ -27,6 +37,12 @@
                         <button id="sizeUp">▲</button>
                         <button id="sizeDown">▼</button>
                     </td>
+                    <td style="border: none;">
+                        <button id="backToMenu">Menu</button>
+                    </td>
+                    <td style="border: none;">
+                        <button id="restart">Restart</button>
+                    </td>
                 </tr>
                 <tr>
                     <td style="border: none;">
@@ -40,8 +56,6 @@
                     </td>
                 </tr>
             </tbody></table>
-        </div><br>
-        <div>
             <table style="width: 100%;"><tbody>
                 <tr>
                     <td style="width: 50%; border: none;">
@@ -65,13 +79,12 @@
                             <button id="changeResolution">Change resolution (requires reload)</button>
                         </div>
                     </td>
-                    <td style="width: 50%; border: none;"></td>
                 </tr>
             </tbody></table>
         </div>
         <div>
             <h1>
-                Instructions:
+                &nbsp;Instructions
             </h1>
             <p>
                 <b>Left click</b> to place pixels<br>
@@ -175,7 +188,7 @@
                 </tr> -->
             </tbody></table>
             <h2>
-                Premade save codes:
+                &nbsp;Premade save codes
             </h2>
             <table style="user-select: text;"><tbody>
                 <tr><td class="save">
@@ -245,17 +258,18 @@
             <button id="confirmationModalNo">NO</button>
         </div>
     </div>
-    <div id="transitionScreen" style="background-color: black;">
+    <div id="menuScreen" style="background-color: black;">
         <div id="titleContainer">
             <div id="t_redpixel"></div>
             <div id="t_textRed">Red</div>
             <div id="t_textPixel">Pixel</div>
             <div id="t_textSimulator">Simulator</div>
         </div>
-        <div id="t_bottom"></div>
-        <div id="t_top"></div>
         <button id="sandboxButton">SANDBOX</button>
         <button id="challengeButton">CHALLENGES</button>
+        
+        <div id="t_bottom"></div>
+        <div id="t_top"></div>
     </div>
 </body>
 </html>

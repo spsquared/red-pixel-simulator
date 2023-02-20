@@ -11,6 +11,7 @@ let gridSize = 100;
 let saveCode = window.localStorage.getItem('saveCode') ?? '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
 let startPaused = false;
 let backgroundColor = '#ffffff';
+let sandboxMode = true;
 
 let noNoise = false;
 let optimizedLags = false;
@@ -139,7 +140,7 @@ function loadSaveCode() {
         gridPaused = true;
         simulatePaused = false;
         runTicks = 0;
-        forceRedraw = true;
+        ticks = 0;
         let sections = saveCode.split(';');
         if (isNaN(parseInt(sections[0]))) return;
         function parseSaveCode(code) {
@@ -239,17 +240,21 @@ function loadSaveCode() {
             }
         };
         if (sections[0]) createGrid(parseInt(sections[0]));
-        if (sections[1]) parseSaveCode(sections[1]);
-        if (sections[2]) parseBooleanCode(fireGrid, sections[2]);
-        if (sections[3]) parseBooleanCode(deleterGrid, sections[3]);
+        if (sections[1]) ticks = parseInt(sections[1], 16);
+        if (sections[2]) parseSaveCode(sections[2]);
+        if (sections[3]) parseBooleanCode(fireGrid, sections[3]);
+        if (sections[4]) parseBooleanCode(deleterGrid, sections[4]);
+        randomSeed(ticks);
         gridPaused = startPaused;
         updateTimeControlButtons();
+        forceRedraw = true;
     }
-    window.localStorage.setItem('saveCode', saveCode);
+    if (sandboxMode) {
+        window.localStorage.setItem('saveCode', saveCode);
+    }
 };
 function generateSaveCode() {
-    let saveCode = '';
-    saveCode += gridSize + ';';
+    let saveCode = `${gridSize};${'0000'.substring(0, 4 - ticks.toString(16).length)}${ticks.toString(16)};`;
     let pixel = '';
     let amount = 0;
     for (let i = 0; i < gridSize; i++) {
@@ -320,30 +325,6 @@ async function loadPremade(id) {
     }
 };
 
-function updateTimeControlButtons() {
-    if (gridPaused) {
-        document.getElementById('pause').style.backgroundColor = 'red';
-        document.getElementById('pause').innerText = '▶';
-        document.getElementById('pause').style.fontSize = '20px';
-        if (simulatePaused) {
-            document.getElementById('simulatePaused').style.backgroundColor = 'lime';
-        } else {
-            document.getElementById('simulatePaused').style.backgroundColor = 'red';
-        }
-        document.getElementById('advanceTick').style.backgroundColor = 'lightgray';
-        document.getElementById('simulatePaused').style.cursor = '';
-        document.getElementById('advanceTick').style.cursor = '';
-    } else {
-        document.getElementById('pause').style.backgroundColor = 'lime';
-        document.getElementById('pause').innerText = '▐ ▌';
-        document.getElementById('pause').style.fontSize = '';
-        document.getElementById('simulatePaused').style.backgroundColor = 'grey';
-        document.getElementById('advanceTick').style.backgroundColor = 'grey';
-        document.getElementById('simulatePaused').style.cursor = 'not-allowed';
-        document.getElementById('advanceTick').style.cursor = 'not-allowed';
-    }
-};
-
 function confirmationModal() {
     acceptInputs = false;
     const confirmationModalContainer = document.getElementById('confirmationModalContainer');
@@ -368,6 +349,13 @@ function confirmationModal() {
             hide();
             resolve(false);
         };
+        document.addEventListener('keydown', function cancel(e) {
+            if (e.key == 'Escape') {
+                hide();
+                resolve(false);
+                document.removeEventListener('keydown', cancel);
+            }
+        });
     });
 };
 
@@ -476,8 +464,9 @@ function setup() {
     }, 500);
 
     setInterval(() => {
-        window.localStorage.setItem('saveCode', generateSaveCode());
-        window.localStorage.setItem('saveCodeText', saveCode);
+        if (sandboxMode) {
+            window.localStorage.setItem('saveCode', generateSaveCode());
+        }
     }, 30000);
 
     lastFpsList = millis();
@@ -922,13 +911,62 @@ function updateFrame() {
                 }
             }
             frames.push(millis());
-            ticks++;
+            ticks = (ticks + 1) % 65536;
+            randomSeed(ticks);
         }
     }
 };
 
+function updateTimeControlButtons() {
+    if (gridPaused) {
+        document.getElementById('pause').style.backgroundColor = 'red';
+        document.getElementById('pause').innerText = '▶';
+        document.getElementById('pause').style.fontSize = '20px';
+        if (simulatePaused) {
+            document.getElementById('simulatePaused').style.backgroundColor = 'lime';
+        } else {
+            document.getElementById('simulatePaused').style.backgroundColor = 'red';
+        }
+        document.getElementById('advanceTick').style.backgroundColor = 'lightgray';
+        document.getElementById('simulatePaused').style.cursor = '';
+        document.getElementById('advanceTick').style.cursor = '';
+    } else {
+        document.getElementById('pause').style.backgroundColor = 'lime';
+        document.getElementById('pause').innerText = '▐ ▌';
+        document.getElementById('pause').style.fontSize = '';
+        document.getElementById('simulatePaused').style.backgroundColor = 'grey';
+        document.getElementById('advanceTick').style.backgroundColor = 'grey';
+        document.getElementById('simulatePaused').style.cursor = 'not-allowed';
+        document.getElementById('advanceTick').style.cursor = 'not-allowed';
+    }
+};
+document.getElementById('sizeUp').onclick = (e) => {
+    clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
+};
+document.getElementById('sizeDown').onclick = (e) => {
+    clickSize = Math.max(1, clickSize - 1);
+};
+document.getElementById('pause').onclick = (e) => {
+    gridPaused = !gridPaused;
+    simulatePaused = false;
+    updateTimeControlButtons();
+};
+document.getElementById('simulatePaused').onclick = (e) => {
+    if (gridPaused) simulatePaused = !simulatePaused;
+    updateTimeControlButtons();
+};
+document.getElementById('advanceTick').onclick = (e) => {
+    runTicks = 1;
+};
+document.getElementById('backToMenu').onclick = (e) => {
+    gridPaused = true;
+    simulatePaused = false;
+    updateTimeControlButtons();
+    transitionToMenu();
+};
 let writeSaveTimeout = setTimeout(() => { });
 document.getElementById('saveCode').oninput = (e) => {
+    if (!sandboxMode) return;
     let index = saveCodeText.value.indexOf(';');
     if (index > 0) {
         document.getElementById('gridSize').value = saveCodeText.value.substring(0, index);
@@ -936,18 +974,25 @@ document.getElementById('saveCode').oninput = (e) => {
     saveCode = saveCodeText.value.replace('\n', '');
     clearTimeout(writeSaveTimeout);
     writeSaveTimeout = setTimeout(() => {
-        window.localStorage.setItem('saveCodeText', saveCode);
+        if (sandboxMode) {
+            window.localStorage.setItem('saveCodeText', saveCode);
+        }
     }, 1000);
 };
 document.getElementById('generateSave').onclick = (e) => {
+    if (!sandboxMode) return;
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
     saveCode = generateSaveCode();
-    window.localStorage.setItem('saveCodeText', saveCode);
+    if (sandboxMode) {
+        window.localStorage.setItem('saveCode', saveCode);
+        window.localStorage.setItem('saveCodeText', saveCode);
+    }
     saveCodeText.value = saveCode;
 };
 document.getElementById('uploadSave').onclick = (e) => {
+    if (!sandboxMode) return;
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
@@ -970,6 +1015,7 @@ document.getElementById('uploadSave').onclick = (e) => {
     };
 };
 document.getElementById('downloadSave').onclick = (e) => {
+    if (!sandboxMode) return;
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
@@ -992,6 +1038,7 @@ document.getElementById('reset').onclick = async (e) => {
     }
 };
 document.getElementById('gridSize').oninput = (e) => {
+    if (!sandboxMode) return;
     document.getElementById('gridSize').value = Math.max(1, Math.min(parseInt(document.getElementById('gridSize').value.replace('e', '')), 500));
     if (document.getElementById('gridSize').value != '') saveCode = document.getElementById('gridSize').value + saveCode.substring(saveCode.indexOf(';'));
     saveCodeText.value = saveCode;
@@ -1013,25 +1060,6 @@ document.getElementById('changeResolution').onclick = (e) => {
         window.localStorage.setItem('resolution', newRes);
         window.location.reload();
     }
-};
-
-document.getElementById('sizeUp').onclick = (e) => {
-    clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
-};
-document.getElementById('sizeDown').onclick = (e) => {
-    clickSize = Math.max(1, clickSize - 1);
-};
-document.getElementById('pause').onclick = (e) => {
-    gridPaused = !gridPaused;
-    simulatePaused = false;
-    updateTimeControlButtons();
-};
-document.getElementById('simulatePaused').onclick = (e) => {
-    if (gridPaused) simulatePaused = !simulatePaused;
-    updateTimeControlButtons();
-};
-document.getElementById('advanceTick').onclick = (e) => {
-    runTicks = 1;
 };
 
 window.onresize = (e) => {

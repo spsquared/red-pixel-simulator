@@ -47,6 +47,7 @@ button {
     padding: 4px 4px;
     font: 16px Arial;
     font-weight: bolder;
+    background-color: lightgray;
     border: 5px outset #AAAAAA;
     transition: 100ms linear background-color;
     cursor: pointer;
@@ -76,17 +77,19 @@ td {
     width: 100%;
 }
 #sizeUp, #sizeDown {
-    width: 40px;
+    width: 42px;
     height: 40px;
     font-size: 20px;
+}
+#pause, #simulatePaused, #advanceTick, #backToMenu, #restart {
+    width: 100px;
+    height: 40px;
 }
 #pause {
     background-color: lime;
 }
-#pause, #simulatePaused, #advanceTick {
+#simulatePaused, #advanceTick {
     background-color: gray;
-    width: 100px;
-    height: 40px;
 }
 
 #pixelPicker {
@@ -179,7 +182,6 @@ td {
     margin-top: 8px;
     font-size: 18px;
 }
-
 #noNoise, #fadeEffect, #changeResolution {
     margin-left: unset;
     font-size: 12px;
@@ -191,7 +193,6 @@ td {
 #fadeEffect {
     background-color: lime;
 }
-
 .save {
     font-weight: lighter;
 }
@@ -243,9 +244,11 @@ td {
         background-color: #333;
         color: white;
     }
+
     b, td {
         border-color: white;
     }
+
     #pixelPicker {
         border-color: white;
     }
@@ -255,6 +258,7 @@ td {
     .pickerPixel:hover {
         border-color: white;
     }
+
     #confirmationModal {
         background-color: #333;
         border-color: white;

@@ -810,14 +810,14 @@ const pixels = {
                 nextFireGrid[y][x] = false;
             });
             let aerated = updateTouchingPixel(x, y, 'air');
-            if (random() < (20 - flammability) / (aerated ? 360 : 100)) {
+            if (random() < (20 - flammability) / (aerated ? 360 : 40)) {
                 nextFireGrid[y][x] = false;
             }
             if (random() < flammability / 1200 && nextGrid[y][x] == null && !isLava) {
                 if (grid[y][x].includes('laser_')) {
                     nextGrid[y][x] = 'air';
                     explode(x, y, 3);
-                } else if (grid[y][x] != 'ash' && random() < 0.8) {
+                } else if (grid[y][x] != 'ash' && random() < 0.5) {
                     nextGrid[y][x] = 'ash';
                 } else {
                     nextGrid[y][x] = 'air';
