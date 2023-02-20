@@ -727,7 +727,11 @@ function draw() {
 
     // place pixels
     if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && mouseOver) {
-        clickLine(mXGrid, mYGrid, prevMXGrid, prevMYGrid, mouseButton == RIGHT || removing);
+        if (mouseButton == CENTER) {
+            if (pixels[grid[mYGrid][mXGrid]].pickable) clickPixel = grid[mYGrid][mXGrid];
+        } else {
+            clickLine(mXGrid, mYGrid, prevMXGrid, prevMYGrid, mouseButton == RIGHT || removing);
+        }
     }
     // simulate pixels
     updateFrame();
@@ -924,12 +928,14 @@ function updateTimeControlButtons() {
         document.getElementById('pause').style.fontSize = '20px';
         if (simulatePaused) {
             document.getElementById('simulatePaused').style.backgroundColor = 'lime';
+            document.getElementById('advanceTick').style.backgroundColor = 'grey';
+            document.getElementById('advanceTick').style.cursor = 'not-allowed';
         } else {
             document.getElementById('simulatePaused').style.backgroundColor = 'red';
+            document.getElementById('advanceTick').style.backgroundColor = 'lightgray';
+            document.getElementById('advanceTick').style.cursor = '';
         }
-        document.getElementById('advanceTick').style.backgroundColor = 'lightgray';
         document.getElementById('simulatePaused').style.cursor = '';
-        document.getElementById('advanceTick').style.cursor = '';
     } else {
         document.getElementById('pause').style.backgroundColor = 'lime';
         document.getElementById('pause').innerText = '▐ ▌';

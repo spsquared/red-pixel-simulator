@@ -810,7 +810,7 @@ const pixels = {
                 nextFireGrid[y][x] = false;
             });
             let aerated = updateTouchingPixel(x, y, 'air');
-            if (random() < (20 - flammability) / (aerated ? 360 : 40)) {
+            if (random() < (20 - flammability) / (aerated ? 360 : 80)) {
                 nextFireGrid[y][x] = false;
             }
             if (random() < flammability / 1200 && nextGrid[y][x] == null && !isLava) {
@@ -2389,7 +2389,7 @@ const pixels = {
                 for (let j = 0; j < height; j++) {
                     ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
                     drawPixel(x + i, y + j, 1, 1, ctx);
-                    ctx.fillStyle = `rgba(125, 255, 0, ${(random(225) + 30) * opacity})`;
+                    ctx.fillStyle = `rgba(125, 255, 0, ${(random() * 0.6 + 0.4) * opacity})`;
                     drawPixel(x + i, y + j, 1, 1, ctx);
                 }
             }

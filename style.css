@@ -56,6 +56,9 @@ button:active {
     border-style: inset;
 }
 
+p {
+    line-height: 18px;
+}
 b {
     /* background-color: beige; */
     border: 1px solid black;
