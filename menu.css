@@ -52,6 +52,49 @@
     top: 20vh;
 }
 
+#sandboxButton, #challengeButton {
+    position: absolute;
+    left: 35vw;
+    width: 30vw;
+    height: 8vh;
+    font-size: 4vh;
+    border: 1vh outset gold;
+    background-color: goldenrod;
+    transition: 1500ms cubic-bezier(0.2, 0.2, 0, 1) transform;
+    transform: none;
+}
+#sandboxButton:active, #challengeButton:active {
+    border-style: inset;
+}
+#sandboxButton {
+    top: 100vh;
+}
+#challengeButton {
+    top: 114vh;
+}
+
+#levelSelect {
+    position: absolute;
+    top: 10vh;
+    left: 20vw;
+    width: 60vw;
+    height: 80vh;
+    background-color: #EFEFEF;
+    border: 4px solid black;
+    transition: 500ms ease-in-out transform;
+    transform: translateY(-100vh);
+}
+#levelSelectClose {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    width: 40px;
+    height: 40px;
+    line-height: 10px;
+    background-color: red;
+    border-color: crimson;
+}
+
 #t_bottom, #t_top {
     position: absolute;
     left: 0px;
@@ -96,28 +139,9 @@
 }
 */
 
-#sandboxButton, #challengeButton {
-    position: absolute;
-    left: 35vw;
-    width: 30vw;
-    height: 8vh;
-    font-size: 4vh;
-    border: 1vh outset gold;
-    background-color: goldenrod;
-    transition: 1500ms cubic-bezier(0.2, 0.2, 0, 1) transform;
-    transform: none;
-}
-#sandboxButton:active, #challengeButton:active {
-    border-style: inset;
-}
-#sandboxButton {
-    top: 100vh;
-}
-#challengeButton {
-    top: 114vh;
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-#challengeButton:active {
-    border-style: outset;
+@media (prefers-color-scheme: dark) {
+    #levelSelect {
+        background-color: #333;
+        border-color: white;
+    }
 }

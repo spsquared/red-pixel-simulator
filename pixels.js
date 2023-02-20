@@ -183,13 +183,13 @@ const pixels = {
                     move(x, y, x, y + 1);
                 } else {
                     let slideLeft = x > 0 && isPassableFluid(x - 1, y) &&
-                    ((isPassableFluid(x - 3, y) && isPassableFluid(x - 3, y + 1) && isPassableFluid(x - 2, y) && canMoveTo(x - 1, y))
-                    || (isPassableFluid(x - 2, y) && isPassableFluid(x - 2, y + 1) && canMoveTo(x - 1, y))
-                    || (isPassableFluid(x - 1, y + 1) && canMoveTo(x - 1, y + 1)));
+                        ((isPassableFluid(x - 3, y) && isPassableFluid(x - 3, y + 1) && isPassableFluid(x - 2, y) && canMoveTo(x - 1, y))
+                            || (isPassableFluid(x - 2, y) && isPassableFluid(x - 2, y + 1) && canMoveTo(x - 1, y))
+                            || (isPassableFluid(x - 1, y + 1) && canMoveTo(x - 1, y + 1)));
                     let slideRight = x < gridSize - 1 && isPassableFluid(x + 1, y) &&
-                    ((isPassableFluid(x + 3, y) && isPassableFluid(x + 3, y + 1) && isPassableFluid(x + 2, y) && canMoveTo(x + 1, y))
-                    || (isPassableFluid(x + 2, y) && isPassableFluid(x + 2, y + 1) && canMoveTo(x + 1, y))
-                    || (isPassableFluid(x + 1, y + 1) && canMoveTo(x + 1, y + 1)));
+                        ((isPassableFluid(x + 3, y) && isPassableFluid(x + 3, y + 1) && isPassableFluid(x + 2, y) && canMoveTo(x + 1, y))
+                            || (isPassableFluid(x + 2, y) && isPassableFluid(x + 2, y + 1) && canMoveTo(x + 1, y))
+                            || (isPassableFluid(x + 1, y + 1) && canMoveTo(x + 1, y + 1)));
                     if (slideLeft && slideRight) {
                         if (ticks % 2 == 0) {
                             if (isPassableFluid(x - 1, y + 1)) move(x, y, x - 1, y + 1);
@@ -1847,6 +1847,62 @@ const pixels = {
         above: false,
         pickable: true
     },
+    slider_horizontal: {
+        name: 'Horizontal Slider',
+        description: 'Can only be pushed left and right',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(255, 180, 0, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(200, 100, 0, ${opacity})`;
+            for (let i = 0; i < height; i++) {
+                drawPixel(x, y + i + 1 / 4, width, 1 / 2, ctx);
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 180, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(200, 100, 0)';
+            ctx.fillRect(0, 25 / 2, 50, 25);
+        },
+        flammability: 0,
+        group: 1,
+        key: Infinity,
+        updatePriority: -1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
+        pickable: true
+    },
+    slider_vertical: {
+        name: 'Vertical Slider',
+        description: 'Can only be pushed up and down',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(250, 180, 0, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(200, 100, 0, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                drawPixel(x + i + 1 / 4, y, 1 / 2, height, ctx);
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 180, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(200, 100, 0)';
+            ctx.fillRect(25 / 2, 0, 25, 50);
+        },
+        flammability: 0,
+        group: 1,
+        key: Infinity,
+        updatePriority: -1,
+        animatedNoise: false,
+        animated: false,
+        above: false,
+        pickable: true
+    },
     pump: {
         name: 'Water Pump',
         description: 'Violates the Laws of Thermodynamics to create water',
@@ -1932,62 +1988,6 @@ const pixels = {
         group: 2,
         key: Infinity,
         updatePriority: 4,
-        animatedNoise: false,
-        animated: false,
-        above: false,
-        pickable: true
-    },
-    slider_horizontal: {
-        name: 'Horizontal Slider',
-        description: 'Can only be pushed left and right',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(255, 180, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(200, 100, 0, ${opacity})`;
-            for (let i = 0; i < height; i++) {
-                drawPixel(x, y + i + 1 / 4, width, 1 / 2, ctx);
-            }
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 180, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(200, 100, 0)';
-            ctx.fillRect(0, 25 / 2, 50, 25);
-        },
-        flammability: 0,
-        group: 2,
-        key: Infinity,
-        updatePriority: -1,
-        animatedNoise: false,
-        animated: false,
-        above: false,
-        pickable: true
-    },
-    slider_vertical: {
-        name: 'Vertical Slider',
-        description: 'Can only be pushed up and down',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(250, 180, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(200, 100, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                drawPixel(x + i + 1 / 4, y, 1 / 2, height, ctx);
-            }
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 180, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(200, 100, 0)';
-            ctx.fillRect(25 / 2, 0, 25, 50);
-        },
-        flammability: 0,
-        group: 2,
-        key: Infinity,
-        updatePriority: -1,
         animatedNoise: false,
         animated: false,
         above: false,
@@ -2688,7 +2688,7 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
         },
         flammability: 0,
-        group: -1,
+        group: 3,
         key: Infinity,
         updatePriority: -1,
         animatedNoise: false,
@@ -2696,9 +2696,86 @@ const pixels = {
         above: false,
         pickable: false
     },
+    placementUnRestriction: {
+        name: 'Allow Placement',
+        description: 'Remove placement restrictions in sandbox levels',
+        draw: function (x, y, width, height, opacity, ctx) { },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        flammability: 0,
+        group: 4,
+        key: Infinity,
+        updatePriority: -1,
+        animatedNoise: false,
+        animated: true,
+        above: true,
+        pickable: true
+    },
+    placementRestriction: {
+        name: 'Prevent Placement',
+        description: 'Prevents players from placing pixels in sandbox levels',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(0, 0, 0, ${opacity * 0.2})`;
+            drawPixel(x, y, width, height, ctx);
+        },
+        update: function (x, y) {
+            grid[y][x] = 'air';
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(220, 220, 220)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        flammability: 0,
+        group: 4,
+        key: Infinity,
+        updatePriority: -1,
+        animatedNoise: false,
+        animated: true,
+        above: true,
+        pickable: true
+    },
+    enemy: {
+        name: 'Enemy',
+        description: 'The bad pixels in challenge puzzles',
+        draw: function (x, y, width, height, opacity, ctx) {
+            let color = colorAnimate(0, 160, 70, 0, 180, 80, 64);
+            ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 6, y + 1 / 6 + j, 1 / 4, 1 / 4, ctx);
+                    drawPixel(x + 7/12 + i, y + 1 / 6 + j, 1 / 4, 1 / 4, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            grid[y][x] = 'air';
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(200, 0, 255)';
+            ctx.fillRect(50 / 4, 50 / 4, 25, 25);
+        },
+        flammability: 0,
+        group: 3,
+        key: Infinity,
+        updatePriority: 0,
+        animatedNoise: false,
+        animated: true,
+        above: true,
+        pickable: true
+    },
     remove: {
         name: "Remove (brush only)",
-        description: `<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&rel=0&controls=0&disablekb=1" width=${window.innerWidth} height=${window.innerHeight} style="position: absolute; top: -2px; left: -2px; pointer-events: none;"></iframe><div style="position: absolute; top: 0px, left: 0px; width: 100vw; height: 100vh; z-index: 100;"></div>`,
+        description: 'Unfortunately it\'s not THE red pixel',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(255, 0, 0, 255)`;
             drawPixel(x, y, width, height, ctx);
@@ -2750,12 +2827,44 @@ const pixels = {
         animated: false,
         above: false,
         pickable: false
+    },
+    red: {
+        name: 'Red Pixel',
+        description: 'What???',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = '#FF0000';
+            ctx.fillRect(0, 0, canvasResolution, canvasResolution);
+        },
+        update: function (x, y) {
+            gridPaused = true;
+            modal('Red Pixel Simulator', '86 7A 91 7A 8A 26 7C 87 86 86 76 26 7C 81 91 7A 26 94 87 90 26 90 88', false).then(() => window.location.reload());
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        flammability: 0,
+        group: -1,
+        key: Infinity,
+        updatePriority: 0,
+        animatedNoise: false,
+        animatedNoise: false,
+        animated: false,
+        above: false,
+        pickable: false
+    }
+};
+const pixelAmounts = {};
+function resetPixelAmounts() {
+    for (let id in pixels) {
+        pixelAmounts[id] = 0;
     }
 };
 
 function generateDescription(id) {
     return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Flammability: ${pixels[id].flammability}/20`;
-}
+};
 const canvas2 = document.createElement('canvas');
 const ctx2 = canvas2.getContext('2d');
 canvas2.width = 50;
@@ -2782,6 +2891,10 @@ for (const id in pixels) {
         pixels[id].drawPreview(ctx2);
         img.src = canvas2.toDataURL('image/png');
         box.appendChild(img);
+        const count = document.createElement('div');
+        count.id = `picker-${id}-count`;
+        count.classList.add('pickerCount');
+        box.append(count);
         if (groups[pixels[id].group] == undefined) {
             groups[pixels[id].group] = document.createElement('div');
         }

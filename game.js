@@ -1,5 +1,3 @@
-// no documentation here!
-
 window.addEventListener('error', (e) => {
     modal('An error occured:', `<span style="color: red;"><br>${e.message}<br>${e.filename} ${e.lineno}:${e.colno}</span>`, false);
 });
@@ -14,7 +12,7 @@ let noNoise = false;
 let optimizedLags = false;
 let fadeEffect = 127;
 
-const canvasResolution = parseInt(window.localStorage.getItem('resolution') ?? 800);
+const canvasResolution = parseInt(window.localStorage.getItem('resolution') ?? 1000);
 const NO_OFFSCREENCANVAS = typeof OffscreenCanvas == 'undefined';
 function createCanvas2(w, h) {
     if (NO_OFFSCREENCANVAS) {
@@ -30,10 +28,14 @@ const canvas = document.getElementById('canvas');
 const below = createCanvas2(canvasResolution, canvasResolution);
 const above = createCanvas2(canvasResolution, canvasResolution);
 const fire = createCanvas2(canvasResolution, canvasResolution);
+const deleter = createCanvas2(canvasResolution, canvasResolution);
+const placeable = createCanvas2(canvasResolution, canvasResolution);
 const ctx = canvas.getContext('2d');
 const belowctx = below.getContext('2d');
 const abovectx = above.getContext('2d');
-const firectx = above.getContext('2d');
+const firectx = fire.getContext('2d');
+const deleterctx = deleter.getContext('2d');
+const placeablectx = placeable.getContext('2d');
 function resetCanvases() {
     canvas.width = canvasResolution;
     canvas.height = canvasResolution;
@@ -43,6 +45,10 @@ function resetCanvases() {
     above.height = canvasResolution;
     fire.width = canvasResolution;
     fire.height = canvasResolution;
+    deleter.width = canvasResolution;
+    deleter.height = canvasResolution;
+    placeable.width = canvasResolution;
+    placeable.height = canvasResolution;
     ctx.imageSmoothingEnabled = false;
     ctx.webkitImageSmoothingEnabled = false;
     ctx.mozImageSmoothingEnabled = false;
@@ -55,6 +61,12 @@ function resetCanvases() {
     firectx.imageSmoothingEnabled = false;
     firectx.webkitImageSmoothingEnabled = false;
     firectx.mozImageSmoothingEnabled = false;
+    deleterctx.imageSmoothingEnabled = false;
+    deleterctx.webkitImageSmoothingEnabled = false;
+    deleterctx.mozImageSmoothingEnabled = false;
+    placeablectx.imageSmoothingEnabled = false;
+    placeablectx.webkitImageSmoothingEnabled = false;
+    placeablectx.mozImageSmoothingEnabled = false;
 };
 const sidebar = document.getElementById('sidebar');
 const pixelPicker = document.getElementById('pixelPicker');
@@ -77,8 +89,12 @@ const lastGrid = [];
 const nextGrid = [];
 const noiseGrid = [];
 const fireGrid = [];
+const lastFireGrid = [];
 const nextFireGrid = [];
 const deleterGrid = [];
+const placeableGrid = [];
+const lastPlaceableGrid = [];
+const target = [0, 0];
 let pendingExplosions = [];
 let gridPaused = true;
 let simulatePaused = false;
@@ -110,24 +126,33 @@ function createGrid(size) {
     nextGrid.length = 0;
     noiseGrid.length = 0;
     fireGrid.length = 0;
+    lastFireGrid.length = 0;
     nextFireGrid.length = 0;
     deleterGrid.length = 0;
+    placeableGrid.length = 0;
+    lastPlaceableGrid.length = 0;
     for (let i = 0; i < gridSize; i++) {
         grid[i] = [];
         lastGrid[i] = [];
         nextGrid[i] = [];
         noiseGrid[i] = [];
         fireGrid[i] = [];
+        lastFireGrid[i] = [];
         nextFireGrid[i] = [];
         deleterGrid[i] = [];
+        placeableGrid[i] = [];
+        lastPlaceableGrid[i] = [];
         for (let j = 0; j < gridSize; j++) {
             grid[i][j] = 'air';
             lastGrid[i][j] = null;
             nextGrid[i][j] = null;
             noiseGrid[i][j] = noise(j / 2, i / 2);
             fireGrid[i][j] = false;
+            lastFireGrid[i][j] = false;
             nextFireGrid[i][j] = false;
             deleterGrid[i][j] = false;
+            placeableGrid[i][j] = true;
+            lastPlaceableGrid[i][j] = true;
         }
     }
     document.getElementById('gridSize').value = gridSize;
@@ -230,7 +255,7 @@ function loadSaveCode() {
             while (i < code.length) {
                 let next = code.indexOf(':', i);
                 if (next == -1) break;
-                let amount = parseInt(code.substring(i, next));
+                let amount = parseInt(code.substring(i, next), 16);
                 if (addPixels(pixel, amount)) break;
                 pixel = !pixel;
                 i = next + 1;
@@ -241,6 +266,7 @@ function loadSaveCode() {
         if (sections[2]) parseSaveCode(sections[2]);
         if (sections[3]) parseBooleanCode(fireGrid, sections[3]);
         if (sections[4]) parseBooleanCode(deleterGrid, sections[4]);
+        if (sections[5]) parseBooleanCode(placeableGrid, sections[5]);
         randomSeed(ticks);
         gridPaused = startPaused;
         updateTimeControlButtons();
@@ -291,7 +317,7 @@ function generateSaveCode() {
                         if (amount == 1) {
                             saveCode += `1:`;
                         } else {
-                            saveCode += `${amount}:`;
+                            saveCode += `${amount.toString(16)}:`;
                         }
                     }
                     pixel = grid[i][j];
@@ -303,15 +329,16 @@ function generateSaveCode() {
         if (amount == 1) {
             saveCode += `1:`;
         } else {
-            saveCode += `${amount}:`;
+            saveCode += `${amount.toString(16)}:`;
         }
     };
     createBooleanCode(fireGrid);
     createBooleanCode(deleterGrid);
+    createBooleanCode(placeableGrid);
     return saveCode;
 };
 async function loadPremade(id) {
-    if (await confirmationModal()) {
+    if (await modal('Confirm load?', 'Your current red simulation will be overwritten!', true)) {
         document.querySelectorAll('save').forEach(e => {
             if (e.getAttribute('save-id') == id) {
                 saveCode = e.innerHTML;
@@ -331,6 +358,7 @@ function loadStoredSave() {
 };
 
 function modal(title, subtitle, confirmation) {
+    if (!acceptInputs) return new Promise((resolve, reject) => reject());
     acceptInputs = false;
     const modalContainer = document.getElementById('modalContainer');
     const modal = document.getElementById('modal');
@@ -339,8 +367,8 @@ function modal(title, subtitle, confirmation) {
     const modalYes = document.getElementById('modalYes');
     const modalNo = document.getElementById('modalNo');
     const modalOk = document.getElementById('modalOk');
-    modalTitle.innerText = title;
-    modalSubtitle.innerText = subtitle;
+    modalTitle.innerHTML = title;
+    modalSubtitle.innerHTML = subtitle;
     if (confirmation) {
         modalYes.style.display = '';
         modalNo.style.display = '';
@@ -399,7 +427,7 @@ function setup() {
         for (let i in pixels) {
             if (pixels[i].key == key) {
                 clickPixel = i;
-                document.getElementById('pixelPicker').children.forEach(div => div.classList.remove('pickerPixelSelected'));
+                pixelPicker.children.forEach(div => div.classList.remove('pickerPixelSelected'));
                 document.getElementById(`picker-${i}`).classList.add('pickerPixelSelected');
                 pixelPickerDescription.innerHTML = `<span style="font-size: 16px; font-weight: bold;">${pixels[i].name}</span><br>${pixels[i].description}`;
             }
@@ -461,9 +489,9 @@ function setup() {
             if (zooming) {
                 let percentX = (mX + camera.x) / (canvasSize * camera.scale);
                 let percentY = (mY + camera.y) / (canvasSize * camera.scale);
-                camera.scale = Math.max(1, Math.min(camera.scale * (1 - (e.deltaY / 1000)), 5));
-                camera.x = Math.max(0, Math.min((canvasSize * camera.scale * percentX) - mX, (canvasSize * camera.scale) - canvasSize));
-                camera.y = Math.max(0, Math.min((canvasSize * camera.scale * percentY) - mY, (canvasSize * camera.scale) - canvasSize));
+                camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
+                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasSize * camera.scale) - canvasSize));
+                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasSize * camera.scale) - canvasSize));
                 forceRedraw = true;
             } else {
                 if (e.deltaY > 0) {
@@ -675,26 +703,81 @@ function clickLine(startX, startY, endX, endY, remove) {
     let y = startY;
     let angle = atan2(endY - startY, endX - startX);
     let distance = sqrt(pow(endX - startX, 2) + pow(endY - startY, 2));
-    for (let i = 0; i <= distance; i++) {
+    let modifiedPixelCounts = [];
+    place: for (let i = 0; i <= distance; i++) {
         let gridX = Math.floor(x);
         let gridY = Math.floor(y);
         let xmin = Math.max(0, Math.min(gridX - clickSize + 1, gridSize - 1));
         let xmax = Math.max(0, Math.min(gridX + clickSize - 1, gridSize - 1));
         let ymin = Math.max(0, Math.min(gridY - clickSize + 1, gridSize - 1));
         let ymax = Math.max(0, Math.min(gridY + clickSize - 1, gridSize - 1));
-        for (let j = xmin; j <= xmax; j++) {
-            for (let k = ymin; k <= ymax; k++) {
-                if (remove) {
-                    grid[k][j] = 'air';
-                    fireGrid[k][j] = false;
-                    deleterGrid[k][j] = false;
-                } else if (clickPixel == 'fire') {
-                    fireGrid[k][j] = true;
-                } else if (clickPixel == 'deleter') {
-                    deleterGrid[k][j] = true;
-                } else {
-                    grid[k][j] = clickPixel;
+        function act(cb) {
+            for (let j = xmin; j <= xmax; j++) {
+                for (let k = ymin; k <= ymax; k++) {
+                    if (cb(j, k)) return true;
                 }
+            }
+            return false;
+        };
+        if (remove) {
+            if (sandboxMode) {
+                act(function (x, y) {
+                    grid[y][x] = 'air';
+                    fireGrid[y][x] = false;
+                    deleterGrid[y][x] = false;
+                    return false;
+                });
+            } else {
+                act(function (x, y) {
+                    pixelAmounts[grid[k][j]]++;
+                    modifiedPixelCounts[grid[k][j]] = true;
+                    grid[y][x] = 'air';
+                    fireGrid[y][x] = false;
+                    deleterGrid[y][x] = false;
+                    return false;
+                });
+            }
+        } else if (clickPixel == 'fire') {
+            act(function (x, y) {
+                fireGrid[y][x] = true;
+                return false;
+            });
+        } else if (clickPixel == 'deleter') {
+            if (sandboxMode) {
+                act(function (x, y) {
+                    deleterGrid[y][x] = true;
+                    return false;
+                });
+            } else {
+                modifiedPixelCounts[clickPixel] = true;
+                if (act(function (x, y) {
+                    modifiedPixelCounts[grid[k][j]] = true;
+                    deleterGrid[y][x] = true;
+                    pixelAmounts[clickPixel]--;
+                    return pixelAmounts[clickPixel] <= 0;
+                })) break place;
+            }
+        } else if (clickPixel == 'placementRestriction') {
+            if (sandboxMode) act(function (x, y) {
+                placeableGrid[y][x] = false;
+            })
+        } else if (clickPixel == 'placementUnRestriction') {
+            if (sandboxMode) act(function (x, y) {
+                placeableGrid[y][x] = true;
+            })
+        } else {
+            if (sandboxMode) {
+                act(function (x, y) {
+                    grid[y][x] = clickPixel;
+                });
+            } else {
+                if (act(function (x, y) {
+                    modifiedPixelCounts[grid[y][x]] = true;
+                    pixelAmounts[grid[y][x]]++;
+                    grid[y][x] = clickPixel;
+                    pixelAmounts[clickPixel]--;
+                    return pixelAmounts[clickPixel] <= 0;
+                })) break place;
             }
         }
         x += cos(angle);
@@ -712,8 +795,8 @@ function draw() {
     let prevMYGrid = mYGrid;
     let prevMX = mX;
     let prevMY = mY;
-    mX = (mouseX - 10) * canvasScale;
-    mY = (mouseY - 10) * canvasScale;
+    mX = Math.round((mouseX - 10) * canvasScale);
+    mY = Math.round((mouseY - 10) * canvasScale);
     let scale = gridSize / canvasSize / camera.scale / canvasScale;
     mXGrid = Math.floor((mX + camera.x) * scale);
     mYGrid = Math.floor((mY + camera.y) * scale);
@@ -725,6 +808,8 @@ function draw() {
     ctx.drawImage(below, 0, 0);
     ctx.drawImage(above, 0, 0);
     ctx.drawImage(fire, 0, 0);
+    ctx.drawImage(deleter, 0, 0);
+    ctx.drawImage(placeable, 0, 0);
     // draw brush
     if (!gridPaused || !simulatePaused) {
         let x1 = Math.min(gridSize, Math.max(0, mXGrid - clickSize + 1));
@@ -745,7 +830,7 @@ function draw() {
         ctx.stroke();
     }
 
-    // place pixels
+    // place pixels (also camera)
     if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && mouseOver) {
         if (mouseButton == CENTER) {
             if (zooming) {
@@ -817,13 +902,20 @@ function drawFrame() {
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
         ctx.fillStyle = backgroundColor + (255 - fadeEffect).toString(16);
         ctx.fillRect(0, 0, canvasResolution, canvasResolution);
-        abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
+        if (forceRedraw) {
+            ctx.fillStyle = backgroundColor;
+            ctx.fillRect(0, 0, canvasResolution, canvasResolution);
+            belowctx.clearRect(0, 0, canvasResolution, canvasResolution);
+            abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
+            firectx.clearRect(0, 0, canvasResolution, canvasResolution);
+            deleterctx.clearRect(0, 0, canvasResolution, canvasResolution);
+            placeablectx.clearRect(0, 0, canvasResolution, canvasResolution);
+        }
         for (let i = 0; i < gridSize; i++) {
             let curr = 'air';
             let redrawing = grid[i][0] != lastGrid[i][0];
             let amount = 0;
-            let j;
-            for (j = 0; j < gridSize; j++) {
+            for (let j = 0; j < gridSize; j++) {
                 amount++;
                 if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
                     let pixelType = pixels[curr] ?? pixels['missing'];
@@ -838,12 +930,18 @@ function drawFrame() {
             if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? abovectx : belowctx);
             else if (curr == 'air' && (redrawing || forceRedraw)) clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixelType.above ? abovectx : belowctx);
         }
-        drawBooleanGrid(fireGrid, 'fire', firectx);
-        drawBooleanGrid(deleterGrid, 'deleter', abovectx);
+        drawBooleanGrid(fireGrid, lastFireGrid, 'fire', firectx);
+        drawBooleanGrid(deleterGrid, deleterGrid, 'deleter', deleterctx);
+        drawBooleanGrid(placeableGrid, lastPlaceableGrid, 'placementRestriction', placeablectx, true);
         for (let i = 0; i < gridSize; i++) {
             for (let j = 0; j < gridSize; j++) {
                 lastGrid[i][j] = grid[i][j];
+                lastFireGrid[i][j] = fireGrid[i][j];
+                lastPlaceableGrid[i][j] = placeableGrid[i][j];
             }
+        }
+        if (!sandboxMode) {
+
         }
         forceRedraw = false;
     }
@@ -851,25 +949,39 @@ function drawFrame() {
         frames.push(millis());
     }
 };
-function drawBooleanGrid(grid, type, ctx) {
-    for (let i = 0; i < gridSize; i++) {
-        let j = 0;
-        let pixel = false;
-        let number = 0;
-        while (j < gridSize) {
-            number++;
-            if (grid[i][j] != pixel) {
-                if (pixel) {
-                    drawPixels(j - number, i, number, 1, type, 1, ctx);
+function drawBooleanGrid(grid, lastGrid, type, ctx, invert) {
+    if (grid === lastGrid) {
+        ctx.clearRect(0, 0, canvasResolution, canvasResolution);
+        for (let i = 0; i < gridSize; i++) {
+            let pixel = false;
+            let amount = 0;
+            for (let j = 0; j < gridSize; j++) {
+                amount++;
+                if (grid[i][j] != pixel) {
+                    if (pixel ^ invert) drawPixels(j - amount, i, amount, 1, type, 1, ctx);
+                    pixel = grid[i][j];
+                    amount = 0;
                 }
-                pixel = grid[i][j];
-                number = 0;
             }
-            j++;
+            if (pixel) drawPixels(gridSize - amount - 1, i, amount, 1, type, 1, ctx);
         }
-        number++;
-        if (pixel) {
-            drawPixels(j - number, i, number, 1, type, 1, ctx);
+    } else {
+        for (let i = 0; i < gridSize; i++) {
+            let pixel = false;
+            let redrawing = grid[i][0] != lastGrid[i][0];
+            let amount = 0;
+            for (let j = 0; j < gridSize; j++) {
+                amount++;
+                if (grid[i][j] != pixel || (grid[i][j] != lastGrid[i][j]) != redrawing) {
+                    if (pixel ^ invert && (redrawing || forceRedraw)) drawPixels(j - amount, i, amount, 1, type, 1, ctx);
+                    else if (!pixel ^ invert && (redrawing || forceRedraw)) clearPixels(j - amount, i, amount, 1, ctx);
+                    pixel = grid[i][j];
+                    redrawing = grid[i][j] != lastGrid[i][j];
+                    amount = 0;
+                }
+            }
+            if (pixel ^ invert && (redrawing || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, type, 1, ctx);
+            else if (!pixel ^ invert && (redrawing || forceRedraw)) clearPixels(gridSize - amount - 1, i, amount + 1, 1, ctx);
         }
     }
 };
@@ -987,11 +1099,12 @@ document.getElementById('advanceTick').onclick = (e) => {
     runTicks = 1;
 };
 document.getElementById('backToMenu').onclick = (e) => {
+    if (window.inMenuScreen) return;
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
     if (sandboxMode) {
-        window.localStorage.setItem('saveCode', saveCode);
+        window.localStorage.setItem('saveCode', generateSaveCode());
         window.localStorage.setItem('saveCodeText', saveCodeText.value);
     }
     transitionToMenu();
@@ -1064,6 +1177,9 @@ document.getElementById('startPaused').onclick = (e) => {
     else document.getElementById('startPaused').style.backgroundColor = 'red';
 };
 document.getElementById('reset').onclick = async (e) => {
+    gridPaused = true;
+    simulatePaused = false;
+    updateTimeControlButtons();
     if (await modal('Confirm reset?', 'Your current red simulation will be overwritten!', true)) {
         saveCode = saveCodeText.value.replace('\n', '');
         loadSaveCode();
@@ -1103,6 +1219,10 @@ window.onresize = (e) => {
     below.height = canvasResolution;
     above.width = canvasResolution;
     above.height = canvasResolution;
+    fire.width = canvasResolution;
+    fire.height = canvasResolution;
+    deleter.width = canvasResolution;
+    deleter.height = canvasResolution;
     resetCanvases();
     canvas.style.width = canvasSize + 'px';
     canvas.style.height = canvasSize + 'px';
