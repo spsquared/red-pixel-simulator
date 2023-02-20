@@ -35,7 +35,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
     }, 1000);
     setTimeout(() => {
         titleContainer.style.transform = 'translateY(-20vh)';
-        titleContainer.style.animationName = 'titleBob';
     }, 1500);
     setTimeout(() => {
         sandboxButton.style.transform = 'translateY(-40vh)';
@@ -43,6 +42,19 @@ window.addEventListener('DOMContentLoaded', (e) => {
     setTimeout(() => {
         challengeButton.style.transform = 'translateY(-40vh)';
     }, 2600);
+
+    let titleBobController = setInterval(() => {});
+    function titleBob() {
+        titleContainer.style.transitionDuration = '2s';
+        let timer = false;
+        titleContainer.style.transform = 'translateY(-19vh)';
+        titleBobController = setInterval(() => {
+            timer = !timer;
+            if (timer) titleContainer.style.transform = 'translateY(-21vh)';
+            else titleContainer.style.transform = 'translateY(-19vh)';
+        }, 2000);
+    };
+    setTimeout(titleBob, 3000);
 
     document.getElementById('sandboxButton').onclick = (e) => {
         transitionToGame();
@@ -52,6 +64,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
         // bars do the chompy thing
     };
     transitionToGame = () => {
+        clearInterval(titleBobController);
+        titleContainer.style.transitionDuration = '';
         titleContainer.style.transform = 'translateY(-165vh)';
         setTimeout(() => {
             challengeButton.style.transform = 'translateY(100vh)';

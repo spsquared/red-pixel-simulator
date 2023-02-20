@@ -130,7 +130,7 @@ td {
     margin-right: 8px;
     height: min-content;
     text-align: justify;
-    transition: 0.5s ease height;
+    transition: 0.5s ease-in-out height;
 }
 
 #saveCode {
