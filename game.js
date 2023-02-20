@@ -1,14 +1,11 @@
 // no documentation here!
 
 window.addEventListener('error', (e) => {
-    document.getElementById('confirmationModalContainer').style.opacity = '1';
-    document.getElementById('confirmationModalContainer').style.pointerEvents = 'all';
-    document.getElementById('confirmationModal').style.transform = 'translateY(0px)';
-    document.getElementById('confirmationModal').innerHTML = `<span style="color: red;"><br>${e.message}<br>${e.filename} ${e.lineno}:${e.colno}</span>`;
+    modal('An error occured:', `<span style="color: red;"><br>${e.message}<br>${e.filename} ${e.lineno}:${e.colno}</span>`, false);
 });
 
 let gridSize = 100;
-let saveCode = window.localStorage.getItem('saveCode') ?? '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
+let saveCode = '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
 let startPaused = false;
 let backgroundColor = '#ffffff';
 let sandboxMode = true;
@@ -324,30 +321,59 @@ async function loadPremade(id) {
         });
     }
 };
+function loadStoredSave() {
+    saveCode = window.localStorage.getItem('saveCode') ?? saveCode;
+    loadSaveCode();
+    saveCode = window.localStorage.getItem(('saveCodeText')) ?? saveCode;
+    saveCodeText.value = saveCode;
+    gridPaused = true;
+    updateTimeControlButtons();
+};
 
-function confirmationModal() {
+function modal(title, subtitle, confirmation) {
     acceptInputs = false;
-    const confirmationModalContainer = document.getElementById('confirmationModalContainer');
-    const confirmationModal = document.getElementById('confirmationModal');
-    const confirmationModalYes = document.getElementById('confirmationModalYes');
-    const confirmationModalNo = document.getElementById('confirmationModalNo');
-    confirmationModalContainer.style.opacity = '1';
-    confirmationModalContainer.style.pointerEvents = 'all';
-    confirmationModal.style.transform = 'translateY(0px)';
+    const modalContainer = document.getElementById('modalContainer');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubtitle = document.getElementById('modalSubtitle');
+    const modalYes = document.getElementById('modalYes');
+    const modalNo = document.getElementById('modalNo');
+    const modalOk = document.getElementById('modalOk');
+    modalTitle.innerText = title;
+    modalSubtitle.innerText = subtitle;
+    if (confirmation) {
+        modalYes.style.display = '';
+        modalNo.style.display = '';
+        modalOk.style.display = 'none';
+    } else {
+        modalYes.style.display = 'none';
+        modalNo.style.display = 'none';
+        modalOk.style.display = '';
+    }
+    modalContainer.style.opacity = '1';
+    modalContainer.style.pointerEvents = 'all';
+    modal.style.transform = 'translateY(0px)';
     const hide = () => {
-        confirmationModalContainer.style.opacity = '';
-        confirmationModalContainer.style.pointerEvents = '';
-        confirmationModal.style.transform = '';
+        modalContainer.style.opacity = '';
+        modalContainer.style.pointerEvents = '';
+        modal.style.transform = '';
+        modalYes.onclick = null;
+        modalNo.onclick = null;
+        modalOk.onclick = null;
         acceptInputs = true;
     };
     return new Promise((resolve, reject) => {
-        confirmationModalYes.onclick = (e) => {
+        modalYes.onclick = (e) => {
             hide();
             resolve(true);
         };
-        confirmationModalNo.onclick = (e) => {
+        modalNo.onclick = (e) => {
             hide();
             resolve(false);
+        };
+        modalOk.onclick = (e) => {
+            hide();
+            resolve(true);
         };
         document.addEventListener('keydown', function cancel(e) {
             if (e.key == 'Escape') {
@@ -365,12 +391,7 @@ function setup() {
 
     document.querySelectorAll('.p5Canvas').forEach(e => e.remove());
 
-    createGrid(100);
-    loadSaveCode();
-    saveCode = window.localStorage.getItem(('saveCodeText')) ?? saveCode;
-    saveCodeText.value = saveCode;
-    gridPaused = true;
-    updateTimeControlButtons();
+    loadStoredSave();
 
     document.onkeydown = (e) => {
         if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || window.inMenuScreen) return;
@@ -687,17 +708,16 @@ function draw() {
     ctx.resetTransform();
     belowctx.resetTransform();
     abovectx.resetTransform();
-    mX = (mouseX - 10) * canvasScale;
-    mY = (mouseY - 10) * canvasScale;
     let prevMXGrid = mXGrid;
     let prevMYGrid = mYGrid;
+    let prevMX = mX;
+    let prevMY = mY;
+    mX = (mouseX - 10) * canvasScale;
+    mY = (mouseY - 10) * canvasScale;
     let scale = gridSize / canvasSize / camera.scale / canvasScale;
     mXGrid = Math.floor((mX + camera.x) * scale);
     mYGrid = Math.floor((mY + camera.y) * scale);
     mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
-
-    // update camera
-    updateCamera();
 
     // draw pixels
     drawFrame();
@@ -728,7 +748,13 @@ function draw() {
     // place pixels
     if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && mouseOver) {
         if (mouseButton == CENTER) {
-            if (pixels[grid[mYGrid][mXGrid]].pickable) clickPixel = grid[mYGrid][mXGrid];
+            if (zooming) {
+                camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasSize * camera.scale) - canvasSize));
+                camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasSize * camera.scale) - canvasSize));
+                forceRedraw = true;
+            } else {
+                if (pixels[grid[mYGrid][mXGrid]].pickable) clickPixel = grid[mYGrid][mXGrid];
+            }
         } else {
             clickLine(mXGrid, mYGrid, prevMXGrid, prevMYGrid, mouseButton == RIGHT || removing);
         }
@@ -786,10 +812,6 @@ function draw() {
     }
 
     animationTime++;
-};
-function updateCamera() {
-    // camera mode 1 - camera follows mouse and clamps to edges, mouse is always in center of camera unless clamped to edge
-    // camera mode 2 - fixed camera, mouse zoom and control middle click moves
 };
 function drawFrame() {
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
@@ -968,6 +990,10 @@ document.getElementById('backToMenu').onclick = (e) => {
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
+    if (sandboxMode) {
+        window.localStorage.setItem('saveCode', saveCode);
+        window.localStorage.setItem('saveCodeText', saveCodeText.value);
+    }
     transitionToMenu();
 };
 let writeSaveTimeout = setTimeout(() => { });
@@ -991,11 +1017,11 @@ document.getElementById('generateSave').onclick = (e) => {
     simulatePaused = false;
     updateTimeControlButtons();
     saveCode = generateSaveCode();
+    saveCodeText.value = saveCode;
     if (sandboxMode) {
         window.localStorage.setItem('saveCode', saveCode);
         window.localStorage.setItem('saveCodeText', saveCode);
     }
-    saveCodeText.value = saveCode;
 };
 document.getElementById('uploadSave').onclick = (e) => {
     if (!sandboxMode) return;
@@ -1011,7 +1037,7 @@ document.getElementById('uploadSave').onclick = (e) => {
         if (files.length == 0) return;
         const reader = new FileReader();
         reader.onload = async (e) => {
-            if (await confirmationModal()) {
+            if (await modal('Confirm load?', 'Your current red simulation will be overwritten!', true)) {
                 saveCode = e.target.result;
                 saveCodeText.value = saveCode;
                 loadSaveCode();
@@ -1038,7 +1064,7 @@ document.getElementById('startPaused').onclick = (e) => {
     else document.getElementById('startPaused').style.backgroundColor = 'red';
 };
 document.getElementById('reset').onclick = async (e) => {
-    if (await confirmationModal()) {
+    if (await modal('Confirm reset?', 'Your current red simulation will be overwritten!', true)) {
         saveCode = saveCodeText.value.replace('\n', '');
         loadSaveCode();
     }

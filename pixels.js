@@ -49,6 +49,10 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, 'water')) {
+                nextGrid[y][x] = 'mud';
+                return;
+            }
             if (y < gridSize - 1) {
                 if (isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
@@ -140,6 +144,76 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 15,
+        group: 0,
+        key: Infinity,
+        updatePriority: 2,
+        animatedNoise: false,
+        animated: false,
+        above: false,
+        pickable: true
+    },
+    mud: {
+        name: 'Mud',
+        description: 'Basically wet dirt',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(100, 60, 0, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            if (noNoise) {
+                ctx.fillStyle = `rgba(100, 60, 0, ${opacity})`;
+                drawPixel(x, y, width, height, ctx);
+            } else {
+                ctx.fillStyle = `rgba(90, 50, 0, ${opacity})`;
+                drawPixel(x, y, width, height, ctx);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = `rgba(105, 70, 0, ${noiseGrid[y + j][x + i] * opacity})`;
+                        drawPixel(x + i, y + j, 1, 1, ctx);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (!updateTouchingPixel(x, y, 'water') && random() < 0.001) {
+                nextGrid[y][x] = 'dirt';
+                return;
+            }
+            if (y < gridSize - 1) {
+                if (isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+                    move(x, y, x, y + 1);
+                } else {
+                    let slideLeft = x > 0 && isPassableFluid(x - 1, y) &&
+                    ((isPassableFluid(x - 3, y) && isPassableFluid(x - 3, y + 1) && isPassableFluid(x - 2, y) && canMoveTo(x - 1, y))
+                    || (isPassableFluid(x - 2, y) && isPassableFluid(x - 2, y + 1) && canMoveTo(x - 1, y))
+                    || (isPassableFluid(x - 1, y + 1) && canMoveTo(x - 1, y + 1)));
+                    let slideRight = x < gridSize - 1 && isPassableFluid(x + 1, y) &&
+                    ((isPassableFluid(x + 3, y) && isPassableFluid(x + 3, y + 1) && isPassableFluid(x + 2, y) && canMoveTo(x + 1, y))
+                    || (isPassableFluid(x + 2, y) && isPassableFluid(x + 2, y + 1) && canMoveTo(x + 1, y))
+                    || (isPassableFluid(x + 1, y + 1) && canMoveTo(x + 1, y + 1)));
+                    if (slideLeft && slideRight) {
+                        if (ticks % 2 == 0) {
+                            if (isPassableFluid(x - 1, y + 1)) move(x, y, x - 1, y + 1);
+                            else move(x, y, x - 1, y);
+                        } else {
+                            if (isPassableFluid(x + 1, y + 1)) move(x, y, x + 1, y + 1);
+                            else move(x, y, x + 1, y);
+                        }
+                    } else if (slideLeft) {
+                        if (isPassableFluid(x - 1, y + 1)) move(x, y, x - 1, y + 1);
+                        else move(x, y, x - 1, y);
+                    } else if (slideRight) {
+                        if (isPassableFluid(x + 1, y + 1)) move(x, y, x + 1, y + 1);
+                        else move(x, y, x + 1, y);
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 60, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        flammability: 1,
         group: 0,
         key: Infinity,
         updatePriority: 2,
@@ -262,9 +336,9 @@ const pixels = {
                     }
                     let toSlide = 0;
                     if (foundLeftDrop && foundRightDrop) {
-                        if (slideLeft > slideRight) {
+                        if (slideLeft < slideRight) {
                             toSlide = -1;
-                        } else if (slideLeft < slideRight) {
+                        } else if (slideLeft > slideRight) {
                             toSlide = 1;
                         } else {// implies both slides are not 0
                             if (random() <= 0.5) {
@@ -277,9 +351,9 @@ const pixels = {
                         toSlide = -1;
                     } else if (foundRightDrop) {
                         toSlide = 1;
-                    } else if (slideLeft > slideRight) {
-                        toSlide = -1;
                     } else if (slideLeft < slideRight) {
+                        toSlide = -1;
+                    } else if (slideLeft > slideRight) {
                         toSlide = 1;
                     } else if (slideLeft != 0) { // implies slideRight also isn't 0
                         if (random() <= 0.5) {
@@ -320,7 +394,7 @@ const pixels = {
     },
     lava: {
         name: 'Lava',
-        description: 'Try not to get burned, it also melts stuff and sets things on fire',
+        description: 'Try not to get burned, it also melts stuff and sets things on fire (and hardens into... concrete?)',
         draw: function (x, y, width, height, opacity, ctx) {
             if (noNoise) {
                 ctx.fillStyle = `rgba(255, 100, 0, ${opacity})`;
@@ -405,9 +479,9 @@ const pixels = {
                     }
                     let toSlide = 0;
                     if (foundLeftDrop && foundRightDrop) {
-                        if (slideLeft > slideRight) {
+                        if (slideLeft < slideRight) {
                             toSlide = -1;
-                        } else if (slideLeft < slideRight) {
+                        } else if (slideLeft > slideRight) {
                             toSlide = 1;
                         } else {// implies both slides are not 0
                             if (random() <= 0.5) {
@@ -420,9 +494,9 @@ const pixels = {
                         toSlide = -1;
                     } else if (foundRightDrop) {
                         toSlide = 1;
-                    } else if (slideLeft > slideRight) {
-                        toSlide = -1;
                     } else if (slideLeft < slideRight) {
+                        toSlide = -1;
+                    } else if (slideLeft > slideRight) {
                         toSlide = 1;
                     } else if (slideLeft != 0) { // implies slideRight also isn't 0
                         if (random() <= 0.5) {

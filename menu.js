@@ -58,8 +58,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
 
     sandboxButton.onclick = (e) => {
         clearTimeout(startTitleBob);
-        transitionToGame();
-        sandboxMode = true;
         document.getElementById('restart').style.display = 'none';
         document.getElementById('saveCode').disabled = false;
         document.getElementById('saveCode').style.cursor = '';
@@ -71,10 +69,13 @@ window.addEventListener('DOMContentLoaded', (e) => {
         document.getElementById('downloadSave').style.cursor = '';
         document.getElementById('gridSize').disabled = false;
         document.getElementById('gridSize').style.cursor = '';
+        document.getElementById('premadeSaves').style.display = '';
+        sandboxMode = true;
+        loadStoredSave();
+        transitionToGame();
     };
     challengeButton.onclick = (e) => {
         clearTimeout(startTitleBob);
-        sandboxMode = false;
         document.getElementById('restart').style.display = '';
         document.getElementById('saveCode').disabled = true;
         document.getElementById('saveCode').style.cursor = 'not-allowed';
@@ -86,6 +87,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
         document.getElementById('downloadSave').style.cursor = 'not-allowed';
         document.getElementById('gridSize').disabled = true;
         document.getElementById('gridSize').style.cursor = 'not-allowed';
+        document.getElementById('premadeSaves').style.display = 'none';
+        sandboxMode = false;
     };
 
     transitionToMenu = () => {
