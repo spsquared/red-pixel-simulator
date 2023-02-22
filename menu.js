@@ -6,10 +6,10 @@ const t_redpixel = document.getElementById('t_redpixel');
 const t_textRed = document.getElementById('t_textRed');
 const t_textPixel = document.getElementById('t_textPixel');
 const t_textSimulator = document.getElementById('t_textSimulator');
-const t_bottom = document.getElementById('t_bottom');
 const t_top = document.getElementById('t_top');
+const t_bottom = document.getElementById('t_bottom');
 const sandboxButton = document.getElementById('sandboxButton');
-const challengeButton = document.getElementById('challengeButton');
+const puzzleButton = document.getElementById('puzzleButton');
 
 window.addEventListener('resize', (e) => {
     menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
@@ -41,8 +41,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
         sandboxButton.style.transform = 'translateY(-40vh)';
     }, 2200);
     setTimeout(() => {
-        challengeButton.style.transform = 'translateY(-40vh)';
-    }, 2600);
+        puzzleButton.style.transform = 'translateY(-40vh)';
+    }, 2400);
     startTitleBob = setTimeout(titleBob, 3000);
 });
 
@@ -59,7 +59,47 @@ function titleBob() {
 };
 let startTitleBob = setTimeout(() => { });
 
-transitionToMenu = () => {
+const transitionTimeouts = [];
+function setTransitionTimeout(cb, ms) {
+    let t = setTimeout(() => {
+        cb();
+        transitionTimeouts.splice(transitionTimeouts.indexOf(t), 1);
+    }, ms);
+    transitionTimeouts.push(t);
+};
+function transitionWithinGame (cb) {
+    for (let t of transitionTimeouts) {
+        clearInterval(t);
+    }
+    transitionTimeouts.length = 0;
+    menuScreen.style.transitionDuration = '0s';
+    menuScreen.style.backgroundColor = 'transparent';
+    menuScreen.style.opacity = '1';
+    menuScreen.style.visibility = '';
+    menuScreen.style.pointerEvents = '';
+    window.inMenuScreen = true;
+    t_top.style.transform = 'translateY(50vh)';
+    t_bottom.style.transform = 'translateY(-50vh)';
+    setTransitionTimeout(() => {
+        cb();
+        t_top.style.transform = '';
+        t_bottom.style.transform = '';
+        document.getElementById('sidebar').scrollTo(0, 0);
+        window.inMenuScreen = false;
+    }, 800);
+    setTransitionTimeout(() => {
+        menuScreen.style.visibility = 'hidden';
+        menuScreen.style.transitionDuration = '';
+        menuScreen.style.backgroundColor = '';
+        menuScreen.style.opacity = '0';
+        menuScreen.style.pointerEvents = 'none';
+    }, 1100);
+};
+function transitionToMenu () {
+    for (let t of transitionTimeouts) {
+        clearInterval(t);
+    }
+    transitionTimeouts.length = 0;
     menuScreen.style.transitionDuration = '0s';
     menuScreen.style.backgroundColor = 'transparent';
     menuScreen.style.opacity = '1';
@@ -67,44 +107,49 @@ transitionToMenu = () => {
     menuScreen.style.pointerEvents = '';
     titleContainer.style.transitionDuration = '';
     window.inMenuScreen = true;
-    t_bottom.style.transform = 'translateY(-50vh)';
     t_top.style.transform = 'translateY(50vh)';
-    setTimeout(() => {
+    t_bottom.style.transform = 'translateY(-50vh)';
+    setTransitionTimeout(() => {
         menuScreen.style.transitionDuration = '';
         menuScreen.style.backgroundColor = '';
-        t_bottom.style.transform = '';
         t_top.style.transform = '';
+        t_bottom.style.transform = '';
     }, 800);
     titleContainer.style.transform = 'translateY(-20vh)';
-    setTimeout(() => {
+    setTransitionTimeout(() => {
         sandboxButton.style.transform = 'translateY(-40vh)';
     }, 600);
-    setTimeout(() => {
-        challengeButton.style.transform = 'translateY(-40vh)';
-    }, 1000);
-    setTimeout(() => {
+    setTransitionTimeout(() => {
+        puzzleButton.style.transform = 'translateY(-40vh)';
+    }, 800);
+    setTransitionTimeout(() => {
         titleBob();
     }, 1500);
 };
-transitionToGame = () => {
+function transitionToGame () {
+    for (let t of transitionTimeouts) {
+        clearInterval(t);
+    }
+    transitionTimeouts.length = 0;
     clearInterval(titleBobController);
     titleContainer.style.transitionDuration = '';
     titleContainer.style.transform = 'translateY(-165vh)';
-    setTimeout(() => {
-        challengeButton.style.transform = 'translateY(100vh)';
+    document.getElementById('sidebar').scrollTo(0, 0);
+    setTransitionTimeout(() => {
+        puzzleButton.style.transform = 'translateY(100vh)';
     }, 200);
-    setTimeout(() => {
+    setTransitionTimeout(() => {
         sandboxButton.style.transform = 'translateY(100vh)';
     }, 300);
-    setTimeout(() => {
+    setTransitionTimeout(() => {
         menuScreen.style.opacity = '0';
         window.inMenuScreen = false;
     }, 600);
-    setTimeout(() => {
+    setTransitionTimeout(() => {
         menuScreen.style.pointerEvents = 'none';
     }, 1100);
-    setTimeout(() => {
-        menuScreen.style.visibility = 'none';
+    setTransitionTimeout(() => {
+        menuScreen.style.visibility = 'hidden';
     }, 1600);
 };
 
@@ -113,7 +158,9 @@ const levelSelectClose = document.getElementById('levelSelectClose');
 const levelSelectBody = document.getElementById('levelSelectBody');
 
 sandboxButton.onclick = (e) => {
+    levelSelect.style.transform = '';
     clearTimeout(startTitleBob);
+    document.getElementById('levelDetails').style.display = 'none';
     document.getElementById('restart').style.display = 'none';
     document.getElementById('saveCode').disabled = false;
     document.getElementById('saveCode').style.cursor = '';
@@ -127,11 +174,22 @@ sandboxButton.onclick = (e) => {
     document.getElementById('gridSize').style.cursor = '';
     document.getElementById('premadeSaves').style.display = '';
     sandboxMode = true;
+    camera.scale = 1;
+    camera.x = 0;
+    camera.y = 0;
+    resetPixelAmounts();
     loadStoredSave();
     transitionToGame();
 };
-challengeButton.onclick = (e) => {
+puzzleButton.onclick = (e) => {
+    levelSelect.style.transform = 'none';
+};
+levelSelectClose.onclick = (e) => {
+    levelSelect.style.transform = '';
+};
+function selectPuzzle() {
     clearTimeout(startTitleBob);
+    document.getElementById('levelDetails').style.display = '';
     document.getElementById('restart').style.display = '';
     document.getElementById('saveCode').disabled = true;
     document.getElementById('saveCode').style.cursor = 'not-allowed';
@@ -145,8 +203,6 @@ challengeButton.onclick = (e) => {
     document.getElementById('gridSize').style.cursor = 'not-allowed';
     document.getElementById('premadeSaves').style.display = 'none';
     sandboxMode = false;
-    levelSelect.style.transform = 'none';
-};
-levelSelectClose.onclick = (e) => {
     levelSelect.style.transform = '';
+    transitionToGame();
 };

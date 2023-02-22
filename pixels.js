@@ -15,12 +15,11 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: false,
-        above: false,
-        pickable: false
+        pickable: true
     },
     wall: {
         name: 'Wall',
-        description: 'An immovable wall',
+        description: 'An immovable wall (good luck finding an unstoppable force-OH NO)',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
@@ -37,7 +36,6 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     dirt: {
@@ -56,7 +54,7 @@ const pixels = {
             if (y < gridSize - 1) {
                 if (isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
-                } else if (y < gridSize - 2) {
+                } else if (y < gridSize - 2 && (grid[y + 1][x] == 'dirt' || grid[y + 1][x] == 'grass')) {
                     let slideLeft = x > 0 && isPassableFluid(x - 1, y) && isPassableFluid(x - 1, y + 1) && isPassableFluid(x - 1, y + 2);
                     let slideRight = x < gridSize - 1 && isPassableFluid(x + 1, y) && isPassableFluid(x + 1, y + 1) && isPassableFluid(x + 1, y + 2);
                     if (slideLeft && slideRight) {
@@ -84,7 +82,6 @@ const pixels = {
         updatePriority: 2,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     grass: {
@@ -121,7 +118,7 @@ const pixels = {
             if (y < gridSize - 1) {
                 if (isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
-                } else if (y < gridSize - 2) {
+                } else if (y < gridSize - 2 && (grid[y + 1][x] == 'dirt' || grid[y + 1][x] == 'grass')) {
                     let slideLeft = x > 0 && isPassableFluid(x - 1, y) && isPassableFluid(x - 1, y + 1) && isPassableFluid(x - 1, y + 2);
                     let slideRight = x < gridSize - 1 && isPassableFluid(x + 1, y) && isPassableFluid(x + 1, y + 1) && isPassableFluid(x + 1, y + 2);
                     if (slideLeft && slideRight) {
@@ -149,7 +146,6 @@ const pixels = {
         updatePriority: 2,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     mud: {
@@ -174,7 +170,11 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            if (!updateTouchingPixel(x, y, 'water') && random() < 0.001) {
+            let touchingMud = 1;
+            updateTouchingPixel(x, y, 'mud', function (actionX, actionY) {
+                touchingMud *= 2;
+            });
+            if (!updateTouchingPixel(x, y, 'water') && random() < 0.01 / touchingMud) {
                 nextGrid[y][x] = 'dirt';
                 return;
             }
@@ -219,7 +219,6 @@ const pixels = {
         updatePriority: 2,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     sand: {
@@ -262,7 +261,156 @@ const pixels = {
         updatePriority: 2,
         animatedNoise: false,
         animated: false,
-        above: false,
+        pickable: true
+    },
+    wood: {
+        name: 'Wood',
+        description: 'Just some logs',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(175, 125, 75, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(150, 100, 75, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                drawPixel(x + i, y, 1 / 2, height, ctx);
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(175, 125, 75)';
+            ctx.fillRect(25, 0, 25, 50);
+            ctx.fillStyle = 'rgb(150, 100, 75)';
+            ctx.fillRect(0, 0, 25, 50);
+        },
+        flammability: 12,
+        group: 0,
+        key: Infinity,
+        updatePriority: -1,
+        animatedNoise: false,
+        animated: false,
+        pickable: true
+    },
+    leaves: {
+        name: 'Leaves',
+        description: 'Lush green leaves... or was it leafs?',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(100, 220, 0, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, 'wood')) return;
+            let touchingLeaves = 0;
+            let xmin = Math.max(0, Math.min(x - 1, gridSize - 1));
+            let xmax = Math.max(0, Math.min(x + 1, gridSize - 1));
+            let ymin = Math.max(0, Math.min(y - 1, gridSize - 1));
+            let ymax = Math.max(0, Math.min(y + 1, gridSize - 1));
+            for (let i = xmin; i <= xmax; i++) {
+                for (let j = ymin; j <= ymax; j++) {
+                    if (grid[j][i] == 'leaves') touchingLeaves++;
+                }
+            }
+            if (touchingLeaves < 4) {
+                if (random() < 0.01) {
+                    nextGrid[y][x] = 'air';
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(115, 220, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        flammability: 18,
+        group: 0,
+        key: Infinity,
+        updatePriority: 3,
+        animatedNoise: false,
+        animated: false,
+        pickable: true
+    },
+    // add stone, replace lava melting concrete with lava melting stone (remember to change description)
+    concrete_powder: {
+        name: 'Concrete Powder',
+        description: 'Like sand, but hardens into concrete when in contact with water',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(150, 150, 150, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, 'water')) {
+                nextGrid[y][x] = 'concrete';
+                return;
+            }
+            if (y > 0 && grid[y - 1][x] == 'lava') {
+                if (canMoveTo(x, y - 1) && random() < 0.5) {
+                    nextGrid[y][x] = 'lava';
+                    nextGrid[y - 1][x] = 'concrete';
+                }
+            }
+            if (y < gridSize - 1) {
+                if (isPassableNonLavaFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+                    move(x, y, x, y + 1);
+                } else if (y < gridSize - 2) {
+                    let slideLeft = x > 0 && isPassableNonLavaFluid(x - 1, y) && isPassableNonLavaFluid(x - 1, y + 1) && isPassableNonLavaFluid(x - 1, y + 2);
+                    let slideRight = x < gridSize - 1 && isPassableNonLavaFluid(x + 1, y) && isPassableNonLavaFluid(x + 1, y + 1) && isPassableNonLavaFluid(x + 1, y + 2);
+                    if (slideLeft && slideRight) {
+                        if (ticks % 2 == 0) {
+                            move(x, y, x - 1, y + 1);
+                        } else {
+                            move(x, y, x + 1, y + 1);
+                        }
+                    } else if (slideLeft) {
+                        move(x, y, x - 1, y + 1);
+                    } else if (slideRight) {
+                        move(x, y, x + 1, y + 1);
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(150, 150, 150)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        flammability: 0,
+        group: 0,
+        key: Infinity,
+        updatePriority: 2,
+        animatedNoise: false,
+        animated: false,
+        pickable: true
+    },
+    concrete: {
+        name: 'Concrete',
+        description: 'Hard stuff that doesn\'t move easily',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(75, 75, 75, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (y > 0) {
+                if (grid[y - 1][x] == 'lava') {
+                    if (canMoveTo(x, y - 1) && random() < 0.25) {
+                        nextGrid[y][x] = 'lava';
+                        nextGrid[y - 1][x] = 'concrete_powder';
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 75, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        flammability: 0,
+        group: 0,
+        key: Infinity,
+        updatePriority: 3,
+        animatedNoise: false,
+        animated: false,
         pickable: true
     },
     water: {
@@ -293,7 +441,7 @@ const pixels = {
                 }
             });
             if (y < gridSize - 1) {
-                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'collapsible') {
+                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'collapsible' || grid[y + 1][x] == 'deleter') {
                     if (canMoveTo(x, y + 1)) {
                         move(x, y, x, y + 1);
                     }
@@ -336,12 +484,12 @@ const pixels = {
                     }
                     let toSlide = 0;
                     if (foundLeftDrop && foundRightDrop) {
-                        if (slideLeft < slideRight) {
+                        if (slideLeft < slideRight && slideLeft != 0) {
                             toSlide = -1;
-                        } else if (slideLeft > slideRight) {
+                        } else if (slideLeft > slideRight && slideRight != 0) {
                             toSlide = 1;
-                        } else {// implies both slides are not 0
-                            if (random() <= 0.5) {
+                        } else {
+                            if (ticks % 2 == 0) {
                                 toSlide = -1;
                             } else {
                                 toSlide = 1;
@@ -351,12 +499,12 @@ const pixels = {
                         toSlide = -1;
                     } else if (foundRightDrop) {
                         toSlide = 1;
-                    } else if (slideLeft < slideRight) {
+                    } else if (slideLeft < slideRight && slideLeft != 0) {
                         toSlide = -1;
-                    } else if (slideLeft > slideRight) {
+                    } else if (slideLeft > slideRight && slideRight != 0) {
                         toSlide = 1;
-                    } else if (slideLeft != 0) { // implies slideRight also isn't 0
-                        if (random() <= 0.5) {
+                    } else if (slideLeft != 0 && slideRight != 0) {
+                        if (ticks % 2 == 0) {
                             toSlide = -1;
                         } else {
                             toSlide = 1;
@@ -389,7 +537,6 @@ const pixels = {
         updatePriority: 3,
         animatedNoise: true,
         animated: true,
-        above: false,
         pickable: true
     },
     lava: {
@@ -436,7 +583,7 @@ const pixels = {
             }
             nextFireGrid[y][x] = true;
             if (y < gridSize - 1 && random() < 0.5) {
-                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'collapsible') {
+                if (grid[y + 1][x] == 'air' || grid[y + 1][x] == 'collapsible' || grid[y + 1][x] == 'deleter') {
                     if (canMoveTo(x, y + 1)) {
                         move(x, y, x, y + 1);
                     }
@@ -479,12 +626,12 @@ const pixels = {
                     }
                     let toSlide = 0;
                     if (foundLeftDrop && foundRightDrop) {
-                        if (slideLeft < slideRight) {
+                        if (slideLeft < slideRight && slideLeft != 0) {
                             toSlide = -1;
-                        } else if (slideLeft > slideRight) {
+                        } else if (slideLeft > slideRight && slideRight != 0) {
                             toSlide = 1;
-                        } else {// implies both slides are not 0
-                            if (random() <= 0.5) {
+                        } else {
+                            if (ticks % 2 == 0) {
                                 toSlide = -1;
                             } else {
                                 toSlide = 1;
@@ -494,12 +641,12 @@ const pixels = {
                         toSlide = -1;
                     } else if (foundRightDrop) {
                         toSlide = 1;
-                    } else if (slideLeft < slideRight) {
+                    } else if (slideLeft < slideRight && slideLeft != 0) {
                         toSlide = -1;
-                    } else if (slideLeft > slideRight) {
+                    } else if (slideLeft > slideRight && slideRight != 0) {
                         toSlide = 1;
-                    } else if (slideLeft != 0) { // implies slideRight also isn't 0
-                        if (random() <= 0.5) {
+                    } else if (slideLeft != 0 && slideRight != 0) {
+                        if (ticks % 2 == 0) {
                             toSlide = -1;
                         } else {
                             toSlide = 1;
@@ -566,92 +713,6 @@ const pixels = {
         updatePriority: 3,
         animatedNoise: true,
         animated: true,
-        above: false,
-        pickable: true
-    },
-    concrete_powder: {
-        name: 'Concrete Powder',
-        description: 'Like sand, but hardens into concrete when in contact with water',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(150, 150, 150, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, 'water')) {
-                nextGrid[y][x] = 'concrete';
-                return;
-            }
-            if (y > 0 && grid[y - 1][x] == 'lava') {
-                if (canMoveTo(x, y - 1) && random() < 0.5) {
-                    nextGrid[y][x] = 'lava';
-                    nextGrid[y - 1][x] = 'concrete';
-                }
-            }
-            if (y < gridSize - 1) {
-                if (isPassableNonLavaFluid(x, y + 1) && canMoveTo(x, y + 1)) {
-                    move(x, y, x, y + 1);
-                } else if (y < gridSize - 2) {
-                    let slideLeft = x > 0 && isPassableNonLavaFluid(x - 1, y) && isPassableNonLavaFluid(x - 1, y + 1) && isPassableNonLavaFluid(x - 1, y + 2);
-                    let slideRight = x < gridSize - 1 && isPassableNonLavaFluid(x + 1, y) && isPassableNonLavaFluid(x + 1, y + 1) && isPassableNonLavaFluid(x + 1, y + 2);
-                    if (slideLeft && slideRight) {
-                        if (ticks % 2 == 0) {
-                            move(x, y, x - 1, y + 1);
-                        } else {
-                            move(x, y, x + 1, y + 1);
-                        }
-                    } else if (slideLeft) {
-                        move(x, y, x - 1, y + 1);
-                    } else if (slideRight) {
-                        move(x, y, x + 1, y + 1);
-                    }
-                }
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(150, 150, 150)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        flammability: 0,
-        group: 0,
-        key: Infinity,
-        updatePriority: 2,
-        animatedNoise: false,
-        animated: false,
-        above: false,
-        pickable: true
-    },
-    concrete: {
-        name: 'Concrete',
-        description: 'Hard stuff that doesn\'t move easily',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(75, 75, 75, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            if (y > 0) {
-                if (grid[y - 1][x] == 'lava') {
-                    if (canMoveTo(x, y - 1) && random() < 0.25) {
-                        nextGrid[y][x] = 'lava';
-                        nextGrid[y - 1][x] = 'concrete_powder';
-                    }
-                }
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 75, 75)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        flammability: 0,
-        group: 0,
-        key: Infinity,
-        updatePriority: 3,
-        animatedNoise: false,
-        animated: false,
-        above: false,
         pickable: true
     },
     ash: {
@@ -715,7 +776,6 @@ const pixels = {
         updatePriority: 2,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     wet_ash: {
@@ -780,7 +840,6 @@ const pixels = {
         updatePriority: 2,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     plant: {
@@ -819,7 +878,6 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     sponge: {
@@ -852,7 +910,6 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     fire: {
@@ -916,7 +973,6 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: false,
-        above: true,
         pickable: true
     },
     gunpowder: {
@@ -972,7 +1028,6 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     c4: {
@@ -994,12 +1049,11 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     cloner_up: {
-        name: 'Cloner (Up)',
-        description: 'Copies stuff from below it to above it',
+        name: 'Copier (Up)',
+        description: 'Copies pixels from below it to above it',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
@@ -1018,9 +1072,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (detectRotate(x, y)) return;
-            if (y > 0 && y < gridSize - 1
-                && grid[y + 1][x] != 'air' && !grid[y + 1][x].includes('cloner')
-                && grid[y - 1][x] == 'air' && canMoveTo(x, y - 1)) {
+            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != 'air' && grid[y - 1][x] == 'air' && canMoveTo(x, y - 1)) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
             }
         },
@@ -1039,12 +1091,11 @@ const pixels = {
         updatePriority: 4,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     cloner_down: {
-        name: 'Cloner (Down)',
-        description: 'Copies stuff from above it to below it',
+        name: 'Copier (Down)',
+        description: 'Copies pixels from above it to below it',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
@@ -1063,9 +1114,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (detectRotate(x, y)) return;
-            if (y > 0 && y < gridSize - 1
-                && grid[y - 1][x] != 'air' && !grid[y - 1][x].includes('cloner')
-                && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != 'air' && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
             }
         },
@@ -1084,12 +1133,11 @@ const pixels = {
         updatePriority: 4,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     cloner_left: {
-        name: 'Cloner (Left)',
-        description: 'Copies stuff from its right to its left',
+        name: 'Copier (Left)',
+        description: 'Copies pixels from its right to its left',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
@@ -1108,9 +1156,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (detectRotate(x, y)) return;
-            if (x > 0 && x < gridSize - 1
-                && grid[y][x + 1] != 'air' && !grid[y][x + 1].includes('cloner')
-                && grid[y][x - 1] == 'air' && canMoveTo(x - 1, y)) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != 'air' && grid[y][x - 1] == 'air' && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
             }
         },
@@ -1129,12 +1175,11 @@ const pixels = {
         updatePriority: 4,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     cloner_right: {
-        name: 'Cloner (Right)',
-        description: 'Copies stuff from its left to its right',
+        name: 'Copier (Right)',
+        description: 'Copies pixels from its left to its right',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
@@ -1153,9 +1198,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (detectRotate(x, y)) return;
-            if (x > 0 && x < gridSize - 1
-                && grid[y][x - 1] != 'air' && !grid[y][x - 1].includes('cloner')
-                && grid[y][x + 1] == 'air' && canMoveTo(x + 1, y)) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != 'air' && grid[y][x + 1] == 'air' && canMoveTo(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
             }
         },
@@ -1174,12 +1217,247 @@ const pixels = {
         updatePriority: 4,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
+    // push_cloner_up: {
+    //     name: 'Cloner (Up)',
+    //     description: 'Clones pixels from below it to above it, pushing pixels in the way',
+    //     draw: function (x, y, width, height, opacity, ctx) {
+    //         ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
+    //         drawPixel(x, y, width, height, ctx);
+    //         ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
+    //             }
+    //         }
+    //         ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
+    //                 drawPixel(x + i + 1 / 4, y + j + 1 / 6, 1 / 2, 1 / 6, ctx);
+    //             }
+    //         }
+    //         ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i + 1 / 4, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+    //             }
+    //         }
+    //     },
+    //     update: function (x, y) {
+    //         if (detectRotate(x, y)) return;
+    //         if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != 'air') {
+    //             let moveY = null;
+    //             let lastCollapsible = null;
+    //             for (let i = y; i >= 0; i--) {
+    //                 if (grid[i][x] == 'air' || grid[i][x] == 'deleter') {
+    //                     moveY = i;
+    //                     if (grid[i][x] == 'deleter') {
+    //                         moveY++;
+    //                     }
+    //                     break;
+    //                 }
+    //                 if (grid[i][x] == 'collapsible') {
+    //                     lastCollapsible = i;
+    //                 }
+    //                 if (i != y && ((grid[i][x].includes('piston') && grid[i][x].length <= 12) || grid[i][x] == 'wall' || grid[i][x] == 'slider_horizontal')) {
+    //                     break;
+    //                 }
+    //             }
+    //             if (moveY == null && lastCollapsible != null) {
+    //                 moveY = lastCollapsible;
+    //             }
+    //             if (moveY != null) {
+    //                 for (let i = moveY; i < y - 1; i++) {
+    //                     if (!canMoveTo(x, i + 1)) return;
+    //                 }
+    //                 for (let i = moveY; i < y - 1; i++) {
+    //                     nextGrid[i][x] = grid[i + 1][x];
+    //                 }
+    //                 nextGrid[y][x] = 'air';
+    //             }
+    //         }
+    //     },
+    //     drawPreview: function (ctx) {
+    //         ctx.clearRect(0, 0, 50, 50);
+    //         ctx.fillStyle = 'rgb(100, 100, 100)';
+    //         ctx.fillRect(0, 0, 50, 50);
+    //         ctx.fillStyle = 'rgb(0, 125, 255)';
+    //         ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+    //         ctx.fillStyle = 'rgb(255, 255, 0)';
+    //         ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+    //         ctx.fillRect(50 / 4, 50 / 6, 25, 50 / 3);
+    //         ctx.fillStyle = 'rgb(200, 0, 255)';
+    //         ctx.fillRect(50 / 4, 50 / 3, 25, 50 / 3);
+    //     },
+    //     flammability: 8,
+    //     group: 1,
+    //     key: Infinity,
+    //     updatePriority: 4,
+    //     animatedNoise: false,
+    //     animated: false,
+    //     pickable: true
+    // },
+    // push_cloner_down: {
+    //     name: 'Cloner (Down)',
+    //     description: 'Clones pixels from above it to below it, pushing pixels in the way',
+    //     draw: function (x, y, width, height, opacity, ctx) {
+    //         ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
+    //         drawPixel(x, y, width, height, ctx);
+    //         ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
+    //             }
+    //         }
+    //         ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
+    //                 drawPixel(x + i + 1 / 4, y + j + 2 / 3, 1 / 2, 1 / 6, ctx);
+    //             }
+    //         }
+    //         ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i + 1 / 4, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+    //             }
+    //         }
+    //     },
+    //     update: function (x, y) {
+    //         if (detectRotate(x, y)) return;
+    //         if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != 'air' && grid[y + 1][x] == 'air' && canMoveTo(x, y + 1)) {
+    //             nextGrid[y + 1][x] = grid[y - 1][x];
+    //         }
+    //     },
+    //     drawPreview: function (ctx) {
+    //         ctx.clearRect(0, 0, 50, 50);
+    //         ctx.fillStyle = 'rgb(100, 100, 100)';
+    //         ctx.fillRect(0, 0, 50, 50);
+    //         ctx.fillStyle = 'rgb(0, 125, 255)';
+    //         ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+    //         ctx.fillStyle = 'rgb(255, 255, 0)';
+    //         ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+    //         ctx.fillRect(50 / 4, 250 / 6, 25, 50 / 3);
+    //         ctx.fillStyle = 'rgb(200, 0, 255)';
+    //         ctx.fillRect(50 / 4, 50 / 3, 25, 50 / 3);
+    //     },
+    //     flammability: 8,
+    //     group: 1,
+    //     key: Infinity,
+    //     updatePriority: 4,
+    //     animatedNoise: false,
+    //     animated: false,
+    //     pickable: true
+    // },
+    // push_cloner_left: {
+    //     name: 'Cloner (Left)',
+    //     description: 'Clones pixels from its right to its left, pushing pixels in the way',
+    //     draw: function (x, y, width, height, opacity, ctx) {
+    //         ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
+    //         drawPixel(x, y, width, height, ctx);
+    //         ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+    //             }
+    //         }
+    //         ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+    //                 drawPixel(x + i + 1 / 6, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
+    //             }
+    //         }
+    //         ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i + 1 / 3, y + j + 1 / 4, 1 / 3, 1 / 2, ctx);
+    //             }
+    //         }
+    //     },
+    //     update: function (x, y) {
+    //         if (detectRotate(x, y)) return;
+    //         if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != 'air' && grid[y][x - 1] == 'air' && canMoveTo(x - 1, y)) {
+    //             nextGrid[y][x - 1] = grid[y][x + 1];
+    //         }
+    //     },
+    //     drawPreview: function (ctx) {
+    //         ctx.clearRect(0, 0, 50, 50);
+    //         ctx.fillStyle = 'rgb(100, 100, 100)';
+    //         ctx.fillRect(0, 0, 50, 50);
+    //         ctx.fillStyle = 'rgb(0, 125, 255)';
+    //         ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+    //         ctx.fillStyle = 'rgb(255, 255, 0)';
+    //         ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+    //         ctx.fillRect(50 / 6, 50 / 4, 50 / 6, 25);
+    //         ctx.fillStyle = 'rgb(200, 0, 255)';
+    //         ctx.fillRect(50 / 3, 50 / 4, 50 / 3, 25);
+    //     },
+    //     flammability: 8,
+    //     group: 1,
+    //     key: Infinity,
+    //     updatePriority: 4,
+    //     animatedNoise: false,
+    //     animated: false,
+    //     pickable: true
+    // },
+    // push_cloner_right: {
+    //     name: 'Cloner (Right)',
+    //     description: 'Clones pixels from its left to its right, pushing pixels in the way',
+    //     draw: function (x, y, width, height, opacity, ctx) {
+    //         ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
+    //         drawPixel(x, y, width, height, ctx);
+    //         ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+    //             }
+    //         }
+    //         ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+    //                 drawPixel(x + i + 2 / 3, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
+    //             }
+    //         }
+    //         ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+    //         for (let i = 0; i < width; i++) {
+    //             for (let j = 0; j < height; j++) {
+    //                 drawPixel(x + i + 1 / 3, y + j + 1 / 4, 1 / 3, 1 / 2, ctx);
+    //             }
+    //         }
+    //     },
+    //     update: function (x, y) {
+    //         if (detectRotate(x, y)) return;
+    //         if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != 'air' && grid[y][x + 1] == 'air' && canMoveTo(x + 1, y)) {
+    //             nextGrid[y][x + 1] = grid[y][x - 1];
+    //         }
+    //     },
+    //     drawPreview: function (ctx) {
+    //         ctx.clearRect(0, 0, 50, 50);
+    //         ctx.fillStyle = 'rgb(100, 100, 100)';
+    //         ctx.fillRect(0, 0, 50, 50);
+    //         ctx.fillStyle = 'rgb(0, 125, 255)';
+    //         ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+    //         ctx.fillStyle = 'rgb(255, 255, 0)';
+    //         ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+    //         ctx.fillRect(200 / 6, 50 / 4, 50 / 6, 25);
+    //         ctx.fillStyle = 'rgb(200, 0, 255)';
+    //         ctx.fillRect(50 / 3, 50 / 4, 50 / 3, 25);
+    //     },
+    //     flammability: 8,
+    //     group: 1,
+    //     key: Infinity,
+    //     updatePriority: 4,
+    //     animatedNoise: false,
+    //     animated: false,
+    //     pickable: true
+    // },
     super_cloner_up: {
-        name: 'Super Cloner (Up)',
-        description: 'Copies stuff from below it to above it, removing whatever was previously there',
+        name: 'Super Copier (Up)',
+        description: 'Copies pixels from below it to above it, removing whatever was previously there',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
@@ -1217,12 +1495,11 @@ const pixels = {
         updatePriority: 4,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: false
     },
     super_cloner_down: {
-        name: 'Super Cloner (Down)',
-        description: 'Copies stuff from above it to below it, removing whatever was previously there',
+        name: 'Super Copier (Down)',
+        description: 'Copies pixels from above it to below it, removing whatever was previously there',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
@@ -1260,12 +1537,11 @@ const pixels = {
         updatePriority: 4,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: false
     },
     super_cloner_left: {
-        name: 'Super Cloner (Left)',
-        description: 'Copies stuff from its right to its left, removing whatever was previously there',
+        name: 'Super Copier (Left)',
+        description: 'Copies pixels from its right to its left, removing whatever was previously there',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
@@ -1303,12 +1579,11 @@ const pixels = {
         updatePriority: 4,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: false
     },
     super_cloner_right: {
-        name: 'Super Cloner (Right)',
-        description: 'Copies stuff from its left to its right, removing whatever was previously there',
+        name: 'Super Copier (Right)',
+        description: 'Copies pixels from its left to its right, removing whatever was previously there',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
@@ -1346,7 +1621,6 @@ const pixels = {
         updatePriority: 4,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: false
     },
     piston_up: {
@@ -1364,17 +1638,18 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
-                nextGrid[y][x] = 'air';
-            })) {
+            if (updateTouchingPixel(x, y, 'lava')) {
                 nextGrid[y][x] = 'ash';
                 return;
             }
             let moveY = null;
             let lastCollapsible = null;
             for (let i = y; i >= 0; i--) {
-                if (grid[i][x] == 'air') {
+                if (grid[i][x] == 'air' || grid[i][x] == 'deleter') {
                     moveY = i;
+                    if (grid[i][x] == 'deleter') {
+                        moveY++;
+                    }
                     break;
                 }
                 if (grid[i][x] == 'collapsible') {
@@ -1412,7 +1687,6 @@ const pixels = {
         updatePriority: 1,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     piston_down: {
@@ -1430,17 +1704,18 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
-                nextGrid[y][x] = 'air';
-            })) {
+            if (updateTouchingPixel(x, y, 'lava')) {
                 nextGrid[y][x] = 'ash';
                 return;
             }
             let moveY = null;
             let lastCollapsible = null;
             for (let i = y; i <= gridSize - 1; i++) {
-                if (grid[i][x] == 'air') {
+                if (grid[i][x] == 'air' || grid[i][x] == 'deleter') {
                     moveY = i;
+                    if (grid[i][x] == 'deleter') {
+                        moveY--;
+                    }
                     break;
                 }
                 if (grid[i][x] == 'collapsible') {
@@ -1478,7 +1753,6 @@ const pixels = {
         updatePriority: 1,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     piston_left: {
@@ -1496,17 +1770,18 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
-                nextGrid[y][x] = 'air';
-            })) {
+            if (updateTouchingPixel(x, y, 'lava')) {
                 nextGrid[y][x] = 'ash';
                 return;
             }
             let moveX = null;
             let lastCollapsible = null;
             for (let i = x; i >= 0; i--) {
-                if (grid[y][i] == 'air') {
+                if (grid[y][i] == 'air' || grid[y][i] == 'deleter') {
                     moveX = i;
+                    if (grid[y][i] == 'deleter') {
+                        moveX++;
+                    }
                     break;
                 }
                 if (grid[y][i] == 'collapsible') {
@@ -1544,7 +1819,6 @@ const pixels = {
         updatePriority: 1,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     piston_right: {
@@ -1562,17 +1836,18 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, 'lava', function (actionX, actionY) {
-                nextGrid[y][x] = 'air';
-            })) {
+            if (updateTouchingPixel(x, y, 'lava')) {
                 nextGrid[y][x] = 'ash';
                 return;
             }
             let moveX = null;
             let lastCollapsible = null;
             for (let i = x; i <= gridSize - 1; i++) {
-                if (grid[y][i] == 'air') {
+                if (grid[y][i] == 'air' || grid[y][i] == 'deleter') {
                     moveX = i;
+                    if (grid[y][i] == 'deleter') {
+                        moveX--;
+                    }
                     break;
                 }
                 if (grid[y][i] == 'collapsible') {
@@ -1610,7 +1885,6 @@ const pixels = {
         updatePriority: 1,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     rotator_up: {
@@ -1640,7 +1914,6 @@ const pixels = {
         updatePriority: 5,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     rotator_down: {
@@ -1670,7 +1943,6 @@ const pixels = {
         updatePriority: 5,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     rotator_left: {
@@ -1700,7 +1972,6 @@ const pixels = {
         updatePriority: 5,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     rotator_right: {
@@ -1730,7 +2001,6 @@ const pixels = {
         updatePriority: 5,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     rotator_clockwise: {
@@ -1787,7 +2057,6 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: true,
-        above: false,
         pickable: true
     },
     rotator_counterclockwise: {
@@ -1844,7 +2113,6 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: true,
-        above: false,
         pickable: true
     },
     slider_horizontal: {
@@ -1872,7 +2140,6 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     slider_vertical: {
@@ -1900,7 +2167,6 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     pump: {
@@ -1941,7 +2207,6 @@ const pixels = {
         updatePriority: 4,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     lava_generator: {
@@ -1990,7 +2255,6 @@ const pixels = {
         updatePriority: 4,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     collapsible: {
@@ -2027,7 +2291,6 @@ const pixels = {
         updatePriority: 2,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     nuke_diffuser: {
@@ -2059,7 +2322,6 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     laser_scatterer: {
@@ -2089,8 +2351,6 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: false,
-        above: false,
-        above: false,
         pickable: true
     },
     laser_up: {
@@ -2143,7 +2403,6 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: true,
-        above: false,
         pickable: true
     },
     laser_down: {
@@ -2196,7 +2455,6 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: true,
-        above: false,
         pickable: true
     },
     laser_left: {
@@ -2249,7 +2507,6 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: true,
-        above: false,
         pickable: true
     },
     laser_right: {
@@ -2302,14 +2559,13 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: true,
-        above: false,
         pickable: true
     },
     nuke: {
         name: 'Nuke',
         description: 'TBH, kinda weak',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 255, 75, ${opacity})`;
+            ctx.fillStyle = `rgba(0, 255, 125, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
@@ -2332,7 +2588,7 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 255, 75)';
+            ctx.fillStyle = 'rgb(0, 255, 125)';
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
@@ -2341,7 +2597,6 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     huge_nuke: {
@@ -2380,7 +2635,6 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     very_huge_nuke: {
@@ -2419,7 +2673,6 @@ const pixels = {
         updatePriority: 0,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: true
     },
     deleter: {
@@ -2436,9 +2689,7 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) {
-            grid[y][x] = 'air';
-        },
+        update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(100, 100, 100)';
@@ -2449,10 +2700,9 @@ const pixels = {
         flammability: 0,
         group: 3,
         key: Infinity,
-        updatePriority: 0,
+        updatePriority: -1,
         animatedNoise: false,
         animated: true,
-        above: true,
         pickable: true
     },
     lag_spike_generator: {
@@ -2497,7 +2747,6 @@ const pixels = {
         updatePriority: 5,
         animatedNoise: false,
         animated: true,
-        above: false,
         pickable: true
     },
     corruption: {
@@ -2562,28 +2811,6 @@ const pixels = {
                     }
                 }
             }
-            // if (!optimizedLags) {
-            //     for (let i = 0; i < gridSize; i++) {
-            //         let curr = 'air';
-            //         let redrawing = grid[i][0] != lastGrid[i][0];
-            //         let amount = 0;
-            //         let j;
-            //         for (j = 0; j < gridSize; j++) {
-            //             amount++;
-            //             if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
-            //                 let pixelType = pixels[curr];
-            //                 if (curr != 'air' && curr != 'corruption' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, pixelType.above ? abovectx : belowctx);
-            //                 else if (curr == 'air') clearPixels(j - amount, i, amount, 1, pixelType.above ? abovectx : belowctx);
-            //                 curr = grid[i][j]
-            //                 redrawing = grid[i][j] != lastGrid[i][j];
-            //                 amount = 0;
-            //             }
-            //         }
-            //         let pixelType = pixels[curr];
-            //         if (curr != 'air' && curr != 'corruption' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, pixelType.above ? abovectx : belowctx);
-            //         else if (curr == 'air') clearPixels(gridSize - amount - 1, i, amount + 1, 1, pixelType.above ? abovectx : belowctx);
-            //     }
-            // }
         },
         update: function (x, y) {
             function chaos(actionX, actionY) {
@@ -2665,7 +2892,6 @@ const pixels = {
         updatePriority: 5,
         animatedNoise: false,
         animated: true,
-        above: false,
         pickable: true
     },
     spin: {
@@ -2693,7 +2919,6 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: true,
-        above: false,
         pickable: false
     },
     placementUnRestriction: {
@@ -2712,7 +2937,6 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: true,
-        above: true,
         pickable: true
     },
     placementRestriction: {
@@ -2736,48 +2960,67 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: true,
-        above: true,
         pickable: true
     },
-    enemy: {
-        name: 'Enemy',
+    monster: {
+        name: 'Monster',
         description: 'The bad pixels in challenge puzzles',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(0, 140, 30, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
             let color = colorAnimate(0, 160, 70, 0, 180, 80, 64);
             ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 6, y + j + 1 / 6, 2 / 3, 2 / 3, ctx);
+                }
+            }
             ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 6, y + 1 / 6 + j, 1 / 4, 1 / 4, ctx);
-                    drawPixel(x + 7/12 + i, y + 1 / 6 + j, 1 / 4, 1 / 4, ctx);
+                    drawPixel(x + i + 1 / 6, y + 1 / 5 + j, 1 / 5, 1 / 5, ctx);
+                    drawPixel(x + 19 / 30 + i, y + 1 / 5 + j, 1 / 5, 1 / 5, ctx);
+                    drawPixel(x + 1 / 4 + i, y + 3 / 5 + j, 1 / 2, 1 / 6, ctx);
                 }
             }
         },
         update: function (x, y) {
-            grid[y][x] = 'air';
+            if (grid[y][x] != 'air') {
+                grid[y][x] = 'air';
+                monsterGrid[y][x] = false;
+            } else if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1) && !monsterGrid[y + 1][x]) {
+                nextGrid[y][x] = grid[y + 1][x];
+                nextGrid[y + 1][x] = grid[y][x];
+                monsterGrid[y + 1][x] = true;
+                monsterGrid[y][x] = false;
+                nextFireGrid[y + 1][x] = fireGrid[y][x];
+                nextFireGrid[y][x] = fireGrid[y + 1][x];
+            }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillStyle = 'rgb(0, 140, 30)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(200, 0, 255)';
-            ctx.fillRect(50 / 4, 50 / 4, 25, 25);
+            ctx.fillStyle = 'rgb(0, 160, 70)';
+            ctx.fillRect(50 / 6, 50 / 6, 100 / 3, 100 / 3);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(50 / 6, 10, 10, 10);
+            ctx.fillRect(950 / 30, 10, 10, 10);
+            ctx.fillRect(50 / 4, 30, 25, 50 / 6);
         },
-        flammability: 0,
+        flammability: 8,
         group: 3,
         key: Infinity,
         updatePriority: 0,
         animatedNoise: false,
         animated: true,
-        above: true,
         pickable: true
     },
     remove: {
         name: "Remove (brush only)",
         description: 'Unfortunately it\'s not THE red pixel',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(255, 0, 0, 255)`;
+            ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
             drawPixel(x, y, width, height, ctx);
         },
         update: function (x, y) { },
@@ -2792,7 +3035,6 @@ const pixels = {
         updatePriority: -1,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: false
     },
     missing: {
@@ -2825,7 +3067,6 @@ const pixels = {
         animatedNoise: false,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: false
     },
     red: {
@@ -2851,14 +3092,36 @@ const pixels = {
         animatedNoise: false,
         animatedNoise: false,
         animated: false,
-        above: false,
         pickable: false
     }
 };
 const pixelAmounts = {};
+const pixelSelectors = {};
 function resetPixelAmounts() {
     for (let id in pixels) {
         pixelAmounts[id] = 0;
+        updatePixelAmount(id, true);
+    }
+    pixelAmounts['air'] = Infinity;
+    updatePixelAmount('air', true);
+};
+function updatePixelAmount(id, hideEmpty, forceShow) {
+    if (pixelSelectors[id]) {
+        if (sandboxMode) {
+            pixelSelectors[id].count.innerText = '';
+            pixelSelectors[id].box.classList.remove('pickerNoPixels');
+            pixelSelectors[id].box.style.display = '';
+        } else {
+            pixelSelectors[id].count.innerText = pixelAmounts[id];
+            if (pixelAmounts[id] == 0 || pixelAmounts[id] == Infinity) {
+                pixelSelectors[id].box.classList.add('pickerNoPixels');
+                if (hideEmpty && !forceShow) pixelSelectors[id].box.style.display = 'none';
+                else if (forceShow) pixelSelectors[id].box.style.display = '';
+            } else {
+                pixelSelectors[id].box.classList.remove('pickerNoPixels');
+                pixelSelectors[id].box.style.display = '';
+            }
+        }
     }
 };
 
@@ -2873,7 +3136,6 @@ const groups = [];
 for (const id in pixels) {
     if (pixels[id].pickable) {
         const box = document.createElement('div');
-        box.id = `picker-${id})`;
         box.classList.add('pickerPixel');
         box.onclick = (e) => {
             clickPixel = id;
@@ -2892,17 +3154,20 @@ for (const id in pixels) {
         img.src = canvas2.toDataURL('image/png');
         box.appendChild(img);
         const count = document.createElement('div');
-        count.id = `picker-${id}-count`;
         count.classList.add('pickerCount');
         box.append(count);
         if (groups[pixels[id].group] == undefined) {
             groups[pixels[id].group] = document.createElement('div');
         }
         groups[pixels[id].group].appendChild(box);
+        pixelSelectors[id] = {
+            box: box,
+            count: count
+        };
     }
 }
 for (let group of groups) {
     pixelPicker.appendChild(group);
 }
-document.getElementById(`picker-${clickPixel})`).classList.add('pickerPixelSelected');
-pixelPickerDescription.innerHTML = generateDescription(clickPixel);
+pixelSelectors[clickPixel].box.click();
+resetPixelAmounts();

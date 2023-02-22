@@ -37,6 +37,7 @@
     font-family: "Lucida Console", Lucida, monospace;
     font-size: 10vh;
     font-weight: bold;
+    color: white;
     padding-top: 0.5vh;
     transition: none;
     transform: translateX(calc(100vw - 30vh - var(--title-left-offset)));
@@ -52,7 +53,7 @@
     top: 20vh;
 }
 
-#sandboxButton, #challengeButton {
+#sandboxButton, #puzzleButton {
     position: absolute;
     left: 35vw;
     width: 30vw;
@@ -63,13 +64,13 @@
     transition: 1500ms cubic-bezier(0.2, 0.2, 0, 1) transform;
     transform: none;
 }
-#sandboxButton:active, #challengeButton:active {
+#sandboxButton:active, #puzzleButton:active {
     border-style: inset;
 }
 #sandboxButton {
     top: 100vh;
 }
-#challengeButton {
+#puzzleButton {
     top: 114vh;
 }
 
@@ -94,8 +95,24 @@
     background-color: red;
     border-color: crimson;
 }
+#levelSelectTitle {
+    width: 100%;
+    height: 8vh;
+    margin-top: 2vh;
+    text-align: center;
+    font-size: 8vh;
+    font-weight: bold;
+}
 
-#t_bottom, #t_top {
+.levelGroup {
+    width: 100%;
+    text-align: center;
+}
+.levelButton {
+    width: 100px;
+}
+
+#t_top, #t_bottom {
     position: absolute;
     left: 0px;
     width: 100vw;
@@ -103,41 +120,27 @@
     background-color: #282828;
     transition: 300ms ease-in transform;
 }
-#t_bottom {
-    top: 100vh;
-}
 #t_top {
     top: -50vh;
 }
-/*
-#t_bottom::before, #t_top::before {
-    content: '';
+#t_bottom {
+    top: 100vh;
+}
+#t_topredpixel, #t_bottomredpixel {
     position: absolute;
-    left: 0px;
-    width: 100vw;
-    height: 5vh;
-    background-color: #505050;
+    left: calc(50vw - 5vh);
+    width: 0px;
+    height: 0px;
+    box-shadow: 0px 0px 3vh rgba(255, 0, 0, 0.7);
 }
-#t_bottom::after, #t_top::after {
-    content: '';
-    position: absolute;
-    left: 0px;
-    width: 100vw;
-    height: 1vh;
+#t_topredpixel {
+    top: -5vh;
+    border: 10vh 10vh 0vh 0vh solid red transparent transparent transparent;
 }
-#t_bottom::before, #t_bottom::after {
-    top: 0px;
+#t_bottomredpixel {
+    bottom: -5vh;
+    border: 0vh 0vh 10vh 10vh solid transparent transparent red transparent;
 }
-#t_top::before, #t_top::after {
-    bottom: 0px;
-}
-#t_bottom::after {
-    background-color: #E0E0E0;
-}
-#t_top::after {
-    background-color: #C0C0C0;
-}
-*/
 
 @media (prefers-color-scheme: dark) {
     #levelSelect {

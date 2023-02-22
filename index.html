@@ -20,61 +20,76 @@
     <script src="./p5.min.js" defer></script>
     <script src="./game.js" defer></script>
     <script src="./pixels.js" defer></script>
-    <script src="./challenges.js" defer></script>
+    <script src="./puzzles.js" defer></script>
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./menu.css">
 </head>
 <body>
-    <div id="tempCover" style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; background-color: black; z-index: 999;"></div>
+    <div id="tempCover" style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; background-color: black; z-index: 1001;"></div>
     <canvas id="canvas"></canvas>
     <div id="sidebar">
         <!-- WARNING: Tables -->
+        <div id="levelDetails">
+            <div id="levelName">asdfsadf</div>
+            <div id="levelDescription">sdfddf</div>
+        </div>
         <div id="gameControls">
             <div id="pixelPicker"></div>
             <div id="pixelPickerDescription"></div>
             <br>
             <table><tbody>
                 <tr>
-                    <td style="border: none;">
+                    <td>
                         <button id="sizeUp">▲</button>
                         <button id="sizeDown">▼</button>
                     </td>
-                    <td style="border: none;">
+                    <td>
                         <button id="backToMenu">Menu</button>
-                    </td>
-                    <td style="border: none;">
-                        <button id="restart">Restart</button>
                     </td>
                 </tr>
                 <tr>
-                    <td style="border: none;">
+                    <td>
                         <button id="pause">▐ ▌</button>
                     </td>
-                    <td style="border: none;">
+                    <td>
                         <button id="simulatePaused">>>></button>
                     </td>
-                    <td style="border: none;">
+                    <td>
                         <button id="advanceTick">>II</button>
                     </td>
                 </tr>
             </tbody></table>
-            <table style="width: 100%;"><tbody>
+            <table><tbody>
                 <tr>
-                    <td style="width: 50%; border: none;">
+                    <td style="width: 100%;" rowspan="3">
                         <textarea id="saveCode"></textarea>
                     </td>
-                    <td style="width: 50%; border: none;">
+                    <td>
                         <button id="generateSave">GENERATE<br>SAVE CODE</button>
+                    </td>
+                    <td>
                         <button id="uploadSave">UPLOAD<br>SAVE</button>
-                        <button id="downloadSave">DOWNLOAD<br>SAVE</button><br>
-                        <button id="startPaused">START PAUSED</button>
-                        <button id="reset">RESET</button><br>
+                    </td>
+                    <td>
+                        <button id="downloadSave">DOWNLOAD<br>SAVE</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="reset">Reset</button>
+                    </td>
+                    <td>
+                        <button id="restart">Restart</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
                         <label id="gridSizeLabel" for="gridSize">Grid Size: </label>
                         <input id="gridSize" type="number" min="1" max="500" step="1">
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 50%; border: none;">
+                    <td style="width: 50%;">
                         <div>
                             <button id="noNoise">Disable Noise</button>
                             <button id="fadeEffect">Blur</button>
@@ -105,7 +120,7 @@
                 Press <b>[b]</b> for bomb rain<br>
                 Press <b>[n]</b> for nuke bomb<br>
             </p>
-            <table><tbody>
+            <table class="tableHighlight"><tbody>
                 <tr>
                     <td>Keybinds are currently being reassigned</td>
                 </tr>
@@ -198,7 +213,7 @@
                 <h1>
                     &nbsp;Premade save codes
                 </h1>
-                <table style="user-select: text;"><tbody>
+                <table style="user-select: text;" class="tableHighlight"><tbody>
                     <tr><td class="save">
                         <span style="font-weight: bold">water, lava, and nukes (default)</span>
                         <button class="loadSave" onclick="loadPremade('default');">Load</button><br>
@@ -259,6 +274,16 @@
             <br>
         </div>
     </div>
+    <div id="winScreen">
+        <div id="winBox">
+            <div id="winText">Puzzle Complete!</div>
+            <div id="winButtons">
+                <button id="winReset">Reset</button>
+                <button id="winNext">Next</button>
+                <button id="winMenu">Menu</button>
+            </div>
+        </div>
+    </div>
     <div id="menuScreen" style="background-color: black;">
         <div id="titleContainer">
             <div id="t_redpixel"></div>
@@ -267,21 +292,23 @@
             <div id="t_textSimulator">Simulator</div>
         </div>
         <button id="sandboxButton">SANDBOX</button>
-        <button id="challengeButton">CHALLENGES</button>
+        <button id="puzzleButton">PUZZLES</button>
         <div id="levelSelect">
             <button id="levelSelectClose">✖</button>
+            <div id="levelSelectTitle">Puzzles</div>
             <div id="levelSelectBody"></div>
-            <div style="position: absolute;top: 50%;left: 0px;width: 100%; text-align: center; color: red;">
-                Nothing to here yet! Sorry!
-            </div>
         </div>
-        <div id="t_bottom"></div>
-        <div id="t_top"></div>
+        <div id="t_top">
+            <div id="t_topredpixel"></div>
+        </div>
+        <div id="t_bottom">
+            <div id="t_bottomredpixel"></div>
+        </div>
     </div>
     <div id="modalContainer">
         <div id="modal">
-            <h1 id="modalTitle">Are you sure you want to overwrite your current red simulation?</h1>
-            <p id="modalSubtitle">Are you sure you want to overwrite your current red simulation?</p>
+            <h1 id="modalTitle"></h1>
+            <p id="modalSubtitle"></p>
             <button id="modalYes">YES</button>
             <button id="modalNo">NO</button>
             <button id="modalOk">OK</button>
