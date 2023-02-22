@@ -276,7 +276,7 @@ table {
 }
 #modal {
     position: absolute;
-    top: 50vh;
+    bottom: 100vh;
     left: 25vw;
     width: 50vw;
     padding: 4px 16px;
@@ -284,7 +284,6 @@ table {
     background-color: lightgray;
     text-align: center;
     transition: 400ms ease-in-out transform;
-    transform: translateY(-100vh);
 }
 #modalSubtitle {
     font-size: 16px;

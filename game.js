@@ -375,7 +375,7 @@ function modal(title, subtitle, confirmation) {
     }
     modalContainer.style.opacity = '1';
     modalContainer.style.pointerEvents = 'all';
-    modalBody.style.transform = 'translateY(-50%)';
+    modalBody.style.transform = 'translateY(calc(50vh + 50%))';
     const hide = () => {
         modalContainer.style.opacity = '';
         modalContainer.style.pointerEvents = '';
@@ -417,6 +417,10 @@ function setup() {
     loadStoredSave();
 
     document.onkeydown = (e) => {
+        if (e.target.matches('button') && (e.key == 'Tab' || e.key == 'Enter')) {
+            e.preventDefault();
+            e.target.blur();
+        }
         if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || inWinScreen || window.inMenuScreen) return;
         const key = e.key.toLowerCase();
         for (let i in pixels) {
@@ -429,23 +433,23 @@ function setup() {
             clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
         } else if (key == 'arrowdown') {
             clickSize = Math.max(1, clickSize - 1);
-        } else if (key == 'r') {
+        } else if (sandboxMode && key == 'r') {
             for (let i = 0; i < gridSize; i++) {
                 if (grid[0][i] == 'air' && random() < 0.25) {
                     grid[0][i] = 'water';
                 }
             }
-        } else if (key == 'e') {
+        } else if (sandboxMode && key == 'e') {
             for (let i = 0; i < gridSize; i++) {
                 if (grid[0][i] == 'air' && random() < 0.25) {
                     grid[0][i] = 'lava';
                 }
             }
-        } else if (key == 'b') {
+        } else if (sandboxMode && key == 'b') {
             for (let i = 0; i < gridSize; i++) {
                 grid[0][i] = 'nuke';
             }
-        } else if (key == 'n') {
+        } else if (sandboxMode && key == 'n') {
             for (let i = 0; i < gridSize; i += 5) {
                 for (let j = 0; j < gridSize; j += 5) {
                     grid[j][i] = 'very_huge_nuke';
@@ -459,7 +463,6 @@ function setup() {
             zooming = true;
         }
         if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11' && key != '=' && key != '-') e.preventDefault();
-        if (e.target.matches('button')) e.target.blur();
     };
     document.onkeyup = (e) => {
         if (e.target.matches('#saveCode') || !acceptInputs || inWinScreen || window.inMenuScreen) return;
@@ -1120,7 +1123,7 @@ advanceTickButton.onclick = (e) => {
     runTicks = 1;
 };
 document.getElementById('backToMenu').onclick = (e) => {
-    if (window.inMenuScreen) return;
+    if (window.inMenuScreen || inWinScreen || !acceptInputs) return;
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
@@ -1193,6 +1196,7 @@ document.getElementById('downloadSave').onclick = (e) => {
     a.click();
 };
 document.getElementById('reset').onclick = async (e) => {
+    if (window.inMenuScreen || inWinScreen || !acceptInputs) return;
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
@@ -1203,13 +1207,13 @@ document.getElementById('reset').onclick = async (e) => {
     }
 };
 document.getElementById('restart').onclick = async (e) => {
-    if (window.inMenuScreen) return;
+    if (window.inMenuScreen || inWinScreen || !acceptInputs) return;
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
     if (await modal('Restart?', 'Your solution will be removed!', true)) {
         window.localStorage.removeItem(`challenge-${currentPuzzleId}`);
-        loadChallenge(currentPuzzleSection, currentPuzzleLevel);
+        loadPuzzle(currentPuzzleSection, currentPuzzleLevel);
     }
 };
 gridSizeText.oninput = (e) => {

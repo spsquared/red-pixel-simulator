@@ -121,25 +121,35 @@
     transition: 300ms ease-in transform;
 }
 #t_top {
-    top: -50vh;
+    top: -60vh;
 }
 #t_bottom {
-    top: 100vh;
+    top: 110vh;
 }
-#t_topredpixel, #t_bottomredpixel {
+#t_loadingContainer {
     position: absolute;
-    left: calc(50vw - 5vh);
-    width: 0px;
-    height: 0px;
-    box-shadow: 0px 0px 3vh rgba(255, 0, 0, 0.7);
+    left: 50vw;
+    bottom: -8vh;
+    height: 16vh;
+    transform: translateX(-50%);
 }
-#t_topredpixel {
-    top: -5vh;
-    border: 10vh 10vh 0vh 0vh solid red transparent transparent transparent;
+#t_loadingRedpixel {
+    display: inline-block;
+    width: 16vh;
+    height: 16vh;
+    margin-right: 1vh;
+    background-color: red;
+    box-shadow: 0px 0px 1vh rgba(255, 0, 0, 0.7);
 }
-#t_bottomredpixel {
-    bottom: -5vh;
-    border: 0vh 0vh 10vh 10vh solid transparent transparent red transparent;
+#t_loadingText {
+    display: inline-block;
+    height: 16vh;
+    font-family: "Lucida Console", Lucida, monospace;
+    font-size: 8vh;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0px 0px 5vh rgba(255, 255, 255, 0.5), -0.5vh 0.5vh 0vh rgba(255, 255, 255, 0.2);
+    vertical-align: middle;
 }
 
 @media (prefers-color-scheme: dark) {

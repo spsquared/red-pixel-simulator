@@ -190,7 +190,7 @@ function loadPuzzle(section, level) {
                     pixelSelectors[i].box.click();
                     isFirst = false;
                 }
-                if (puzzle.inventory[i]) {
+                if (puzzle.inventory[i] !== undefined || savedData.pixels[i] != 0) {
                     pixelAmounts[i] = savedData.pixels[i];
                     updatePixelAmount(i, false, true);
                 }
