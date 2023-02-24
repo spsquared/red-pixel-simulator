@@ -707,7 +707,7 @@ function flow(x, y) {
                     if (grid[y][left] != grid[y][x] || (y > 0 && grid[y - 1][left] != pixNum.AIR)) slideLeft = x - left;
                     incrementLeft = false;
                 }
-                if (grid[y + 1][left] == pixNum.AIR) {
+                if (grid[y + 1][left] == pixNum.AIR && grid[y][left] == pixNum.AIR) {
                     slideLeft = x - left;
                     foundLeftDrop = true;
                     incrementLeft = false;
@@ -720,7 +720,7 @@ function flow(x, y) {
                     if (grid[y][right] != grid[y][x] || (y > 0 && grid[y - 1][right] != pixNum.AIR)) slideRight = right - x;
                     incrementRight = false;
                 }
-                if (grid[y + 1][right] == pixNum.AIR) {
+                if (grid[y + 1][right] == pixNum.AIR && grid[y][right] == pixNum.AIR) {
                     slideRight = right - x;
                     foundRightDrop = true;
                     incrementRight = false;

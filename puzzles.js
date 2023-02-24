@@ -263,4 +263,4 @@ window.addEventListener('DOMContentLoaded', (e) => {
         i++;
         key = window.localStorage.key(i);
     }
-})
+});
