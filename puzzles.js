@@ -43,7 +43,7 @@ const puzzles = [
                 id: '3bf72052-af2f-4e43-ab64-bff7008be1bc'
             },
             {
-                name: 'Breaking Through',
+                name: 'Breaking Game',
                 description: `There's plenty of lava to destroy the monsters, but they've built a water trough to stop the lava and you only have some kitchen sponges and that weird plant you found growing on your basement floor. Wait, is that a <i>vault</i> that that monster's sealed itself in? You should be able to do this, though, you'll find a way.`,
                 saveCode: '25;0000;air-310:water-4:concrete:air-17:concrete-8:air-21:concrete:air-24:concrete:air-24:concrete:air-24:concrete:air-13:lava-6:air-5:concrete:air-6:wall-3:concrete:wall-9:air:wall:air-3:concrete:grass-6:wall-3:concrete:wall-3:dirt-5:wall:air:wall:grass-3:concrete:dirt-6:wall-3:concrete:wall-3:dirt-5:wall:air:wall:dirt-10:wall-3:air:wall-3:dirt-5:wall:air:wall:dirt-10:wall-7:dirt-5:wall:air:wall:dirt-10:wall-7:dirt-5:wall-3:dirt-10:wall-7:;271:;32:f:a:f:a:f:a:f:a:f:a:f:a:f:a:f:35:7:12:7:12:7:12:7:12:7:12:7:12:7:af:;1ce:1:15:2:3c:1:4e:',
                 inventory: {
@@ -90,7 +90,7 @@ const puzzles = [
                 id: '55f2433d-8012-4b75-a3bf-c00a182a6a43'
             },
             {
-                name: 'Well Well Well',
+                name: 'Oh Well',
                 description: `This is a strange predicament... We're in a desert now, and we nothing except some leaves, which are pretty useless. Wait, did I say "<h>we</h>"? Sorry, I meant <h>you</h>.`,
                 saveCode: '50;0000;air-891:wood-5:air-45:wood-5:air-96:wood:air:wood:air-5:sand-10:air-32:wood:air:wood:sand-18:air-5:sand-10:lava-7:sand-7:concrete:water:concrete:sand-34:lava-5:sand-8:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-47:concrete:water:concrete:sand-5:concrete-11:sand-7:concrete-5:sand-19:concrete:water:concrete:sand-5:concrete-29:sand-3:concrete-7:sand-3:concrete:water:concrete:sand:concrete-47:water:concrete-49:water:concrete-49:water:concrete-43:water-13:concrete-34:water-16:;9c4:;16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:1c:16:13:5:4:16:13:5:4:16:1c:16:14:1:1:1:5:16:14:1:1:57e:;459:1:56a:',
                 inventory: {
@@ -172,7 +172,7 @@ function loadPuzzle(section, level) {
         currentPuzzleLevel = parseInt(level);
         const puzzle = puzzles[section].levels[level];
         currentPuzzleId = puzzle.id;
-        levelName.innerHTML = puzzle.name;
+        levelName.innerHTML = `${parseInt(section) + 1}-${parseInt(level) + 1} ${puzzle.name}`;
         levelDescription.innerHTML = puzzle.description;
         puzzleSaveCode = puzzle.saveCode;
         saveCode = puzzleSaveCode;
@@ -190,7 +190,7 @@ function loadPuzzle(section, level) {
                     pixelSelectors[i].box.click();
                     isFirst = false;
                 }
-                if (puzzle.inventory[i] !== undefined || savedData.pixels[i] != 0) {
+                if (puzzle.inventory[i] !== undefined || (savedData.pixels[i] != 0 && i != 'air')) {
                     pixelAmounts[i] = savedData.pixels[i];
                     updatePixelAmount(i, false, true);
                 }
@@ -206,6 +206,8 @@ function loadPuzzle(section, level) {
                 updatePixelAmount(i, false, true);
             }
         }
+        pixelAmounts['air'] = Infinity;
+        updatePixelAmount('air', false, false);
         camera.scale = 1;
         camera.x = 0;
         camera.y = 0;

@@ -24,12 +24,14 @@ function createCanvas2(w, h) {
     }
 };
 const canvas = document.getElementById('canvas');
+const gameCanvas = createCanvas2(canvasResolution, canvasResolution);
 const gridCanvas = createCanvas2(canvasResolution, canvasResolution);
 const above = createCanvas2(canvasResolution, canvasResolution);
 const fire = createCanvas2(canvasResolution, canvasResolution);
 const monster = createCanvas2(canvasResolution, canvasResolution);
 const placeable = createCanvas2(canvasResolution, canvasResolution);
 const ctx = canvas.getContext('2d');
+const gamectx = gameCanvas.getContext('2d');
 const gridctx = gridCanvas.getContext('2d');
 const abovectx = above.getContext('2d');
 const firectx = fire.getContext('2d');
@@ -38,6 +40,8 @@ const placeablectx = placeable.getContext('2d');
 function resetCanvases() {
     canvas.width = canvasResolution;
     canvas.height = canvasResolution;
+    gameCanvas.width = canvasResolution;
+    gameCanvas.height = canvasResolution;
     gridCanvas.width = canvasResolution;
     gridCanvas.height = canvasResolution;
     above.width = canvasResolution;
@@ -49,6 +53,9 @@ function resetCanvases() {
     ctx.imageSmoothingEnabled = false;
     ctx.webkitImageSmoothingEnabled = false;
     ctx.mozImageSmoothingEnabled = false;
+    gamectx.imageSmoothingEnabled = false;
+    gamectx.webkitImageSmoothingEnabled = false;
+    gamectx.mozImageSmoothingEnabled = false;
     gridctx.imageSmoothingEnabled = false;
     gridctx.webkitImageSmoothingEnabled = false;
     gridctx.mozImageSmoothingEnabled = false;
@@ -120,35 +127,35 @@ function createGrid(size) {
     grid.length = 0;
     lastGrid.length = 0;
     nextGrid.length = 0;
-    noiseGrid.length = 0;
     fireGrid.length = 0;
     lastFireGrid.length = 0;
     nextFireGrid.length = 0;
     monsterGrid.length = 0;
     placeableGrid.length = 0;
     lastPlaceableGrid.length = 0;
+    noiseGrid.length = 0;
     for (let i = 0; i < gridSize; i++) {
         grid[i] = [];
         lastGrid[i] = [];
         nextGrid[i] = [];
-        noiseGrid[i] = [];
         fireGrid[i] = [];
         lastFireGrid[i] = [];
         nextFireGrid[i] = [];
         monsterGrid[i] = [];
         placeableGrid[i] = [];
         lastPlaceableGrid[i] = [];
+        noiseGrid[i] = [];
         for (let j = 0; j < gridSize; j++) {
-            grid[i][j] = 'air';
+            grid[i][j] = pixNum.AIR;
             lastGrid[i][j] = null;
             nextGrid[i][j] = null;
-            noiseGrid[i][j] = noise(j / 2, i / 2);
             fireGrid[i][j] = false;
             lastFireGrid[i][j] = false;
             nextFireGrid[i][j] = false;
             monsterGrid[i][j] = false;
             placeableGrid[i][j] = true;
             lastPlaceableGrid[i][j] = true;
+            noiseGrid[i][j] = noise(j / 2, i / 2);
         }
     }
     gridSizeText.value = gridSize;
@@ -168,7 +175,7 @@ function loadSaveCode() {
             const loopedPixels = [];
             function addPixels(pixel, amount) {
                 while (amount > 0) {
-                    grid[y][x++] = pixel;
+                    grid[y][x++] = pixNum[pixel.toUpperCase()];
                     if (x == gridSize) {
                         y++;
                         x = 0;
@@ -273,17 +280,17 @@ function loadSaveCode() {
 };
 function generateSaveCode() {
     let saveCode = `${gridSize};${'0000'.substring(0, 4 - ticks.toString(16).length)}${ticks.toString(16)};`;
-    let pixel = '';
+    let pixel = null;
     let amount = 0;
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
             amount++;
             if (grid[i][j] != pixel) {
-                if (pixel != '' && amount != 0) {
+                if (pixel != null && amount != 0) {
                     if (amount == 1) {
-                        saveCode += `${pixel}:`;
+                        saveCode += `${(numPixels[pixel] ?? numPixels[pixNum.MISSING]).id}:`;
                     } else {
-                        saveCode += `${pixel}-${amount}:`;
+                        saveCode += `${(numPixels[pixel] ?? numPixels[pixNum.MISSING]).id}-${amount}:`;
                     }
                 }
                 pixel = grid[i][j];
@@ -294,9 +301,9 @@ function generateSaveCode() {
     amount++;
     if (pixel != '') {
         if (amount == 1) {
-            saveCode += `${pixel}:`;
+            saveCode += `${(numPixels[pixel] ?? numPixels[pixNum.MISSING]).id}:`;
         } else {
-            saveCode += `${pixel}-${amount}:`;
+            saveCode += `${(numPixels[pixel] ?? numPixels[pixNum.MISSING]).id}-${amount}:`;
         }
     }
     function createBooleanCode(grid) {
@@ -435,24 +442,24 @@ function setup() {
             clickSize = Math.max(1, clickSize - 1);
         } else if (sandboxMode && key == 'r') {
             for (let i = 0; i < gridSize; i++) {
-                if (grid[0][i] == 'air' && random() < 0.25) {
-                    grid[0][i] = 'water';
+                if (grid[0][i] == pixNum.AIR && random() < 0.25) {
+                    grid[0][i] = pixNum.WATER;
                 }
             }
         } else if (sandboxMode && key == 'e') {
             for (let i = 0; i < gridSize; i++) {
-                if (grid[0][i] == 'air' && random() < 0.25) {
-                    grid[0][i] = 'lava';
+                if (grid[0][i] == pixNum.AIR && random() < 0.25) {
+                    grid[0][i] = pixNum.WATER;
                 }
             }
         } else if (sandboxMode && key == 'b') {
             for (let i = 0; i < gridSize; i++) {
-                grid[0][i] = 'nuke';
+                grid[0][i] = pixNum.NUKE;
             }
         } else if (sandboxMode && key == 'n') {
             for (let i = 0; i < gridSize; i += 5) {
                 for (let j = 0; j < gridSize; j += 5) {
-                    grid[j][i] = 'very_huge_nuke';
+                    grid[j][i] = pixNum.VERY_HUGE_NUKE;
                 }
             }
         } else if (key == 'enter') {
@@ -518,10 +525,10 @@ function setup() {
 };
 
 function drawPixels(x, y, width, height, type, opacity, ctx) {
-    if (pixels[type]) {
-        pixels[type].draw(x, y, width, height, opacity, ctx);
+    if (numPixels[type]) {
+        numPixels[type].draw(x, y, width, height, opacity, ctx);
     } else {
-        pixels['missing'].draw(x, y, width, height, opacity, ctx);
+        numPixels[pixNum.MISSING].draw(x, y, width, height, opacity, ctx);
     }
 };
 function clearPixels(x, y, width, height, ctx) {
@@ -542,8 +549,8 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
     ];
 };
 function updatePixel(x, y, i) {
-    let pixelType = pixels[grid[y][x]];
-    if (pixelType != null && pixelType.updatePriority == i) {
+    let pixelType = numPixels[grid[y][x]];
+    if (pixelType != undefined && pixelType.updatePriority == i) {
         pixelType.update(x, y);
     }
 };
@@ -569,19 +576,19 @@ function updateTouchingPixel(x, y, type, action) {
 };
 function updateTouchingAnything(x, y, action) {
     let touchingPixel = false;
-    if (x > 0 && grid[y][x - 1] != 'air') {
+    if (x > 0 && grid[y][x - 1] != pixNum.AIR) {
         if (typeof action == 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (x < gridSize - 1 && grid[y][x + 1] != 'air') {
+    if (x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR) {
         if (typeof action == 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (y > 0 && grid[y - 1][x] != 'air') {
+    if (y > 0 && grid[y - 1][x] != pixNum.AIR) {
         if (typeof action == 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (y < gridSize - 1 && grid[y + 1][x] != 'air') {
+    if (y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR) {
         if (typeof action == 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
@@ -590,18 +597,21 @@ function updateTouchingAnything(x, y, action) {
 function validMovingPixel(x, y) {
     return nextGrid[y][x] == null;
 };
+function isAir(x, y) {
+    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.DELETER;
+}
 function isPassableFluid(x, y) {
-    return grid[y][x] == 'air' || grid[y][x] == 'water' || grid[y][x] == 'lava';
+    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.LAVA || grid[y][x] == pixNum.DELETER;
 };
 function isPassableNonLavaFluid(x, y) {
-    return grid[y][x] == 'air' || grid[y][x] == 'water';
+    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.DELETER;
 };
 function canMoveTo(x, y) {
-    return nextGrid[y][x] == null || nextGrid[y][x] == 'air' || nextGrid[y][x] == 'deleter';
+    return nextGrid[y][x] == null || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.DELETER;
 };
 function move(x1, y1, x2, y2) {
-    if (grid[y2][x2] == 'deleter') {
-        nextGrid[y1][x1] = 'air';
+    if (grid[y2][x2] == pixNum.DELETER) {
+        nextGrid[y1][x1] = pixNum.pixNum.AIR;
     } else {
         nextGrid[y1][x1] = grid[y2][x2];
         nextGrid[y2][x2] = grid[y1][x1];
@@ -609,86 +619,209 @@ function move(x1, y1, x2, y2) {
         nextFireGrid[y2][x2] = fireGrid[y1][x1];
     }
 };
-function detectRotate(x, y) {
-    return updateTouchingAnything(x, y, function (actionX, actionY) {
-        if (grid[actionY][actionX] == 'rotator_clockwise') {
-            const selfType = grid[y][x].replace(/_up|_down|_left|_right/g, '');
-            const selfDir = grid[y][x].replace(selfType + '_', '');
-            switch (selfDir) {
-                case 'up':
-                    nextGrid[y][x] = selfType + '_right';
-                    break;
-                case 'down':
-                    nextGrid[y][x] = selfType + '_left';
-                    break;
-                case 'left':
-                    nextGrid[y][x] = selfType + '_up';
-                    break;
-                case 'right':
-                    nextGrid[y][x] = selfType + '_down';
-                    break;
+function fall(x, y, xTravel, yTravel, isPassable) {
+    if (y < gridSize - 1) {
+        if (isPassable(x, y + 1) && canMoveTo(x, y + 1)) {
+            move(x, y, x, y + 1);
+        } else if (y < gridSize - yTravel) {
+            let slideLeft = x >= xTravel && canMoveTo(x - 1, y);
+            let slideRight = x < gridSize - xTravel && canMoveTo(x + 1, y);
+            let canMoveLeftDiagonal = false;
+            let canMoveRightDiagonal = false;
+            if (slideLeft) {
+                for (let i = x - 1; i >= x - xTravel; i--) {
+                    if (!isPassable(i, y)) {
+                        slideLeft = false;
+                        break;
+                    }
+                    let valid = true;
+                    for (let j = y + 1; j <= y + yTravel; j++) {
+                        if (!isPassable(i, j)) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (valid) {
+                        canMoveLeftDiagonal = i == x - 1 && canMoveTo(i, y + 1);
+                        break;
+                    }
+                    if (i == x - xTravel) slideLeft = false;
+                }
             }
-            return true;
-        } else if (grid[actionY][actionX] == 'rotator_counterclockwise') {
-            const selfType = grid[y][x].replace(/_up|_down|_left|_right/g, '');
-            const selfDir = grid[y][x].replace(selfType + '_', '');
-            switch (selfDir) {
-                case 'up':
-                    nextGrid[y][x] = selfType + '_left';
-                    break;
-                case 'down':
-                    nextGrid[y][x] = selfType + '_right';
-                    break;
-                case 'left':
-                    nextGrid[y][x] = selfType + '_down';
-                    break;
-                case 'right':
-                    nextGrid[y][x] = selfType + '_up';
-                    break;
+            if (slideRight) {
+                for (let i = x + 1; i <= x + xTravel; i++) {
+                    if (!isPassable(i, y)) {
+                        slideRight = false;
+                        break;
+                    }
+                    let valid = true;
+                    for (let j = y + 1; j <= y + yTravel; j++) {
+                        if (!isPassable(i, j)) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (valid) {
+                        canMoveRightDiagonal = i == x + 1 && canMoveTo(i, y + 1);
+                        break;
+                    }
+                    if (i == x + xTravel) slideRight = false;
+                }
             }
-            return true;
-        } else if (grid[actionY][actionX].startsWith('rotator_')) {
-            const selfType = grid[y][x].replace(/_up|_down|_left|_right/g, '');
-            if (grid[actionY][actionX].replace('rotator', '') != grid[y][x].replace(selfType, '')) {
-                nextGrid[y][x] = selfType + grid[actionY][actionX].replace('rotator', '');
-                return true;
+            if (slideLeft && slideRight) {
+                if (ticks % 2 == 0) {
+                    if (canMoveLeftDiagonal) move(x, y, x - 1, y + 1);
+                    else move(x, y, x - 1, y);
+                } else {
+                    if (canMoveRightDiagonal) move(x, y, x + 1, y + 1);
+                    else move(x, y, x + 1, y);
+                }
+            } else if (slideLeft) {
+                if (canMoveLeftDiagonal) move(x, y, x - 1, y + 1);
+                else move(x, y, x - 1, y);
+            } else if (slideRight) {
+                if (canMoveRightDiagonal) move(x, y, x + 1, y + 1);
+                else move(x, y, x + 1, y);
             }
         }
-        return false;
+    }
+};
+function flow(x, y) {
+    if (y == gridSize) return;
+    if (grid[y + 1][x] == pixNum.AIR || grid[y + 1][x] == pixNum.COLLAPSIBLE || grid[y + 1][x] == pixNum.DELETER) {
+        if (canMoveTo(x, y + 1)) {
+            move(x, y, x, y + 1);
+        }
+    } else {
+        let left = x - 1;
+        let right = x + 1;
+        let slideLeft = 0;
+        let slideRight = 0;
+        let foundLeftDrop = false;
+        let foundRightDrop = false;
+        let incrementLeft = canMoveTo(x - 1, y) && grid[y][x - 1] == pixNum.AIR;
+        let incrementRight = canMoveTo(x + 1, y) && grid[y][x + 1] == pixNum.AIR;
+        while (incrementLeft || incrementRight) {
+            if (incrementLeft) {
+                if (grid[y][left] != pixNum.AIR) {
+                    if (grid[y][left] != grid[y][x] || (y > 0 && grid[y - 1][left] != pixNum.AIR)) slideLeft = x - left;
+                    incrementLeft = false;
+                }
+                if (grid[y + 1][left] == pixNum.AIR) {
+                    slideLeft = x - left;
+                    foundLeftDrop = true;
+                    incrementLeft = false;
+                }
+                left--;
+                if (left < 0) incrementLeft = false;
+            }
+            if (incrementRight) {
+                if (grid[y][right] != pixNum.AIR) {
+                    if (grid[y][right] != grid[y][x] || (y > 0 && grid[y - 1][right] != pixNum.AIR)) slideRight = right - x;
+                    incrementRight = false;
+                }
+                if (grid[y + 1][right] == pixNum.AIR) {
+                    slideRight = right - x;
+                    foundRightDrop = true;
+                    incrementRight = false;
+                }
+                right++;
+                if (right >= gridSize) incrementRight = false;
+            }
+        }
+        let toSlide = 0;
+        if (foundLeftDrop && foundRightDrop) {
+            if (slideLeft < slideRight && slideLeft != 0) {
+                toSlide = -1;
+            } else if (slideLeft > slideRight && slideRight != 0) {
+                toSlide = 1;
+            } else {
+                if (ticks % 2 == 0) {
+                    toSlide = -1;
+                } else {
+                    toSlide = 1;
+                }
+            }
+        } else if (foundLeftDrop) {
+            toSlide = -1;
+        } else if (foundRightDrop) {
+            toSlide = 1;
+        } else if (slideLeft < slideRight && slideLeft != 0) {
+            toSlide = -1;
+        } else if (slideLeft > slideRight && slideRight != 0) {
+            toSlide = 1;
+        } else if (slideLeft != 0 && slideRight != 0) {
+            if (ticks % 2 == 0) {
+                toSlide = -1;
+            } else {
+                toSlide = 1;
+            }
+        }
+        if (toSlide > 0) {
+            if (foundRightDrop && grid[y + 1][x + 1] == pixNum.AIR) {
+                move(x, y, x + 1, y + 1);
+            } else {
+                move(x, y, x + 1, y);
+            }
+        } else if (toSlide < 0) {
+            if (foundLeftDrop && grid[y + 1][x - 1] == pixNum.AIR) {
+                move(x, y, x - 1, y + 1);
+            } else {
+                move(x, y, x - 1, y);
+            }
+        }
+    }
+};
+function rotatePixel(x, y, possibleRotations) {
+    if (nextGrid[y][x] != null) return;
+    let rotate = 0;
+    let thisPixel = numPixels[grid[y][x]];
+    updateTouchingAnything(x, y, function (actionX, actionY) {
+        let pixel = grid[actionY][actionX];
+        if (pixel == pixNum.ROTATOR_CLOCKWISE) {
+            rotate++;
+        } else if (pixel == pixNum.ROTATOR_COUNTERCLOCKWISE) {
+            rotate--;
+        } else if ((pixel >= pixNum.ROTATOR_LEFT && pixel <= pixNum.ROTATOR_DOWN) && numPixels[pixel].rotation != thisPixel.rotation) {
+            rotate += numPixels[pixel].rotation - thisPixel.rotation;
+        }
     });
+    if (rotate != 0) {
+        nextGrid[y][x] = grid[y][x] - thisPixel.rotation + ((((thisPixel.rotation + rotate) % possibleRotations) + possibleRotations) % possibleRotations);
+    }
 };
 function explode(x, y, size, chain) {
     chain = chain ?? 2;
-    nextGrid[y][x] = 'air';
-    grid[y][x] = 'wall';
+    nextGrid[y][x] = pixNum.AIR;
+    grid[y][x] = pixNum.WALL;
     let chained = false;
     for (let i = y - size; i <= y + size; i++) {
         for (let j = x - size; j <= x + size; j++) {
             if (i >= 0 && i < gridSize && j >= 0 && j < gridSize) {
                 if (random() < 1 - (dist(x, y, j, i) / (size * 1.2))) {
-                    nextGrid[i][j] = 'air';
+                    nextGrid[i][j] = pixNum.AIR;
                     monsterGrid[i][j] = false;
                     if (chain > 0 && !chained) {
-                        if (grid[i][j] == 'nuke') {
+                        if (grid[i][j] == pixNum.NUKE) {
                             pendingExplosions.push([j, i, 10, chain - 1]);
-                            grid[i][j] = 'air';
+                            grid[i][j] = pixNum.AIR;
                             chained = true;
-                        } else if (grid[i][j] == 'huge_nuke') {
+                        } else if (grid[i][j] == pixNum.HUGE_NUKE) {
                             pendingExplosions.push([j, i, 20, chain - 1]);
-                            grid[i][j] = 'air';
+                            grid[i][j] = pixNum.AIR;
                             chained = true;
-                        } else if (grid[i][j] == 'very_huge_nuke') {
+                        } else if (grid[i][j] == pixNum.VERY_HUGE_NUKE) {
                             pendingExplosions.push([j, i, 40, chain - 1]);
-                            grid[i][j] = 'air';
+                            grid[i][j] = pixNum.AIR;
                             chained = true;
                         }
                     }
-                    if (grid[i][j] == 'gunpowder') {
+                    if (grid[i][j] == pixNum.GUNPOWDER) {
                         pendingExplosions.push([j, i, 5, 1]);
-                        grid[i][j] = 'wall';
-                    } else if (grid[i][j] == 'c4') {
+                        grid[i][j] = pixNum.WALL;
+                    } else if (grid[i][j] == pixNum.C4) {
                         pendingExplosions.push([j, i, 15, 1]);
-                        grid[i][j] = 'wall';
+                        grid[i][j] = pixNum.WALL;
                     }
                 }
                 if (random() < 0.5 - (dist(x, y, j, i) / (size * 1.2))) {
@@ -705,6 +838,7 @@ function clickLine(startX, startY, endX, endY, remove) {
     let angle = atan2(endY - startY, endX - startX);
     let distance = sqrt(pow(endX - startX, 2) + pow(endY - startY, 2));
     let modifiedPixelCounts = [];
+    let clickPixelNum = pixels[clickPixel].numId;
     place: for (let i = 0; i <= distance; i++) {
         let gridX = Math.floor(x);
         let gridY = Math.floor(y);
@@ -723,7 +857,7 @@ function clickLine(startX, startY, endX, endY, remove) {
         if (remove) {
             if (sandboxMode) {
                 act(function (x, y) {
-                    grid[y][x] = 'air';
+                    grid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
                     monsterGrid[y][x] = false;
                     return false;
@@ -733,7 +867,7 @@ function clickLine(startX, startY, endX, endY, remove) {
                     if (placeableGrid[y][x]) {
                         pixelAmounts[grid[y][x]]++;
                         modifiedPixelCounts[grid[y][x]] = true;
-                        grid[y][x] = 'air';
+                        grid[y][x] = pixNum.AIR;
                         fireGrid[y][x] = false;
                     }
                     return false;
@@ -760,7 +894,7 @@ function clickLine(startX, startY, endX, endY, remove) {
         } else {
             if (sandboxMode) {
                 act(function (x, y) {
-                    grid[y][x] = clickPixel;
+                    grid[y][x] = clickPixelNum;
                 });
             } else {
                 modifiedPixelCounts[clickPixel] = true;
@@ -769,7 +903,7 @@ function clickLine(startX, startY, endX, endY, remove) {
                     if (placeableGrid[y][x]) {
                         modifiedPixelCounts[grid[y][x]] = true;
                         pixelAmounts[grid[y][x]]++;
-                        grid[y][x] = clickPixel;
+                        grid[y][x] = clickPixelNum;
                         pixelAmounts[clickPixel]--;
                     }
                     return pixelAmounts[clickPixel] <= 0;
@@ -795,8 +929,6 @@ function clickLine(startX, startY, endX, endY, remove) {
 function draw() {
     if (window.inMenuScreen) return;
 
-    ctx.resetTransform();
-    gridctx.resetTransform();
     let prevMXGrid = mXGrid;
     let prevMYGrid = mYGrid;
     let prevMX = mX;
@@ -809,12 +941,19 @@ function draw() {
     mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
 
     // draw pixels
+    ctx.resetTransform();
+    gamectx.resetTransform();
+    gridctx.resetTransform();
+    abovectx.resetTransform();
+    monsterctx.resetTransform();
+    firectx.resetTransform();
     drawFrame();
     // copy layers
-    ctx.drawImage(gridCanvas, 0, 0);
-    ctx.drawImage(above, 0, 0);
-    ctx.drawImage(monster, 0, 0);
-    ctx.drawImage(fire, 0, 0);
+    gamectx.drawImage(gridCanvas, 0, 0);
+    gamectx.drawImage(above, 0, 0);
+    gamectx.drawImage(monster, 0, 0);
+    gamectx.drawImage(fire, 0, 0);
+    ctx.drawImage(gameCanvas, 0, 0);
     if (inResetState || sandboxMode) ctx.drawImage(placeable, 0, 0);
     // draw brush
     if (!gridPaused || !simulatePaused) {
@@ -822,7 +961,7 @@ function draw() {
         let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + clickSize - 1));
         let y1 = Math.min(gridSize, Math.max(0, mYGrid - clickSize + 1));
         let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + clickSize - 1));
-        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? 'remove' : clickPixel, 0.5, ctx);
+        drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[clickPixel].numId, 0.5, ctx);
         ctx.strokeStyle = 'rgb(0, 0, 0)';
         ctx.lineWidth = 2;
         ctx.lineJoin = 'miter';
@@ -856,7 +995,7 @@ function draw() {
                 camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasSize * camera.scale) - canvasSize));
                 forceRedraw = true;
             } else {
-                if (pixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[grid[mYGrid][mXGrid]].box.style.display != 'none') clickPixel = grid[mYGrid][mXGrid];
+                if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].numId].box.style.display != 'none') clickPixel = grid[mYGrid][mXGrid];
             }
         } else {
             clickLine(mXGrid, mYGrid, prevMXGrid, prevMYGrid, mouseButton == RIGHT || removing);
@@ -900,7 +1039,7 @@ function draw() {
     }
     ctx.textAlign = 'right';
     ctx.fillText(`Brush Size: ${clickSize * 2 - 1}`, canvasResolution - 3, 1);
-    ctx.fillText(`Brush Pixel: ${(pixels[clickPixel] ?? pixels['missing']).name}`, canvasResolution - 3, 22);
+    ctx.fillText(`Brush Pixel: ${(pixels[clickPixel] ?? numPixels[pixNum.MISSING]).name}`, canvasResolution - 3, 22);
     ctx.fillText(`Zoom: ${Math.round(camera.scale * 10) / 10}`, canvasResolution - 3, 43);
     if (gridPaused) {
         if (simulatePaused) {
@@ -918,38 +1057,39 @@ function draw() {
 };
 function drawFrame() {
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
-        ctx.fillStyle = backgroundColor + (255 - fadeEffect).toString(16);
-        ctx.fillRect(0, 0, canvasResolution, canvasResolution);
+        ctx.clearRect(0, 0, canvasResolution, canvasResolution);
+        gamectx.fillStyle = backgroundColor + (255 - fadeEffect).toString(16);
+        gamectx.fillRect(0, 0, canvasResolution, canvasResolution);
         if (forceRedraw) {
-            ctx.fillStyle = backgroundColor;
-            ctx.fillRect(0, 0, canvasResolution, canvasResolution);
+            gamectx.fillStyle = backgroundColor;
+            gamectx.fillRect(0, 0, canvasResolution, canvasResolution);
             gridctx.clearRect(0, 0, canvasResolution, canvasResolution);
             firectx.clearRect(0, 0, canvasResolution, canvasResolution);
             placeablectx.clearRect(0, 0, canvasResolution, canvasResolution);
         }
         abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
         for (let i = 0; i < gridSize; i++) {
-            let curr = 'air';
+            let curr = pixNum.AIR;
             let redrawing = grid[i][0] != lastGrid[i][0];
             let amount = 0;
             for (let j = 0; j < gridSize; j++) {
                 amount++;
                 if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
-                    let pixelType = pixels[curr] ?? pixels['missing'];
-                    if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, gridctx);
-                    else if (curr == 'air') clearPixels(j - amount, i, amount, 1, gridctx);
+                    let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
+                    if (curr != pixNum.AIR && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, gridctx);
+                    else if (curr == pixNum.AIR) clearPixels(j - amount, i, amount, 1, gridctx);
                     curr = grid[i][j];
                     redrawing = grid[i][j] != lastGrid[i][j];
                     amount = 0;
                 }
             }
-            let pixelType = pixels[curr] ?? pixels['missing'];
-            if (curr != 'air' && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, gridctx);
-            else if (curr == 'air' && (redrawing || forceRedraw)) clearPixels(gridSize - amount - 1, i, amount + 1, 1, gridctx);
+            let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
+            if (curr != pixNum.AIR && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, gridctx);
+            else if (curr == pixNum.AIR && (redrawing || forceRedraw)) clearPixels(gridSize - amount - 1, i, amount + 1, 1, gridctx);
         }
-        drawBooleanGrid(monsterGrid, monsterGrid, 'monster', monsterctx);
-        drawBooleanGrid(fireGrid, lastFireGrid, 'fire', firectx);
-        drawBooleanGrid(placeableGrid, lastPlaceableGrid, 'placementRestriction', placeablectx, true);
+        drawBooleanGrid(monsterGrid, monsterGrid, pixNum.MONSTER, monsterctx);
+        drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
+        drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         for (let i = 0; i < gridSize; i++) {
             for (let j = 0; j < gridSize; j++) {
                 lastGrid[i][j] = grid[i][j];
@@ -1008,16 +1148,19 @@ function updateFrame() {
             update priority:
             -: fire
             0: nukes, plants, sponges, gunpowder, and lasers
-            1: pistons
-            2: gravity pixels
-            3: liquids, concrete, and leaves
-            4: pumps and cloners
-            5: lag
+            1, 2, 3, 4: pistons
+            5, 6, 7, 8: cloners
+            9: gravity solids
+            10: pumps
+            11: liquids, concrete, and leaves
+            12: lag
+            13: rotators
+            -: monster
             */
-            let firePixelType = pixels['fire'];
+            let firePixelType = numPixels[pixNum.FIRE];
             for (let j = 0; j < gridSize; j++) {
                 for (let k = 0; k < gridSize; k++) {
-                    if (monsterGrid[k][j]) grid[k][j] = 'monster';
+                    if (monsterGrid[k][j]) grid[k][j] = pixNum.MONSTER;
                 }
             }
             for (let j = 0; j < gridSize; j++) {
@@ -1027,7 +1170,7 @@ function updateFrame() {
             }
             for (let j = 0; j < gridSize; j++) {
                 for (let k = 0; k < gridSize; k++) {
-                    if (grid[k][j] == 'monster') grid[k][j] = 'air';
+                    if (grid[k][j] == pixNum.MONSTER) grid[k][j] = pixNum.AIR;
                     if (nextFireGrid[k][j] != null) {
                         fireGrid[k][j] = nextFireGrid[k][j];
                         nextFireGrid[k][j] = null;
@@ -1039,7 +1182,7 @@ function updateFrame() {
             for (let explosion of currentExplosions) {
                 explode(...explosion);
             }
-            for (let j = 0; j <= 5; j++) {
+            for (let j = 0; j <= 13; j++) {
                 if (ticks % 2 == 0) {
                     for (let k = 0; k < gridSize; k++) {
                         for (let l = gridSize - 1; l >= 0; l--) {
@@ -1062,7 +1205,7 @@ function updateFrame() {
                     }
                 }
             }
-            let enemyPixelType = pixels['monster'];
+            let enemyPixelType = numPixels.MONSTER;
             for (let j = 0; j < gridSize; j++) {
                 for (let k = gridSize - 1; k > 0; k--) {
                     if (monsterGrid[k][j]) enemyPixelType.update(j, k);
