@@ -994,8 +994,8 @@ function draw() {
                 camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasSize * camera.scale) - canvasSize));
                 camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasSize * camera.scale) - canvasSize));
                 forceRedraw = true;
-            } else {
-                if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].numId].box.style.display != 'none') clickPixel = grid[mYGrid][mXGrid];
+            } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
+                pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
             }
         } else {
             clickLine(mXGrid, mYGrid, prevMXGrid, prevMYGrid, mouseButton == RIGHT || removing);
@@ -1317,7 +1317,7 @@ document.getElementById('uploadSave').onclick = (e) => {
         if (files.length == 0) return;
         const reader = new FileReader();
         reader.onload = async (e) => {
-            if (await modal('Confirm load?', 'Your current red simulation will be overwritten!', true)) {
+            if (await modal('Load premade?', 'Your current red simulation will be overwritten!', true)) {
                 saveCode = e.target.result;
                 saveCodeText.value = saveCode;
                 loadSaveCode();

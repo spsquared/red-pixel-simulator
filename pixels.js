@@ -3112,7 +3112,7 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
             pixelSelectors[id].box.classList.remove('pickerNoPixels');
             pixelSelectors[id].box.style.display = '';
         } else {
-            pixelSelectors[id].count.innerText = pixelAmounts[id];
+            pixelSelectors[id].count.innerText = pixelAmounts[id] == Infinity ? '∞' : pixelAmounts[id];
             if (pixelAmounts[id] == 0 || pixelAmounts[id] == Infinity) {
                 pixelSelectors[id].box.classList.add('pickerNoPixels');
                 if (hideEmpty && !forceShow) pixelSelectors[id].box.style.display = 'none';

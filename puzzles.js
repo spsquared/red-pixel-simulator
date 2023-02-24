@@ -212,7 +212,7 @@ function loadPuzzle(section, level) {
         camera.x = 0;
         camera.y = 0;
     } catch (err) {
-        modal('Could not load puzzle:', `<span style="color: red;">${err.message}</span>`, false);
+        modal('Could not load puzzle:', `<span style="color: red;">${err.message}</span><br>Restart the puzzle if issues persist.`, false);
     }
 };
 for (let section in puzzles) {
