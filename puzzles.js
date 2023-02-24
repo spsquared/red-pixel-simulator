@@ -105,7 +105,7 @@ const puzzles = [
                 inventory: {
                     air: 0
                 },
-                id: '97d4d74b-4c07-4c6f-8de4-2412090c019f'
+                id: '0a512d7b-228e-48a1-8ecd-b2347fea79e0'
             }
         ]
     },
@@ -185,25 +185,25 @@ function loadPuzzle(section, level) {
         resetPixelAmounts();
         if (savedData) {
             let isFirst = true;
-            for (let i in savedData.pixels) {
+            for (let pixelType in savedData.pixels) {
                 if (isFirst) {
-                    pixelSelectors[i].box.click();
+                    pixelSelectors[pixelType].box.click();
                     isFirst = false;
                 }
-                if (puzzle.inventory[i] !== undefined || (savedData.pixels[i] != 0 && i != 'air')) {
-                    pixelAmounts[i] = savedData.pixels[i];
-                    updatePixelAmount(i, false, true);
+                if (puzzle.inventory[pixelType] !== undefined || (savedData.pixels[pixelType] != 0 && pixelType != 'air')) {
+                    pixelAmounts[pixelType] = savedData.pixels[pixelType];
+                    updatePixelAmount(pixelType, false, true);
                 }
             }
         } else {
             let isFirst = true;
-            for (let i in puzzle.inventory) {
+            for (let pixelType in puzzle.inventory) {
                 if (isFirst) {
-                    pixelSelectors[i].box.click();
+                    pixelSelectors[pixelType].box.click();
                     isFirst = false;
                 }
-                pixelAmounts[i] = puzzle.inventory[i];
-                updatePixelAmount(i, false, true);
+                pixelAmounts[pixelType] = puzzle.inventory[pixelType];
+                updatePixelAmount(pixelType, false, true);
             }
         }
         pixelAmounts['air'] = Infinity;

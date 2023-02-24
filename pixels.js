@@ -1694,7 +1694,7 @@ const pixels = {
         rotateable: true,
         rotation: 3,
         group: 1,
-        key: 'k',
+        key: Infinity,
         updatePriority: 2,
         animatedNoise: false,
         animated: false,
@@ -1904,7 +1904,16 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) { },
+        update: function (x, y) {
+            updateTouchingAnything(x, y, function (actionX, actionY) {
+                let pixel = grid[actionY][actionX]
+                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
+                    rotatePixel(actionX, actionY, 2);
+                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.CLONER_DOWN) || (pixel >= pixNum.PISTON_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
+                    rotatePixel(actionX, actionY, 4);
+                }
+            });
+        },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(100, 100, 100)';
@@ -1927,7 +1936,7 @@ const pixels = {
         rotateable: false,
         group: 1,
         key: Infinity,
-        updatePriority: -1,
+        updatePriority: 13,
         animatedNoise: false,
         animated: true,
         pickable: true,
@@ -1964,7 +1973,16 @@ const pixels = {
                 }
             }
         },
-        update: function (x, y) { },
+        update: function (x, y) {
+            updateTouchingAnything(x, y, function (actionX, actionY) {
+                let pixel = grid[actionY][actionX]
+                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
+                    rotatePixel(actionX, actionY, 2);
+                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.CLONER_DOWN) || (pixel >= pixNum.PISTON_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
+                    rotatePixel(actionX, actionY, 4);
+                }
+            });
+        },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(100, 100, 100)';
@@ -1987,7 +2005,7 @@ const pixels = {
         rotateable: false,
         group: 1,
         key: Infinity,
-        updatePriority: -1,
+        updatePriority: 13,
         animatedNoise: false,
         animated: true,
         pickable: true,
@@ -2292,7 +2310,7 @@ const pixels = {
                     removeX--;
                     if (grid[y][removeX] != pixNum.AIR) {
                         if (grid[y][removeX] != pixNum.LASER_SCATTERER) nextGrid[y][removeX] = pixNum.AIR;
-                        if (!grid[y][removeX].includes('laser')) nextFireGrid[y][removeX] = true;
+                        if (grid[y][removeX] < pixNum.LASER_LEFT || grid[y][removeX] > pixNum.LASER_DOWN) nextFireGrid[y][removeX] = true;
                         break;
                     }
                 }
@@ -2348,7 +2366,7 @@ const pixels = {
                     removeY--;
                     if (grid[removeY][x] != pixNum.AIR) {
                         if (grid[removeY][x] != pixNum.LASER_SCATTERER) nextGrid[removeY][x] = pixNum.AIR;
-                        if (!grid[removeY][x].includes('laser')) nextFireGrid[removeY][x] = true;
+                        if (grid[removeY][x] < pixNum.LASER_LEFT || grid[removeY][x] > pixNum.LASER_DOWN) nextFireGrid[removeY][x] = true;
                         break;
                     }
                 }
@@ -2404,7 +2422,7 @@ const pixels = {
                     removeX++;
                     if (grid[y][removeX] != pixNum.AIR) {
                         if (grid[y][removeX] != pixNum.LASER_SCATTERER) nextGrid[y][removeX] = pixNum.AIR;
-                        if (!grid[y][removeX].includes('laser')) nextFireGrid[y][removeX] = true;
+                        if (grid[y][removeX] < pixNum.LASER_LEFT || grid[y][removeX] > pixNum.LASER_DOWN) nextFireGrid[y][removeX] = true;
                         break;
                     }
                 }
@@ -2460,7 +2478,7 @@ const pixels = {
                     removeY++;
                     if (grid[removeY][x] != pixNum.AIR) {
                         if (grid[removeY][x] != pixNum.LASER_SCATTERER) nextGrid[removeY][x] = pixNum.AIR;
-                        if (!grid[removeY][x].includes('laser')) nextFireGrid[removeY][x] = true;
+                        if (grid[removeY][x] < pixNum.LASER_LEFT || grid[removeY][x] > pixNum.LASER_DOWN) nextFireGrid[removeY][x] = true;
                         break;
                     }
                 }
@@ -3084,8 +3102,8 @@ function resetPixelAmounts() {
         pixelAmounts[id] = 0;
         updatePixelAmount(id, true);
     }
-    pixelAmounts[pixNum.AIR] = Infinity;
-    updatePixelAmount(pixNum.AIR, true);
+    pixelAmounts['air'] = Infinity;
+    updatePixelAmount('air', true);
 };
 function updatePixelAmount(id, hideEmpty, forceShow) {
     if (pixelSelectors[id]) {

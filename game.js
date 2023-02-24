@@ -611,7 +611,7 @@ function canMoveTo(x, y) {
 };
 function move(x1, y1, x2, y2) {
     if (grid[y2][x2] == pixNum.DELETER) {
-        nextGrid[y1][x1] = pixNum.pixNum.AIR;
+        nextGrid[y1][x1] = pixNum.AIR;
     } else {
         nextGrid[y1][x1] = grid[y2][x2];
         nextGrid[y2][x2] = grid[y1][x1];
@@ -865,7 +865,7 @@ function clickLine(startX, startY, endX, endY, remove) {
             } else {
                 act(function (x, y) {
                     if (placeableGrid[y][x]) {
-                        pixelAmounts[grid[y][x]]++;
+                        pixelAmounts[numPixels[grid[y][x]].id]++;
                         modifiedPixelCounts[grid[y][x]] = true;
                         grid[y][x] = pixNum.AIR;
                         fireGrid[y][x] = false;
@@ -897,12 +897,12 @@ function clickLine(startX, startY, endX, endY, remove) {
                     grid[y][x] = clickPixelNum;
                 });
             } else {
-                modifiedPixelCounts[clickPixel] = true;
+                modifiedPixelCounts[clickPixelNum] = true;
                 if (pixelAmounts[clickPixel] <= 0) break place;
                 if (act(function (x, y) {
                     if (placeableGrid[y][x]) {
                         modifiedPixelCounts[grid[y][x]] = true;
-                        pixelAmounts[grid[y][x]]++;
+                        pixelAmounts[numPixels[grid[y][x]].id]++;
                         grid[y][x] = clickPixelNum;
                         pixelAmounts[clickPixel]--;
                     }
@@ -914,7 +914,7 @@ function clickLine(startX, startY, endX, endY, remove) {
         y += sin(angle);
     }
     for (let pixelType in modifiedPixelCounts) {
-        if (pixelType != 'air') updatePixelAmount(pixelType);
+        if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
     }
     if (!sandboxMode) {
         saveCode = generateSaveCode();
@@ -1205,7 +1205,7 @@ function updateFrame() {
                     }
                 }
             }
-            let enemyPixelType = numPixels.MONSTER;
+            let enemyPixelType = numPixels[pixNum.MONSTER];
             for (let j = 0; j < gridSize; j++) {
                 for (let k = gridSize - 1; k > 0; k--) {
                     if (monsterGrid[k][j]) enemyPixelType.update(j, k);
