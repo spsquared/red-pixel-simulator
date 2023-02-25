@@ -825,6 +825,7 @@ const pixels = {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+                    drawPixel(x + i + 1 / 6, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
                 }
             }
         },
@@ -841,6 +842,7 @@ const pixels = {
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(50 / 6, 50 / 4, 50 / 6, 25);
         },
         flammability: 8,
         pushable: true,
@@ -871,6 +873,7 @@ const pixels = {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
+                    drawPixel(x + i + 1 / 4, y + j + 1 / 6, 1 / 2, 1 / 6, ctx);
                 }
             }
         },
@@ -887,6 +890,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+            ctx.fillRect(50 / 4, 50 / 6, 25, 50 / 6);
         },
         flammability: 8,
         pushable: true,
@@ -917,6 +921,7 @@ const pixels = {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
                 }
             }
         },
@@ -933,6 +938,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(200 / 6, 50 / 4, 50 / 6, 25);
         },
         flammability: 8,
         pushable: true,
@@ -963,6 +969,7 @@ const pixels = {
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
+                    drawPixel(x + i + 1 / 4, y + j + 2 / 3, 1 / 2, 1 / 6, ctx);
                 }
             }
         },
@@ -979,6 +986,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(50 / 4, 200 / 6, 25, 50 / 6);
         },
         flammability: 8,
         pushable: true,
@@ -1012,10 +1020,10 @@ const pixels = {
                     drawPixel(x + i + 1 / 6, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
                 }
             }
-            ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+            ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 1 / 4, 1 / 3, 1 / 2, ctx);
+                    drawPixel(x + i + 1 / 3, y + j + 2 / 5, 1 / 3, 1 / 5, ctx);
                 }
             }
         },
@@ -1061,8 +1069,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 6, 50 / 4, 50 / 6, 25);
-            ctx.fillStyle = 'rgb(200, 0, 255)';
-            ctx.fillRect(50 / 3, 50 / 4, 50 / 3, 25);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(50 / 3, 20, 50 / 3, 10);
         },
         flammability: 8,
         pushable: true,
@@ -1096,10 +1104,10 @@ const pixels = {
                     drawPixel(x + i + 1 / 4, y + j + 1 / 6, 1 / 2, 1 / 6, ctx);
                 }
             }
-            ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+            ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 4, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    drawPixel(x + i + 2 / 5, y + j + 1 / 3, 1 / 5, 1 / 3, ctx);
                 }
             }
         },
@@ -1144,9 +1152,9 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
-            ctx.fillRect(50 / 4, 50 / 6, 25, 50 / 3);
-            ctx.fillStyle = 'rgb(200, 0, 255)';
-            ctx.fillRect(50 / 4, 50 / 3, 25, 50 / 3);
+            ctx.fillRect(50 / 4, 50 / 6, 25, 50 / 6);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(20, 50 / 3, 10, 50 / 3);
         },
         flammability: 8,
         pushable: true,
@@ -1180,10 +1188,10 @@ const pixels = {
                     drawPixel(x + i + 2 / 3, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
                 }
             }
-            ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+            ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 1 / 4, 1 / 3, 1 / 2, ctx);
+                    drawPixel(x + i + 1 / 3, y + j + 2 / 5, 1 / 3, 1 / 5, ctx);
                 }
             }
         },
@@ -1229,8 +1237,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(200 / 6, 50 / 4, 50 / 6, 25);
-            ctx.fillStyle = 'rgb(200, 0, 255)';
-            ctx.fillRect(50 / 3, 50 / 4, 50 / 3, 25);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(50 / 3, 20, 50 / 3, 10);
         },
         flammability: 8,
         pushable: true,
@@ -1264,10 +1272,10 @@ const pixels = {
                     drawPixel(x + i + 1 / 4, y + j + 2 / 3, 1 / 2, 1 / 6, ctx);
                 }
             }
-            ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+            ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 4, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    drawPixel(x + i + 2 / 5, y + j + 1 / 3, 1 / 5, 1 / 3, ctx);
                 }
             }
         },
@@ -1313,8 +1321,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 4, 200 / 6, 25, 50 / 6);
-            ctx.fillStyle = 'rgb(200, 0, 255)';
-            ctx.fillRect(50 / 4, 50 / 3, 25, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(20, 50 / 3, 10, 50 / 3);
         },
         flammability: 8,
         pushable: true,

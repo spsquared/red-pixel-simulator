@@ -114,6 +114,11 @@ function transitionToMenu() {
         menuScreen.style.backgroundColor = '';
         t_top.style.transform = '';
         t_bottom.style.transform = '';
+        if (startMusic) startMusic();
+        else setTimeout(function wait() {
+            if (startMusic) startMusic();
+            else setTimeout(wait, 1000);
+        }, 1000);
     }, 800);
     titleContainer.style.transform = 'translateY(-20vh)';
     setTransitionTimeout(() => {
@@ -134,6 +139,7 @@ function transitionToGame() {
     clearInterval(titleBobController);
     titleContainer.style.transitionDuration = '';
     titleContainer.style.transform = 'translateY(-165vh)';
+    if (stopMusic) stopMusic();
     document.getElementById('sidebar').scrollTo(0, 0);
     setTransitionTimeout(() => {
         puzzleButton.style.transform = 'translateY(100vh)';
@@ -152,6 +158,40 @@ function transitionToGame() {
         menuScreen.style.visibility = 'hidden';
     }, 1600);
 };
+
+async function initMenuMusic() {
+    document.removeEventListener('mousedown', initMenuMusic);
+    document.removeEventListener('keydown', initMenuMusic);
+    const audioContext = AudioContext ? new AudioContext() : false;
+    const gain = audioContext.createGain();
+    gain.connect(audioContext.destination);
+    gain.gain.setValueAtTime(0, audioContext.currentTime);
+    const request = new XMLHttpRequest();
+    request.open("GET", "./menu.mp3", true);
+    request.responseType = "arraybuffer";
+    request.onload = () => {
+        audioContext.decodeAudioData(request.response, (buf) => {
+            window.startMusic = () => {
+                const musicSource = audioContext.createBufferSource();
+                musicSource.buffer = buf;
+                musicSource.loop = true;
+                musicSource.connect(gain);
+                gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 1);
+                musicSource.start();
+                window.stopMusic = () => {
+                    gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
+                    setTimeout(() => musicSource.stop(), 1000);
+                    window.stopMusic = null;
+                };
+            };
+            startMusic();
+        });
+    };
+    request.send();
+    initMenuMusic = null;
+};
+document.addEventListener('mousedown', initMenuMusic);
+document.addEventListener('keydown', initMenuMusic);
 
 const levelSelect = document.getElementById('levelSelect');
 const levelSelectClose = document.getElementById('levelSelectClose');
