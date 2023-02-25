@@ -1808,7 +1808,7 @@ const pixels = {
                 let pixel = grid[actionY][actionX]
                 if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
                     rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.CLONER_DOWN) || (pixel >= pixNum.PISTON_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
+                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
                 }
             });
@@ -1851,7 +1851,7 @@ const pixels = {
                 let pixel = grid[actionY][actionX]
                 if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
                     rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.CLONER_DOWN) || (pixel >= pixNum.PISTON_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
+                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
                 }
             });
@@ -1894,7 +1894,7 @@ const pixels = {
                 let pixel = grid[actionY][actionX]
                 if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
                     rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.CLONER_DOWN) || (pixel >= pixNum.PISTON_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
+                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
                 }
             });
@@ -1937,7 +1937,7 @@ const pixels = {
                 let pixel = grid[actionY][actionX]
                 if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
                     rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.CLONER_DOWN) || (pixel >= pixNum.PISTON_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
+                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
                 }
             });
@@ -1997,7 +1997,7 @@ const pixels = {
                 let pixel = grid[actionY][actionX]
                 if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
                     rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.CLONER_DOWN) || (pixel >= pixNum.PISTON_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
+                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
                 }
             });
@@ -2066,7 +2066,7 @@ const pixels = {
                 let pixel = grid[actionY][actionX]
                 if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
                     rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.CLONER_DOWN) || (pixel >= pixNum.PISTON_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
+                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
                 }
             });
