@@ -1055,6 +1055,7 @@ const pixels = {
                     }
                     for (let i = moveX; i < x - 1; i++) {
                         nextGrid[y][i] = grid[y][i + 1];
+                        fireGrid[y][i] = fireGrid[y][i + 1];
                     }
                     nextGrid[y][x - 1] = grid[y][x + 1];
                 }
@@ -1139,6 +1140,7 @@ const pixels = {
                     }
                     for (let i = moveY; i < y - 1; i++) {
                         nextGrid[i][x] = grid[i + 1][x];
+                        fireGrid[i][x] = fireGrid[i + 1][x];
                     }
                     nextGrid[y - 1][x] = grid[y + 1][x];
                 }
@@ -1223,6 +1225,7 @@ const pixels = {
                     }
                     for (let i = moveX; i > x + 1; i--) {
                         nextGrid[y][i] = grid[y][i - 1];
+                        fireGrid[y][i] = fireGrid[y][i - 1];
                     }
                     nextGrid[y][x + 1] = grid[y][x - 1];
                 }
@@ -1307,6 +1310,7 @@ const pixels = {
                     }
                     for (let i = moveY; i > y + 1; i--) {
                         nextGrid[i][x] = grid[i - 1][x];
+                        fireGrid[i][x] = fireGrid[i - 1][x];
                     }
                     nextGrid[y + 1][x] = grid[y - 1][x];
                 }
@@ -1567,8 +1571,10 @@ const pixels = {
                 }
                 for (let i = moveX; i < x; i++) {
                     nextGrid[y][i] = grid[y][i + 1];
+                    fireGrid[y][i] = fireGrid[y][i + 1];
                 }
                 nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
             }
         },
         drawPreview: function (ctx) {
@@ -1636,8 +1642,10 @@ const pixels = {
                 }
                 for (let i = moveY; i < y; i++) {
                     nextGrid[i][x] = grid[i + 1][x];
+                    fireGrid[i][x] = fireGrid[i + 1][x];
                 }
                 nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
             }
         },
         drawPreview: function (ctx) {
@@ -1705,8 +1713,10 @@ const pixels = {
                 }
                 for (let i = moveX; i > x; i--) {
                     nextGrid[y][i] = grid[y][i - 1];
+                    fireGrid[y][i] = fireGrid[y][i - 1];
                 }
                 nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
             }
         },
         drawPreview: function (ctx) {
@@ -1774,8 +1784,10 @@ const pixels = {
                 }
                 for (let i = moveY; i > y; i--) {
                     nextGrid[i][x] = grid[i - 1][x];
+                    fireGrid[i][x] = fireGrid[i - 1][x];
                 }
                 nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
             }
         },
         drawPreview: function (ctx) {

@@ -114,9 +114,9 @@ function transitionToMenu() {
         menuScreen.style.backgroundColor = '';
         t_top.style.transform = '';
         t_bottom.style.transform = '';
-        if (startMusic) startMusic();
+        if (window.startMusic) window.startMusic();
         else setTimeout(function wait() {
-            if (startMusic) startMusic();
+            if (window.startMusic) window.startMusic();
             else setTimeout(wait, 1000);
         }, 1000);
     }, 800);
@@ -139,7 +139,7 @@ function transitionToGame() {
     clearInterval(titleBobController);
     titleContainer.style.transitionDuration = '';
     titleContainer.style.transform = 'translateY(-165vh)';
-    if (stopMusic) stopMusic();
+    if (window.stopMusic) window.stopMusic();
     document.getElementById('sidebar').scrollTo(0, 0);
     setTransitionTimeout(() => {
         puzzleButton.style.transform = 'translateY(100vh)';
@@ -159,9 +159,9 @@ function transitionToGame() {
     }, 1600);
 };
 
-async function initMenuMusic() {
-    document.removeEventListener('mousedown', initMenuMusic);
-    document.removeEventListener('keydown', initMenuMusic);
+async function initSound() {
+    document.removeEventListener('mousedown', initSound);
+    document.removeEventListener('keydown', initSound);
     const audioContext = AudioContext ? new AudioContext() : false;
     const gain = audioContext.createGain();
     gain.connect(audioContext.destination);
@@ -188,10 +188,10 @@ async function initMenuMusic() {
         });
     };
     request.send();
-    initMenuMusic = null;
+    initSound = null;
 };
-document.addEventListener('mousedown', initMenuMusic);
-document.addEventListener('keydown', initMenuMusic);
+document.addEventListener('mousedown', initSound);
+document.addEventListener('keydown', initSound);
 
 const levelSelect = document.getElementById('levelSelect');
 const levelSelectClose = document.getElementById('levelSelectClose');

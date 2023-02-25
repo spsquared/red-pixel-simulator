@@ -90,8 +90,8 @@ const monsterGrid = [];
 const deleterGrid = [];
 const placeableGrid = [];
 const lastPlaceableGrid = [];
-const target = [0, 0];
 const noiseGrid = [];
+const target = [0, 0];
 let pendingExplosions = [];
 let animationTime = 0;
 let ticks = 0;
@@ -618,12 +618,13 @@ function canMoveTo(x, y) {
 function move(x1, y1, x2, y2) {
     if (grid[y2][x2] == pixNum.DELETER) {
         nextGrid[y1][x1] = pixNum.AIR;
-        nextFireGrid[y1][x1] = false;
+        fireGrid[y1][x1] = false;
     } else {
         nextGrid[y1][x1] = grid[y2][x2];
         nextGrid[y2][x2] = grid[y1][x1];
-        nextFireGrid[y1][x1] = fireGrid[y2][x2];
-        nextFireGrid[y2][x2] = fireGrid[y1][x1];
+        let fire = fireGrid[y1][x1]
+        fireGrid[y1][x1] = fireGrid[y2][x2];
+        fireGrid[y2][x2] = fire;
     }
 };
 function fall(x, y, xTravel, yTravel, isPassable) {
