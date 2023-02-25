@@ -109,7 +109,7 @@ let mY = 0;
 let mXGrid = 0;
 let mYGrid = 0;
 let removing = false;
-let zooming = false;
+let holdingControl = false;
 let camera = {
     x: 0,
     y: 0,
@@ -473,7 +473,7 @@ function setup() {
         } else if (key == 'shift') {
             removing = true;
         } else if (key == 'control') {
-            zooming = true;
+            holdingControl = true;
         }
         if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11' && key != '=' && key != '-') e.preventDefault();
     };
@@ -489,13 +489,13 @@ function setup() {
         } else if (key == 'shift') {
             removing = false;
         } else if (key == 'control') {
-            zooming = false;
+            holdingControl = false;
         }
         e.preventDefault();
     };
     document.addEventListener('wheel', (e) => {
         if (mouseOver && !window.inMenuScreen) {
-            if (zooming) {
+            if (holdingControl) {
                 let percentX = (mX + camera.x) / (canvasSize * camera.scale);
                 let percentY = (mY + camera.y) / (canvasSize * camera.scale);
                 camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
@@ -510,13 +510,13 @@ function setup() {
                 }
             }
         }
-        if (zooming) { e.preventDefault(); }
+        if (holdingControl) { e.preventDefault(); }
     }, { passive: false });
     hasFocus = false;
     setInterval(function () {
         if (hasFocus && !document.hasFocus()) {
             removing = false;
-            zooming = false;
+            holdingControl = false;
         }
         hasFocus = document.hasFocus();
     }, 500);
@@ -1011,7 +1011,7 @@ function draw() {
     // place pixels (also camera and pick pixel)
     if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && !inWinScreen && mouseOver) {
         if (mouseButton == CENTER) {
-            if (zooming) {
+            if (holdingControl) {
                 camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasSize * camera.scale) - canvasSize));
                 camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasSize * camera.scale) - canvasSize));
                 forceRedraw = true;
