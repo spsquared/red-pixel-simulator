@@ -35,7 +35,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         flammability: 0,
-        pushable: true,
+        pushable: false,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -993,254 +993,342 @@ const pixels = {
         id: 'cloner_down',
         numId: 0
     },
-    // push_cloner_up: {
-    //     name: 'Cloner (Up)',
-    //     description: 'Clones pixels from below it to above it, pushing pixels in the way',
-    //     draw: function (x, y, width, height, opacity, ctx) {
-    //         ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-    //         drawPixel(x, y, width, height, ctx);
-    //         ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
-    //             }
-    //         }
-    //         ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
-    //                 drawPixel(x + i + 1 / 4, y + j + 1 / 6, 1 / 2, 1 / 6, ctx);
-    //             }
-    //         }
-    //         ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i + 1 / 4, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
-    //             }
-    //         }
-    //     },
-    //     update: function (x, y) {
-    //         if (detectRotate(x, y)) return;
-    //         if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR) {
-    //             let moveY = null;
-    //             let lastCollapsible = null;
-    //             for (let i = y; i >= 0; i--) {
-    //                 if (grid[i][x] == pixNum.AIR || grid[i][x] == pixNum.DELETER) {
-    //                     moveY = i;
-    //                     if (grid[i][x] == pixNum.DELETER) {
-    //                         moveY++;
-    //                     }
-    //                     break;
-    //                 }
-    //                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
-    //                     lastCollapsible = i;
-    //                 }
-    //                 if (i != y && ((grid[i][x].includes('piston') && grid[i][x].length <= 12) || grid[i][x] == pixNum.WALL || grid[i][x] == pixNum.SLIDER_HORIZONTAL)) {
-    //                     break;
-    //                 }
-    //             }
-    //             if (moveY == null && lastCollapsible != null) {
-    //                 moveY = lastCollapsible;
-    //             }
-    //             if (moveY != null) {
-    //                 for (let i = moveY; i < y - 1; i++) {
-    //                     if (!canMoveTo(x, i + 1)) return;
-    //                 }
-    //                 for (let i = moveY; i < y - 1; i++) {
-    //                     nextGrid[i][x] = grid[i + 1][x];
-    //                 }
-    //                 nextGrid[y][x] = pixNum.AIR;
-    //             }
-    //         }
-    //     },
-    //     drawPreview: function (ctx) {
-    //         ctx.clearRect(0, 0, 50, 50);
-    //         ctx.fillStyle = 'rgb(100, 100, 100)';
-    //         ctx.fillRect(0, 0, 50, 50);
-    //         ctx.fillStyle = 'rgb(0, 125, 255)';
-    //         ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
-    //         ctx.fillStyle = 'rgb(255, 255, 0)';
-    //         ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
-    //         ctx.fillRect(50 / 4, 50 / 6, 25, 50 / 3);
-    //         ctx.fillStyle = 'rgb(200, 0, 255)';
-    //         ctx.fillRect(50 / 4, 50 / 3, 25, 50 / 3);
-    //     },
-    //     flammability: 8,
-    //     group: 1,
-    // rotation: 1,
-    //     key: Infinity,
-    //     updatePriority: 5,
-    //     animatedNoise: false,
-    //     animated: false,
-    //     pickable: true,
-    // id: 'push_cloner_up',
-    // numId: 0
-    // },
-    // push_cloner_down: {
-    //     name: 'Cloner (Down)',
-    //     description: 'Clones pixels from above it to below it, pushing pixels in the way',
-    //     draw: function (x, y, width, height, opacity, ctx) {
-    //         ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-    //         drawPixel(x, y, width, height, ctx);
-    //         ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
-    //             }
-    //         }
-    //         ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
-    //                 drawPixel(x + i + 1 / 4, y + j + 2 / 3, 1 / 2, 1 / 6, ctx);
-    //             }
-    //         }
-    //         ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i + 1 / 4, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
-    //             }
-    //         }
-    //     },
-    //     update: function (x, y) {
-    //         if (detectRotate(x, y)) return;
-    //         if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
-    //             nextGrid[y + 1][x] = grid[y - 1][x];
-    //         }
-    //     },
-    //     drawPreview: function (ctx) {
-    //         ctx.clearRect(0, 0, 50, 50);
-    //         ctx.fillStyle = 'rgb(100, 100, 100)';
-    //         ctx.fillRect(0, 0, 50, 50);
-    //         ctx.fillStyle = 'rgb(0, 125, 255)';
-    //         ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
-    //         ctx.fillStyle = 'rgb(255, 255, 0)';
-    //         ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
-    //         ctx.fillRect(50 / 4, 250 / 6, 25, 50 / 3);
-    //         ctx.fillStyle = 'rgb(200, 0, 255)';
-    //         ctx.fillRect(50 / 4, 50 / 3, 25, 50 / 3);
-    //     },
-    //     flammability: 8,
-    //     group: 1,
-    // rotation: 3,
-    //     key: Infinity,
-    //     updatePriority: 6,
-    //     animatedNoise: false,
-    //     animated: false,
-    //     pickable: true,
-    // id: 'push_cloner_down',
-    // numId: 0
-    // },
-    // push_cloner_left: {
-    //     name: 'Cloner (Left)',
-    //     description: 'Clones pixels from its right to its left, pushing pixels in the way',
-    //     draw: function (x, y, width, height, opacity, ctx) {
-    //         ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-    //         drawPixel(x, y, width, height, ctx);
-    //         ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-    //             }
-    //         }
-    //         ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-    //                 drawPixel(x + i + 1 / 6, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
-    //             }
-    //         }
-    //         ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i + 1 / 3, y + j + 1 / 4, 1 / 3, 1 / 2, ctx);
-    //             }
-    //         }
-    //     },
-    //     update: function (x, y) {
-    //         if (detectRotate(x, y)) return;
-    //         if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
-    //             nextGrid[y][x - 1] = grid[y][x + 1];
-    //         }
-    //     },
-    //     drawPreview: function (ctx) {
-    //         ctx.clearRect(0, 0, 50, 50);
-    //         ctx.fillStyle = 'rgb(100, 100, 100)';
-    //         ctx.fillRect(0, 0, 50, 50);
-    //         ctx.fillStyle = 'rgb(0, 125, 255)';
-    //         ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
-    //         ctx.fillStyle = 'rgb(255, 255, 0)';
-    //         ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-    //         ctx.fillRect(50 / 6, 50 / 4, 50 / 6, 25);
-    //         ctx.fillStyle = 'rgb(200, 0, 255)';
-    //         ctx.fillRect(50 / 3, 50 / 4, 50 / 3, 25);
-    //     },
-    //     flammability: 8,
-    //     group: 1,
-    // rotation: 0,
-    //     key: Infinity,
-    //     updatePriority: 7,
-    //     animatedNoise: false,
-    //     animated: false,
-    //     pickable: true,
-    // id: 'push_cloner_left',
-    // numId: 0
-    // },
-    // push_cloner_right: {
-    //     name: 'Cloner (Right)',
-    //     description: 'Clones pixels from its left to its right, pushing pixels in the way',
-    //     draw: function (x, y, width, height, opacity, ctx) {
-    //         ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-    //         drawPixel(x, y, width, height, ctx);
-    //         ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-    //             }
-    //         }
-    //         ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-    //                 drawPixel(x + i + 2 / 3, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
-    //             }
-    //         }
-    //         ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
-    //         for (let i = 0; i < width; i++) {
-    //             for (let j = 0; j < height; j++) {
-    //                 drawPixel(x + i + 1 / 3, y + j + 1 / 4, 1 / 3, 1 / 2, ctx);
-    //             }
-    //         }
-    //     },
-    //     update: function (x, y) {
-    //         if (detectRotate(x, y)) return;
-    //         if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
-    //             nextGrid[y][x + 1] = grid[y][x - 1];
-    //         }
-    //     },
-    //     drawPreview: function (ctx) {
-    //         ctx.clearRect(0, 0, 50, 50);
-    //         ctx.fillStyle = 'rgb(100, 100, 100)';
-    //         ctx.fillRect(0, 0, 50, 50);
-    //         ctx.fillStyle = 'rgb(0, 125, 255)';
-    //         ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-    //         ctx.fillStyle = 'rgb(255, 255, 0)';
-    //         ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
-    //         ctx.fillRect(200 / 6, 50 / 4, 50 / 6, 25);
-    //         ctx.fillStyle = 'rgb(200, 0, 255)';
-    //         ctx.fillRect(50 / 3, 50 / 4, 50 / 3, 25);
-    //     },
-    //     flammability: 8,
-    //     group: 1,
-    // rotation: 2,
-    //     key: Infinity,
-    //     updatePriority: 8,
-    //     animatedNoise: false,
-    //     animated: false,
-    //     pickable: true,
-    // id: 'push_cloner_right',
-    // numId: 0
-    // },
+    push_cloner_left: {
+        name: 'Cloner (Left)',
+        description: 'Clones pixels from its right to its left, pushing pixels in the way',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+                }
+            }
+            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+                    drawPixel(x + i + 1 / 6, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
+                }
+            }
+            ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 3, y + j + 1 / 4, 1 / 3, 1 / 2, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR) {
+                let moveX = null;
+                let lastCollapsible = null;
+                for (let i = x - 1; i >= 0; i--) {
+                    if (grid[y][i] == pixNum.AIR || grid[y][i] == pixNum.DELETER) {
+                        moveX = i;
+                        if (grid[y][i] == pixNum.DELETER) {
+                            moveX++;
+                        }
+                        break;
+                    }
+                    if (grid[y][i] == pixNum.COLLAPSIBLE) {
+                        lastCollapsible = i;
+                    }
+                    if (!numPixels[grid[y][i]].pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
+                        break;
+                    }
+                }
+                if (moveX == null && lastCollapsible != null) {
+                    moveX = lastCollapsible;
+                }
+                if (moveX != null) {
+                    for (let i = moveX; i < x; i++) {
+                        if (!canMoveTo(i + 1, y)) return;
+                    }
+                    for (let i = moveX; i < x - 1; i++) {
+                        nextGrid[y][i] = grid[y][i + 1];
+                    }
+                    nextGrid[y][x - 1] = grid[y][x + 1];
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(50 / 6, 50 / 4, 50 / 6, 25);
+            ctx.fillStyle = 'rgb(200, 0, 255)';
+            ctx.fillRect(50 / 3, 50 / 4, 50 / 3, 25);
+        },
+        flammability: 8,
+        pushable: true,
+        rotateable: true,
+        group: 1,
+        rotation: 0,
+        key: Infinity,
+        updatePriority: 7,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'push_cloner_left',
+        numId: 0
+    },
+    push_cloner_up: {
+        name: 'Cloner (Up)',
+        description: 'Clones pixels from below it to above it, pushing pixels in the way',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
+                }
+            }
+            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
+                    drawPixel(x + i + 1 / 4, y + j + 1 / 6, 1 / 2, 1 / 6, ctx);
+                }
+            }
+            ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 4, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR) {
+                let moveY = null;
+                let lastCollapsible = null;
+                for (let i = y - 1; i >= 0; i--) {
+                    if (grid[i][x] == pixNum.AIR || grid[i][x] == pixNum.DELETER) {
+                        moveY = i;
+                        if (grid[i][x] == pixNum.DELETER) {
+                            moveY++;
+                        }
+                        break;
+                    }
+                    if (grid[i][x] == pixNum.COLLAPSIBLE) {
+                        lastCollapsible = i;
+                    }
+                    if (!numPixels[grid[i][x]].pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
+                        break;
+                    }
+                }
+                if (moveY == null && lastCollapsible != null) {
+                    moveY = lastCollapsible;
+                }
+                if (moveY != null) {
+                    for (let i = moveY; i < y; i++) {
+                        if (!canMoveTo(x, i + 1)) return;
+                    }
+                    for (let i = moveY; i < y - 1; i++) {
+                        nextGrid[i][x] = grid[i + 1][x];
+                    }
+                    nextGrid[y - 1][x] = grid[y + 1][x];
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+            ctx.fillRect(50 / 4, 50 / 6, 25, 50 / 3);
+            ctx.fillStyle = 'rgb(200, 0, 255)';
+            ctx.fillRect(50 / 4, 50 / 3, 25, 50 / 3);
+        },
+        flammability: 8,
+        pushable: true,
+        rotateable: true,
+        group: 1,
+        rotation: 1,
+        key: Infinity,
+        updatePriority: 5,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'push_cloner_up',
+        numId: 0
+    },
+    push_cloner_right: {
+        name: 'Cloner (Right)',
+        description: 'Clones pixels from its left to its right, pushing pixels in the way',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+                }
+            }
+            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
+                    drawPixel(x + i + 2 / 3, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
+                }
+            }
+            ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 3, y + j + 1 / 4, 1 / 3, 1 / 2, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR) {
+                let moveX = null;
+                let lastCollapsible = null;
+                for (let i = x + 1; i <= gridSize - 1; i++) {
+                    if (grid[y][i] == pixNum.AIR || grid[y][i] == pixNum.DELETER) {
+                        moveX = i;
+                        if (grid[y][i] == pixNum.DELETER) {
+                            moveX--;
+                        }
+                        break;
+                    }
+                    if (grid[y][i] == pixNum.COLLAPSIBLE) {
+                        lastCollapsible = i;
+                    }
+                    if (!numPixels[grid[y][i]].pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
+                        break;
+                    }
+                }
+                if (moveX == null && lastCollapsible != null) {
+                    moveX = lastCollapsible;
+                }
+                if (moveX != null) {
+                    for (let i = moveX; i > x; i--) {
+                        if (!canMoveTo(i - 1, y)) return;
+                    }
+                    for (let i = moveX; i > x + 1; i--) {
+                        nextGrid[y][i] = grid[y][i - 1];
+                    }
+                    nextGrid[y][x + 1] = grid[y][x - 1];
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(200 / 6, 50 / 4, 50 / 6, 25);
+            ctx.fillStyle = 'rgb(200, 0, 255)';
+            ctx.fillRect(50 / 3, 50 / 4, 50 / 3, 25);
+        },
+        flammability: 8,
+        pushable: true,
+        rotateable: true,
+        group: 1,
+        rotation: 2,
+        key: Infinity,
+        updatePriority: 8,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'push_cloner_right',
+        numId: 0
+    },
+    push_cloner_down: {
+        name: 'Cloner (Down)',
+        description: 'Clones pixels from above it to below it, pushing pixels in the way',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
+            drawPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
+                }
+            }
+            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
+                    drawPixel(x + i + 1 / 4, y + j + 2 / 3, 1 / 2, 1 / 6, ctx);
+                }
+            }
+            ctx.fillStyle = `rgba(200, 0, 255, ${opacity})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(x + i + 1 / 4, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR) {
+                let moveY = null;
+                let lastCollapsible = null;
+                for (let i = y + 1; i <= gridSize - 1; i++) {
+                    if (grid[i][x] == pixNum.AIR || grid[i][x] == pixNum.DELETER) {
+                        moveY = i;
+                        if (grid[i][x] == pixNum.DELETER) {
+                            moveY--;
+                        }
+                        break;
+                    }
+                    if (grid[i][x] == pixNum.COLLAPSIBLE) {
+                        lastCollapsible = i;
+                    }
+                    if (!numPixels[grid[i][x]].pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
+                        break;
+                    }
+                }
+                if (moveY == null && lastCollapsible != null) {
+                    moveY = lastCollapsible;
+                }
+                if (moveY != null) {
+                    for (let i = moveY; i > y; i--) {
+                        if (!canMoveTo(x, i - 1)) return;
+                    }
+                    for (let i = moveY; i > y + 1; i--) {
+                        nextGrid[i][x] = grid[i - 1][x];
+                    }
+                    nextGrid[y + 1][x] = grid[y - 1][x];
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(50 / 4, 200 / 6, 25, 50 / 6);
+            ctx.fillStyle = 'rgb(200, 0, 255)';
+            ctx.fillRect(50 / 4, 50 / 3, 25, 50 / 3);
+        },
+        flammability: 8,
+        pushable: true,
+        rotateable: true,
+        group: 1,
+        rotation: 3,
+        key: Infinity,
+        updatePriority: 6,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'push_cloner_down',
+        numId: 0
+    },
     super_cloner_left: {
         name: 'Super Copier (Left)',
         description: 'Copies pixels from its right to its left, removing whatever was previously there',
@@ -1447,7 +1535,7 @@ const pixels = {
             }
             let moveX = null;
             let lastCollapsible = null;
-            for (let i = x; i >= 0; i--) {
+            for (let i = x - 1; i >= 0; i--) {
                 if (grid[y][i] == pixNum.AIR || grid[y][i] == pixNum.DELETER) {
                     moveX = i;
                     if (grid[y][i] == pixNum.DELETER) {
@@ -1458,7 +1546,7 @@ const pixels = {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (i != x && (grid[y][i] == pixNum.WALL || grid[y][i] == pixNum.SLIDER_VERTICAL)) {
+                if (!numPixels[grid[y][i]].pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
                     break;
                 }
             }
@@ -1516,7 +1604,7 @@ const pixels = {
             }
             let moveY = null;
             let lastCollapsible = null;
-            for (let i = y; i >= 0; i--) {
+            for (let i = y - 1; i >= 0; i--) {
                 if (grid[i][x] == pixNum.AIR || grid[i][x] == pixNum.DELETER) {
                     moveY = i;
                     if (grid[i][x] == pixNum.DELETER) {
@@ -1527,7 +1615,7 @@ const pixels = {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (i != y && (grid[i][x] == pixNum.WALL || grid[i][x] == pixNum.SLIDER_HORIZONTAL)) {
+                if (!numPixels[grid[i][x]].pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
                     break;
                 }
             }
@@ -1585,7 +1673,7 @@ const pixels = {
             }
             let moveX = null;
             let lastCollapsible = null;
-            for (let i = x; i <= gridSize - 1; i++) {
+            for (let i = x + 1; i <= gridSize - 1; i++) {
                 if (grid[y][i] == pixNum.AIR || grid[y][i] == pixNum.DELETER) {
                     moveX = i;
                     if (grid[y][i] == pixNum.DELETER) {
@@ -1596,7 +1684,7 @@ const pixels = {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (i != x && (grid[y][i] == pixNum.WALL || grid[y][i] == pixNum.SLIDER_VERTICAL)) {
+                if (!numPixels[grid[y][i]].pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
                     break;
                 }
             }
@@ -1654,7 +1742,7 @@ const pixels = {
             }
             let moveY = null;
             let lastCollapsible = null;
-            for (let i = y; i <= gridSize - 1; i++) {
+            for (let i = y + 1; i <= gridSize - 1; i++) {
                 if (grid[i][x] == pixNum.AIR || grid[i][x] == pixNum.DELETER) {
                     moveY = i;
                     if (grid[i][x] == pixNum.DELETER) {
@@ -1665,7 +1753,7 @@ const pixels = {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (i != y && (grid[i][x] == pixNum.WALL || grid[i][x] == pixNum.SLIDER_HORIZONTAL)) {
+                if (!numPixels[grid[i][x]].pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
                     break;
                 }
             }
@@ -2970,13 +3058,21 @@ const pixels = {
             if (grid[y][x] != pixNum.AIR) {
                 grid[y][x] = pixNum.AIR;
                 monsterGrid[y][x] = false;
+                fireGrid[y1][x1] = false;
             } else if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1) && !monsterGrid[y + 1][x]) {
-                nextGrid[y][x] = grid[y + 1][x];
-                nextGrid[y + 1][x] = grid[y][x];
-                monsterGrid[y + 1][x] = true;
-                monsterGrid[y][x] = false;
-                nextFireGrid[y + 1][x] = fireGrid[y][x];
-                nextFireGrid[y][x] = fireGrid[y + 1][x];
+                if (deleterGrid[y + 1][x]) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    monsterGrid[y][x] = false;
+                    nextFireGrid[y][x] = false;
+                } else {
+                    nextGrid[y][x] = grid[y + 1][x];
+                    nextGrid[y + 1][x] = grid[y][x];
+                    monsterGrid[y + 1][x] = true;
+                    monsterGrid[y][x] = false;
+                    let fire = fireGrid[y + 1][x];
+                    fireGrid[y + 1][x] = fireGrid[y][x];
+                    fireGrid[y][x] = fire;
+                }
             }
         },
         drawPreview: function (ctx) {
@@ -3126,7 +3222,7 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
 };
 
 function generateDescription(id) {
-    return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Flammability: ${pixels[id].flammability}/20<br>Pushable: ${pixels[id].pushable}`;
+    return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Flammability: ${pixels[id].flammability}/20<br>Pushable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`;
 };
 const canvas2 = document.createElement('canvas');
 const ctx2 = canvas2.getContext('2d');

@@ -87,6 +87,7 @@ const fireGrid = [];
 const lastFireGrid = [];
 const nextFireGrid = [];
 const monsterGrid = [];
+const deleterGrid = [];
 const placeableGrid = [];
 const lastPlaceableGrid = [];
 const target = [0, 0];
@@ -131,6 +132,7 @@ function createGrid(size) {
     lastFireGrid.length = 0;
     nextFireGrid.length = 0;
     monsterGrid.length = 0;
+    deleterGrid.length = 0;
     placeableGrid.length = 0;
     lastPlaceableGrid.length = 0;
     noiseGrid.length = 0;
@@ -142,6 +144,7 @@ function createGrid(size) {
         lastFireGrid[i] = [];
         nextFireGrid[i] = [];
         monsterGrid[i] = [];
+        deleterGrid[i] = [];
         placeableGrid[i] = [];
         lastPlaceableGrid[i] = [];
         noiseGrid[i] = [];
@@ -153,6 +156,7 @@ function createGrid(size) {
             lastFireGrid[i][j] = false;
             nextFireGrid[i][j] = false;
             monsterGrid[i][j] = false;
+            deleterGrid[i][j] = false;
             placeableGrid[i][j] = true;
             lastPlaceableGrid[i][j] = true;
             noiseGrid[i][j] = noise(j / 2, i / 2);
@@ -174,8 +178,10 @@ function loadSaveCode() {
             let i = 0;
             const loopedPixels = [];
             function addPixels(pixel, amount) {
+                let pixelTypeNum = pixNum[pixel.toUpperCase()];
                 while (amount > 0) {
-                    grid[y][x++] = pixNum[pixel.toUpperCase()];
+                    if (pixelTypeNum == pixNum.DELETER) deleterGrid[y][x] = true;
+                    grid[y][x++] = pixelTypeNum;
                     if (x == gridSize) {
                         y++;
                         x = 0;
@@ -612,6 +618,7 @@ function canMoveTo(x, y) {
 function move(x1, y1, x2, y2) {
     if (grid[y2][x2] == pixNum.DELETER) {
         nextGrid[y1][x1] = pixNum.AIR;
+        nextFireGrid[y1][x1] = false;
     } else {
         nextGrid[y1][x1] = grid[y2][x2];
         nextGrid[y2][x2] = grid[y1][x1];
@@ -860,28 +867,41 @@ function clickLine(startX, startY, endX, endY, remove) {
                     grid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
                     monsterGrid[y][x] = false;
-                    return false;
+                    deleterGrid[y][x] = false;
                 });
             } else {
                 act(function (x, y) {
-                    if (placeableGrid[y][x]) {
+                    if (placeableGrid[y][x] && !deleterGrid[y][x]) {
                         pixelAmounts[numPixels[grid[y][x]].id]++;
                         modifiedPixelCounts[grid[y][x]] = true;
                         grid[y][x] = pixNum.AIR;
-                        fireGrid[y][x] = false;
+                        if (fireGrid[y][x]) {
+                            pixelAmounts['fire']++;
+                            modifiedPixelCounts[pixNum.FIRE] = true;
+                            fireGrid[y][x] = false;
+                        }
                     }
-                    return false;
                 });
             }
         } else if (clickPixel == 'fire') {
-            act(function (x, y) {
+            if (sandboxMode) act(function (x, y) {
                 fireGrid[y][x] = true;
-                return false;
+            });
+            else act(function (x, y) {
+                if (placeableGrid[y][x] && !deleterGrid[y][x]) {
+                    fireGrid[y][x] = true;
+                    pixelAmounts[clickPixel]--;
+                }
+                return pixelAmounts[clickPixel] <= 0;
+            });
+        } else if (clickPixel == 'deleter') {
+            if (sandboxMode) act(function (x, y) {
+                deleterGrid[y][x] = true;
+                grid[y][x] = clickPixelNum;
             });
         } else if (clickPixel == 'monster') {
             if (sandboxMode) act(function (x, y) {
                 monsterGrid[y][x] = true;
-                return false;
             });
         } else if (clickPixel == 'placementRestriction') {
             if (sandboxMode) act(function (x, y) {
@@ -900,7 +920,7 @@ function clickLine(startX, startY, endX, endY, remove) {
                 modifiedPixelCounts[clickPixelNum] = true;
                 if (pixelAmounts[clickPixel] <= 0) break place;
                 if (act(function (x, y) {
-                    if (placeableGrid[y][x]) {
+                    if (placeableGrid[y][x] && !deleterGrid[y][x]) {
                         modifiedPixelCounts[grid[y][x]] = true;
                         pixelAmounts[numPixels[grid[y][x]].id]++;
                         grid[y][x] = clickPixelNum;
@@ -1209,6 +1229,8 @@ function updateFrame() {
             for (let j = 0; j < gridSize; j++) {
                 for (let k = gridSize - 1; k > 0; k--) {
                     if (monsterGrid[k][j]) enemyPixelType.update(j, k);
+                    if (deleterGrid[k][j]) grid[k][j] = pixNum.DELETER;
+                    else if (grid[k][j] == pixNum.DELETER && !deleterGrid[k][j]) grid[k][j] = pixNum.AIR;
                 }
             }
             frames.push(millis());

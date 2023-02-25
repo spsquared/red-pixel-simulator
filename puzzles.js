@@ -110,7 +110,14 @@ const puzzles = [
         ]
     },
     // {
-    //     name: 'Pixel Machines'
+    //     name: 'Pixel Machines',
+    //     levels: [
+    //         {
+    //             name: 'Pushy Pistons',
+    //             description: 'These pixels can move on their own, I wonder if you can make a computer with them.',
+    //             saveCode
+    //         }
+    //     ]
     // }
 ];
 
