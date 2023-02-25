@@ -1178,12 +1178,16 @@ function updateFrame() {
             13: rotators
             -: monster
             */
-            let firePixelType = numPixels[pixNum.FIRE];
+            let monsterCount = 0;
             for (let j = 0; j < gridSize; j++) {
                 for (let k = 0; k < gridSize; k++) {
-                    if (monsterGrid[k][j]) grid[k][j] = pixNum.MONSTER;
+                    if (monsterGrid[k][j]) {
+                        grid[k][j] = pixNum.MONSTER;
+                        monsterCount++;
+                    }
                 }
             }
+            let firePixelType = numPixels[pixNum.FIRE];
             for (let j = 0; j < gridSize; j++) {
                 for (let k = 0; k < gridSize; k++) {
                     if (fireGrid[k][j]) firePixelType.update(j, k);
@@ -1226,14 +1230,17 @@ function updateFrame() {
                     }
                 }
             }
-            let enemyPixelType = numPixels[pixNum.MONSTER];
+            let monsterPixelType = numPixels[pixNum.MONSTER];
+            let newMonsterCount = 0;
             for (let j = 0; j < gridSize; j++) {
                 for (let k = gridSize - 1; k > 0; k--) {
-                    if (monsterGrid[k][j]) enemyPixelType.update(j, k);
+                    if (monsterGrid[k][j]) monsterPixelType.update(j, k);
+                    if (monsterGrid[k][j]) newMonsterCount++;
                     if (deleterGrid[k][j]) grid[k][j] = pixNum.DELETER;
                     else if (grid[k][j] == pixNum.DELETER && !deleterGrid[k][j]) grid[k][j] = pixNum.AIR;
                 }
             }
+            if (newMonsterCount != monsterCount && window.playMonsterDeathSound != null) window.playMonsterDeathSound();
             frames.push(millis());
             ticks = (ticks + 1) % 65536;
             randomSeed(ticks);
@@ -1408,6 +1415,59 @@ document.getElementById('changeResolution').onclick = (e) => {
         window.location.reload();
     }
 };
+
+async function initSound() {
+    document.removeEventListener('mousedown', initSound);
+    document.removeEventListener('keydown', initSound);
+    const audioContext = AudioContext ? new AudioContext() : false;
+    const gain = audioContext.createGain();
+    gain.connect(audioContext.destination);
+    gain.gain.setValueAtTime(0, audioContext.currentTime);
+    function setAudio(n, fn) {
+        const request = new XMLHttpRequest();
+        request.open('', n, true);
+        request.responseType = 'arraybuffer';
+        request.onload = () => audioContext.decodeAudioData(request.response, fn);
+        request.send();
+    };
+    setAudio('./menu.mp3', (buf) => {
+        window.startMusic = () => {
+            const musicSource = audioContext.createBufferSource();
+            musicSource.buffer = buf;
+            musicSource.loop = true;
+            musicSource.connect(gain);
+            gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 1);
+            musicSource.start();
+            window.stopMusic = () => {
+                gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
+                setTimeout(() => musicSource.stop(), 1000);
+                window.stopMusic = null;
+            };
+        };
+        startMusic();
+    });
+    setAudio('./tick.mp3', (buf) => {
+        document.querySelectorAll('button').forEach((button) => {
+            button.addEventListener('click', (e) => {
+                const tickSource = audioContext.createBufferSource();
+                tickSource.buffer = buf;
+                tickSource.connect(audioContext.destination);
+                tickSource.start();
+            });
+        });
+    });
+    setAudio('./monsterDeath.mp3', (buf) => {
+        window.playMonsterDeathSound = () => {
+            const monsterDeathSource = audioContext.createBufferSource();
+            monsterDeathSource.buffer = buf;
+            monsterDeathSource.connect(audioContext.destination);
+            monsterDeathSource.start();
+        };
+    });
+    initSound = null;
+};
+document.addEventListener('mousedown', initSound);
+document.addEventListener('keydown', initSound);
 
 window.onresize = (e) => {
     canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;

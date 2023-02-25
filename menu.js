@@ -159,56 +159,6 @@ function transitionToGame() {
     }, 1600);
 };
 
-async function initSound() {
-    document.removeEventListener('mousedown', initSound);
-    document.removeEventListener('keydown', initSound);
-    const audioContext = AudioContext ? new AudioContext() : false;
-    const gain = audioContext.createGain();
-    gain.connect(audioContext.destination);
-    gain.gain.setValueAtTime(0, audioContext.currentTime);
-    const request = new XMLHttpRequest();
-    request.open("GET", "./menu.mp3", true);
-    request.responseType = "arraybuffer";
-    request.onload = () => {
-        audioContext.decodeAudioData(request.response, (buf) => {
-            window.startMusic = () => {
-                const musicSource = audioContext.createBufferSource();
-                musicSource.buffer = buf;
-                musicSource.loop = true;
-                musicSource.connect(gain);
-                gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 1);
-                musicSource.start();
-                window.stopMusic = () => {
-                    gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
-                    setTimeout(() => musicSource.stop(), 1000);
-                    window.stopMusic = null;
-                };
-            };
-            startMusic();
-        });
-    };
-    request.send();
-    const request2 = new XMLHttpRequest();
-    request2.open("GET", "./tick.mp3", true);
-    request2.responseType = "arraybuffer";
-    request2.onload = () => {
-        audioContext.decodeAudioData(request2.response, (buf) => {
-            document.querySelectorAll('button').forEach((button) => {
-                button.addEventListener('click', (e) => {
-                    const tickSource = audioContext.createBufferSource();
-                    tickSource.buffer = buf;
-                    tickSource.connect(audioContext.destination);
-                    tickSource.start();
-                });
-            });
-        });
-    };
-    request2.send();
-    initSound = null;
-};
-document.addEventListener('mousedown', initSound);
-document.addEventListener('keydown', initSound);
-
 const levelSelect = document.getElementById('levelSelect');
 const levelSelectClose = document.getElementById('levelSelectClose');
 const levelSelectBody = document.getElementById('levelSelectBody');
