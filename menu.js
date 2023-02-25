@@ -192,7 +192,7 @@ async function initSound() {
     request2.open("GET", "./tick.mp3", true);
     request2.responseType = "arraybuffer";
     request2.onload = () => {
-        audioContext.decodeAudioData(request.response, (buf) => {
+        audioContext.decodeAudioData(request2.response, (buf) => {
             document.querySelectorAll('button').forEach((button) => {
                 button.addEventListener('click', (e) => {
                     const tickSource = audioContext.createBufferSource();
