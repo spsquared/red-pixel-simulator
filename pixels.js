@@ -11,6 +11,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -39,6 +40,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 20,
         flammability: 0,
         pushable: false,
         rotateable: false,
@@ -76,6 +78,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 3,
         flammability: 1,
         pushable: true,
         rotateable: false,
@@ -131,6 +134,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 3,
         flammability: 15,
         pushable: true,
         rotateable: false,
@@ -183,6 +187,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 2,
         flammability: 1,
         pushable: true,
         rotateable: false,
@@ -214,6 +219,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 5,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -248,6 +254,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 8,
         flammability: 12,
         pushable: true,
         rotateable: false,
@@ -294,6 +301,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 1,
         flammability: 18,
         pushable: true,
         rotateable: false,
@@ -336,6 +344,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 5,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -374,6 +383,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 15,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -425,6 +435,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 12,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -526,6 +537,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 16,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -578,6 +590,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 3,
         flammability: 2,
         pushable: true,
         rotateable: false,
@@ -627,6 +640,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 3,
         flammability: 1,
         pushable: true,
         rotateable: false,
@@ -672,6 +686,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 1,
         flammability: 15,
         pushable: true,
         rotateable: false,
@@ -711,6 +726,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 1,
         flammability: 10,
         pushable: true,
         rotateable: false,
@@ -782,6 +798,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 20,
         pushable: true,
         rotateable: false,
@@ -826,6 +843,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 20,
         pushable: true,
         rotateable: false,
@@ -854,6 +872,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -874,7 +893,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
             }
         },
@@ -900,6 +919,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 14,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -921,7 +941,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
+            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
             }
         },
@@ -947,6 +967,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 14,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -968,7 +989,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
             }
         },
@@ -994,6 +1015,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 14,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1015,7 +1037,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
+            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
             }
         },
@@ -1041,6 +1063,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 14,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1062,7 +1085,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable) {
                 let moveX = null;
                 let lastCollapsible = null;
                 for (let i = x - 1; i >= 0; i--) {
@@ -1076,7 +1099,7 @@ const pixels = {
                     if (grid[y][i] == pixNum.COLLAPSIBLE) {
                         lastCollapsible = i;
                     }
-                    if (!numPixels[grid[y][i]].pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
+                    if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
                         break;
                     }
                 }
@@ -1121,6 +1144,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 12,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1142,7 +1166,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR) {
+            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable) {
                 let moveY = null;
                 let lastCollapsible = null;
                 for (let i = y - 1; i >= 0; i--) {
@@ -1156,7 +1180,7 @@ const pixels = {
                     if (grid[i][x] == pixNum.COLLAPSIBLE) {
                         lastCollapsible = i;
                     }
-                    if (!numPixels[grid[i][x]].pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
+                    if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
                         break;
                     }
                 }
@@ -1201,6 +1225,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 12,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1222,7 +1247,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable) {
                 let moveX = null;
                 let lastCollapsible = null;
                 for (let i = x + 1; i <= gridSize - 1; i++) {
@@ -1236,7 +1261,7 @@ const pixels = {
                     if (grid[y][i] == pixNum.COLLAPSIBLE) {
                         lastCollapsible = i;
                     }
-                    if (!numPixels[grid[y][i]].pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
+                    if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
                         break;
                     }
                 }
@@ -1281,6 +1306,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 12,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1302,7 +1328,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR) {
+            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable) {
                 let moveY = null;
                 let lastCollapsible = null;
                 for (let i = y + 1; i <= gridSize - 1; i++) {
@@ -1316,7 +1342,7 @@ const pixels = {
                     if (grid[i][x] == pixNum.COLLAPSIBLE) {
                         lastCollapsible = i;
                     }
-                    if (!numPixels[grid[i][x]].pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
+                    if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
                         break;
                     }
                 }
@@ -1361,6 +1387,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 12,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1407,6 +1434,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 14,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1453,6 +1481,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 14,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1500,6 +1529,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 14,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1546,6 +1576,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 14,
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1592,7 +1623,7 @@ const pixels = {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!numPixels[grid[y][i]].pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
                     break;
                 }
             }
@@ -1620,6 +1651,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 10,
         flammability: 6,
         pushable: true,
         rotateable: true,
@@ -1666,7 +1698,7 @@ const pixels = {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!numPixels[grid[i][x]].pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
                     break;
                 }
             }
@@ -1694,6 +1726,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 10,
         flammability: 6,
         pushable: true,
         rotateable: true,
@@ -1740,7 +1773,7 @@ const pixels = {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!numPixels[grid[y][i]].pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
                     break;
                 }
             }
@@ -1768,6 +1801,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 10,
         flammability: 6,
         pushable: true,
         rotateable: true,
@@ -1814,7 +1848,7 @@ const pixels = {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!numPixels[grid[i][x]].pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
                     break;
                 }
             }
@@ -1842,6 +1876,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 10,
         flammability: 6,
         pushable: true,
         rotateable: true,
@@ -1888,6 +1923,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 8,
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -1934,6 +1970,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 8,
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -1980,6 +2017,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 8,
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -2026,6 +2064,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 8,
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -2101,6 +2140,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 8,
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -2175,6 +2215,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 8,
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -2209,6 +2250,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 18,
         flammability: 0,
         pushable: true,
         rotateable: true,
@@ -2244,6 +2286,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 18,
         flammability: 0,
         pushable: true,
         rotateable: true,
@@ -2292,6 +2335,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 5,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2347,6 +2391,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 5,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2390,6 +2435,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 2,
         flammability: 15,
         pushable: true,
         rotateable: false,
@@ -2428,6 +2474,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 19,
         flammability: 2,
         pushable: true,
         rotateable: false,
@@ -2464,6 +2511,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 1,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2522,6 +2570,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 1,
         flammability: 20,
         pushable: true,
         rotateable: true,
@@ -2581,6 +2630,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 1,
         flammability: 20,
         pushable: true,
         rotateable: true,
@@ -2640,6 +2690,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 1,
         flammability: 20,
         pushable: true,
         rotateable: true,
@@ -2699,6 +2750,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 1,
         flammability: 20,
         pushable: true,
         rotateable: true,
@@ -2745,6 +2797,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2790,6 +2843,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2835,6 +2889,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2872,8 +2927,9 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 20,
         flammability: 0,
-        pushable: true,
+        pushable: false,
         rotateable: false,
         group: 3,
         key: Infinity,
@@ -2923,6 +2979,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 15,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -3078,6 +3135,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 18,
         flammability: NaN,
         pushable: true,
         rotateable: false,
@@ -3112,6 +3170,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 20,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -3140,14 +3199,15 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 0,
-        pushable: true,
+        pushable: false,
         rotateable: false,
         group: 4,
         key: Infinity,
         updateStage: -1,
         animatedNoise: false,
-        animated: true,
+        animated: false,
         pickable: true,
         id: 'placementUnRestriction',
         numId: 0
@@ -3184,20 +3244,21 @@ const pixels = {
             ctx.fillStyle = `rgb(255, 255, 255)`;
             ctx.rotate(-Math.PI / 4);
             fillPixel(-0.1, 0, 0.2, 0.1);
-            fillPixel(-Math.sqrt(2)/2, Math.sqrt(2)/2 - 0.1, Math.sqrt(2), 0.2);
+            fillPixel(-Math.sqrt(2) / 2, Math.sqrt(2) / 2 - 0.1, Math.sqrt(2), 0.2);
             fillPixel(-0.1, Math.sqrt(2) - 0.1, 0.2, 0.1);
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 0,
-        pushable: true,
+        pushable: false,
         rotateable: false,
         group: 4,
         key: Infinity,
         updateStage: -1,
         animatedNoise: false,
-        animated: true,
+        animated: false,
         pickable: true,
         id: 'placementRestriction',
         numId: 0
@@ -3254,14 +3315,15 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 2,
         flammability: 20,
-        pushable: true,
+        pushable: false,
         rotateable: false,
         group: 3,
         key: Infinity,
         updateStage: -1,
         animatedNoise: false,
-        animated: true,
+        animated: false,
         pickable: true,
         id: 'monster',
         numId: 0
@@ -3282,6 +3344,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -3320,6 +3383,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
+        blastResistance: 0,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -3352,6 +3416,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
+        blastResistance: undefined,
         flammability: undefined,
         pushable: true,
         rotateable: false,
@@ -3399,7 +3464,7 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
 };
 
 function generateDescription(id) {
-    return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Flammability: ${pixels[id].flammability}/20<br>Pushable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`;
+    return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Blast Resistance: ${pixels[id].blastResistance}/20<br>Flammability: ${pixels[id].flammability}/20<br>Pushable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`;
 };
 window.addEventListener('DOMContentLoaded', (e) => {
     const canvas2 = document.createElement('canvas');

@@ -778,37 +778,37 @@ function explode(x, y, size, chain) {
     nextGrid[y][x] = pixNum.AIR;
     grid[y][x] = pixNum.WALL;
     let chained = false;
-    for (let i = y - size; i <= y + size; i++) {
-        for (let j = x - size; j <= x + size; j++) {
-            if (i >= 0 && i < gridSize && j >= 0 && j < gridSize) {
-                if (random() < 1 - (dist(x, y, j, i) / (size * 1.2))) {
-                    nextGrid[i][j] = pixNum.AIR;
-                    monsterGrid[i][j] = false;
+    for (let cy = y - size; cy <= y + size; cy++) {
+        for (let cx = x - size; cx <= x + size; cx++) {
+            if (cy >= 0 && cy < gridSize && cx >= 0 && cx < gridSize) {
+                if (random() < (1 - (dist(x, y, cx, cy) / (size * 1.2))) * ((20 - (numPixels[grid[cy][cx]] ?? numPixels[pixNum.MISSING]).blastResistance) / (45 - size))) {
+                    nextGrid[cy][cx] = pixNum.AIR;
+                    monsterGrid[cy][cx] = false;
                     if (chain > 0 && !chained) {
-                        if (grid[i][j] == pixNum.NUKE) {
-                            pendingExplosions.push([j, i, 10, chain - 1]);
-                            grid[i][j] = pixNum.AIR;
+                        if (grid[cy][cx] == pixNum.NUKE) {
+                            pendingExplosions.push([cx, cy, 10, chain - 1]);
+                            grid[cy][cx] = pixNum.AIR;
                             chained = true;
-                        } else if (grid[i][j] == pixNum.HUGE_NUKE) {
-                            pendingExplosions.push([j, i, 20, chain - 1]);
-                            grid[i][j] = pixNum.AIR;
+                        } else if (grid[cy][cx] == pixNum.HUGE_NUKE) {
+                            pendingExplosions.push([cx, cy, 20, chain - 1]);
+                            grid[cy][cx] = pixNum.AIR;
                             chained = true;
-                        } else if (grid[i][j] == pixNum.VERY_HUGE_NUKE) {
-                            pendingExplosions.push([j, i, 40, chain - 1]);
-                            grid[i][j] = pixNum.AIR;
+                        } else if (grid[cy][cx] == pixNum.VERY_HUGE_NUKE) {
+                            pendingExplosions.push([cx, cy, 40, chain - 1]);
+                            grid[cy][cx] = pixNum.AIR;
                             chained = true;
                         }
                     }
-                    if (grid[i][j] == pixNum.GUNPOWDER) {
-                        pendingExplosions.push([j, i, 5, 1]);
-                        grid[i][j] = pixNum.WALL;
-                    } else if (grid[i][j] == pixNum.C4) {
-                        pendingExplosions.push([j, i, 15, 1]);
-                        grid[i][j] = pixNum.WALL;
+                    if (grid[cy][cx] == pixNum.GUNPOWDER) {
+                        pendingExplosions.push([cx, cy, 5, 1]);
+                        grid[cy][cx] = pixNum.WALL;
+                    } else if (grid[cy][cx] == pixNum.C4) {
+                        pendingExplosions.push([cx, cy, 15, 1]);
+                        grid[cy][cx] = pixNum.WALL;
                     }
-                }
-                if (random() < 0.5 - (dist(x, y, j, i) / (size * 1.2))) {
-                    fireGrid[i][j] = true;
+                    if (random() < 0.5 - (dist(x, y, cx, cy) / (size * 1.2))) {
+                        fireGrid[cy][cx] = true;
+                    }
                 }
             }
         }
@@ -1313,7 +1313,7 @@ function updateFrame() {
             for (let y = gridSize - 1; y > 0; y--) {
                 for (let x = 0; x < gridSize; x++) {
                     if (deleterGrid[y][x]) grid[y][x] = pixNum.DELETER;
-                    else if (grid[y][x] == pixNum.DELETER && !deleterGrid[y][x]) grid[y][x] = pixNum.AIR;
+                    // else if (grid[y][x] == pixNum.DELETER && !deleterGrid[y][x]) grid[y][x] = pixNum.AIR;
                     if (monsterGrid[y][x]) monsterPixelType.update(x, y);
                 }
             }
