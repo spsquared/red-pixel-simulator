@@ -142,7 +142,6 @@ function transitionToGame() {
     clearInterval(titleBobController);
     titleContainer.style.transitionDuration = '';
     titleContainer.style.transform = 'translateY(-165vh)';
-    if (window.stopMenuMusic) window.stopMenuMusic();
     document.getElementById('sidebar').scrollTo(0, 0);
     setTransitionTimeout(() => {
         puzzleButton.style.transform = 'translateY(100vh)';
@@ -153,6 +152,7 @@ function transitionToGame() {
     setTransitionTimeout(() => {
         menuScreen.style.opacity = '0';
         inMenuScreen = false;
+        if (window.stopMenuMusic) window.stopMenuMusic();
     }, 600);
     setTransitionTimeout(() => {
         menuScreen.style.pointerEvents = 'none';

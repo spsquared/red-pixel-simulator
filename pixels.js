@@ -3254,7 +3254,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
-        flammability: 8,
+        flammability: 20,
         pushable: true,
         rotateable: false,
         group: 3,
