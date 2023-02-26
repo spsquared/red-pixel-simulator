@@ -1515,7 +1515,6 @@ document.onkeydown = (e) => {
         if (pixels[i].key == key) {
             brush.pixel = i;
             pixelSelectors[brush.pixel].box.click();
-            clickSound();
         }
     }
     if (key == 'arrowup') {

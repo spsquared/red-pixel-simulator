@@ -3449,6 +3449,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
     for (let group of groups) {
         pixelPicker.appendChild(group);
     }
-    pixelSelectors[brush.pixel].box.click();
+    pixelSelectors[brush.pixel].box.onclick();
     resetPixelAmounts();
 });

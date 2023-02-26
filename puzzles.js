@@ -193,7 +193,7 @@ function loadPuzzle(section, level) {
             let isFirst = true;
             for (let pixelType in savedData.pixels) {
                 if (isFirst) {
-                    pixelSelectors[pixelType].box.click();
+                    pixelSelectors[pixelType].box.onclick();
                     isFirst = false;
                 }
                 if (puzzle.inventory[pixelType] !== undefined || (savedData.pixels[pixelType] != 0 && pixelType != 'air')) {
@@ -205,7 +205,7 @@ function loadPuzzle(section, level) {
             let isFirst = true;
             for (let pixelType in puzzle.inventory) {
                 if (isFirst) {
-                    pixelSelectors[pixelType].box.click();
+                    pixelSelectors[pixelType].box.onclick();
                     isFirst = false;
                 }
                 pixelAmounts[pixelType] = puzzle.inventory[pixelType];
