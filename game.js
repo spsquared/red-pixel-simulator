@@ -1016,7 +1016,7 @@ function updateMouseControls() {
             let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
             for (let y = 0; y < selection.grid.length; y++) {
                 if (y + offsetY >= 0 && y + offsetX < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
-                    if (x + offsetX >= 0 && x + offsetX < gridSize) {
+                    if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
                         grid[y + offsetY][x + offsetX] = selection.grid[y][x];
                     }
                 }
@@ -1061,14 +1061,27 @@ function drawBrush() {
                 }
             }
             ctx.globalAlpha = 1;
-            outlineRect(x1, y1, x2, y2, ctx);
+            ctx.strokeStyle = 'rgb(0, 0, 0)';
+            let scale = gridScale * camera.scale;
+            ctx.setLineDash([scale / 2, scale / 2]);
+            ctx.lineWidth = 2 * camera.scale;
+            ctx.beginPath();
+            ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
+            ctx.stroke();
         } else {
             let x1 = Math.min(gridSize, Math.max(0, mXGrid - brush.size + 1));
             let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
             let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
             let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + brush.size - 1));
             drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx);
-            outlineRect(x1, y1, x2, y2, ctx);
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = 'rgb(0, 0, 0)';
+            let scale = gridScale * camera.scale;
+            ctx.setLineDash([]);
+            ctx.lineWidth = 2 * camera.scale;
+            ctx.beginPath();
+            ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
+            ctx.stroke();
         }
     }
     if (selection.show) {
@@ -1076,7 +1089,13 @@ function drawBrush() {
         ctx.fillStyle = 'rgb(255, 255, 255)';
         fillPixel(selection.x1, selection.y1, selection.x2 - selection.x1 + 1, selection.y2 - selection.y1 + 1, ctx);
         ctx.globalAlpha = 1;
-        outlineRect(selection.x1, selection.y1, selection.x2, selection.y2, ctx);
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        let scale = gridScale * camera.scale;
+        ctx.setLineDash([scale / 2, scale / 2]);
+        ctx.lineWidth = 2 * camera.scale;
+        ctx.beginPath();
+        ctx.strokeRect(selection.x1 * scale - camera.x, selection.y1 * scale - camera.y, (selection.x2 - selection.x1 + 1) * scale, (selection.y2 - selection.y1 + 1) * scale);
+        ctx.stroke();
     }
 };
 function outlineRect(x1, y1, x2, y2, ctx) {
@@ -1229,8 +1248,8 @@ function updateFrame() {
             1, 2, 3, 4: pistons
             5, 6, 7, 8: cloners
             9: gravity solids
-            10: pumps
-            11: liquids, concrete, and leaves
+            10: liquids, concrete, and leaves
+            11: pumps
             12: lag
             13: rotators
             -: monster
@@ -1288,13 +1307,17 @@ function updateFrame() {
                 }
             }
             let monsterPixelType = numPixels[pixNum.MONSTER];
-            let newMonsterCount = 0;
             for (let y = gridSize - 1; y > 0; y--) {
                 for (let x = 0; x < gridSize; x++) {
-                    if (monsterGrid[y][x]) monsterPixelType.update(x, y);
-                    if (monsterGrid[y][x]) newMonsterCount++;
                     if (deleterGrid[y][x]) grid[y][x] = pixNum.DELETER;
                     else if (grid[y][x] == pixNum.DELETER && !deleterGrid[y][x]) grid[y][x] = pixNum.AIR;
+                    if (monsterGrid[y][x]) monsterPixelType.update(x, y);
+                }
+            }
+            let newMonsterCount = 0;
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    if (monsterGrid[y][x]) newMonsterCount++;
                 }
             }
             if (newMonsterCount != monsterCount && window.playMonsterDeathSound != null) window.playMonsterDeathSound();
