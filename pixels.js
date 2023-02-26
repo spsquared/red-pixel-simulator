@@ -9,6 +9,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -25,8 +27,9 @@ const pixels = {
         name: 'Wall',
         description: 'An immovable wall (good luck finding an unstoppable force-OH NO)',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(0, 0, 0)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -34,6 +37,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 0, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: false,
         rotateable: false,
@@ -50,8 +55,9 @@ const pixels = {
         name: 'Dirt',
         description: 'Wash your hands after handling it, it\'s pretty dirty',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(125, 75, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(125, 75, 0)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -68,6 +74,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(125, 75, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 1,
         pushable: true,
         rotateable: false,
@@ -84,8 +92,9 @@ const pixels = {
         name: 'Grass',
         description: 'Go touch some',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(25, 175, 25, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(25, 175, 25)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -120,6 +129,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(25, 175, 25)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 15,
         pushable: true,
         rotateable: false,
@@ -136,18 +147,19 @@ const pixels = {
         name: 'Mud',
         description: 'Basically wet dirt',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 60, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(100, 60, 0)`;
+            fillPixel(x, y, width, height, ctx);
             if (noNoise) {
-                ctx.fillStyle = `rgba(100, 60, 0, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(100, 60, 0)`;
+                fillPixel(x, y, width, height, ctx);
             } else {
-                ctx.fillStyle = `rgba(90, 50, 0, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(90, 50, 0)`;
+                fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(105, 70, 0, ${noiseGrid[y + j][x + i] * opacity})`;
-                        drawPixel(x + i, y + j, 1, 1, ctx);
+                        ctx.fillStyle = `rgb(105, 70, 0, ${noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
             }
@@ -169,6 +181,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(100, 60, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 1,
         pushable: true,
         rotateable: false,
@@ -185,8 +199,9 @@ const pixels = {
         name: 'Sand',
         description: 'Weird yellow powdery stuff that falls',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(255, 225, 125, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(255, 225, 125)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -197,6 +212,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 225, 125)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -213,11 +230,12 @@ const pixels = {
         name: 'Wood',
         description: 'Just some logs',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(175, 125, 75, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(150, 100, 75, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(175, 125, 75)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(150, 100, 75)`;
             for (let i = 0; i < width; i++) {
-                drawPixel(x + i, y, 1 / 2, height, ctx);
+                fillPixel(x + i, y, 1 / 2, height, ctx);
             }
         },
         update: function (x, y) { },
@@ -228,6 +246,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(150, 100, 75)';
             ctx.fillRect(0, 0, 25, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 12,
         pushable: true,
         rotateable: false,
@@ -244,8 +264,9 @@ const pixels = {
         name: 'Leaves',
         description: 'Lush green leaves... or was it leafs?',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 220, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(100, 220, 0)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -271,6 +292,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(115, 220, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 18,
         pushable: true,
         rotateable: false,
@@ -288,8 +311,9 @@ const pixels = {
         name: 'Concrete Powder',
         description: 'Like sand, but hardens into concrete when in contact with water',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(150, 150, 150, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(150, 150, 150)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -310,6 +334,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(150, 150, 150)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -326,8 +352,9 @@ const pixels = {
         name: 'Concrete',
         description: 'Hard stuff that doesn\'t move easily',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(75, 75, 75, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(75, 75, 75)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -345,6 +372,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 75, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -361,16 +390,17 @@ const pixels = {
         name: 'Water',
         description: 'Unrealistically flows and may or may not be wet',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
             if (noNoise) {
-                ctx.fillStyle = `rgba(75, 100, 255, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(75, 100, 255)`;
+                fillPixel(x, y, width, height, ctx);
             } else {
-                ctx.fillStyle = `rgba(100, 175, 255, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(100, 175, 255)`;
+                fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(75, 50, 255, ${noise((x + i) / 4, (y + j) / 4, animationTime / 10) * opacity + 0.1})`;
-                        drawPixel(x + i, y + j, 1, 1, ctx);
+                        ctx.fillStyle = `rgb(75, 50, 255, ${noise((x + i) / 4, (y + j) / 4, animationTime / 10) + 0.1})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
             }
@@ -393,6 +423,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 100, 255)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -409,16 +441,17 @@ const pixels = {
         name: 'Lava',
         description: 'Try not to get burned, it also melts stuff and sets things on fire (and hardens into... concrete?)',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
             if (noNoise) {
-                ctx.fillStyle = `rgba(255, 100, 0, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(255, 100, 0)`;
+                fillPixel(x, y, width, height, ctx);
             } else {
-                ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(255, 0, 0)`;
+                fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(255, 255, 0, ${noise((x + i) / 6, (y + j) / 6, animationTime / 30) * opacity})`;
-                        drawPixel(x + i, y + j, 1, 1, ctx);
+                        ctx.fillStyle = `rgb(255, 255, 0, ${noise((x + i) / 6, (y + j) / 6, animationTime / 30)})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
             }
@@ -491,6 +524,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 100, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -507,16 +542,17 @@ const pixels = {
         name: 'Ash',
         description: 'Burnt stuff, doesn\'t burn easily',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
             if (noNoise) {
-                ctx.fillStyle = `rgba(100, 110, 120, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(100, 110, 120)`;
+                fillPixel(x, y, width, height, ctx);
             } else {
-                ctx.fillStyle = `rgba(80, 85, 90, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(80, 85, 90)`;
+                fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(120, 130, 140, ${noiseGrid[y + j][x + i] * opacity})`;
-                        drawPixel(x + i, y + j, 1, 1, ctx);
+                        ctx.fillStyle = `rgb(120, 130, 140, ${noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
             }
@@ -540,6 +576,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(100, 110, 120)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 2,
         pushable: true,
         rotateable: false,
@@ -556,16 +594,17 @@ const pixels = {
         name: 'Wet Ash',
         description: 'Almost silt, it\'s nearly fluid',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
             if (noNoise) {
-                ctx.fillStyle = `rgba(80, 80, 90, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(80, 80, 90)`;
+                fillPixel(x, y, width, height, ctx);
             } else {
-                ctx.fillStyle = `rgba(70, 70, 80, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(70, 70, 80)`;
+                fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(85, 85, 90, ${noiseGrid[y + j][x + i] * opacity})`;
-                        drawPixel(x + i, y + j, 1, 1, ctx);
+                        ctx.fillStyle = `rgb(85, 85, 90, ${noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
             }
@@ -586,6 +625,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(80, 80, 90)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 1,
         pushable: true,
         rotateable: false,
@@ -602,8 +643,9 @@ const pixels = {
         name: 'P.L.A.N.T.',
         description: '<span style="font-style: italic;">Persistent Loud Aesthetic Nail Tables.</span><br>No, it doesn\'t actually stand for anything. But it does consume concrete alarmingly fast',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(125, 255, 75, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(125, 255, 75)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -628,6 +670,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 15,
         pushable: true,
         rotateable: false,
@@ -644,8 +688,9 @@ const pixels = {
         name: 'S.P.O.N.G.E.',
         description: '<span style="font-style: italic;">Sample Providing Oceanic Nucleolic Green Egg</span><br>Don\'t ask',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(225, 255, 75, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(225, 255, 75)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -664,6 +709,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(225, 255, 75)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 10,
         pushable: true,
         rotateable: false,
@@ -681,15 +728,17 @@ const pixels = {
         description: 'AAAAAA! It burns!',
         draw: function (x, y, width, height, opacity, ctx) {
             if (noNoise) {
-                ctx.fillStyle = `rgba(255, 180, 0, ${opacity / 2})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.globalAlpha = opacity / 2;
+                ctx.fillStyle = `rgb(255, 180, 0)`;
+                fillPixel(x, y, width, height, ctx);
             } else {
-                ctx.fillStyle = `rgba(255, 100, 0, ${opacity / 3})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.globalAlpha = opacity / 3;
+                ctx.fillStyle = `rgb(255, 100, 0)`;
+                fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(255, 255, 0, ${noiseGrid[y + j][x + i] * opacity / 3})`;
-                        drawPixel(x + i, y + j, 1, 1, ctx);
+                        ctx.fillStyle = `rgb(255, 255, 0, ${noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
             }
@@ -731,6 +780,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 180, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 20,
         pushable: true,
         rotateable: false,
@@ -747,16 +798,17 @@ const pixels = {
         name: 'Gunpowder',
         description: 'A low explosive that explodes when lit on fire',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
             if (noNoise) {
-                ctx.fillStyle = `rgba(50, 25, 25, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(50, 25, 25)`;
+                fillPixel(x, y, width, height, ctx);
             } else {
-                ctx.fillStyle = `rgba(30, 20, 20, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(30, 20, 20)`;
+                fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(55, 40, 40, ${noiseGrid[y + j][x + i] * opacity})`;
-                        drawPixel(x + i, y + j, 1, 1, ctx);
+                        ctx.fillStyle = `rgb(55, 40, 40, ${noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
             }
@@ -772,6 +824,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(50, 25, 25)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 20,
         pushable: true,
         rotateable: false,
@@ -788,8 +842,9 @@ const pixels = {
         name: 'C-4',
         description: 'A high explosive that can only be triggered by other explosions',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(245, 245, 200, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(245, 245, 200)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -797,6 +852,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(245, 245, 200)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -813,21 +870,8 @@ const pixels = {
         name: 'Copier (Left)',
         description: 'Copies pixels from its right to its left',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                    drawPixel(x + i + 1 / 6, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
@@ -844,6 +888,18 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 6, 50 / 4, 50 / 6, 25);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
+            fillPixel(1 / 6, 1 / 4, 1 / 6, 1 / 2);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -861,21 +917,8 @@ const pixels = {
         name: 'Copier (Up)',
         description: 'Copies pixels from below it to above it',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
-                    drawPixel(x + i + 1 / 4, y + j + 1 / 6, 1 / 2, 1 / 6, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
@@ -892,6 +935,18 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 4, 50 / 6, 25, 50 / 6);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixel(1 / 4, 1 / 6, 1 / 2, 1 / 6);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -909,21 +964,8 @@ const pixels = {
         name: 'Copier (Right)',
         description: 'Copies pixels from its left to its right',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
@@ -940,6 +982,18 @@ const pixels = {
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(200 / 6, 50 / 4, 50 / 6, 25);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixel(2 / 3, 1 / 4, 1 / 6, 1 / 2);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -957,21 +1011,8 @@ const pixels = {
         name: 'Copier (Down)',
         description: 'Copies pixels from above it to below it',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
-                    drawPixel(x + i + 1 / 4, y + j + 2 / 3, 1 / 2, 1 / 6, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
@@ -988,6 +1029,18 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 4, 200 / 6, 25, 50 / 6);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            fillPixel(1 / 4, 2 / 3, 1 / 2, 1 / 6);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1005,27 +1058,8 @@ const pixels = {
         name: 'Cloner (Left)',
         description: 'Clones pixels from its right to its left, pushing pixels in the way',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                    drawPixel(x + i + 1 / 6, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 5, 1 / 3, 1 / 5, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR) {
@@ -1073,6 +1107,20 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 0, 0)';
             ctx.fillRect(50 / 3, 20, 50 / 3, 10);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
+            fillPixel(1 / 6, 1 / 4, 1 / 6, 1 / 2);
+            ctx.fillStyle = `rgb(255, 0, 0)`;
+            fillPixel(1 / 3, 2 / 5, 1 / 3, 1 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1090,27 +1138,8 @@ const pixels = {
         name: 'Cloner (Up)',
         description: 'Clones pixels from below it to above it, pushing pixels in the way',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
-                    drawPixel(x + i + 1 / 4, y + j + 1 / 6, 1 / 2, 1 / 6, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 5, y + j + 1 / 3, 1 / 5, 1 / 3, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR) {
@@ -1158,6 +1187,20 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 0, 0)';
             ctx.fillRect(20, 50 / 3, 10, 50 / 3);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixel(1 / 4, 1 / 6, 1 / 2, 1 / 6);
+            ctx.fillStyle = `rgb(255, 0, 0)`;
+            fillPixel(2 / 5, 1 / 3, 1 / 5, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1175,27 +1218,8 @@ const pixels = {
         name: 'Cloner (Right)',
         description: 'Clones pixels from its left to its right, pushing pixels in the way',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 4, 1 / 6, 1 / 2, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 5, 1 / 3, 1 / 5, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR) {
@@ -1243,6 +1267,20 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 0, 0)';
             ctx.fillRect(50 / 3, 20, 50 / 3, 10);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixel(2 / 3, 1 / 4, 1 / 6, 1 / 2);
+            ctx.fillStyle = `rgb(255, 0, 0)`;
+            fillPixel(1 / 3, 2 / 5, 1 / 3, 1 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1260,27 +1298,8 @@ const pixels = {
         name: 'Cloner (Down)',
         description: 'Clones pixels from above it to below it, pushing pixels in the way',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
-                    drawPixel(x + i + 1 / 4, y + j + 2 / 3, 1 / 2, 1 / 6, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 5, y + j + 1 / 3, 1 / 5, 1 / 3, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR) {
@@ -1328,6 +1347,20 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 0, 0)';
             ctx.fillRect(20, 50 / 3, 10, 50 / 3);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            fillPixel(1 / 4, 2 / 3, 1 / 2, 1 / 6);
+            ctx.fillStyle = `rgb(255, 0, 0)`;
+            fillPixel(2 / 5, 1 / 3, 1 / 5, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1345,20 +1378,8 @@ const pixels = {
         name: 'Super Copier (Left)',
         description: 'Copies pixels from its right to its left, removing whatever was previously there',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (x > 0 && x < gridSize - 1) {
@@ -1374,6 +1395,18 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
+            fillPixel(1 / 6, 1 / 4, 1 / 6, 1 / 2);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1391,20 +1424,8 @@ const pixels = {
         name: 'Super Copier (Up)',
         description: 'Copies pixels from below it to above it, removing whatever was previously there',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
@@ -1420,6 +1441,18 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixel(1 / 4, 1 / 6, 1 / 2, 1 / 6);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1438,20 +1471,8 @@ const pixels = {
         name: 'Super Copier (Right)',
         description: 'Copies pixels from its left to its right, removing whatever was previously there',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (x > 0 && x < gridSize - 1) {
@@ -1467,6 +1488,18 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixel(2 / 3, 1 / 4, 1 / 6, 1 / 2);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1484,20 +1517,8 @@ const pixels = {
         name: 'Super Copier (Down)',
         description: 'Copies pixels from above it to below it, removing whatever was previously there',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 2 / 3, 1 / 3, 1 / 3, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1) {
@@ -1513,6 +1534,18 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 0)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
+            ctx.fillStyle = `rgb(255, 255, 0)`;
+            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            fillPixel(1 / 4, 2 / 3, 1 / 2, 1 / 6);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: true,
@@ -1530,12 +1563,13 @@ const pixels = {
         name: 'Piston (Left)',
         description: 'Closer to a flying machine, it pushes stuff',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(75, 255, 255, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    fillPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
                 }
             }
         },
@@ -1584,6 +1618,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 6,
         pushable: true,
         rotateable: true,
@@ -1601,12 +1637,13 @@ const pixels = {
         name: 'Piston (Up)',
         description: 'Closer to a flying machine, it pushes stuff',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(75, 255, 255, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
+                    fillPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
                 }
             }
         },
@@ -1655,6 +1692,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 6,
         pushable: true,
         rotateable: true,
@@ -1672,12 +1711,13 @@ const pixels = {
         name: 'Piston (Right)',
         description: 'Closer to a flying machine, it pushes stuff',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(75, 255, 255, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    fillPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
                 }
             }
         },
@@ -1726,6 +1766,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 6,
         pushable: true,
         rotateable: true,
@@ -1743,12 +1785,13 @@ const pixels = {
         name: 'Piston (Down)',
         description: 'Closer to a flying machine, it pushes stuff',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(75, 255, 255, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(0, 125, 255, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+                    fillPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
                 }
             }
         },
@@ -1797,6 +1840,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 6,
         pushable: true,
         rotateable: true,
@@ -1814,12 +1859,13 @@ const pixels = {
         name: 'Rotator (Left)',
         description: 'Rotates directional pixels to face left',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(75, 255, 255, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    fillPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
                 }
             }
         },
@@ -1840,6 +1886,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -1857,12 +1905,13 @@ const pixels = {
         name: 'Rotator (Up)',
         description: 'Rotates directional pixels to face up',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(75, 255, 255, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
+                    fillPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
                 }
             }
         },
@@ -1883,6 +1932,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -1900,12 +1951,13 @@ const pixels = {
         name: 'Rotator (Right)',
         description: 'Rotates directional pixels to face right',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(75, 255, 255, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    fillPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
                 }
             }
         },
@@ -1926,6 +1978,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -1943,12 +1997,13 @@ const pixels = {
         name: 'Rotator (Down)',
         description: 'Rotates directional pixels to face down',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(75, 255, 255, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+                    fillPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
                 }
             }
         },
@@ -1969,6 +2024,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -1986,31 +2043,8 @@ const pixels = {
         name: 'Rotator (Clockwise)',
         description: 'Rotates directional pixels clockwise',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(75, 255, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    switch (Math.floor(animationTime / 10) % 4) {
-                        case 0:
-                            drawPixel(x + i, y + j, 2 / 3, 1 / 3, ctx);
-                            drawPixel(x + i + 1 / 3, y + j + 2 / 3, 2 / 3, 1 / 3, ctx);
-                            break;
-                        case 1:
-                            drawPixel(x + i + 1 / 3, y + j, 2 / 3, 1 / 3, ctx);
-                            drawPixel(x + i, y + j + 2 / 3, 2 / 3, 1 / 3, ctx);
-                            break;
-                        case 2:
-                            drawPixel(x + i + 2 / 3, y + j, 1 / 3, 2 / 3, ctx);
-                            drawPixel(x + i, y + j + 1 / 3, 1 / 3, 2 / 3, ctx);
-                            break;
-                        case 3:
-                            drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 2 / 3, ctx);
-                            drawPixel(x + i, y + j, 1 / 3, 2 / 3, ctx);
-                            break;
-                    }
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(animationTime / 10) % 4], ctx);
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2026,19 +2060,47 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgba(75, 255, 255, 1)';
+            ctx.fillStyle = 'rgb(75, 255, 255, 1)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgba(75, 255, 255, 0.66)';
+            ctx.fillStyle = 'rgb(75, 255, 255, 0.66)';
             ctx.fillRect(100 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgba(75, 255, 255, 0.33)';
+            ctx.fillStyle = 'rgb(75, 255, 255, 0.33)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgba(75, 255, 255, 0.2)';
+            ctx.fillStyle = 'rgb(75, 255, 255, 0.2)';
             ctx.fillRect(0, 0, 50 / 3, 50 / 3);
             ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(0, 0, 2 / 3, 1 / 3);
+            fillPixel(1 / 3, 2 / 3, 2 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(1 / 3, 0, 2 / 3, 1 / 3);
+            fillPixel(0, 2 / 3, 2 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(2 / 3, 0, 1 / 3, 2 / 3);
+            fillPixel(0, 1 / 3, 1 / 3, 2 / 3);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(2 / 3, 1 / 3, 1 / 3, 2 / 3);
+            fillPixel(0, 0, 1 / 3, 2 / 3);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -2055,31 +2117,8 @@ const pixels = {
         name: 'Rotator (Counterclockwise)',
         description: 'Rotates directional pixels counterclockwise',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(75, 255, 255, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    switch (Math.floor(animationTime / 10) % 4) {
-                        case 3:
-                            drawPixel(x + i + 2 / 3, y + j, 1 / 3, 2 / 3, ctx);
-                            drawPixel(x + i, y + j + 1 / 3, 1 / 3, 2 / 3, ctx);
-                            break;
-                        case 2:
-                            drawPixel(x + i + 2 / 3, y + j + 1 / 3, 1 / 3, 2 / 3, ctx);
-                            drawPixel(x + i, y + j, 1 / 3, 2 / 3, ctx);
-                            break;
-                        case 1:
-                            drawPixel(x + i, y + j, 2 / 3, 1 / 3, ctx);
-                            drawPixel(x + i + 1 / 3, y + j + 2 / 3, 2 / 3, 1 / 3, ctx);
-                            break;
-                        case 0:
-                            drawPixel(x + i + 1 / 3, y + j, 2 / 3, 1 / 3, ctx);
-                            drawPixel(x + i, y + j + 2 / 3, 2 / 3, 1 / 3, ctx);
-                            break;
-                    }
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(animationTime / 10) % 4], ctx);
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2095,19 +2134,47 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgba(75, 255, 255, 1)';
+            ctx.fillStyle = 'rgb(75, 255, 255, 1)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgba(75, 255, 255, 0.66)';
+            ctx.fillStyle = 'rgb(75, 255, 255, 0.66)';
             ctx.fillRect(0, 0, 50 / 3, 50 / 3);
             ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgba(75, 255, 255, 0.33)';
+            ctx.fillStyle = 'rgb(75, 255, 255, 0.33)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgba(75, 255, 255, 0.2)';
+            ctx.fillStyle = 'rgb(75, 255, 255, 0.2)';
             ctx.fillRect(100 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(1 / 3, 0, 2 / 3, 1 / 3);
+            fillPixel(0, 2 / 3, 2 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(0, 0, 2 / 3, 1 / 3);
+            fillPixel(1 / 3, 2 / 3, 2 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(2 / 3, 1 / 3, 1 / 3, 2 / 3);
+            fillPixel(0, 0, 1 / 3, 2 / 3);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(2 / 3, 0, 1 / 3, 2 / 3);
+            fillPixel(0, 1 / 3, 1 / 3, 2 / 3);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 4,
         pushable: true,
         rotateable: false,
@@ -2124,11 +2191,12 @@ const pixels = {
         name: 'Horizontal Slider',
         description: 'Can only be pushed left and right',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(255, 180, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(200, 100, 0, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(255, 180, 0)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(200, 100, 0)`;
             for (let i = 0; i < height; i++) {
-                drawPixel(x, y + i + 1 / 4, width, 1 / 2, ctx);
+                fillPixel(x, y + i + 1 / 4, width, 1 / 2, ctx);
             }
         },
         update: function (x, y) { },
@@ -2139,6 +2207,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(200, 100, 0)';
             ctx.fillRect(0, 25 / 2, 50, 25);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: true,
@@ -2156,11 +2226,12 @@ const pixels = {
         name: 'Vertical Slider',
         description: 'Can only be pushed up and down',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(250, 180, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(200, 100, 0, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(250, 180, 0)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(200, 100, 0)`;
             for (let i = 0; i < width; i++) {
-                drawPixel(x + i + 1 / 4, y, 1 / 2, height, ctx);
+                fillPixel(x + i + 1 / 4, y, 1 / 2, height, ctx);
             }
         },
         update: function (x, y) { },
@@ -2171,6 +2242,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(200, 100, 0)';
             ctx.fillRect(25 / 2, 0, 25, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: true,
@@ -2188,13 +2261,14 @@ const pixels = {
         name: 'Water Pump',
         description: 'Violates the Laws of Thermodynamics to create water',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(75, 100, 255, ${opacity})`;
-            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
-            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(25, 125, 75)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(75, 100, 255)`;
+            fillPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
+            ctx.fillStyle = `rgb(25, 125, 75)`;
             for (let i = 0; i < width - 1; i++) {
-                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
+                fillPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
             }
         },
         update: function (x, y) {
@@ -2216,6 +2290,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(75, 100, 255)';
             ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2232,13 +2308,14 @@ const pixels = {
         name: 'Lava Heater',
         description: 'Violates the Laws of Thermodynamics to create lava',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(255, 125, 0, ${opacity})`;
-            drawPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
-            ctx.fillStyle = `rgba(25, 125, 75, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(25, 125, 75)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(255, 125, 0)`;
+            fillPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
+            ctx.fillStyle = `rgb(25, 125, 75)`;
             for (let i = 0; i < width - 1; i++) {
-                drawPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
+                fillPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
             }
         },
         update: function (x, y) {
@@ -2268,6 +2345,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 125, 0)';
             ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2284,16 +2363,17 @@ const pixels = {
         name: 'Collapsible Box',
         description: 'A box that will disintegrate when squished',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
             if (noNoise) {
-                ctx.fillStyle = `rgba(255, 120, 210, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(255, 120, 210)`;
+                fillPixel(x, y, width, height, ctx);
             } else {
-                ctx.fillStyle = `rgba(255, 100, 200, ${opacity})`;
-                drawPixel(x, y, width, height, ctx);
+                ctx.fillStyle = `rgb(255, 100, 200)`;
+                fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgba(255, 140, 255, ${noiseGrid[y + j][x + i] * opacity})`;
-                        drawPixel(x + i, y + j, 1, 1, ctx);
+                        ctx.fillStyle = `rgb(255, 140, 255, ${noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
             }
@@ -2308,6 +2388,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 120, 210)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 15,
         pushable: true,
         rotateable: false,
@@ -2324,14 +2406,15 @@ const pixels = {
         name: 'Nuke Diffuser',
         description: 'Doesn\'t cause diffusion, but will defuse nukes touching it',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(175, 50, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(225, 125, 0, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(175, 50, 0)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(225, 125, 0)`;
             for (let i = 0; i < width; i++) {
-                drawPixel(x + i + 1 / 3, y, 1 / 3, height, ctx);
+                fillPixel(x + i + 1 / 3, y, 1 / 3, height, ctx);
             }
             for (let i = 0; i < height; i++) {
-                drawPixel(x, y + i + 1 / 3, width, 1 / 3, ctx);
+                fillPixel(x, y + i + 1 / 3, width, 1 / 3, ctx);
             }
         },
         update: function (x, y) { },
@@ -2343,6 +2426,8 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50, 50 / 3);
             ctx.fillRect(50 / 3, 0, 50 / 3, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 2,
         pushable: true,
         rotateable: false,
@@ -2359,12 +2444,13 @@ const pixels = {
         name: 'Laser Scatterer',
         description: 'Scatters lasers that pass through it and makes them useless',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(220, 220, 255, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgba(210, 210, 220, ${opacity})`;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(220, 220, 255)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(210, 210, 220)`;
             for (let i = 0; i < width; i++) {
-                drawPixel(x + i, y, 1 / 4, height, ctx);
-                drawPixel(x + i + 1 / 2, y, 1 / 4, height, ctx);
+                fillPixel(x + i, y, 1 / 4, height, ctx);
+                fillPixel(x + i + 1 / 2, y, 1 / 4, height, ctx);
             }
         },
         update: function (x, y) { },
@@ -2376,6 +2462,8 @@ const pixels = {
             ctx.fillRect(0, 0, 25 / 2, 50);
             ctx.fillRect(25, 0, 25 / 2, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2392,23 +2480,24 @@ const pixels = {
         name: "L.A.S.E.R. (Left)",
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(90, 0, 120, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(90, 0, 120)`;
+            fillPixel(x, y, width, height, ctx);
             let color = colorAnimate(255, 0, 144, 60, 112, 255, 18);
-            ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity})`;
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
+                    fillPixel(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
                 }
             }
-            abovectx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
+            abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < height; i++) {
                 let endX = x;
                 while (endX >= 0) {
                     endX--;
                     if (grid[y + i][endX] != pixNum.AIR) break;
                 }
-                drawPixel(endX + 1, y + 1 / 3 + i, x - endX - 1, 1 / 3, abovectx);
+                fillPixel(endX + 1, y + 1 / 3 + i, x - endX - 1, 1 / 3, abovectx);
             }
         },
         update: function (x, y) {
@@ -2431,6 +2520,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 20,
         pushable: true,
         rotateable: true,
@@ -2448,23 +2539,24 @@ const pixels = {
         name: "L.A.S.E.R. (Up)",
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(90, 0, 120, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(90, 0, 120)`;
+            fillPixel(x, y, width, height, ctx);
             let color = colorAnimate(255, 0, 144, 60, 112, 255, 18);
-            ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity})`;
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2, ctx);
+                    fillPixel(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2, ctx);
                 }
             }
-            abovectx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
+            abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < width; i++) {
                 let endY = y;
                 while (endY >= 0) {
                     endY--;
                     if (endY >= 0 && grid[endY][x + i] != pixNum.AIR) break;
                 }
-                drawPixel(x + 1 / 3 + i, endY + 1, 1 / 3, y - endY - 1, abovectx);
+                fillPixel(x + 1 / 3 + i, endY + 1, 1 / 3, y - endY - 1, abovectx);
             }
         },
         update: function (x, y) {
@@ -2487,6 +2579,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 20,
         pushable: true,
         rotateable: true,
@@ -2504,23 +2598,24 @@ const pixels = {
         name: "L.A.S.E.R. (Right)",
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(90, 0, 120, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(90, 0, 120)`;
+            fillPixel(x, y, width, height, ctx);
             let color = colorAnimate(255, 0, 144, 60, 112, 255, 18);
-            ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity})`;
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
+                    fillPixel(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
                 }
             }
-            abovectx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
+            abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < height; i++) {
                 let endX = x + width - 1;
                 while (endX < gridSize) {
                     endX++;
                     if (grid[y + i][endX] != pixNum.AIR) break;
                 }
-                drawPixel(x + width, y + 1 / 3 + i, endX - x - width, 1 / 3, abovectx);
+                fillPixel(x + width, y + 1 / 3 + i, endX - x - width, 1 / 3, abovectx);
             }
         },
         update: function (x, y) {
@@ -2543,6 +2638,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 20,
         pushable: true,
         rotateable: true,
@@ -2560,23 +2657,24 @@ const pixels = {
         name: "L.A.S.E.R. (Down)",
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(90, 0, 120, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(90, 0, 120)`;
+            fillPixel(x, y, width, height, ctx);
             let color = colorAnimate(255, 0, 144, 60, 112, 255, 18);
-            ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity})`;
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2, ctx);
+                    fillPixel(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2, ctx);
                 }
             }
-            abovectx.fillStyle = `rgba(71, 216, 159, ${opacity})`;
+            abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < width; i++) {
                 let endY = y + height - 1;
                 while (endY < gridSize) {
                     endY++;
                     if (endY < gridSize && grid[endY][x + i] != pixNum.AIR) break;
                 }
-                drawPixel(x + 1 / 3 + i, y + height, 1 / 3, endY - y - height, abovectx);
+                fillPixel(x + 1 / 3 + i, y + height, 1 / 3, endY - y - height, abovectx);
             }
         },
         update: function (x, y) {
@@ -2599,6 +2697,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(60, 112, 255)';
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 20,
         pushable: true,
         rotateable: true,
@@ -2616,8 +2716,9 @@ const pixels = {
         name: 'Nuke',
         description: 'TBH, kinda weak',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(0, 255, 125, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(0, 255, 125)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -2642,6 +2743,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 255, 125)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2658,8 +2761,9 @@ const pixels = {
         name: 'Huge Nuke',
         description: 'KABOOM!',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 60, 255, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(100, 60, 255)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -2684,6 +2788,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(100, 60, 255)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2700,8 +2806,9 @@ const pixels = {
         name: 'Very Huge Nuke',
         description: 'AAAAAAAAAAAAAAAAAAAAA',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(255, 0, 70, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(255, 0, 70)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -2726,6 +2833,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 0, 70)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2742,13 +2851,14 @@ const pixels = {
         name: 'Deleter',
         description: 'undefined',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(100, 100, 100, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(100, 100, 100)`;
+            fillPixel(x, y, width, height, ctx);
             let color = colorAnimate(200, 0, 255, 255, 0, 255, 96);
-            ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity})`;
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    drawPixel(x + 1 / 4 + i, y + 1 / 4 + j, 1 / 2, 1 / 2, ctx);
+                    fillPixel(x + 1 / 4 + i, y + 1 / 4 + j, 1 / 2, 1 / 2, ctx);
                 }
             }
         },
@@ -2760,6 +2870,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(200, 0, 255)';
             ctx.fillRect(50 / 4, 50 / 4, 25, 25);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2776,12 +2888,13 @@ const pixels = {
         name: 'lag_spike_generator',
         description: 'Not that laggy',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-                    drawPixel(x + i, y + j, 1, 1, ctx);
-                    ctx.fillStyle = `rgba(125, 255, 0, ${(random() * 0.6 + 0.4) * opacity})`;
-                    drawPixel(x + i, y + j, 1, 1, ctx);
+                    ctx.fillStyle = `rgb(255, 255, 255)`;
+                    fillPixel(x + i, y + j, 1, 1, ctx);
+                    ctx.fillStyle = `rgb(125, 255, 0, ${(random() * 0.6 + 0.4)})`;
+                    fillPixel(x + i, y + j, 1, 1, ctx);
                 }
             }
         },
@@ -2808,6 +2921,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(125, 255, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -2824,6 +2939,7 @@ const pixels = {
         name: '�',
         description: '<span style="color: red">�</span>',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     for (let k = 0; k < random(1, 5); k++) {
@@ -2839,10 +2955,10 @@ const pixels = {
                         ctx.transform(1, skewY, skewX, 1, 0, 0);
                         let borkXScale = random(0, 4);
                         let borkYScale = random(0, 2);
-                        ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
-                        drawPixel(0, 0, borkXScale, borkYScale, ctx);
-                        ctx.fillStyle = `rgba(100, 255, 0, ${(random() * 0.6 + 0.4) * opacity})`;
-                        drawPixel(0, 0, borkXScale, borkYScale, ctx);
+                        ctx.fillStyle = `rgb(0, 0, 0)`;
+                        fillPixel(0, 0, borkXScale, borkYScale, ctx);
+                        ctx.fillStyle = `rgb(100, 255, 0, ${(random() * 0.6 + 0.4)})`;
+                        fillPixel(0, 0, borkXScale, borkYScale, ctx);
                         ctx.restore();
                         ctx.rotate(-rotationAmount);
                         ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
@@ -2869,11 +2985,11 @@ const pixels = {
                         ctx.rotate(rotationAmount);
                         ctx.save();
                         ctx.transform(1, skewY, skewX, 1, 0, 0);
-                        ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
+                        ctx.fillStyle = `rgb(255, 0, 0)`;
                         ctx.fillRect(0, 0, 90, 90);
-                        ctx.fillStyle = `rgba(255, 255, 0, ${opacity})`;
+                        ctx.fillStyle = `rgb(255, 255, 0)`;
                         ctx.fillRect(10, 10, 70, 70);
-                        ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
+                        ctx.fillStyle = `rgb(255, 0, 0)`;
                         ctx.fillRect(40, 20, 10, 30);
                         ctx.fillRect(40, 60, 10, 10);
                         ctx.restore();
@@ -2960,6 +3076,8 @@ const pixels = {
             ctx.fillRect(22, 8, 6, 22);
             ctx.fillRect(22, 36, 6, 6);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: NaN,
         pushable: true,
         rotateable: false,
@@ -2976,6 +3094,7 @@ const pixels = {
         name: 'Spin',
         description: 'SPINNY CARRIER GO WEEEEEEEEEEEEEEEEEEEEEEEEE!!',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
@@ -2991,6 +3110,8 @@ const pixels = {
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -3006,13 +3127,17 @@ const pixels = {
     placementUnRestriction: {
         name: 'Allow Placement',
         description: 'Remove placement restrictions in sandbox levels',
-        draw: function (x, y, width, height, opacity, ctx) { },
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+        },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -3029,17 +3154,18 @@ const pixels = {
         name: 'Prevent Placement',
         description: 'Prevents players from placing pixels in sandbox levels',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(0, 0, 0, ${opacity * 0.2})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(0, 0, 0, ${opacity * 0.2})`;
+            fillPixel(x, y, width, height, ctx);
         },
-        update: function (x, y) {
-            grid[y][x] = pixNum.AIR;
-        },
+        update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(220, 220, 220)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -3056,29 +3182,14 @@ const pixels = {
         name: 'Monster',
         description: 'The bad pixels in challenge puzzles',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(0, 140, 30, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            let color = colorAnimate(0, 160, 70, 0, 180, 80, 64);
-            ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 6, y + j + 1 / 6, 2 / 3, 2 / 3, ctx);
-                }
-            }
-            ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    drawPixel(x + i + 1 / 6, y + 1 / 5 + j, 1 / 5, 1 / 5, ctx);
-                    drawPixel(x + 19 / 30 + i, y + 1 / 5 + j, 1 / 5, 1 / 5, ctx);
-                    drawPixel(x + 1 / 4 + i, y + 3 / 5 + j, 1 / 2, 1 / 6, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (grid[y][x] != pixNum.AIR) {
                 grid[y][x] = pixNum.AIR;
                 monsterGrid[y][x] = false;
-                fireGrid[y1][x1] = false;
+                fireGrid[y][x] = false;
             } else if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1) && !monsterGrid[y + 1][x]) {
                 if (deleterGrid[y + 1][x]) {
                     nextGrid[y][x] = pixNum.AIR;
@@ -3106,6 +3217,19 @@ const pixels = {
             ctx.fillRect(950 / 30, 10, 10, 10);
             ctx.fillRect(50 / 4, 30, 25, 50 / 6);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(200, 20, 0)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(255, 30, 0)`;
+            fillPixel(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            ctx.fillStyle = `rgb(0, 0, 0)`;
+            fillPixel(1 / 6, 1 / 5, 1 / 5, 1 / 5, ctx);
+            fillPixel(19 / 30, 1 / 5, 1 / 5, 1 / 5, ctx);
+            fillPixel(1 / 4, 3 / 5, 1 / 2, 1 / 6, ctx);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 8,
         pushable: true,
         rotateable: false,
@@ -3122,8 +3246,9 @@ const pixels = {
         name: "Remove (brush only)",
         description: 'Unfortunately it\'s not THE red pixel',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(255, 0, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(255, 0, 0)`;
+            fillPixel(x, y, width, height, ctx);
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -3131,6 +3256,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 0, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -3147,15 +3274,8 @@ const pixels = {
         name: 'Missing Pixel',
         description: 'Check your save code, it probably has pixels that don\'t exist in it',
         draw: function (x, y, width, height, opacity, ctx) {
-            ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
-            drawPixel(x, y, width, height, ctx);
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    ctx.fillStyle = `rgba(255, 0, 255, ${opacity})`;
-                    drawPixel(x + i, y + j, 1 / 2, 1 / 2, ctx);
-                    drawPixel(x + 1 / 2 + i, y + 1 / 2 + j, 1 / 2, 1 / 2, ctx);
-                }
-            }
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -3166,6 +3286,16 @@ const pixels = {
             ctx.fillRect(0, 0, 25, 25);
             ctx.fillRect(25, 25, 25, 25);
         },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(0, 0, 0)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(255, 0, 255)`;
+            fillPixel(0, 0, 1 / 2, 1 / 2);
+            fillPixel(1 / 2, 1 / 2, 1 / 2, 1 / 2);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -3183,6 +3313,7 @@ const pixels = {
         name: 'Red Pixel',
         description: 'What???',
         draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
             ctx.fillStyle = '#FF0000';
             ctx.fillRect(0, 0, canvasResolution, canvasResolution);
         },
@@ -3195,6 +3326,8 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 0, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
+        prerender: function () { },
+        prerenderedFrames: [],
         flammability: undefined,
         pushable: true,
         rotateable: false,
@@ -3222,7 +3355,7 @@ function resetPixelAmounts() {
     updatePixelAmount('air', true);
 };
 function updatePixelAmount(id, hideEmpty, forceShow) {
-    if (pixelSelectors[id]) {
+    if (pixelSelectors[id] != undefined) {
         if (sandboxMode) {
             pixelSelectors[id].count.innerText = '';
             pixelSelectors[id].box.classList.remove('pickerNoPixels');
@@ -3244,51 +3377,54 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
 function generateDescription(id) {
     return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Flammability: ${pixels[id].flammability}/20<br>Pushable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`;
 };
-const canvas2 = document.createElement('canvas');
-const ctx2 = canvas2.getContext('2d');
-let pixIndex = 0;
-canvas2.width = 50;
-canvas2.height = 50;
-const groups = [];
-for (const id in pixels) {
-    if (pixels[id].pickable) {
-        const box = document.createElement('div');
-        box.classList.add('pickerPixel');
-        box.onclick = (e) => {
-            clickPixel = id;
-            pixelPicker.children.forEach(section => section.children.forEach(div => div.classList.remove('pickerPixelSelected')));
-            box.classList.add('pickerPixelSelected');
-            pixelPickerDescription.innerHTML = generateDescription(id);
-        };
-        box.onmouseover = (e) => {
-            pixelPickerDescription.innerHTML = generateDescription(id);
-        };
-        box.onmouseout = (e) => {
-            pixelPickerDescription.innerHTML = generateDescription(clickPixel);
-        };
-        const img = new Image(50, 50);
-        pixels[id].drawPreview(ctx2);
-        img.src = canvas2.toDataURL('image/png');
-        box.appendChild(img);
-        const count = document.createElement('div');
-        count.classList.add('pickerCount');
-        box.append(count);
-        if (groups[pixels[id].group] == undefined) {
-            groups[pixels[id].group] = document.createElement('div');
+window.addEventListener('DOMContentLoaded', (e) => {
+    const canvas2 = document.createElement('canvas');
+    const ctx2 = canvas2.getContext('2d');
+    let pixIndex = 0;
+    canvas2.width = 50;
+    canvas2.height = 50;
+    const groups = [];
+    for (const id in pixels) {
+        pixels[id].id = id;
+        pixels[id].numId = pixIndex;
+        pixNum[id.toUpperCase()] = pixIndex;
+        numPixels[pixIndex++] = pixels[id];
+        pixels[id].prerender();
+        if (pixels[id].pickable) {
+            const box = document.createElement('div');
+            box.classList.add('pickerPixel');
+            box.onclick = (e) => {
+                clickPixel = id;
+                pixelPicker.children.forEach(section => section.children.forEach(div => div.classList.remove('pickerPixelSelected')));
+                box.classList.add('pickerPixelSelected');
+                pixelPickerDescription.innerHTML = generateDescription(id);
+            };
+            box.onmouseover = (e) => {
+                pixelPickerDescription.innerHTML = generateDescription(id);
+            };
+            box.onmouseout = (e) => {
+                pixelPickerDescription.innerHTML = generateDescription(clickPixel);
+            };
+            pixels[id].drawPreview(ctx2);
+            const img = new Image(50, 50);
+            img.src = canvas2.toDataURL('image/png');
+            box.appendChild(img);
+            const count = document.createElement('div');
+            count.classList.add('pickerCount');
+            box.append(count);
+            if (groups[pixels[id].group] == undefined) {
+                groups[pixels[id].group] = document.createElement('div');
+            }
+            groups[pixels[id].group].appendChild(box);
+            pixelSelectors[id] = {
+                box: box,
+                count: count
+            };
         }
-        groups[pixels[id].group].appendChild(box);
-        pixelSelectors[id] = {
-            box: box,
-            count: count
-        };
     }
-    pixels[id].id = id;
-    pixels[id].numId = pixIndex;
-    pixNum[id.toUpperCase()] = pixIndex;
-    numPixels[pixIndex++] = pixels[id];
-}
-for (let group of groups) {
-    pixelPicker.appendChild(group);
-}
-pixelSelectors[clickPixel].box.click();
-resetPixelAmounts();
+    for (let group of groups) {
+        pixelPicker.appendChild(group);
+    }
+    pixelSelectors[clickPixel].box.click();
+    resetPixelAmounts();
+});

@@ -1,4 +1,4 @@
-window.inMenuScreen = true;
+let inMenuScreen = true;
 
 const menuScreen = document.getElementById('menuScreen');
 const titleContainer = document.getElementById('titleContainer');
@@ -77,7 +77,7 @@ function transitionWithinGame(cb) {
     menuScreen.style.opacity = '1';
     menuScreen.style.visibility = '';
     menuScreen.style.pointerEvents = '';
-    window.inMenuScreen = true;
+    inMenuScreen = true;
     t_top.style.transform = 'translateY(60vh)';
     t_bottom.style.transform = 'translateY(-60vh)';
     setTransitionTimeout(() => {
@@ -85,7 +85,7 @@ function transitionWithinGame(cb) {
         t_top.style.transform = '';
         t_bottom.style.transform = '';
         document.getElementById('sidebar').scrollTo(0, 0);
-        window.inMenuScreen = false;
+        inMenuScreen = false;
     }, 800);
     setTransitionTimeout(() => {
         menuScreen.style.visibility = 'hidden';
@@ -106,7 +106,7 @@ function transitionToMenu() {
     menuScreen.style.visibility = '';
     menuScreen.style.pointerEvents = '';
     titleContainer.style.transitionDuration = '';
-    window.inMenuScreen = true;
+    inMenuScreen = true;
     t_top.style.transform = 'translateY(60vh)';
     t_bottom.style.transform = 'translateY(-60vh)';
     setTransitionTimeout(() => {
@@ -149,7 +149,7 @@ function transitionToGame() {
     }, 300);
     setTransitionTimeout(() => {
         menuScreen.style.opacity = '0';
-        window.inMenuScreen = false;
+        inMenuScreen = false;
     }, 600);
     setTransitionTimeout(() => {
         menuScreen.style.pointerEvents = 'none';

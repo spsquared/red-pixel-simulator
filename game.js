@@ -13,23 +13,23 @@ let debugInfo = false;
 
 const canvasResolution = parseInt(window.localStorage.getItem('resolution') ?? 800);
 const NO_OFFSCREENCANVAS = typeof OffscreenCanvas == 'undefined';
-function createCanvas2(w, h) {
+function createCanvas2(size) {
     if (NO_OFFSCREENCANVAS) {
         const canvas = document.createElement('canvas');
-        canvas.width = w || 1;
-        canvas.height = h || 1;
+        canvas.width = size || 1;
+        canvas.height = size || 1;
         return canvas;
     } else {
-        return new OffscreenCanvas(w || 1, h || 1);
+        return new OffscreenCanvas(size || 1, size || 1);
     }
 };
 const canvas = document.getElementById('canvas');
-const gameCanvas = createCanvas2(canvasResolution, canvasResolution);
-const gridCanvas = createCanvas2(canvasResolution, canvasResolution);
-const above = createCanvas2(canvasResolution, canvasResolution);
-const fire = createCanvas2(canvasResolution, canvasResolution);
-const monster = createCanvas2(canvasResolution, canvasResolution);
-const placeable = createCanvas2(canvasResolution, canvasResolution);
+const gameCanvas = createCanvas2(canvasResolution);
+const gridCanvas = createCanvas2(canvasResolution);
+const above = createCanvas2(canvasResolution);
+const fire = createCanvas2(canvasResolution);
+const monster = createCanvas2(canvasResolution);
+const placeable = createCanvas2(canvasResolution);
 const ctx = canvas.getContext('2d');
 const gamectx = gameCanvas.getContext('2d');
 const gridctx = gridCanvas.getContext('2d');
@@ -113,13 +113,18 @@ let holdingControl = false;
 let camera = {
     x: 0,
     y: 0,
-    scale: 1
+    scale: 1,
+    mUp: false,
+    mDown: false,
+    mLeft: false,
+    mRight: false
 };
 let acceptInputs = true;
 let mouseOver = false;
 let inResetState = true;
 let forceRedraw = true;
 
+// save codes
 function createGrid(size) {
     if (size < 1) return;
     gridSize = size;
@@ -365,6 +370,7 @@ function loadStoredSave() {
     updateTimeControlButtons();
 };
 
+// modal
 const modalContainer = document.getElementById('modalContainer');
 const modalBody = document.getElementById('modal');
 const modalTitle = document.getElementById('modalTitle');
@@ -421,6 +427,7 @@ function modal(title, subtitle, confirmation) {
     });
 };
 
+// p5 thing
 function setup() {
     noiseDetail(3, 0.6);
     window.onresize();
@@ -429,107 +436,31 @@ function setup() {
 
     loadStoredSave();
 
-    document.onkeydown = (e) => {
-        if (e.target.matches('button') && (e.key == 'Tab' || e.key == 'Enter')) {
-            e.preventDefault();
-            e.target.blur();
-        }
-        if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || inWinScreen || window.inMenuScreen) return;
-        const key = e.key.toLowerCase();
-        for (let i in pixels) {
-            if (pixels[i].key == key) {
-                clickPixel = i;
-                pixelSelectors[clickPixel].box.click();
-            }
-        }
-        if (key == 'arrowup') {
-            clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
-        } else if (key == 'arrowdown') {
-            clickSize = Math.max(1, clickSize - 1);
-        } else if (sandboxMode && key == 'r') {
-            for (let i = 0; i < gridSize; i++) {
-                if (grid[0][i] == pixNum.AIR && random() < 0.25) {
-                    grid[0][i] = pixNum.WATER;
-                }
-            }
-        } else if (sandboxMode && key == 'e') {
-            for (let i = 0; i < gridSize; i++) {
-                if (grid[0][i] == pixNum.AIR && random() < 0.25) {
-                    grid[0][i] = pixNum.WATER;
-                }
-            }
-        } else if (sandboxMode && key == 'b') {
-            for (let i = 0; i < gridSize; i++) {
-                grid[0][i] = pixNum.NUKE;
-            }
-        } else if (sandboxMode && key == 'n') {
-            for (let i = 0; i < gridSize; i += 5) {
-                for (let j = 0; j < gridSize; j += 5) {
-                    grid[j][i] = pixNum.VERY_HUGE_NUKE;
-                }
-            }
-        } else if (key == 'enter') {
-            runTicks = 1;
-        } else if (key == 'shift') {
-            removing = true;
-        } else if (key == 'control') {
-            holdingControl = true;
-        }
-        if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11' && key != '=' && key != '-') e.preventDefault();
-    };
-    document.onkeyup = (e) => {
-        if (e.target.matches('#saveCode') || !acceptInputs || inWinScreen || window.inMenuScreen) return;
-        const key = e.key.toLowerCase();
-        if (key == 'alt') {
-            debugInfo = !debugInfo;
-        } else if (key == 'p') {
-            gridPaused = !gridPaused;
-            simulatePaused = false;
-            updateTimeControlButtons();
-        } else if (key == 'shift') {
-            removing = false;
-        } else if (key == 'control') {
-            holdingControl = false;
-        }
-        e.preventDefault();
-    };
-    document.addEventListener('wheel', (e) => {
-        if (mouseOver && !window.inMenuScreen) {
-            if (holdingControl) {
-                let percentX = (mX + camera.x) / (canvasSize * camera.scale);
-                let percentY = (mY + camera.y) / (canvasSize * camera.scale);
-                camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
-                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasSize * camera.scale) - canvasSize));
-                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasSize * camera.scale) - canvasSize));
-                forceRedraw = true;
-            } else {
-                if (e.deltaY > 0) {
-                    clickSize = Math.max(1, clickSize - 1);
-                } else {
-                    clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
-                }
-            }
-        }
-        if (holdingControl) { e.preventDefault(); }
-    }, { passive: false });
-    hasFocus = false;
-    setInterval(function () {
-        if (hasFocus && !document.hasFocus()) {
-            removing = false;
-            holdingControl = false;
-        }
-        hasFocus = document.hasFocus();
-    }, 500);
-
     setInterval(() => {
         if (sandboxMode) {
             window.localStorage.setItem('saveCode', generateSaveCode());
         }
     }, 30000);
-
-    lastFpsList = millis();
 };
 
+// pixel utilities
+function PreRenderer() {
+    const rendCanvas = document.createElement('canvas');
+    rendCanvas.width = 60;
+    rendCanvas.height = 60;
+    const rendctx = rendCanvas.getContext('2d');
+    return {
+        ctx: rendctx,
+        fillPixel: function (x, y, width, height) {
+            rendctx.fillRect(x * 60, y * 60, width * 60, height * 60);
+        },
+        toImage: function () {
+            const img = new Image(60);
+            img.src = rendCanvas.toDataURL('image/png');
+            return img;
+        }
+    }
+};
 function drawPixels(x, y, width, height, type, opacity, ctx) {
     if (numPixels[type]) {
         numPixels[type].draw(x, y, width, height, opacity, ctx);
@@ -541,10 +472,18 @@ function clearPixels(x, y, width, height, ctx) {
     let scale = gridScale * camera.scale;
     ctx.clearRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
 };
-function drawPixel(x, y, width, height, ctx) {
+function fillPixel(x, y, width, height, ctx) {
     let scale = gridScale * camera.scale;
     ctx.fillRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
 };
+function imagePixel(x, y, width, height, source, ctx) {
+    let scale = gridScale * camera.scale;
+    for (let i = y; i < y + height; i++) {
+        for (let j = x; j < x + width; j++) {
+            ctx.drawImage(source, j * scale - camera.x, i * scale - camera.y, scale, scale);
+        }
+    }
+}
 function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
     let multiplier1 = (Math.sin(animationTime * Math.PI / p) + 1) / 2;
     let multiplier2 = (Math.sin((animationTime + p) * Math.PI / p) + 1) / 2;
@@ -839,116 +778,10 @@ function explode(x, y, size, chain) {
         }
     }
 };
-function clickLine(startX, startY, endX, endY, remove) {
-    if (!sandboxMode && !inResetState) return;
-    let x = startX;
-    let y = startY;
-    let angle = atan2(endY - startY, endX - startX);
-    let distance = sqrt(pow(endX - startX, 2) + pow(endY - startY, 2));
-    let modifiedPixelCounts = [];
-    let clickPixelNum = pixels[clickPixel].numId;
-    place: for (let i = 0; i <= distance; i++) {
-        let gridX = Math.floor(x);
-        let gridY = Math.floor(y);
-        let xmin = Math.max(0, Math.min(gridX - clickSize + 1, gridSize - 1));
-        let xmax = Math.max(0, Math.min(gridX + clickSize - 1, gridSize - 1));
-        let ymin = Math.max(0, Math.min(gridY - clickSize + 1, gridSize - 1));
-        let ymax = Math.max(0, Math.min(gridY + clickSize - 1, gridSize - 1));
-        function act(cb) {
-            for (let k = ymin; k <= ymax; k++) {
-                for (let j = xmin; j <= xmax; j++) {
-                    if (cb(j, k)) return true;
-                }
-            }
-            return false;
-        };
-        if (remove) {
-            if (sandboxMode) {
-                act(function (x, y) {
-                    grid[y][x] = pixNum.AIR;
-                    fireGrid[y][x] = false;
-                    monsterGrid[y][x] = false;
-                    deleterGrid[y][x] = false;
-                });
-            } else {
-                act(function (x, y) {
-                    if (placeableGrid[y][x] && !deleterGrid[y][x]) {
-                        pixelAmounts[numPixels[grid[y][x]].id]++;
-                        modifiedPixelCounts[grid[y][x]] = true;
-                        grid[y][x] = pixNum.AIR;
-                        if (fireGrid[y][x]) {
-                            pixelAmounts['fire']++;
-                            modifiedPixelCounts[pixNum.FIRE] = true;
-                            fireGrid[y][x] = false;
-                        }
-                    }
-                });
-            }
-        } else if (clickPixel == 'fire') {
-            if (sandboxMode) act(function (x, y) {
-                fireGrid[y][x] = true;
-            });
-            else act(function (x, y) {
-                if (placeableGrid[y][x] && !deleterGrid[y][x]) {
-                    fireGrid[y][x] = true;
-                    pixelAmounts[clickPixel]--;
-                }
-                return pixelAmounts[clickPixel] <= 0;
-            });
-        } else if (clickPixel == 'deleter') {
-            if (sandboxMode) act(function (x, y) {
-                deleterGrid[y][x] = true;
-                grid[y][x] = clickPixelNum;
-            });
-        } else if (clickPixel == 'monster') {
-            if (sandboxMode) act(function (x, y) {
-                monsterGrid[y][x] = true;
-            });
-        } else if (clickPixel == 'placementRestriction') {
-            if (sandboxMode) act(function (x, y) {
-                placeableGrid[y][x] = false;
-            })
-        } else if (clickPixel == 'placementUnRestriction') {
-            if (sandboxMode) act(function (x, y) {
-                placeableGrid[y][x] = true;
-            })
-        } else {
-            if (sandboxMode) {
-                act(function (x, y) {
-                    grid[y][x] = clickPixelNum;
-                });
-            } else {
-                modifiedPixelCounts[clickPixelNum] = true;
-                if (pixelAmounts[clickPixel] <= 0) break place;
-                if (act(function (x, y) {
-                    if (placeableGrid[y][x] && !deleterGrid[y][x]) {
-                        modifiedPixelCounts[grid[y][x]] = true;
-                        pixelAmounts[numPixels[grid[y][x]].id]++;
-                        grid[y][x] = clickPixelNum;
-                        pixelAmounts[clickPixel]--;
-                    }
-                    return pixelAmounts[clickPixel] <= 0;
-                })) break place;
-            }
-        }
-        x += cos(angle);
-        y += sin(angle);
-    }
-    for (let pixelType in modifiedPixelCounts) {
-        if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
-    }
-    if (!sandboxMode) {
-        saveCode = generateSaveCode();
-        window.localStorage.setItem(`challenge-${currentPuzzleId}`, JSON.stringify({
-            code: saveCode,
-            pixels: pixelAmounts
-        }));
-        saveCodeText.value = saveCode;
-    }
-};
 
+// draw loop
 function draw() {
-    if (window.inMenuScreen) return;
+    if (inMenuScreen) return;
 
     let prevMXGrid = mXGrid;
     let prevMYGrid = mYGrid;
@@ -969,6 +802,12 @@ function draw() {
     monsterctx.resetTransform();
     firectx.resetTransform();
     drawFrame();
+    ctx.globalAlpha = 1;
+    gamectx.globalAlpha = 1;
+    gridctx.globalAlpha = 1;
+    abovectx.globalAlpha = 1;
+    monsterctx.globalAlpha = 1;
+    firectx.globalAlpha = 1;
     // copy layers
     gamectx.drawImage(gridCanvas, 0, 0);
     gamectx.drawImage(above, 0, 0);
@@ -995,6 +834,7 @@ function draw() {
         ctx.lineTo((x2 + 1) * gridScale * camera.scale - camera.x, y1 * gridScale * camera.scale - camera.y);
         ctx.stroke();
     }
+    ctx.globalAlpha = 1;
 
     // check win
     let hasMonsters = false;
@@ -1012,14 +852,31 @@ function draw() {
     if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && !inWinScreen && mouseOver) {
         if (mouseButton == CENTER) {
             if (holdingControl) {
-                camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasSize * camera.scale) - canvasSize));
-                camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasSize * camera.scale) - canvasSize));
+                camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * camera.scale) - canvasResolution));
+                camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * camera.scale) - canvasResolution));
                 forceRedraw = true;
             } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
                 pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
             }
         } else {
             clickLine(mXGrid, mYGrid, prevMXGrid, prevMYGrid, mouseButton == RIGHT || removing);
+        }
+    }
+    // more camera
+    if ((!gridPaused || !simulatePaused) && acceptInputs && !inWinScreen) {
+        if (camera.mUp && !camera.mDown) {
+            camera.y = Math.max(0, Math.min(camera.y - 20, (canvasResolution * camera.scale) - canvasResolution));
+            forceRedraw = true;
+        } else if (camera.mDown && !camera.mUp) {
+            camera.y = Math.max(0, Math.min(camera.y + 20, (canvasResolution * camera.scale) - canvasResolution));
+            forceRedraw = true;
+        }
+        if (camera.mLeft && !camera.mRight) {
+            camera.x = Math.max(0, Math.min(camera.x - 20, (canvasResolution * camera.scale) - canvasResolution));
+            forceRedraw = true;
+        } else if (camera.mRight && !camera.mLeft) {
+            camera.x = Math.max(0, Math.min(camera.x + 20, (canvasResolution * camera.scale) - canvasResolution));
+            forceRedraw = true;
         }
     }
     // simulate pixels
@@ -1248,7 +1105,115 @@ function updateFrame() {
         inResetState = false;
     }
 };
+function clickLine(startX, startY, endX, endY, remove) {
+    if (!sandboxMode && !inResetState) return;
+    let x = startX;
+    let y = startY;
+    let angle = atan2(endY - startY, endX - startX);
+    let distance = sqrt(pow(endX - startX, 2) + pow(endY - startY, 2));
+    let modifiedPixelCounts = [];
+    let clickPixelNum = pixels[clickPixel].numId;
+    place: for (let i = 0; i <= distance; i++) {
+        let gridX = Math.floor(x);
+        let gridY = Math.floor(y);
+        let xmin = Math.max(0, Math.min(gridX - clickSize + 1, gridSize - 1));
+        let xmax = Math.max(0, Math.min(gridX + clickSize - 1, gridSize - 1));
+        let ymin = Math.max(0, Math.min(gridY - clickSize + 1, gridSize - 1));
+        let ymax = Math.max(0, Math.min(gridY + clickSize - 1, gridSize - 1));
+        function act(cb) {
+            for (let k = ymin; k <= ymax; k++) {
+                for (let j = xmin; j <= xmax; j++) {
+                    if (cb(j, k)) return true;
+                }
+            }
+            return false;
+        };
+        if (remove) {
+            if (sandboxMode) {
+                act(function (x, y) {
+                    grid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                    monsterGrid[y][x] = false;
+                    deleterGrid[y][x] = false;
+                });
+            } else {
+                act(function (x, y) {
+                    if (placeableGrid[y][x] && !deleterGrid[y][x]) {
+                        pixelAmounts[numPixels[grid[y][x]].id]++;
+                        modifiedPixelCounts[grid[y][x]] = true;
+                        grid[y][x] = pixNum.AIR;
+                        if (fireGrid[y][x]) {
+                            pixelAmounts['fire']++;
+                            modifiedPixelCounts[pixNum.FIRE] = true;
+                            fireGrid[y][x] = false;
+                        }
+                    }
+                });
+            }
+        } else if (clickPixel == 'fire') {
+            if (sandboxMode) act(function (x, y) {
+                fireGrid[y][x] = true;
+            });
+            else act(function (x, y) {
+                if (placeableGrid[y][x] && !deleterGrid[y][x]) {
+                    fireGrid[y][x] = true;
+                    pixelAmounts[clickPixel]--;
+                }
+                return pixelAmounts[clickPixel] <= 0;
+            });
+        } else if (clickPixel == 'deleter') {
+            if (sandboxMode) act(function (x, y) {
+                deleterGrid[y][x] = true;
+                grid[y][x] = clickPixelNum;
+            });
+        } else if (clickPixel == 'monster') {
+            if (sandboxMode) act(function (x, y) {
+                monsterGrid[y][x] = true;
+            });
+        } else if (clickPixel == 'placementRestriction') {
+            if (sandboxMode) act(function (x, y) {
+                placeableGrid[y][x] = false;
+            })
+        } else if (clickPixel == 'placementUnRestriction') {
+            if (sandboxMode) act(function (x, y) {
+                placeableGrid[y][x] = true;
+            })
+        } else {
+            if (sandboxMode) {
+                act(function (x, y) {
+                    grid[y][x] = clickPixelNum;
+                });
+            } else {
+                modifiedPixelCounts[clickPixelNum] = true;
+                if (pixelAmounts[clickPixel] <= 0) break place;
+                if (act(function (x, y) {
+                    if (placeableGrid[y][x] && !deleterGrid[y][x]) {
+                        modifiedPixelCounts[grid[y][x]] = true;
+                        pixelAmounts[numPixels[grid[y][x]].id]++;
+                        grid[y][x] = clickPixelNum;
+                        pixelAmounts[clickPixel]--;
+                    }
+                    return pixelAmounts[clickPixel] <= 0;
+                })) break place;
+            }
+        }
+        x += cos(angle);
+        y += sin(angle);
+    }
+    for (let pixelType in modifiedPixelCounts) {
+        if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
+    }
+    if (!sandboxMode) {
+        saveCode = generateSaveCode();
+        window.localStorage.setItem(`challenge-${currentPuzzleId}`, JSON.stringify({
+            code: saveCode,
+            pixels: pixelAmounts
+        }));
+        saveCodeText.value = saveCode;
+    }
+};
 
+// game control buttons
 const pauseButton = document.getElementById('pause');
 const simulatePausedButton = document.getElementById('simulatePaused');
 const advanceTickButton = document.getElementById('advanceTick');
@@ -1295,17 +1260,7 @@ simulatePausedButton.onclick = (e) => {
 advanceTickButton.onclick = (e) => {
     runTicks = 1;
 };
-document.getElementById('backToMenu').onclick = (e) => {
-    if (window.inMenuScreen || inWinScreen || !acceptInputs) return;
-    gridPaused = true;
-    simulatePaused = false;
-    updateTimeControlButtons();
-    if (sandboxMode) {
-        window.localStorage.setItem('saveCode', generateSaveCode());
-        window.localStorage.setItem('saveCodeText', saveCodeText.value);
-    }
-    transitionToMenu();
-};
+// save code inputs
 let writeSaveTimeout = setTimeout(() => { });
 saveCodeText.oninput = (e) => {
     if (!sandboxMode) return;
@@ -1369,7 +1324,7 @@ document.getElementById('downloadSave').onclick = (e) => {
     a.click();
 };
 document.getElementById('reset').onclick = async (e) => {
-    if (window.inMenuScreen || inWinScreen || !acceptInputs) return;
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
@@ -1380,7 +1335,7 @@ document.getElementById('reset').onclick = async (e) => {
     }
 };
 document.getElementById('restart').onclick = async (e) => {
-    if (window.inMenuScreen || inWinScreen || !acceptInputs) return;
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
@@ -1395,6 +1350,7 @@ gridSizeText.oninput = (e) => {
     if (gridSizeText.value != '') saveCode = gridSizeText.value + saveCode.substring(saveCode.indexOf(';'));
     saveCodeText.value = saveCode;
 };
+// settings
 const noNoiseButton = document.getElementById('noNoise');
 const fadeEffectButton = document.getElementById('fadeEffect');
 noNoiseButton.onclick = (e) => {
@@ -1415,60 +1371,181 @@ document.getElementById('changeResolution').onclick = (e) => {
         window.location.reload();
     }
 };
+// menu
+document.getElementById('backToMenu').onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
+    gridPaused = true;
+    simulatePaused = false;
+    updateTimeControlButtons();
+    if (sandboxMode) {
+        window.localStorage.setItem('saveCode', generateSaveCode());
+        window.localStorage.setItem('saveCodeText', saveCodeText.value);
+    }
+    transitionToMenu();
+};
 
-async function initSound() {
-    document.removeEventListener('mousedown', initSound);
-    document.removeEventListener('keydown', initSound);
-    const audioContext = AudioContext ? new AudioContext() : false;
+// inputs
+document.onkeydown = (e) => {
+    if (e.target.matches('button') && (e.key == 'Tab' || e.key == 'Enter')) {
+        e.preventDefault();
+        e.target.blur();
+    }
+    if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || inWinScreen || inMenuScreen) return;
+    const key = e.key.toLowerCase();
+    for (let i in pixels) {
+        if (pixels[i].key == key) {
+            clickPixel = i;
+            pixelSelectors[clickPixel].box.click();
+        }
+    }
+    if (key == 'arrowup') {
+        clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
+    } else if (key == 'arrowdown') {
+        clickSize = Math.max(1, clickSize - 1);
+    } else if (key == 'w') {
+        camera.mUp = true;
+    } else if (key == 's') {
+        camera.mDown = true;
+    } else if (key == 'a') {
+        camera.mLeft = true;
+    } else if (key == 'd') {
+        camera.mRight = true;
+    } else if (sandboxMode && key == 'r') {
+        for (let i = 0; i < gridSize; i++) {
+            if (grid[0][i] == pixNum.AIR && random() < 0.25) {
+                grid[0][i] = pixNum.WATER;
+            }
+        }
+    } else if (sandboxMode && key == 'e') {
+        for (let i = 0; i < gridSize; i++) {
+            if (grid[0][i] == pixNum.AIR && random() < 0.25) {
+                grid[0][i] = pixNum.WATER;
+            }
+        }
+    } else if (sandboxMode && key == 'b') {
+        for (let i = 0; i < gridSize; i++) {
+            grid[0][i] = pixNum.NUKE;
+        }
+    } else if (sandboxMode && key == 'n') {
+        for (let i = 0; i < gridSize; i += 5) {
+            for (let j = 0; j < gridSize; j += 5) {
+                grid[j][i] = pixNum.VERY_HUGE_NUKE;
+            }
+        }
+    } else if (key == 'enter') {
+        runTicks = 1;
+    } else if (key == 'shift') {
+        removing = true;
+    } else if (key == 'control') {
+        holdingControl = true;
+    }
+    if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11' && key != '=' && key != '-') e.preventDefault();
+};
+document.onkeyup = (e) => {
+    if (e.target.matches('#saveCode') || !acceptInputs || inWinScreen || inMenuScreen) return;
+    const key = e.key.toLowerCase();
+    if (key == 'alt') {
+        debugInfo = !debugInfo;
+    } else if (key == 'w') {
+        camera.mUp = false;
+    } else if (key == 's') {
+        camera.mDown = false;
+    } else if (key == 'a') {
+        camera.mLeft = false;
+    } else if (key == 'd') {
+        camera.mRight = false;
+    } else if (key == 'p') {
+        gridPaused = !gridPaused;
+        simulatePaused = false;
+        updateTimeControlButtons();
+    } else if (key == 'shift') {
+        removing = false;
+    } else if (key == 'control') {
+        holdingControl = false;
+    }
+    e.preventDefault();
+};
+document.addEventListener('wheel', (e) => {
+    if (mouseOver && !inMenuScreen) {
+        if (holdingControl) {
+            let percentX = (mX + camera.x) / (canvasSize * camera.scale);
+            let percentY = (mY + camera.y) / (canvasSize * camera.scale);
+            camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
+            camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
+            camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+            forceRedraw = true;
+        } else {
+            if (e.deltaY > 0) {
+                clickSize = Math.max(1, clickSize - 1);
+            } else {
+                clickSize = Math.min(Math.ceil(gridSize / 2 + 1), clickSize + 1);
+            }
+        }
+    }
+    if (holdingControl) { e.preventDefault(); }
+}, { passive: false });
+hasFocus = false;
+setInterval(function () {
+    if (hasFocus && !document.hasFocus()) {
+        removing = false;
+        holdingControl = false;
+    }
+    hasFocus = document.hasFocus();
+}, 500);
+
+// audio
+const audioContext = AudioContext ? new AudioContext() : false;
+function setAudio(n, fn) {
+    // const request = new XMLHttpRequest();
+    // request.open('GET', n, true);
+    // request.responseType = 'arraybuffer';
+    // request.onload = () => audioContext.decodeAudioData(request.response, fn);
+    // request.send();
+};
+setAudio('./menu.mp3', (buf) => {
     const gain = audioContext.createGain();
     gain.connect(audioContext.destination);
     gain.gain.setValueAtTime(0, audioContext.currentTime);
-    function setAudio(n, fn) {
-        const request = new XMLHttpRequest();
-        request.open('', n, true);
-        request.responseType = 'arraybuffer';
-        request.onload = () => audioContext.decodeAudioData(request.response, fn);
-        request.send();
+    window.startMusic = () => {
+        const musicSource = audioContext.createBufferSource();
+        musicSource.buffer = buf;
+        musicSource.loop = true;
+        musicSource.connect(gain);
+        gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 1);
+        musicSource.start();
+        window.stopMusic = () => {
+            gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
+            setTimeout(() => musicSource.stop(), 1000);
+            window.stopMusic = null;
+        };
     };
-    setAudio('./menu.mp3', (buf) => {
-        window.startMusic = () => {
-            const musicSource = audioContext.createBufferSource();
-            musicSource.buffer = buf;
-            musicSource.loop = true;
-            musicSource.connect(gain);
-            gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 1);
-            musicSource.start();
-            window.stopMusic = () => {
-                gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
-                setTimeout(() => musicSource.stop(), 1000);
-                window.stopMusic = null;
-            };
-        };
-        startMusic();
-    });
-    setAudio('./tick.mp3', (buf) => {
-        document.querySelectorAll('button').forEach((button) => {
-            button.addEventListener('click', (e) => {
-                const tickSource = audioContext.createBufferSource();
-                tickSource.buffer = buf;
-                tickSource.connect(audioContext.destination);
-                tickSource.start();
-            });
-        });
-    });
-    setAudio('./monsterDeath.mp3', (buf) => {
-        window.playMonsterDeathSound = () => {
-            const monsterDeathSource = audioContext.createBufferSource();
-            monsterDeathSource.buffer = buf;
-            monsterDeathSource.connect(audioContext.destination);
-            monsterDeathSource.start();
-        };
-    });
-    initSound = null;
-};
-document.addEventListener('mousedown', initSound);
-document.addEventListener('keydown', initSound);
+    if (!inMenuScreen) startMusic();
+});
+setAudio('./tick.mp3', (buf) => {
+    const gain = audioContext.createGain();
+    gain.connect(audioContext.destination);
+    gain.gain.setValueAtTime(0.5, audioContext.currentTime);
+    function playTick() {
+        const tickSource = audioContext.createBufferSource();
+        tickSource.buffer = buf;
+        tickSource.connect(gain);
+        tickSource.start();
+    };
+    document.querySelectorAll('button').forEach(e => e.addEventListener('click', playTick));
+    document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('click', playTick));
+});
+setAudio('./monsterDeath.mp3', (buf) => {
+    window.playMonsterDeathSound = () => {
+        const monsterDeathSource = audioContext.createBufferSource();
+        monsterDeathSource.buffer = buf;
+        monsterDeathSource.connect(audioContext.destination);
+        monsterDeathSource.start();
+    };
+});
+document.addEventListener('mousedown', function startAudio(e) { audioContext.resume(); document.removeEventListener('mousedown', startAudio); });
+document.addEventListener('keydown', function startAudio(e) { audioContext.resume(); document.removeEventListener('keydown', startAudio); });
 
+// resizing
 window.onresize = (e) => {
     canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;
     canvasScale = canvasResolution / canvasSize;
@@ -1490,12 +1567,12 @@ window.onresize = (e) => {
     }
     forceRedraw = true;
 };
-const preventMotion = (e) => {
-    if (mouseOver) {
-        window.scrollTo(0, 0);
-        e.preventDefault();
-        e.stopPropagation();
-    }
-};
+// const preventMotion = (e) => {
+//     if (mouseOver) {
+//         window.scrollTo(0, 0);
+//         e.preventDefault();
+//         e.stopPropagation();
+//     }
+// };
 // window.addEventListener("scroll", preventMotion, false);
 // window.addEventListener("touchmove", preventMotion, false);
