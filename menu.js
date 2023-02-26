@@ -59,6 +59,7 @@ function titleBob() {
 };
 let startTitleBob = setTimeout(() => { });
 
+let acceptMenuInputs = true;
 const transitionTimeouts = [];
 function setTransitionTimeout(cb, ms) {
     let t = setTimeout(() => {
@@ -96,6 +97,7 @@ function transitionWithinGame(cb) {
     }, 1100);
 };
 function transitionToMenu() {
+    acceptMenuInputs = true;
     for (let t of transitionTimeouts) {
         clearInterval(t);
     }
@@ -132,6 +134,7 @@ function transitionToMenu() {
     }, 1500);
 };
 function transitionToGame() {
+    acceptMenuInputs = false;
     for (let t of transitionTimeouts) {
         clearInterval(t);
     }
@@ -164,6 +167,7 @@ const levelSelectClose = document.getElementById('levelSelectClose');
 const levelSelectBody = document.getElementById('levelSelectBody');
 
 sandboxButton.onclick = (e) => {
+    if (!acceptMenuInputs) return;
     levelSelect.style.transform = '';
     clearTimeout(startTitleBob);
     document.getElementById('levelDetails').style.display = 'none';
@@ -194,6 +198,7 @@ levelSelectClose.onclick = (e) => {
     levelSelect.style.transform = '';
 };
 function selectPuzzle() {
+    if (!acceptMenuInputs) return;
     clearTimeout(startTitleBob);
     document.getElementById('levelDetails').style.display = '';
     document.getElementById('restart').style.display = '';

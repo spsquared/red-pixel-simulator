@@ -1496,11 +1496,11 @@ setInterval(function () {
 // audio
 const audioContext = AudioContext ? new AudioContext() : false;
 function setAudio(n, fn) {
-    // const request = new XMLHttpRequest();
-    // request.open('GET', n, true);
-    // request.responseType = 'arraybuffer';
-    // request.onload = () => audioContext.decodeAudioData(request.response, fn);
-    // request.send();
+    const request = new XMLHttpRequest();
+    request.open('GET', n, true);
+    request.responseType = 'arraybuffer';
+    request.onload = () => audioContext.decodeAudioData(request.response, fn);
+    request.send();
 };
 setAudio('./menu.mp3', (buf) => {
     const gain = audioContext.createGain();
@@ -1519,7 +1519,7 @@ setAudio('./menu.mp3', (buf) => {
             window.stopMusic = null;
         };
     };
-    if (!inMenuScreen) startMusic();
+    if (inMenuScreen) startMusic();
 });
 setAudio('./tick.mp3', (buf) => {
     const gain = audioContext.createGain();
