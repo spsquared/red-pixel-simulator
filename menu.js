@@ -116,9 +116,9 @@ function transitionToMenu() {
         menuScreen.style.backgroundColor = '';
         t_top.style.transform = '';
         t_bottom.style.transform = '';
-        if (window.startMusic) window.startMusic();
+        if (window.startMenuMusic) window.startMenuMusic();
         else setTimeout(function wait() {
-            if (window.startMusic) window.startMusic();
+            if (window.startMenuMusic) window.startMenuMusic();
             else setTimeout(wait, 1000);
         }, 1000);
     }, 800);
@@ -142,7 +142,7 @@ function transitionToGame() {
     clearInterval(titleBobController);
     titleContainer.style.transitionDuration = '';
     titleContainer.style.transform = 'translateY(-165vh)';
-    if (window.stopMusic) window.stopMusic();
+    if (window.stopMenuMusic) window.stopMenuMusic();
     document.getElementById('sidebar').scrollTo(0, 0);
     setTransitionTimeout(() => {
         puzzleButton.style.transform = 'translateY(100vh)';

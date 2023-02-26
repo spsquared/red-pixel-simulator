@@ -3232,9 +3232,9 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 140, 30)';
+            ctx.fillStyle = `rgb(200, 20, 0)`;
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 160, 70)';
+            ctx.fillStyle = `rgb(255, 30, 0)`;
             ctx.fillRect(50 / 6, 50 / 6, 100 / 3, 100 / 3);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             ctx.fillRect(50 / 6, 10, 10, 10);
