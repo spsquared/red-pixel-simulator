@@ -1517,13 +1517,15 @@ document.onkeydown = (e) => {
     }
     if (key == 'arrowup') {
         if (!brush.isSelection) {
+            let bsize = brush.size;
             brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
-            tickSound();
+            if (brush.size != bsize) tickSound();
         }
     } else if (key == 'arrowdown') {
         if (!brush.isSelection) {
+            let bsize = brush.size;
             brush.size = Math.max(1, brush.size - 1);
-            tickSound();
+            if (brush.size != bsize) tickSound();
         }
     } else if (sandboxMode && key == 'd' && e.ctrlKey) {
         if (selection.show) {
@@ -1614,12 +1616,13 @@ document.addEventListener('wheel', (e) => {
             tickSound();
             forceRedraw = true;
         } else if (!brush.isSelection) {
+            let bsize = brush.size;
             if (e.deltaY > 0) {
                 brush.size = Math.max(1, brush.size - 1);
             } else {
                 brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
             }
-            tickSound();
+            if (brush.size != bsize) tickSound();
         }
     }
     if (holdingControl) { e.preventDefault(); }
@@ -1661,22 +1664,6 @@ setAudio('./menu.mp3', (buf) => {
         };
     };
 });
-setAudio('./tick.mp3', (buf) => {
-    const gain = audioContext.createGain();
-    gain.connect(audioContext.destination);
-    gain.gain.setValueAtTime(0.5, audioContext.currentTime);
-    const preloadQueue = [];
-    preloadQueue.push(audioContext.createBufferSource());
-    preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(gain);
-    window.playTickSound = () => {
-        preloadQueue.shift().start();
-        const nextSource = audioContext.createBufferSource();
-        nextSource.buffer = buf;
-        nextSource.connect(gain);
-        preloadQueue.push(nextSource);
-    };
-});
 setAudio('./click.mp3', (buf) => {
     const gain = audioContext.createGain();
     gain.connect(audioContext.destination);
@@ -1698,7 +1685,7 @@ setAudio('./click.mp3', (buf) => {
 setAudio('./tick.mp3', (buf) => {
     const gain = audioContext.createGain();
     gain.connect(audioContext.destination);
-    gain.gain.setValueAtTime(0.5, audioContext.currentTime);
+    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
     const preloadQueue = [];
     preloadQueue.push(audioContext.createBufferSource());
     preloadQueue[0].buffer = buf;
@@ -1711,7 +1698,7 @@ setAudio('./tick.mp3', (buf) => {
         preloadQueue.push(nextSource);
     };
     document.querySelectorAll('.btick').forEach(e => e.addEventListener('click', window.playTickSound));
-    document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('mouseover', window.playTickSound));
+    document.querySelectorAll('.pickerPixel').forEach(e => e.firstChild.addEventListener('mouseover', window.playTickSound));
 });
 setAudio('./monsterDeath.mp3', (buf) => {
     const preloadQueue = [];
