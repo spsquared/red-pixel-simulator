@@ -1,6 +1,4 @@
 const puzzles = [
-    // haha i can put comments take that json
-    // oh right i barely ever use comments anyways
     {
         name: 'World of Squares',
         levels: [
@@ -45,12 +43,12 @@ const puzzles = [
             {
                 name: 'Breaking Game',
                 description: `There's plenty of lava to destroy the monsters, but they've built a water trough to stop the lava and you only have some kitchen sponges and that weird plant you found growing on your basement floor. Wait, is that a <i>vault</i> that that monster's sealed itself in? You should be able to do this, though, you'll find a way.`,
-                saveCode: '25;0000;air-310:water-4:concrete:air-17:concrete-8:air-21:concrete:air-24:concrete:air-24:concrete:air-24:concrete:air-13:lava-6:air-5:concrete:air-6:wall-3:concrete:wall-9:air:wall:air-3:concrete:grass-6:wall-3:concrete:wall-3:dirt-5:wall:air:wall:grass-3:concrete:dirt-6:wall-3:concrete:wall-3:dirt-5:wall:air:wall:dirt-10:wall-3:air:wall-3:dirt-5:wall:air:wall:dirt-10:wall-7:dirt-5:wall:air:wall:dirt-10:wall-7:dirt-5:wall-3:dirt-10:wall-7:;271:;32:f:a:f:a:f:a:f:a:f:a:f:a:f:a:f:35:7:12:7:12:7:12:7:12:7:12:7:12:7:af:;1ce:1:15:2:3c:1:4e:',
+                saveCode: '25;0000;air-310:water-4:concrete:air-17:concrete-8:air-21:concrete:air-24:concrete:air-24:concrete:air-24:concrete:air-13:lava-6:air-5:concrete:air-6:wall-3:concrete:wall-9:air:wall:air-3:concrete:grass-6:wall-3:concrete:wall-3:dirt-5:wall:air:wall:grass-3:concrete:dirt-6:wall-3:concrete:wall-3:dirt-5:wall:air:wall:dirt-10:wall-3:air:wall-3:dirt-5:wall:air:wall:dirt-10:wall-7:dirt-5:wall:air:wall:dirt-10:wall-7:dirt-5:wall-3:dirt-10:wall-7:;271:;32:f:a:f:a:f:a:f:a:f:a:f:a:f:a:f:35:7:12:7:12:7:12:7:12:7:12:7:12:7:af:;1e4:2:3c:1:4e:',
                 inventory: {
                     plant: 1,
                     sponge: 3
                 },
-                id: 'fd389469-07ad-4d5d-b73e-9a5165d2037e'
+                id: '9fdf18da-5bc2-468f-9816-0bef9d80d02d'
             },
             {
                 name: 'Floating Islands',
@@ -136,6 +134,7 @@ function triggerWin() {
     gridPaused = true;
     simulatePaused = false;
     updateTimeControlButtons();
+    if (window.playWinSound) window.playWinSound();
     winScreen.style.opacity = '1';
     winScreen.style.pointerEvents = 'all';
     winBox.style.transform = 'translateY(-50%)';

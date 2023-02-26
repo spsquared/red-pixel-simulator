@@ -192,7 +192,7 @@ sandboxButton.onclick = (e) => {
     transitionToGame();
 };
 puzzleButton.onclick = (e) => {
-    levelSelect.style.transform = 'none';
+    levelSelect.style.transform = 'translateY(100vh)';
 };
 levelSelectClose.onclick = (e) => {
     levelSelect.style.transform = '';

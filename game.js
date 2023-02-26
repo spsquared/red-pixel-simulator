@@ -879,48 +879,7 @@ function draw() {
     }
 
     // ui
-    ctx.fillStyle = '#000';
-    ctx.font = '20px Arial';
-    ctx.textBaseline = 'top';
-    ctx.textAlign = 'left';
-    if (debugInfo) {
-        if (gridPaused && simulatePaused) ctx.fillStyle = '#FFF';
-        else ctx.fillStyle = '#0000004B';
-        ctx.fillRect(5, 20, 200, 100);
-        ctx.fillStyle = '#000';
-        for (let i = 0; i < 100; i++) {
-            ctx.fillRect(5 + i * 2, 120 - fpsList[i], 2, fpsList[i]);
-        }
-        ctx.fillText('Last 10 seconds:', 10, 24);
-    }
-    if (gridPaused && simulatePaused) {
-        ctx.fillStyle = '#FFF';
-        ctx.fillRect(1, 1, 90, 18);
-        ctx.fillStyle = '#000';
-    }
-    ctx.fillText(`FPS: ${frames.length}`, 3, 1);
-    while (lastFpsList + 100 < millis()) {
-        lastFpsList += 100;
-        fpsList.push(frames.length);
-        while (fpsList.length > 100) {
-            fpsList.shift(1);
-        }
-    }
-    ctx.textAlign = 'right';
-    ctx.fillText(`Brush Size: ${brush.size * 2 - 1}`, canvasResolution - 3, 1);
-    ctx.fillText(`Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`, canvasResolution - 3, 22);
-    ctx.fillText(`Zoom: ${Math.round(camera.scale * 10) / 10}`, canvasResolution - 3, 43);
-    if (gridPaused) {
-        if (simulatePaused) {
-            ctx.font = '60px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
-        } else {
-            ctx.fillStyle = '#000';
-            ctx.fillText('PAUSED', canvasResolution - 3, 64);
-        }
-    }
+    drawUI();
 
     animationTime++;
 };
@@ -1234,6 +1193,50 @@ function clickLine(startX, startY, endX, endY, remove) {
             pixels: pixelAmounts
         }));
         saveCodeText.value = saveCode;
+    }
+};
+function drawUI() {
+    ctx.fillStyle = '#000';
+    ctx.font = '20px Arial';
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    if (debugInfo) {
+        if (gridPaused && simulatePaused) ctx.fillStyle = '#FFF';
+        else ctx.fillStyle = '#0000004B';
+        ctx.fillRect(5, 20, 200, 100);
+        ctx.fillStyle = '#000';
+        for (let i = 0; i < 100; i++) {
+            ctx.fillRect(5 + i * 2, 120 - fpsList[i], 2, fpsList[i]);
+        }
+        ctx.fillText('Last 10 seconds:', 10, 24);
+    }
+    if (gridPaused && simulatePaused) {
+        ctx.fillStyle = '#FFF';
+        ctx.fillRect(1, 1, 90, 18);
+        ctx.fillStyle = '#000';
+    }
+    ctx.fillText(`FPS: ${frames.length}`, 3, 1);
+    while (lastFpsList + 100 < millis()) {
+        lastFpsList += 100;
+        fpsList.push(frames.length);
+        while (fpsList.length > 100) {
+            fpsList.shift(1);
+        }
+    }
+    ctx.textAlign = 'right';
+    ctx.fillText(`Brush Size: ${brush.size * 2 - 1}`, canvasResolution - 3, 1);
+    ctx.fillText(`Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`, canvasResolution - 3, 22);
+    ctx.fillText(`Zoom: ${Math.round(camera.scale * 10) / 10}`, canvasResolution - 3, 43);
+    if (gridPaused) {
+        if (simulatePaused) {
+            ctx.font = '60px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
+        } else {
+            ctx.fillStyle = '#000';
+            ctx.fillText('PAUSED', canvasResolution - 3, 64);
+        }
     }
 };
 function updateFrame() {
@@ -1701,11 +1704,27 @@ setAudio('./tick.mp3', (buf) => {
     document.querySelectorAll('.pickerPixel').forEach(e => e.firstChild.addEventListener('mouseover', window.playTickSound));
 });
 setAudio('./monsterDeath.mp3', (buf) => {
+    const gain = audioContext.createGain();
+    gain.connect(audioContext.destination);
+    gain.gain.setValueAtTime(0.5, audioContext.currentTime);
+    const preloadQueue = [];
+    preloadQueue.push(audioContext.createBufferSource());
+    preloadQueue[0].buffer = buf;
+    preloadQueue[0].connect(gain);
+    window.playMonsterDeathSound = () => {
+        preloadQueue.shift().start();
+        const nextSource = audioContext.createBufferSource();
+        nextSource.buffer = buf;
+        nextSource.connect(gain);
+        preloadQueue.push(nextSource);
+    };
+});
+setAudio('./win.mp3', (buf) => {
     const preloadQueue = [];
     preloadQueue.push(audioContext.createBufferSource());
     preloadQueue[0].buffer = buf;
     preloadQueue[0].connect(audioContext.destination);
-    window.playMonsterDeathSound = () => {
+    window.playWinSound = () => {
         preloadQueue.shift().start();
         const nextSource = audioContext.createBufferSource();
         nextSource.buffer = buf;

@@ -76,14 +76,13 @@
 
 #levelSelect {
     position: absolute;
-    top: 10vh;
+    bottom: 110vh;
     left: 20vw;
     width: 60vw;
     height: 80vh;
     background-color: #EFEFEF;
     border: 4px solid black;
     transition: 500ms ease-in-out transform;
-    transform: translateY(-100vh);
 }
 #levelSelectClose {
     position: absolute;
