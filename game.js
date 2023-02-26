@@ -1557,7 +1557,7 @@ document.addEventListener('mousedown', function startAudio(e) {
     if (inMenuScreen) {
         if (window.startMusic) window.startMusic();
         else setTimeout(function wait() {
-            if (window.startMusic) window.startMusic();
+            if (window.startMusic) { if (window.startMusic) window.startMusic(); }
             else setTimeout(wait, 1000);
         }, 1000);
     }
