@@ -1512,12 +1512,19 @@ document.onkeydown = (e) => {
         if (pixels[i].key == key) {
             brush.pixel = i;
             pixelSelectors[brush.pixel].box.click();
+            clickSound();
         }
     }
     if (key == 'arrowup') {
-        if (!brush.isSelection) brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
+        if (!brush.isSelection) {
+            brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
+            tickSound();
+        }
     } else if (key == 'arrowdown') {
-        if (!brush.isSelection) brush.size = Math.max(1, brush.size - 1);
+        if (!brush.isSelection) {
+            brush.size = Math.max(1, brush.size - 1);
+            tickSound();
+        }
     } else if (sandboxMode && key == 'd' && e.ctrlKey) {
         if (selection.show) {
             selection.grid = [];
@@ -1562,6 +1569,7 @@ document.onkeydown = (e) => {
         }
     } else if (key == 'enter') {
         runTicks = 1;
+        tickSound();
     } else if (key == 'shift') {
         removing = true;
     } else if (key == 'control') {
@@ -1574,6 +1582,7 @@ document.onkeyup = (e) => {
     const key = e.key.toLowerCase();
     if (key == 'alt') {
         debugInfo = !debugInfo;
+        clickSound();
     } else if (key == 'w') {
         camera.mUp = false;
     } else if (key == 's') {
@@ -1586,6 +1595,7 @@ document.onkeyup = (e) => {
         gridPaused = !gridPaused;
         simulatePaused = false;
         updateTimeControlButtons();
+        clickSound();
     } else if (key == 'shift') {
         removing = false;
     } else if (key == 'control') {
@@ -1601,6 +1611,7 @@ document.addEventListener('wheel', (e) => {
             camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
             camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
             camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+            tickSound();
             forceRedraw = true;
         } else if (!brush.isSelection) {
             if (e.deltaY > 0) {
@@ -1608,6 +1619,7 @@ document.addEventListener('wheel', (e) => {
             } else {
                 brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
             }
+            tickSound();
         }
     }
     if (holdingControl) { e.preventDefault(); }
@@ -1657,15 +1669,49 @@ setAudio('./tick.mp3', (buf) => {
     preloadQueue.push(audioContext.createBufferSource());
     preloadQueue[0].buffer = buf;
     preloadQueue[0].connect(gain);
-    function playTick() {
+    window.playTickSound = () => {
         preloadQueue.shift().start();
         const nextSource = audioContext.createBufferSource();
         nextSource.buffer = buf;
         nextSource.connect(gain);
         preloadQueue.push(nextSource);
     };
-    document.querySelectorAll('button').forEach(e => e.addEventListener('click', playTick));
-    document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('click', playTick));
+});
+setAudio('./click.mp3', (buf) => {
+    const gain = audioContext.createGain();
+    gain.connect(audioContext.destination);
+    gain.gain.setValueAtTime(0.5, audioContext.currentTime);
+    const preloadQueue = [];
+    preloadQueue.push(audioContext.createBufferSource());
+    preloadQueue[0].buffer = buf;
+    preloadQueue[0].connect(gain);
+    window.playClickSound = () => {
+        preloadQueue.shift().start();
+        const nextSource = audioContext.createBufferSource();
+        nextSource.buffer = buf;
+        nextSource.connect(gain);
+        preloadQueue.push(nextSource);
+    };
+    document.querySelectorAll('.bclick').forEach(e => e.addEventListener('click', window.playClickSound));
+    document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('click', window.playClickSound));
+});
+setAudio('./tick.mp3', (buf) => {
+    const gain = audioContext.createGain();
+    gain.connect(audioContext.destination);
+    gain.gain.setValueAtTime(0.5, audioContext.currentTime);
+    const preloadQueue = [];
+    preloadQueue.push(audioContext.createBufferSource());
+    preloadQueue[0].buffer = buf;
+    preloadQueue[0].connect(gain);
+    window.playTickSound = () => {
+        preloadQueue.shift().start();
+        const nextSource = audioContext.createBufferSource();
+        nextSource.buffer = buf;
+        nextSource.connect(gain);
+        preloadQueue.push(nextSource);
+    };
+    document.querySelectorAll('.btick').forEach(e => e.addEventListener('click', window.playTickSound));
+    document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('mouseover', window.playTickSound));
 });
 setAudio('./monsterDeath.mp3', (buf) => {
     const preloadQueue = [];
@@ -1680,6 +1726,12 @@ setAudio('./monsterDeath.mp3', (buf) => {
         preloadQueue.push(nextSource);
     };
 });
+function tickSound() {
+    if (window.playTickSound) window.playTickSound();
+};
+function clickSound() {
+    if (window.playClickSound) window.playClickSound();
+};
 document.addEventListener('mousedown', function startAudio(e) {
     audioContext.resume();
     if (inMenuScreen) {
