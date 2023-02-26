@@ -1289,8 +1289,8 @@ function updateFrame() {
             }
             let monsterPixelType = numPixels[pixNum.MONSTER];
             let newMonsterCount = 0;
-            for (let y = 0; y < gridSize; y++) {
-                for (let x = gridSize - 1; x > 0; x--) {
+            for (let y = gridSize - 1; y > 0; y--) {
+                for (let x = 0; x < gridSize; x++) {
                     if (monsterGrid[y][x]) monsterPixelType.update(x, y);
                     if (monsterGrid[y][x]) newMonsterCount++;
                     if (deleterGrid[y][x]) grid[y][x] = pixNum.DELETER;
