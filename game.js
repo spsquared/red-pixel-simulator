@@ -1519,31 +1519,43 @@ setAudio('./menu.mp3', (buf) => {
             window.stopMusic = null;
         };
     };
-    if (inMenuScreen) startMusic();
 });
 setAudio('./tick.mp3', (buf) => {
     const gain = audioContext.createGain();
     gain.connect(audioContext.destination);
     gain.gain.setValueAtTime(0.5, audioContext.currentTime);
+    const preloadQueue = [];
+    preloadQueue.push(audioContext.createBufferSource());
+    preloadQueue[0].buffer = buf;
+    preloadQueue[0].connect(gain);
     function playTick() {
-        const tickSource = audioContext.createBufferSource();
-        tickSource.buffer = buf;
-        tickSource.connect(gain);
-        tickSource.start();
+        preloadQueue.shift().start();
+        const nextSource = audioContext.createBufferSource();
+        nextSource.buffer = buf;
+        nextSource.connect(gain);
+        preloadQueue.push(nextSource);
     };
     document.querySelectorAll('button').forEach(e => e.addEventListener('click', playTick));
     document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('click', playTick));
 });
 setAudio('./monsterDeath.mp3', (buf) => {
+    const preloadQueue = [];
+    preloadQueue.push(audioContext.createBufferSource());
+    preloadQueue[0].buffer = buf;
+    preloadQueue[0].connect(audioContext.destination);
     window.playMonsterDeathSound = () => {
-        const monsterDeathSource = audioContext.createBufferSource();
-        monsterDeathSource.buffer = buf;
-        monsterDeathSource.connect(audioContext.destination);
-        monsterDeathSource.start();
+        preloadQueue.shift().start();
+        const nextSource = audioContext.createBufferSource();
+        nextSource.buffer = buf;
+        nextSource.connect(audioContext.destination);
+        preloadQueue.push(nextSource);
     };
 });
-document.addEventListener('mousedown', function startAudio(e) { audioContext.resume(); document.removeEventListener('mousedown', startAudio); });
-document.addEventListener('keydown', function startAudio(e) { audioContext.resume(); document.removeEventListener('keydown', startAudio); });
+document.addEventListener('mousedown', function startAudio(e) {
+    audioContext.resume();
+    if (window.startMusic && inMenuScreen) window.startMusic();
+    document.removeEventListener('mousedown', startAudio);
+});
 
 // resizing
 window.onresize = (e) => {
