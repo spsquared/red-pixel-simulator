@@ -1658,8 +1658,8 @@ setAudio('./menu.mp3', (buf) => {
         musicSource.buffer = buf;
         musicSource.loop = true;
         musicSource.connect(gain);
-        gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 1);
         musicSource.start();
+        gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 1);
         window.stopMenuMusic = () => {
             gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
             setTimeout(() => musicSource.stop(), 1000);
