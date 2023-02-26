@@ -62,11 +62,10 @@ let startTitleBob = setTimeout(() => { });
 let acceptMenuInputs = true;
 const transitionTimeouts = [];
 function setTransitionTimeout(cb, ms) {
-    let t = setTimeout(() => {
+    transitionTimeouts.push(setTimeout(() => {
         cb();
         transitionTimeouts.splice(transitionTimeouts.indexOf(t), 1);
-    }, ms);
-    transitionTimeouts.push(t);
+    }, ms));
 };
 function transitionWithinGame(cb) {
     for (let t of transitionTimeouts) {

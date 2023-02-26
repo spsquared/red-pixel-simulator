@@ -1507,6 +1507,7 @@ setAudio('./menu.mp3', (buf) => {
     gain.connect(audioContext.destination);
     gain.gain.setValueAtTime(0, audioContext.currentTime);
     window.startMusic = () => {
+        if (window.stopMusic) window.stopMusic();
         const musicSource = audioContext.createBufferSource();
         musicSource.buffer = buf;
         musicSource.loop = true;
@@ -1553,7 +1554,13 @@ setAudio('./monsterDeath.mp3', (buf) => {
 });
 document.addEventListener('mousedown', function startAudio(e) {
     audioContext.resume();
-    if (window.startMusic && inMenuScreen) window.startMusic();
+    if (inMenuScreen) {
+        if (window.startMusic) window.startMusic();
+        else setTimeout(function wait() {
+            if (window.startMusic) window.startMusic();
+            else setTimeout(wait, 1000);
+        }, 1000);
+    }
     document.removeEventListener('mousedown', startAudio);
 });
 
