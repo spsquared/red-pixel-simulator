@@ -228,6 +228,10 @@ table {
     background-color: lime;
 }
 
+#controlsTable td:nth-child(1) {
+    text-align: right;
+}
+
 #winScreen {
     position: fixed;
     top: 0px;
