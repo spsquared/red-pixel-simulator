@@ -18,15 +18,19 @@ img {
     image-rendering: pixelated;
 }
 
-#canvas {
+#canvasContainer {
     position: absolute;
     top: 0px;
     left: 0px;
-    margin: 8px 8px;
-    border: 2px solid black;
-    /* image-rendering: pixelated; */
     scroll-snap-align: start;
     scroll-snap-stop: always;
+}
+#canvas {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    border: 2px solid black;
+    /* image-rendering: pixelated; */
     cursor: none;
 }
 

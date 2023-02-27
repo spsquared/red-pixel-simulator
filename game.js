@@ -23,6 +23,7 @@ function createCanvas2(size) {
         return new OffscreenCanvas(size || 1, size || 1);
     }
 };
+const canvasContainer = document.getElementById('canvasContainer');
 const canvas = document.getElementById('canvas');
 const gameCanvas = createCanvas2(canvasResolution);
 const gridCanvas = createCanvas2(canvasResolution);
@@ -75,7 +76,8 @@ const pixelPickerDescription = document.getElementById('pixelPickerDescription')
 const saveCodeText = document.getElementById('saveCode');
 const gridSizeText = document.getElementById('gridSize');
 resetCanvases();
-canvas.addEventListener('contextmenu', e => e.preventDefault());
+canvasContainer.addEventListener('contextmenu', e => e.preventDefault());
+pixelPicker.addEventListener('contextmenu', e => e.preventDefault());
 
 let gridScale = canvasResolution / gridSize;
 let canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;
@@ -819,17 +821,6 @@ function explode(x, y, size, chain) {
 function draw() {
     if (inMenuScreen) return;
 
-    prevMXGrid = mXGrid;
-    prevMYGrid = mYGrid;
-    prevMX = mX;
-    prevMY = mY;
-    mX = Math.round((mouseX - 10) * canvasScale);
-    mY = Math.round((mouseY - 10) * canvasScale);
-    let scale = gridSize / canvasSize / camera.scale / canvasScale;
-    mXGrid = Math.floor((mX + camera.x) * scale);
-    mYGrid = Math.floor((mY + camera.y) * scale);
-    mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
-
     // draw pixels
     ctx.resetTransform();
     gamectx.resetTransform();
@@ -881,7 +872,12 @@ function draw() {
     // ui
     drawUI();
 
+    // set up for next frame
     animationTime++;
+    prevMXGrid = mXGrid;
+    prevMYGrid = mYGrid;
+    prevMX = mX;
+    prevMY = mY;
 };
 function drawFrame() {
     if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
@@ -910,6 +906,7 @@ function drawFrame() {
                     redrawing = grid[i][j] != lastGrid[i][j];
                     amount = 0;
                 }
+                lastGrid[i][j] = grid[i][j];
             }
             let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
             if (curr != pixNum.AIR && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, gridctx);
@@ -918,13 +915,6 @@ function drawFrame() {
         drawBooleanGrid(monsterGrid, monsterGrid, pixNum.MONSTER, monsterctx);
         drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
         drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
-        for (let i = 0; i < gridSize; i++) {
-            for (let j = 0; j < gridSize; j++) {
-                lastGrid[i][j] = grid[i][j];
-                lastFireGrid[i][j] = fireGrid[i][j];
-                lastPlaceableGrid[i][j] = placeableGrid[i][j];
-            }
-        }
         forceRedraw = false;
     }
     if (gridPaused && runTicks <= 0 && !simulatePaused) {
@@ -961,6 +951,7 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert) {
                     redrawing = grid[i][j] != lastGrid[i][j];
                     amount = 0;
                 }
+                lastGrid[i][j] = grid[i][j];
             }
             if (pixel ^ invert && (redrawing || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, type, 1, ctx);
             else if (!pixel ^ invert && (redrawing || forceRedraw)) clearPixels(gridSize - amount - 1, i, amount + 1, 1, ctx);
@@ -974,7 +965,7 @@ function updateMouseControls() {
             let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
             let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
             for (let y = 0; y < selection.grid.length; y++) {
-                if (y + offsetY >= 0 && y + offsetX < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
+                if (y + offsetY >= 0 && y + offsetY < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
                     if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
                         grid[y + offsetY][x + offsetX] = selection.grid[y][x];
                     }
@@ -1016,7 +1007,9 @@ function drawBrush() {
             let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
             for (let y = 0; y < selection.grid.length; y++) {
                 for (let x = 0; x < selection.grid[y].length; x++) {
-                    drawPixels(x + offsetX, y + offsetY, 1, 1, selection.grid[y][x], 0.5, ctx);
+                    if (x + offsetX >= 0 && x + offsetX < gridSize && y + offsetY >= 0 && y + offsetY < gridSize) {
+                        drawPixels(x + offsetX, y + offsetY, 1, 1, selection.grid[y][x], 0.5, ctx);
+                    }
                 }
             }
             ctx.globalAlpha = 1;
@@ -1339,6 +1332,139 @@ function updateFrame() {
     }
 };
 
+// inputs
+document.onkeydown = (e) => {
+    if (e.target.matches('button') && (e.key == 'Tab' || e.key == 'Enter')) {
+        e.preventDefault();
+        e.target.blur();
+    }
+    if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || inWinScreen || inMenuScreen) return;
+    const key = e.key.toLowerCase();
+    for (let i in pixels) {
+        if (pixels[i].key == key) {
+            brush.pixel = i;
+            pixelSelectors[brush.pixel].box.click();
+        }
+    }
+    if (key == 'arrowup') {
+        if (!brush.isSelection) {
+            let bsize = brush.size;
+            brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
+            if (brush.size != bsize) tickSound();
+        }
+    } else if (key == 'arrowdown') {
+        if (!brush.isSelection) {
+            let bsize = brush.size;
+            brush.size = Math.max(1, brush.size - 1);
+            if (brush.size != bsize) tickSound();
+        }
+    } else if (sandboxMode && key == 'd' && e.ctrlKey) {
+        if (selection.show) {
+            selection.grid = [];
+            for (let y = selection.y1; y <= selection.y2; y++) {
+                selection.grid[y - selection.y1] = [];
+                for (let x = selection.x1; x <= selection.x2; x++) {
+                    selection.grid[y - selection.y1][x - selection.x1] = grid[y][x];
+                }
+            }
+            brush.isSelection = true;
+            selection.show = false;
+        }
+    } else if (key == 'enter') {
+        runTicks = 1;
+        if (gridPaused && !simulatePaused) tickSound();
+    } else if (key == 'w') {
+        camera.mUp = true;
+    } else if (key == 's') {
+        camera.mDown = true;
+    } else if (key == 'a') {
+        camera.mLeft = true;
+    } else if (key == 'd') {
+        camera.mRight = true;
+    } else if (key == 'r') {
+        // rotate selection grid
+    } else if (sandboxMode && key == 'n') {
+        for (let i = 0; i < gridSize; i += 5) {
+            for (let j = 0; j < gridSize; j += 5) {
+                grid[j][i] = pixNum.VERY_HUGE_NUKE;
+            }
+        }
+    } else if (key == 'shift') {
+        removing = true;
+    } else if (key == 'control') {
+        holdingControl = true;
+    }
+    if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11' && key != '=' && key != '-') e.preventDefault();
+};
+document.onkeyup = (e) => {
+    if (e.target.matches('#saveCode') || !acceptInputs || inWinScreen || inMenuScreen) return;
+    const key = e.key.toLowerCase();
+    if (key == 'alt') {
+        debugInfo = !debugInfo;
+        clickSound();
+    } else if (key == 'w') {
+        camera.mUp = false;
+    } else if (key == 's') {
+        camera.mDown = false;
+    } else if (key == 'a') {
+        camera.mLeft = false;
+    } else if (key == 'd') {
+        camera.mRight = false;
+    } else if (key == 'p') {
+        gridPaused = !gridPaused;
+        simulatePaused = false;
+        updateTimeControlButtons();
+        clickSound();
+    } else if (key == 'shift') {
+        removing = false;
+    } else if (key == 'control') {
+        holdingControl = false;
+    } else if (key == 'escape') {
+        brush.isSelection = false;
+        selection.show = false;
+    }
+    e.preventDefault();
+};
+document.onmousemove = (e) => {
+    mX = Math.round((e.pageX - 10) * canvasScale);
+    mY = Math.round((e.pageY - 10) * canvasScale);
+    let scale = gridSize / canvasSize / camera.scale / canvasScale;
+    mXGrid = Math.floor((mX + camera.x) * scale);
+    mYGrid = Math.floor((mY + camera.y) * scale);
+    mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
+};
+document.addEventListener('wheel', (e) => {
+    if (mouseOver && !inMenuScreen) {
+        if (holdingControl) {
+            let percentX = (mX + camera.x) / (canvasSize * camera.scale);
+            let percentY = (mY + camera.y) / (canvasSize * camera.scale);
+            camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
+            camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
+            camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+            tickSound();
+            forceRedraw = true;
+            document.onmousemove(e);
+        } else if (!brush.isSelection) {
+            let bsize = brush.size;
+            if (e.deltaY > 0) {
+                brush.size = Math.max(1, brush.size - 1);
+            } else {
+                brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
+            }
+            if (brush.size != bsize) tickSound();
+        }
+    }
+    if (holdingControl) { e.preventDefault(); }
+}, { passive: false });
+hasFocus = false;
+setInterval(function () {
+    if (hasFocus && !document.hasFocus()) {
+        removing = false;
+        holdingControl = false;
+    }
+    hasFocus = document.hasFocus();
+}, 500);
+
 // game control buttons
 const pauseButton = document.getElementById('pause');
 const simulatePausedButton = document.getElementById('simulatePaused');
@@ -1510,141 +1636,6 @@ document.getElementById('backToMenu').onclick = (e) => {
     transitionToMenu();
 };
 
-// inputs
-document.onkeydown = (e) => {
-    if (e.target.matches('button') && (e.key == 'Tab' || e.key == 'Enter')) {
-        e.preventDefault();
-        e.target.blur();
-    }
-    if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || inWinScreen || inMenuScreen) return;
-    const key = e.key.toLowerCase();
-    for (let i in pixels) {
-        if (pixels[i].key == key) {
-            brush.pixel = i;
-            pixelSelectors[brush.pixel].box.click();
-        }
-    }
-    if (key == 'arrowup') {
-        if (!brush.isSelection) {
-            let bsize = brush.size;
-            brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
-            if (brush.size != bsize) tickSound();
-        }
-    } else if (key == 'arrowdown') {
-        if (!brush.isSelection) {
-            let bsize = brush.size;
-            brush.size = Math.max(1, brush.size - 1);
-            if (brush.size != bsize) tickSound();
-        }
-    } else if (sandboxMode && key == 'd' && e.ctrlKey) {
-        if (selection.show) {
-            selection.grid = [];
-            for (let y = selection.y1; y <= selection.y2; y++) {
-                selection.grid[y - selection.y1] = [];
-                for (let x = selection.x1; x <= selection.x2; x++) {
-                    selection.grid[y - selection.y1][x - selection.x1] = grid[y][x];
-                }
-            }
-            brush.isSelection = true;
-            selection.show = false;
-        }
-    } else if (key == 'enter') {
-        runTicks = 1;
-        if (gridPaused && !simulatePaused) tickSound();
-    } else if (key == 'w') {
-        camera.mUp = true;
-    } else if (key == 's') {
-        camera.mDown = true;
-    } else if (key == 'a') {
-        camera.mLeft = true;
-    } else if (key == 'd') {
-        camera.mRight = true;
-    } else if (sandboxMode && key == 'r') {
-        for (let i = 0; i < gridSize; i++) {
-            if (grid[0][i] == pixNum.AIR && random() < 0.25) {
-                grid[0][i] = pixNum.WATER;
-            }
-        }
-    } else if (sandboxMode && key == 'e') {
-        for (let i = 0; i < gridSize; i++) {
-            if (grid[0][i] == pixNum.AIR && random() < 0.25) {
-                grid[0][i] = pixNum.WATER;
-            }
-        }
-    } else if (sandboxMode && key == 'b') {
-        for (let i = 0; i < gridSize; i++) {
-            grid[0][i] = pixNum.NUKE;
-        }
-    } else if (sandboxMode && key == 'n') {
-        for (let i = 0; i < gridSize; i += 5) {
-            for (let j = 0; j < gridSize; j += 5) {
-                grid[j][i] = pixNum.VERY_HUGE_NUKE;
-            }
-        }
-    } else if (key == 'shift') {
-        removing = true;
-    } else if (key == 'control') {
-        holdingControl = true;
-    }
-    if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11' && key != '=' && key != '-') e.preventDefault();
-};
-document.onkeyup = (e) => {
-    if (e.target.matches('#saveCode') || !acceptInputs || inWinScreen || inMenuScreen) return;
-    const key = e.key.toLowerCase();
-    if (key == 'alt') {
-        debugInfo = !debugInfo;
-        clickSound();
-    } else if (key == 'w') {
-        camera.mUp = false;
-    } else if (key == 's') {
-        camera.mDown = false;
-    } else if (key == 'a') {
-        camera.mLeft = false;
-    } else if (key == 'd') {
-        camera.mRight = false;
-    } else if (key == 'p') {
-        gridPaused = !gridPaused;
-        simulatePaused = false;
-        updateTimeControlButtons();
-        clickSound();
-    } else if (key == 'shift') {
-        removing = false;
-    } else if (key == 'control') {
-        holdingControl = false;
-    }
-    e.preventDefault();
-};
-document.addEventListener('wheel', (e) => {
-    if (mouseOver && !inMenuScreen) {
-        if (holdingControl) {
-            let percentX = (mX + camera.x) / (canvasSize * camera.scale);
-            let percentY = (mY + camera.y) / (canvasSize * camera.scale);
-            camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
-            camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
-            camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
-            tickSound();
-            forceRedraw = true;
-        } else if (!brush.isSelection) {
-            let bsize = brush.size;
-            if (e.deltaY > 0) {
-                brush.size = Math.max(1, brush.size - 1);
-            } else {
-                brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
-            }
-            if (brush.size != bsize) tickSound();
-        }
-    }
-    if (holdingControl) { e.preventDefault(); }
-}, { passive: false });
-hasFocus = false;
-setInterval(function () {
-    if (hasFocus && !document.hasFocus()) {
-        removing = false;
-        holdingControl = false;
-    }
-    hasFocus = document.hasFocus();
-}, 500);
-
 // audio
 const audioContext = AudioContext ? new AudioContext() : false;
 function setAudio(n, fn) {
@@ -1761,6 +1752,8 @@ window.onresize = (e) => {
     canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;
     canvasScale = canvasResolution / canvasSize;
     resetCanvases();
+    canvasContainer.style.width = canvasSize + 20 + 'px';
+    canvasContainer.style.height = canvasSize + 20 + 'px';
     canvas.style.width = canvasSize + 'px';
     canvas.style.height = canvasSize + 'px';
     if (window.innerWidth - canvasSize < 400) {
@@ -1769,6 +1762,7 @@ window.onresize = (e) => {
         let pickerWidth = (Math.round((window.innerWidth - 20) / 62) - 1) * 62;
         pixelPicker.style.width = pickerWidth + 'px';
         pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
+        canvasContainer.style.width = window.innerWidth + 'px';
     } else {
         sidebar.style.top = '0px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - canvasSize - 20 + 'px');
