@@ -1310,10 +1310,9 @@ function updateFrame() {
                 }
             }
             let monsterPixelType = numPixels[pixNum.MONSTER];
-            for (let y = gridSize - 1; y > 0; y--) {
+            for (let y = gridSize - 1; y >= 0; y--) {
                 for (let x = 0; x < gridSize; x++) {
                     if (deleterGrid[y][x]) grid[y][x] = pixNum.DELETER;
-                    // else if (grid[y][x] == pixNum.DELETER && !deleterGrid[y][x]) grid[y][x] = pixNum.AIR;
                     if (monsterGrid[y][x]) monsterPixelType.update(x, y);
                 }
             }
