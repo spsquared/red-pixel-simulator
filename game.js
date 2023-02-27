@@ -1210,12 +1210,17 @@ function drawUI() {
         }
         ctx.fillText('Last 10 seconds:', 10, 24);
     }
-    if (gridPaused && simulatePaused) {
-        ctx.fillStyle = '#FFF';
-        ctx.fillRect(1, 1, 90, 18);
-        ctx.fillStyle = '#000';
-    }
-    ctx.fillText(`FPS: ${frames.length}`, 3, 1);
+    let fpsText = `FPS: ${frames.length}`;
+    let brushSizeText = `Brush Size: ${brush.size * 2 - 1}`;
+    let brushPixelText = `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
+    let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
+    ctx.fillStyle = '#FFF5';
+    ctx.fillRect(1, 0, ctx.measureText(fpsText).width + 4, 20);
+    ctx.fillRect(canvasResolution - ctx.measureText(brushSizeText).width - 4, 0, ctx.measureText(brushSizeText).width + 2, 20);
+    ctx.fillRect(canvasResolution - ctx.measureText(brushPixelText).width - 4, 21, ctx.measureText(brushPixelText).width + 2, 20);
+    ctx.fillRect(canvasResolution - ctx.measureText(zoomText).width - 4, 42, ctx.measureText(zoomText).width + 2, 20);
+    ctx.fillStyle = '#000';
+    ctx.fillText(fpsText, 3, 1);
     while (lastFpsList + 100 < millis()) {
         lastFpsList += 100;
         fpsList.push(frames.length);
@@ -1224,9 +1229,9 @@ function drawUI() {
         }
     }
     ctx.textAlign = 'right';
-    ctx.fillText(`Brush Size: ${brush.size * 2 - 1}`, canvasResolution - 3, 1);
-    ctx.fillText(`Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`, canvasResolution - 3, 22);
-    ctx.fillText(`Zoom: ${Math.round(camera.scale * 10) / 10}`, canvasResolution - 3, 43);
+    ctx.fillText(brushSizeText, canvasResolution - 3, 1);
+    ctx.fillText(brushPixelText, canvasResolution - 3, 22);
+    ctx.fillText(zoomText, canvasResolution - 3, 43);
     if (gridPaused) {
         if (simulatePaused) {
             ctx.font = '60px Arial';
@@ -1234,6 +1239,8 @@ function drawUI() {
             ctx.textBaseline = 'middle';
             ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
         } else {
+            ctx.fillStyle = '#FFF5';
+            ctx.fillRect(canvasResolution - 84, 63, 82, 20);
             ctx.fillStyle = '#000';
             ctx.fillText('PAUSED', canvasResolution - 3, 64);
         }
