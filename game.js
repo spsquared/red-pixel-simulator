@@ -905,7 +905,7 @@ function drawFrame() {
                 if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
                     let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
                     if (curr != pixNum.AIR && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, gridctx);
-                    else if (curr == pixNum.AIR) clearPixels(j - amount, i, amount, 1, gridctx);
+                    else if (curr == pixNum.AIR && (redrawing || forceRedraw)) clearPixels(j - amount, i, amount, 1, gridctx);
                     curr = grid[i][j];
                     redrawing = grid[i][j] != lastGrid[i][j];
                     amount = 0;
@@ -1548,6 +1548,9 @@ document.onkeydown = (e) => {
             brush.isSelection = true;
             selection.show = false;
         }
+    } else if (key == 'enter') {
+        runTicks = 1;
+        if (gridPaused && !simulatePaused) tickSound();
     } else if (key == 'w') {
         camera.mUp = true;
     } else if (key == 's') {
@@ -1578,9 +1581,6 @@ document.onkeydown = (e) => {
                 grid[j][i] = pixNum.VERY_HUGE_NUKE;
             }
         }
-    } else if (key == 'enter') {
-        runTicks = 1;
-        tickSound();
     } else if (key == 'shift') {
         removing = true;
     } else if (key == 'control') {
