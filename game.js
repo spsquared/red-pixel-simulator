@@ -783,7 +783,7 @@ function explode(x, y, size, chain) {
     for (let cy = y - size; cy <= y + size; cy++) {
         for (let cx = x - size; cx <= x + size; cx++) {
             if (cy >= 0 && cy < gridSize && cx >= 0 && cx < gridSize) {
-                if (random() < (1 - (dist(x, y, cx, cy) / (size * 1.2))) * ((20 - (numPixels[grid[cy][cx]] ?? numPixels[pixNum.MISSING]).blastResistance) / (45 - size))) {
+                if (random() < (1 - (dist(x, y, cx, cy) / size)) * ((20 - (numPixels[grid[cy][cx]] ?? numPixels[pixNum.MISSING]).blastResistance) / (45 - size))) {
                     nextGrid[cy][cx] = pixNum.AIR;
                     monsterGrid[cy][cx] = false;
                     if (chain > 0 && !chained) {
@@ -808,7 +808,7 @@ function explode(x, y, size, chain) {
                         pendingExplosions.push([cx, cy, 15, 1]);
                         grid[cy][cx] = pixNum.WALL;
                     }
-                    if (random() < 0.5 - (dist(x, y, cx, cy) / (size * 1.2))) {
+                    if (random() < 0.5 - (dist(x, y, cx, cy) / size)) {
                         fireGrid[cy][cx] = true;
                     }
                 }
@@ -1312,7 +1312,6 @@ function updateFrame() {
             let monsterPixelType = numPixels[pixNum.MONSTER];
             for (let y = gridSize - 1; y >= 0; y--) {
                 for (let x = 0; x < gridSize; x++) {
-                    if (deleterGrid[y][x]) grid[y][x] = pixNum.DELETER;
                     if (monsterGrid[y][x]) monsterPixelType.update(x, y);
                 }
             }
