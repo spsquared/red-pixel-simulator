@@ -314,242 +314,6 @@ const pixels = {
         id: 'leaves',
         numId: 0
     },
-    // add stone, replace lava melting concrete with lava melting stone (remember to change description)
-    concrete_powder: {
-        name: 'Concrete Powder',
-        description: 'Like sand, but hardens into concrete when in contact with water',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = `rgb(150, 150, 150)`;
-            fillPixel(x, y, width, height, ctx);
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.WATER)) {
-                nextGrid[y][x] = pixNum.CONCRETE;
-                return;
-            }
-            if (y > 0 && grid[y - 1][x] == pixNum.LAVA) {
-                if (canMoveTo(x, y - 1) && random() < 0.5) {
-                    nextGrid[y][x] = pixNum.LAVA;
-                    nextGrid[y - 1][x] = pixNum.CONCRETE;
-                }
-            }
-            fall(x, y, 1, 2, isPassableNonLavaFluid);
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(150, 150, 150)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 5,
-        flammability: 0,
-        pushable: true,
-        rotateable: false,
-        group: 0,
-        key: Infinity,
-        updateStage: 9,
-        animatedNoise: false,
-        animated: false,
-        pickable: true,
-        id: 'concrete_powder',
-        numId: 0
-    },
-    concrete: {
-        name: 'Concrete',
-        description: 'Hard stuff that doesn\'t move easily',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = `rgb(75, 75, 75)`;
-            fillPixel(x, y, width, height, ctx);
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            if (y > 0) {
-                if (grid[y - 1][x] == pixNum.LAVA) {
-                    if (canMoveTo(x, y - 1) && random() < 0.25) {
-                        nextGrid[y][x] = pixNum.LAVA;
-                        nextGrid[y - 1][x] = pixNum.CONCRETE_POWDER;
-                    }
-                }
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 75, 75)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 15,
-        flammability: 0,
-        pushable: true,
-        rotateable: false,
-        group: 0,
-        key: Infinity,
-        updateStage: 10,
-        animatedNoise: false,
-        animated: false,
-        pickable: true,
-        id: 'concrete',
-        numId: 0
-    },
-    water: {
-        name: 'Water',
-        description: 'Unrealistically flows and may or may not be wet',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            if (noNoise) {
-                ctx.fillStyle = `rgb(75, 100, 255)`;
-                fillPixel(x, y, width, height, ctx);
-            } else {
-                ctx.fillStyle = `rgb(100, 175, 255)`;
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(75, 50, 255, ${noise((x + i) / 4, (y + j) / 4, animationTime / 10) + 0.1})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
-            }
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            fireGrid[y][x] = false;
-            updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = pixNum.AIR;
-                    nextGrid[actionY][actionX] = pixNum.CONCRETE;
-                }
-            });
-            if (y < gridSize - 1) {
-                flow(x, y);
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 100, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 12,
-        flammability: 0,
-        pushable: true,
-        rotateable: false,
-        group: 0,
-        key: Infinity,
-        updateStage: 10,
-        animatedNoise: true,
-        animated: true,
-        pickable: true,
-        id: 'water',
-        numId: 0
-    },
-    lava: {
-        name: 'Lava',
-        description: 'Try not to get burned, it also melts stuff and sets things on fire (and hardens into... concrete?)',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            if (noNoise) {
-                ctx.fillStyle = `rgb(255, 100, 0)`;
-                fillPixel(x, y, width, height, ctx);
-            } else {
-                ctx.fillStyle = `rgb(255, 0, 0)`;
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(255, 255, 0, ${noise((x + i) / 6, (y + j) / 6, animationTime / 30)})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
-            }
-        },
-        update: function (x, y) {
-            updateTouchingPixel(x, y, pixNum.COLLAPSIBLE, function (actionX, actionY) {
-                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = pixNum.AIR;
-                    nextGrid[actionY][actionX] = pixNum.SAND;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.LASER_SCATTERER, function (actionX, actionY) {
-                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = pixNum.AIR;
-                    nextGrid[actionY][actionX] = pixNum.SAND;
-                }
-            });
-            let cooldownSpeed = 2;
-            updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
-                cooldownSpeed--;
-            });
-            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                cooldownSpeed++;
-            });
-            if (random() < 0.0001 * cooldownSpeed) {
-                nextGrid[y][x] = pixNum.CONCRETE_POWDER;
-                return;
-            }
-            nextFireGrid[y][x] = true;
-            if (y < gridSize - 1 && random() < 0.5) {
-                flow(x, y);
-            }
-            if (y > 0) {
-                if (random() < 0.125) {
-                    let validSlidingPositions = [];
-                    if (x > 0) {
-                        if ((grid[y][x - 1] == pixNum.CONCRETE || grid[y][x - 1] == pixNum.CONCRETE_POWDER) && (grid[y - 1][x - 1] == pixNum.CONCRETE || grid[y - 1][x - 1] == pixNum.CONCRETE_POWDER)) {
-                            validSlidingPositions.push(-1);
-                        }
-                    }
-                    if (x < gridSize - 1) {
-                        if ((grid[y][x + 1] == pixNum.CONCRETE || grid[y][x + 1] == pixNum.CONCRETE_POWDER) && (grid[y - 1][x + 1] == pixNum.CONCRETE || grid[y - 1][x + 1] == pixNum.CONCRETE_POWDER)) {
-                            validSlidingPositions.push(1);
-                        }
-                    }
-                    if (validSlidingPositions.length > 0) {
-                        let slidePosition = validSlidingPositions[Math.floor(random(0, validSlidingPositions.length))];
-                        if (nextGrid[y][x] == null && nextGrid[y - 1][x + slidePosition] == null) {
-                            nextGrid[y][x] = grid[y - 1][x + slidePosition];
-                            nextGrid[y - 1][x + slidePosition] = pixNum.LAVA;
-                        }
-                    }
-                }
-            }
-            if (y > 0) {
-                if (random() < 0.5) {
-                    if (y == gridSize - 1 || grid[y + 1][x] == pixNum.LAVA) {
-                        if (grid[y - 1][x] == pixNum.CONCRETE_POWDER || grid[y - 1][x] == pixNum.CONCRETE) {
-                            if (nextGrid[y][x] == null && nextGrid[y - 1][x] == null) {
-                                nextGrid[y][x] = grid[y - 1][x];
-                                nextGrid[y - 1][x] = pixNum.LAVA;
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 100, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 16,
-        flammability: 0,
-        pushable: true,
-        rotateable: false,
-        group: 0,
-        key: Infinity,
-        updateStage: 10,
-        animatedNoise: true,
-        animated: true,
-        pickable: true,
-        id: 'lava',
-        numId: 0
-    },
     ash: {
         name: 'Ash',
         description: 'Burnt stuff, doesn\'t burn easily',
@@ -651,6 +415,274 @@ const pixels = {
         animated: false,
         pickable: true,
         id: 'wet_ash',
+        numId: 0
+    },
+    stone: {
+        name: 'Concrete',
+        description: 'Hard stuff that doesn\'t move easily',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(110, 110, 110)`;
+            fillPixel(x, y, width, height, ctx);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (y > 0) {
+                if (grid[y - 1][x] == pixNum.LAVA) {
+                    if (canMoveTo(x, y - 1) && random() < 0.25) {
+                        nextGrid[y][x] = pixNum.LAVA;
+                        nextGrid[y - 1][x] = pixNum.STONE;
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(110, 110, 110)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 15,
+        flammability: 0,
+        pushable: true,
+        rotateable: false,
+        group: 0,
+        key: Infinity,
+        updateStage: 10,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'stone',
+        numId: 0
+    },
+    water: {
+        name: 'Water',
+        description: 'Unrealistically flows and may or may not be wet',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = `rgb(75, 100, 255)`;
+                fillPixel(x, y, width, height, ctx);
+            } else {
+                ctx.fillStyle = `rgb(100, 175, 255)`;
+                fillPixel(x, y, width, height, ctx);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = `rgb(75, 50, 255, ${noise((x + i) / 4, (y + j) / 4, animationTime / 10) + 0.1})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            fireGrid[y][x] = false;
+            updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    nextGrid[actionY][actionX] = pixNum.CONCRETE;
+                }
+            });
+            if (y < gridSize - 1) {
+                flow(x, y);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 100, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 12,
+        flammability: 0,
+        pushable: true,
+        rotateable: false,
+        group: 0,
+        key: Infinity,
+        updateStage: 10,
+        animatedNoise: true,
+        animated: true,
+        pickable: true,
+        id: 'water',
+        numId: 0
+    },
+    lava: {
+        name: 'Lava',
+        description: 'Try not to get burned, it also melts stuff and sets things on fire',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = `rgb(255, 100, 0)`;
+                fillPixel(x, y, width, height, ctx);
+            } else {
+                ctx.fillStyle = `rgb(255, 0, 0)`;
+                fillPixel(x, y, width, height, ctx);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = `rgb(255, 255, 0, ${noise((x + i) / 6, (y + j) / 6, animationTime / 30)})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            updateTouchingPixel(x, y, pixNum.COLLAPSIBLE, function (actionX, actionY) {
+                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    nextGrid[actionY][actionX] = pixNum.SAND;
+                }
+            });
+            updateTouchingPixel(x, y, pixNum.LASER_SCATTERER, function (actionX, actionY) {
+                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    nextGrid[actionY][actionX] = pixNum.SAND;
+                }
+            });
+            let cooldownSpeed = 2;
+            updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
+                cooldownSpeed--;
+            });
+            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
+                cooldownSpeed++;
+            });
+            if (random() < 0.0001 * cooldownSpeed) {
+                nextGrid[y][x] = pixNum.STONE;
+                return;
+            }
+            nextFireGrid[y][x] = true;
+            if (y < gridSize - 1 && random() < 0.5) {
+                flow(x, y);
+            }
+            if (y > 0) {
+                if (random() < 0.125) {
+                    let validSlidingPositions = [];
+                    if (x > 0) {
+                        if (grid[y][x - 1] == pixNum.STONE && grid[y - 1][x - 1] == pixNum.STONE) {
+                            validSlidingPositions.push(-1);
+                        }
+                    }
+                    if (x < gridSize - 1) {
+                        if (grid[y][x + 1] == pixNum.STONE && grid[y - 1][x + 1] == pixNum.STONE) {
+                            validSlidingPositions.push(1);
+                        }
+                    }
+                    if (validSlidingPositions.length > 0) {
+                        let slidePosition = validSlidingPositions[Math.floor(random(0, validSlidingPositions.length))];
+                        if (nextGrid[y][x] == null && nextGrid[y - 1][x + slidePosition] == null) {
+                            nextGrid[y][x] = grid[y - 1][x + slidePosition];
+                            nextGrid[y - 1][x + slidePosition] = pixNum.LAVA;
+                        }
+                    }
+                }
+            }
+            if (y > 0) {
+                if (random() < 0.5) {
+                    if (y == gridSize - 1 || grid[y + 1][x] == pixNum.LAVA) {
+                        if (grid[y - 1][x] == pixNum.STONE) {
+                            if (nextGrid[y][x] == null && nextGrid[y - 1][x] == null) {
+                                nextGrid[y][x] = grid[y - 1][x];
+                                nextGrid[y - 1][x] = pixNum.LAVA;
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 100, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 16,
+        flammability: 0,
+        pushable: true,
+        rotateable: false,
+        group: 0,
+        key: Infinity,
+        updateStage: 10,
+        animatedNoise: true,
+        animated: true,
+        pickable: true,
+        id: 'lava',
+        numId: 0
+    },
+    concrete_powder: {
+        name: 'Concrete Powder',
+        description: 'Like sand, but hardens into concrete when in contact with water',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(150, 150, 150)`;
+            fillPixel(x, y, width, height, ctx);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.WATER)) {
+                nextGrid[y][x] = pixNum.CONCRETE;
+                return;
+            }
+            fall(x, y, 1, 2, isPassableFluid);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(150, 150, 150)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 0,
+        pushable: true,
+        rotateable: false,
+        group: 0,
+        key: Infinity,
+        updateStage: 9,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'concrete_powder',
+        numId: 0
+    },
+    concrete: {
+        name: 'Concrete',
+        description: 'Hard stuff that doesn\'t move easily',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(75, 75, 75)`;
+            fillPixel(x, y, width, height, ctx);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (y > 0) {
+                if (grid[y - 1][x] == pixNum.LAVA) {
+                    if (canMoveTo(x, y - 1) && random() < 0.25) {
+                        nextGrid[y][x] = pixNum.LAVA;
+                        nextGrid[y - 1][x] = pixNum.CONCRETE_POWDER;
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 75, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 15,
+        flammability: 0,
+        pushable: true,
+        rotateable: false,
+        group: 0,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'concrete',
         numId: 0
     },
     plant: {
