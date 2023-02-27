@@ -418,8 +418,8 @@ const pixels = {
         numId: 0
     },
     stone: {
-        name: 'Concrete',
-        description: 'Hard stuff that doesn\'t move easily',
+        name: 'Stone',
+        description: 'Very stony and hard',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = `rgb(110, 110, 110)`;
@@ -443,7 +443,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 15,
+        blastResistance: 14,
         flammability: 0,
         pushable: true,
         rotateable: false,
@@ -648,7 +648,7 @@ const pixels = {
     },
     concrete: {
         name: 'Concrete',
-        description: 'Hard stuff that doesn\'t move easily',
+        description: 'Hard stuff that doesn\'t move easily, behaves similarly to stone but does not melt',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = `rgb(75, 75, 75)`;
