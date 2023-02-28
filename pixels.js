@@ -14,6 +14,7 @@ const pixels = {
         blastResistance: 0,
         flammability: 0,
         pushable: true,
+        cloneable: false,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -43,6 +44,7 @@ const pixels = {
         blastResistance: 20,
         flammability: 0,
         pushable: false,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -81,6 +83,7 @@ const pixels = {
         blastResistance: 3,
         flammability: 1,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -137,6 +140,7 @@ const pixels = {
         blastResistance: 3,
         flammability: 15,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -190,6 +194,7 @@ const pixels = {
         blastResistance: 2,
         flammability: 1,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -222,6 +227,7 @@ const pixels = {
         blastResistance: 5,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -257,6 +263,7 @@ const pixels = {
         blastResistance: 8,
         flammability: 12,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -304,6 +311,7 @@ const pixels = {
         blastResistance: 1,
         flammability: 18,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -357,6 +365,7 @@ const pixels = {
         blastResistance: 3,
         flammability: 2,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -407,6 +416,7 @@ const pixels = {
         blastResistance: 3,
         flammability: 1,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -446,6 +456,7 @@ const pixels = {
         blastResistance: 14,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -498,6 +509,7 @@ const pixels = {
         blastResistance: 12,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -600,6 +612,7 @@ const pixels = {
         blastResistance: 16,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -636,6 +649,7 @@ const pixels = {
         blastResistance: 5,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -675,6 +689,7 @@ const pixels = {
         blastResistance: 15,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -721,6 +736,7 @@ const pixels = {
         blastResistance: 1,
         flammability: 15,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -761,6 +777,7 @@ const pixels = {
         blastResistance: 1,
         flammability: 10,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -832,7 +849,8 @@ const pixels = {
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 20,
-        pushable: true,
+        pushable: false,
+        cloneable: false,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -878,6 +896,7 @@ const pixels = {
         blastResistance: 0,
         flammability: 20,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -907,6 +926,7 @@ const pixels = {
         blastResistance: 0,
         flammability: 4,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 0,
         key: Infinity,
@@ -925,7 +945,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
             }
         },
@@ -954,6 +974,7 @@ const pixels = {
         blastResistance: 14,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 0,
         group: 1,
@@ -973,7 +994,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
+            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
             }
         },
@@ -1002,6 +1023,7 @@ const pixels = {
         blastResistance: 14,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 1,
         group: 1,
@@ -1021,7 +1043,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
             }
         },
@@ -1050,6 +1072,7 @@ const pixels = {
         blastResistance: 14,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 2,
         group: 1,
@@ -1069,7 +1092,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
+            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
             }
         },
@@ -1098,6 +1121,7 @@ const pixels = {
         blastResistance: 14,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 3,
         group: 1,
@@ -1117,11 +1141,11 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x - 1, y)) {
                 let moveX = null;
                 let lastCollapsible = null;
                 for (let i = x - 1; i >= 0; i--) {
-                    if (grid[y][i] == pixNum.AIR || grid[y][i] == pixNum.DELETER) {
+                    if (isAir(i, y)) {
                         moveX = i;
                         if (grid[y][i] == pixNum.DELETER) {
                             moveX++;
@@ -1131,7 +1155,7 @@ const pixels = {
                     if (grid[y][i] == pixNum.COLLAPSIBLE) {
                         lastCollapsible = i;
                     }
-                    if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
+                    if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL) {
                         break;
                     }
                 }
@@ -1179,6 +1203,7 @@ const pixels = {
         blastResistance: 12,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         group: 1,
         rotation: 0,
@@ -1198,11 +1223,11 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable) {
+            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x, y - 1)) {
                 let moveY = null;
                 let lastCollapsible = null;
                 for (let i = y - 1; i >= 0; i--) {
-                    if (grid[i][x] == pixNum.AIR || grid[i][x] == pixNum.DELETER) {
+                    if (isAir(x, i)) {
                         moveY = i;
                         if (grid[i][x] == pixNum.DELETER) {
                             moveY++;
@@ -1212,7 +1237,7 @@ const pixels = {
                     if (grid[i][x] == pixNum.COLLAPSIBLE) {
                         lastCollapsible = i;
                     }
-                    if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
+                    if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
                         break;
                     }
                 }
@@ -1260,6 +1285,7 @@ const pixels = {
         blastResistance: 12,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         group: 1,
         rotation: 1,
@@ -1279,11 +1305,11 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable) {
+            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x + 1, y)) {
                 let moveX = null;
                 let lastCollapsible = null;
                 for (let i = x + 1; i <= gridSize - 1; i++) {
-                    if (grid[y][i] == pixNum.AIR || grid[y][i] == pixNum.DELETER) {
+                    if (isAir(i, y)) {
                         moveX = i;
                         if (grid[y][i] == pixNum.DELETER) {
                             moveX--;
@@ -1293,7 +1319,7 @@ const pixels = {
                     if (grid[y][i] == pixNum.COLLAPSIBLE) {
                         lastCollapsible = i;
                     }
-                    if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
+                    if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL) {
                         break;
                     }
                 }
@@ -1341,6 +1367,7 @@ const pixels = {
         blastResistance: 12,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         group: 1,
         rotation: 2,
@@ -1360,12 +1387,11 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable) {
+            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x, y + 1)) {
                 let moveY = null;
                 let lastCollapsible = null;
                 for (let i = y + 1; i <= gridSize - 1; i++) {
-                    if (grid[i][x] == pixNum.AIR || grid[i][x] == pixNum.DELETER) {
-                        moveY = i;
+                    if (isAir(x, i)) {
                         if (grid[i][x] == pixNum.DELETER) {
                             moveY--;
                         }
@@ -1374,7 +1400,7 @@ const pixels = {
                     if (grid[i][x] == pixNum.COLLAPSIBLE) {
                         lastCollapsible = i;
                     }
-                    if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
+                    if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
                         break;
                     }
                 }
@@ -1422,6 +1448,7 @@ const pixels = {
         blastResistance: 12,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         group: 1,
         rotation: 3,
@@ -1469,6 +1496,7 @@ const pixels = {
         blastResistance: 14,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 0,
         group: 1,
@@ -1516,7 +1544,9 @@ const pixels = {
         blastResistance: 14,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 1,
         group: 1,
@@ -1564,6 +1594,7 @@ const pixels = {
         blastResistance: 14,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 2,
         group: 1,
@@ -1611,6 +1642,7 @@ const pixels = {
         blastResistance: 14,
         flammability: 8,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 3,
         group: 1,
@@ -1645,7 +1677,7 @@ const pixels = {
             let moveX = null;
             let lastCollapsible = null;
             for (let i = x - 1; i >= 0; i--) {
-                if (grid[y][i] == pixNum.AIR || grid[y][i] == pixNum.DELETER) {
+                if (isAir(i, y)) {
                     moveX = i;
                     if (grid[y][i] == pixNum.DELETER) {
                         moveX++;
@@ -1655,7 +1687,7 @@ const pixels = {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_RIGHT) {
                     break;
                 }
             }
@@ -1686,6 +1718,7 @@ const pixels = {
         blastResistance: 10,
         flammability: 6,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 0,
         group: 1,
@@ -1720,7 +1753,7 @@ const pixels = {
             let moveY = null;
             let lastCollapsible = null;
             for (let i = y - 1; i >= 0; i--) {
-                if (grid[i][x] == pixNum.AIR || grid[i][x] == pixNum.DELETER) {
+                if (isAir(x, i)) {
                     moveY = i;
                     if (grid[i][x] == pixNum.DELETER) {
                         moveY++;
@@ -1730,7 +1763,7 @@ const pixels = {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_DOWN) {
                     break;
                 }
             }
@@ -1761,6 +1794,7 @@ const pixels = {
         blastResistance: 10,
         flammability: 6,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 1,
         group: 1,
@@ -1795,7 +1829,7 @@ const pixels = {
             let moveX = null;
             let lastCollapsible = null;
             for (let i = x + 1; i <= gridSize - 1; i++) {
-                if (grid[y][i] == pixNum.AIR || grid[y][i] == pixNum.DELETER) {
+                if (isAir(i, y)) {
                     moveX = i;
                     if (grid[y][i] == pixNum.DELETER) {
                         moveX--;
@@ -1805,7 +1839,7 @@ const pixels = {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || grid[y][i] == pixNum.SLIDER_VERTICAL) {
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_LEFT) {
                     break;
                 }
             }
@@ -1836,6 +1870,7 @@ const pixels = {
         blastResistance: 10,
         flammability: 6,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 2,
         group: 1,
@@ -1870,7 +1905,7 @@ const pixels = {
             let moveY = null;
             let lastCollapsible = null;
             for (let i = y + 1; i <= gridSize - 1; i++) {
-                if (grid[i][x] == pixNum.AIR || grid[i][x] == pixNum.DELETER) {
+                if (isAir(x, i)) {
                     moveY = i;
                     if (grid[i][x] == pixNum.DELETER) {
                         moveY--;
@@ -1880,7 +1915,7 @@ const pixels = {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_UP) {
                     break;
                 }
             }
@@ -1911,6 +1946,7 @@ const pixels = {
         blastResistance: 10,
         flammability: 6,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 3,
         group: 1,
@@ -1958,6 +1994,7 @@ const pixels = {
         blastResistance: 8,
         flammability: 4,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         rotation: 0,
         group: 1,
@@ -2005,6 +2042,7 @@ const pixels = {
         blastResistance: 8,
         flammability: 4,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         rotation: 1,
         group: 1,
@@ -2052,6 +2090,7 @@ const pixels = {
         blastResistance: 8,
         flammability: 4,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         rotation: 2,
         group: 1,
@@ -2099,6 +2138,7 @@ const pixels = {
         blastResistance: 8,
         flammability: 4,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         rotation: 3,
         group: 1,
@@ -2175,6 +2215,7 @@ const pixels = {
         blastResistance: 8,
         flammability: 4,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 1,
         key: Infinity,
@@ -2250,6 +2291,7 @@ const pixels = {
         blastResistance: 8,
         flammability: 4,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 1,
         key: Infinity,
@@ -2285,6 +2327,7 @@ const pixels = {
         blastResistance: 18,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 0,
         group: 1,
@@ -2321,6 +2364,7 @@ const pixels = {
         blastResistance: 18,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 1,
         group: 1,
@@ -2370,6 +2414,7 @@ const pixels = {
         blastResistance: 5,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 2,
         key: Infinity,
@@ -2426,6 +2471,7 @@ const pixels = {
         blastResistance: 5,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 2,
         key: Infinity,
@@ -2456,7 +2502,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (validMovingPixel(x, y) && y < gridSize - 1 && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
+            if (validMovingPixel(x, y) && y < gridSize - 1 && isAir(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
         },
@@ -2470,6 +2516,7 @@ const pixels = {
         blastResistance: 2,
         flammability: 15,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 2,
         key: Infinity,
@@ -2509,6 +2556,7 @@ const pixels = {
         blastResistance: 19,
         flammability: 2,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 2,
         key: Infinity,
@@ -2546,6 +2594,7 @@ const pixels = {
         blastResistance: 1,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 2,
         key: Infinity,
@@ -2570,6 +2619,7 @@ const pixels = {
                     fillPixel(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
                 }
             }
+            abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < height; i++) {
                 let endX = x;
@@ -2581,15 +2631,15 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (random() < 0.2) {
-                let removeX = x;
-                while (removeX > 0) {
-                    removeX--;
-                    if (grid[y][removeX] != pixNum.AIR) {
+            let removeX = x;
+            while (removeX > 0) {
+                removeX--;
+                if (grid[y][removeX] != pixNum.AIR) {
+                    if (random() < 0.2 - ((numPixels[grid[y][removeX]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
                         if (grid[y][removeX] != pixNum.LASER_SCATTERER) nextGrid[y][removeX] = pixNum.AIR;
                         if (grid[y][removeX] < pixNum.LASER_LEFT || grid[y][removeX] > pixNum.LASER_DOWN) nextFireGrid[y][removeX] = true;
-                        break;
                     }
+                    break;
                 }
             }
         },
@@ -2605,6 +2655,7 @@ const pixels = {
         blastResistance: 1,
         flammability: 20,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 0,
         group: 2,
@@ -2630,6 +2681,7 @@ const pixels = {
                     fillPixel(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2, ctx);
                 }
             }
+            abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < width; i++) {
                 let endY = y;
@@ -2641,15 +2693,15 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (random() < 0.2) {
-                let removeY = y;
-                while (removeY > 0) {
-                    removeY--;
-                    if (grid[removeY][x] != pixNum.AIR) {
+            let removeY = y;
+            while (removeY > 0) {
+                removeY--;
+                if (grid[removeY][x] != pixNum.AIR) {
+                    if (random() < 0.2 - ((numPixels[grid[removeY][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
                         if (grid[removeY][x] != pixNum.LASER_SCATTERER) nextGrid[removeY][x] = pixNum.AIR;
                         if (grid[removeY][x] < pixNum.LASER_LEFT || grid[removeY][x] > pixNum.LASER_DOWN) nextFireGrid[removeY][x] = true;
-                        break;
                     }
+                    break;
                 }
             }
         },
@@ -2665,6 +2717,7 @@ const pixels = {
         blastResistance: 1,
         flammability: 20,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 1,
         group: 2,
@@ -2690,6 +2743,7 @@ const pixels = {
                     fillPixel(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
                 }
             }
+            abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < height; i++) {
                 let endX = x + width - 1;
@@ -2701,15 +2755,15 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (random() < 0.2) {
-                let removeX = x;
-                while (removeX < gridSize - 1) {
-                    removeX++;
-                    if (grid[y][removeX] != pixNum.AIR) {
+            let removeX = x;
+            while (removeX < gridSize - 1) {
+                removeX++;
+                if (grid[y][removeX] != pixNum.AIR) {
+                    if (random() < 0.2 - ((numPixels[grid[y][removeX]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
                         if (grid[y][removeX] != pixNum.LASER_SCATTERER) nextGrid[y][removeX] = pixNum.AIR;
                         if (grid[y][removeX] < pixNum.LASER_LEFT || grid[y][removeX] > pixNum.LASER_DOWN) nextFireGrid[y][removeX] = true;
-                        break;
                     }
+                    break;
                 }
             }
         },
@@ -2725,6 +2779,7 @@ const pixels = {
         blastResistance: 1,
         flammability: 20,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 2,
         group: 2,
@@ -2750,6 +2805,7 @@ const pixels = {
                     fillPixel(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2, ctx);
                 }
             }
+            abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < width; i++) {
                 let endY = y + height - 1;
@@ -2761,11 +2817,11 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (random() < 0.2) {
-                let removeY = y;
-                while (removeY < gridSize - 1) {
-                    removeY++;
-                    if (grid[removeY][x] != pixNum.AIR) {
+            let removeY = y;
+            while (removeY < gridSize - 1) {
+                removeY++;
+                if (grid[removeY][x] != pixNum.AIR) {
+                    if (random() < 0.2 - ((numPixels[grid[removeY][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
                         if (grid[removeY][x] != pixNum.LASER_SCATTERER) nextGrid[removeY][x] = pixNum.AIR;
                         if (grid[removeY][x] < pixNum.LASER_LEFT || grid[removeY][x] > pixNum.LASER_DOWN) nextFireGrid[removeY][x] = true;
                         break;
@@ -2785,6 +2841,7 @@ const pixels = {
         blastResistance: 1,
         flammability: 20,
         pushable: true,
+        cloneable: true,
         rotateable: true,
         rotation: 3,
         group: 2,
@@ -2832,6 +2889,7 @@ const pixels = {
         blastResistance: 0,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 3,
         key: Infinity,
@@ -2878,6 +2936,7 @@ const pixels = {
         blastResistance: 0,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 3,
         key: Infinity,
@@ -2924,6 +2983,7 @@ const pixels = {
         blastResistance: 0,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 3,
         key: Infinity,
@@ -2962,6 +3022,7 @@ const pixels = {
         blastResistance: 20,
         flammability: 0,
         pushable: false,
+        cloneable: true,
         rotateable: false,
         group: 3,
         key: Infinity,
@@ -3014,6 +3075,7 @@ const pixels = {
         blastResistance: 15,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 3,
         key: Infinity,
@@ -3170,6 +3232,7 @@ const pixels = {
         blastResistance: 18,
         flammability: NaN,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 3,
         key: Infinity,
@@ -3205,6 +3268,7 @@ const pixels = {
         blastResistance: 20,
         flammability: 0,
         pushable: true,
+        cloneable: true,
         rotateable: false,
         group: 3,
         key: Infinity,
@@ -3234,6 +3298,7 @@ const pixels = {
         blastResistance: 0,
         flammability: 0,
         pushable: false,
+        cloneable: false,
         rotateable: false,
         group: 4,
         key: Infinity,
@@ -3285,6 +3350,7 @@ const pixels = {
         blastResistance: 0,
         flammability: 0,
         pushable: false,
+        cloneable: false,
         rotateable: false,
         group: 4,
         key: Infinity,
@@ -3308,7 +3374,7 @@ const pixels = {
                 monsterGrid[y][x] = false;
                 fireGrid[y][x] = false;
             } else if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1) && !monsterGrid[y + 1][x]) {
-                if (deleterGrid[y + 1][x]) {
+                if (grid[y + 1][x] == pixNum.DELETER) {
                     nextGrid[y][x] = pixNum.AIR;
                     monsterGrid[y][x] = false;
                     nextFireGrid[y][x] = false;
@@ -3341,17 +3407,18 @@ const pixels = {
             ctx.fillStyle = `rgb(255, 30, 0)`;
             fillPixel(1 / 6, 1 / 6, 2 / 3, 2 / 3);
             ctx.fillStyle = `rgb(0, 0, 0)`;
-            fillPixel(1 / 6, 1 / 5, 1 / 5, 1 / 5, ctx);
-            fillPixel(19 / 30, 1 / 5, 1 / 5, 1 / 5, ctx);
-            fillPixel(1 / 4, 3 / 5, 1 / 2, 1 / 6, ctx);
+            fillPixel(1 / 6, 1 / 5, 1 / 5, 1 / 5);
+            fillPixel(19 / 30, 1 / 5, 1 / 5, 1 / 5);
+            fillPixel(1 / 4, 3 / 5, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
         blastResistance: 2,
         flammability: 20,
         pushable: false,
+        cloneable: false,
         rotateable: false,
-        group: 3,
+        group: 4,
         key: Infinity,
         updateStage: -1,
         animatedNoise: false,
@@ -3378,7 +3445,8 @@ const pixels = {
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
-        pushable: true,
+        pushable: false,
+        cloneable: false,
         rotateable: false,
         group: -1,
         key: Infinity,
@@ -3417,7 +3485,8 @@ const pixels = {
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
-        pushable: true,
+        pushable: false,
+        cloneable: false,
         rotateable: false,
         group: -1,
         key: Infinity,
@@ -3450,7 +3519,8 @@ const pixels = {
         prerenderedFrames: [],
         blastResistance: undefined,
         flammability: undefined,
-        pushable: true,
+        pushable: false,
+        cloneable: false,
         rotateable: false,
         group: -1,
         key: Infinity,

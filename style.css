@@ -166,7 +166,7 @@ table {
     height: 40px;
     font-size: 20px;
 }
-#pause, #simulatePaused, #advanceTick, #backToMenu {
+#pause, #simulatePaused, #advanceTick {
     width: 100px;
     height: 40px;
 }
@@ -190,7 +190,6 @@ table {
     width: 100px;
     height: 50px;
     font-size: 12px;
-    margin: 4px 4px;
 }
 #downloadSave {
     margin-right: 12px;
@@ -199,7 +198,10 @@ table {
     width: 100px;
     height: 40px;
     background-color: red;
-    margin: 4px 4px;
+}
+#backToMenu {
+    width: 100px;
+    height: 40px;
 }
 #gridSizeLabel {
     margin-top: 8px;
