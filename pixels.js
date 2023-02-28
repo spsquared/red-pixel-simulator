@@ -2824,8 +2824,8 @@ const pixels = {
                     if (random() < 0.2 - ((numPixels[grid[removeY][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
                         if (grid[removeY][x] != pixNum.LASER_SCATTERER) nextGrid[removeY][x] = pixNum.AIR;
                         if (grid[removeY][x] < pixNum.LASER_LEFT || grid[removeY][x] > pixNum.LASER_DOWN) nextFireGrid[removeY][x] = true;
-                        break;
                     }
+                    break;
                 }
             }
         },
