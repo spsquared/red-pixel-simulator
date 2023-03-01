@@ -1162,7 +1162,7 @@ const pixels = {
                 if (moveX == null && lastCollapsible != null) {
                     moveX = lastCollapsible;
                 }
-                if (moveX != null) {
+                if (moveX != null && moveX != x) {
                     for (let i = moveX; i < x; i++) {
                         if (!canMoveTo(i + 1, y)) return;
                     }
@@ -1244,7 +1244,7 @@ const pixels = {
                 if (moveY == null && lastCollapsible != null) {
                     moveY = lastCollapsible;
                 }
-                if (moveY != null) {
+                if (moveY != null && moveY != y) {
                     for (let i = moveY; i < y; i++) {
                         if (!canMoveTo(x, i + 1)) return;
                     }
@@ -1326,7 +1326,7 @@ const pixels = {
                 if (moveX == null && lastCollapsible != null) {
                     moveX = lastCollapsible;
                 }
-                if (moveX != null) {
+                if (moveX != null && moveX != x) {
                     for (let i = moveX; i > x; i--) {
                         if (!canMoveTo(i - 1, y)) return;
                     }
@@ -1392,6 +1392,7 @@ const pixels = {
                 let lastCollapsible = null;
                 for (let i = y + 1; i <= gridSize - 1; i++) {
                     if (isAir(x, i)) {
+                        moveY = i;
                         if (grid[i][x] == pixNum.DELETER) {
                             moveY--;
                         }
@@ -1407,7 +1408,7 @@ const pixels = {
                 if (moveY == null && lastCollapsible != null) {
                     moveY = lastCollapsible;
                 }
-                if (moveY != null) {
+                if (moveY != null && moveY != y) {
                     for (let i = moveY; i > y; i--) {
                         if (!canMoveTo(x, i - 1)) return;
                     }
