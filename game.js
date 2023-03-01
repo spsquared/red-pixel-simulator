@@ -106,12 +106,13 @@ const placeableGrid = [];
 const lastPlaceableGrid = [];
 const noiseGrid = [];
 let pendingExplosions = [];
-let animationTime = 0;
+let frameCount = 0;
 let ticks = 0;
-let gridPaused = true;
-let simulatePaused = false;
+let simulationPaused = true;
+let slowSimulation = false;
+let fastSimulation = false;
 let runTicks = 0;
-const frames = [];
+const frameList = [];
 const fpsList = [];
 let lastFpsList = -1;
 
@@ -200,8 +201,8 @@ function createGrid(size) {
 };
 function loadSaveCode() {
     if (saveCode.length != 0) {
-        gridPaused = true;
-        simulatePaused = false;
+        simulationPaused = true;
+        fastSimulation = false;
         runTicks = 0;
         ticks = 0;
         let sections = saveCode.split(';');
@@ -396,7 +397,7 @@ function loadStoredSave() {
     loadSaveCode();
     saveCode = window.localStorage.getItem(('saveCodeText')) ?? saveCode;
     saveCodeText.value = saveCode;
-    gridPaused = true;
+    simulationPaused = true;
     updateTimeControlButtons();
 };
 
@@ -515,8 +516,8 @@ function imagePixel(x, y, width, height, source, ctx) {
     }
 }
 function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
-    let multiplier1 = (Math.sin(animationTime * Math.PI / p) + 1) / 2;
-    let multiplier2 = (Math.sin((animationTime + p) * Math.PI / p) + 1) / 2;
+    let multiplier1 = (Math.sin(frameCount * Math.PI / p) + 1) / 2;
+    let multiplier2 = (Math.sin((frameCount + p) * Math.PI / p) + 1) / 2;
     return [
         (r1 * multiplier1) + (r2 * multiplier2),
         (g1 * multiplier1) + (g2 * multiplier2),
@@ -882,22 +883,22 @@ function draw() {
     updateFrame();
 
     // fps
-    while (frames[0] + 1000 < millis()) {
-        frames.shift(1);
+    while (frameList[0] + 1000 < millis()) {
+        frameList.shift(1);
     }
 
     // ui
     drawUI();
 
     // set up for next frame
-    animationTime++;
+    frameCount++;
     prevMXGrid = mXGrid;
     prevMYGrid = mYGrid;
     prevMX = mX;
     prevMY = mY;
 };
 function drawFrame() {
-    if ((gridPaused && !simulatePaused) || !gridPaused || animationTime % 20 == 0) {
+    if (!fastSimulation || frameCount % 20 == 0) {
         ctx.clearRect(0, 0, canvasResolution, canvasResolution);
         gamectx.fillStyle = backgroundColor + (255 - fadeEffect).toString(16);
         gamectx.fillRect(0, 0, canvasResolution, canvasResolution);
@@ -935,8 +936,8 @@ function drawFrame() {
         drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         forceRedraw = false;
     }
-    if (gridPaused && runTicks <= 0 && !simulatePaused) {
-        frames.push(millis());
+    if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 != 0)) {
+        frameList.push(millis());
     }
 };
 function drawBooleanGrid(grid, lastGrid, type, ctx, invert) {
@@ -978,7 +979,7 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert) {
 };
 function updateMouseControls() {
     if ((mouseIsPressed && mouseButton == RIGHT) || removing) brush.isSelection = false;
-    if (mouseIsPressed && (!gridPaused || !simulatePaused) && acceptInputs && !inWinScreen && mouseOver) {
+    if (mouseIsPressed && !fastSimulation && acceptInputs && !inWinScreen && mouseOver) {
         if (brush.isSelection && selection.grid[0] != undefined && sandboxMode) {
             let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
             let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
@@ -1124,7 +1125,7 @@ function clickLine(startX, startY, endX, endY, remove) {
     }
 };
 function drawBrush() {
-    if ((!gridPaused || !simulatePaused) && !selecting) {
+    if (!fastSimulation && !selecting) {
         if (brush.isSelection && selection.grid[0] != undefined && !((mouseIsPressed && mouseButton == RIGHT) || removing)) {
             let x1 = Math.min(gridSize, Math.max(0, Math.floor(mXGrid - selection.grid[0].length / 2)));
             let x2 = Math.min(gridSize - 1, Math.max(-1, Math.floor(mXGrid + selection.grid[0].length / 2) - 1));
@@ -1178,7 +1179,7 @@ function drawBrush() {
     }
 };
 function updateCamera() {
-    if ((!gridPaused || !simulatePaused) && acceptInputs && !inWinScreen) {
+    if ((!simulationPaused || !fastSimulation) && acceptInputs && !inWinScreen) {
         if (camera.mUp && !camera.mDown) {
             camera.y = Math.max(0, Math.min(camera.y - 20, (canvasResolution * camera.scale) - canvasResolution));
             forceRedraw = true;
@@ -1206,7 +1207,7 @@ function drawUI() {
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
     if (debugInfo) {
-        if (gridPaused && simulatePaused) ctx.fillStyle = '#FFF';
+        if (simulationPaused && fastSimulation) ctx.fillStyle = '#FFF';
         else ctx.fillStyle = '#0000004B';
         ctx.fillRect(5, 20, 200, 100);
         ctx.fillStyle = '#000';
@@ -1215,7 +1216,7 @@ function drawUI() {
         }
         ctx.fillText('Last 10 seconds:', 10, 24);
     }
-    let fpsText = `FPS: ${frames.length}`;
+    let fpsText = `FPS: ${frameList.length}`;
     let brushSizeText = `Brush Size: ${brush.size * 2 - 1}`;
     let brushPixelText = `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
@@ -1228,7 +1229,7 @@ function drawUI() {
     ctx.fillText(fpsText, 3, 1);
     while (lastFpsList + 100 < millis()) {
         lastFpsList += 100;
-        fpsList.push(frames.length);
+        fpsList.push(frameList.length);
         while (fpsList.length > 100) {
             fpsList.shift(1);
         }
@@ -1237,25 +1238,28 @@ function drawUI() {
     ctx.fillText(brushSizeText, canvasResolution - 3, 1);
     ctx.fillText(brushPixelText, canvasResolution - 3, 22);
     ctx.fillText(zoomText, canvasResolution - 3, 43);
-    if (gridPaused) {
-        if (simulatePaused) {
-            ctx.font = '60px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
-        } else {
-            ctx.fillStyle = '#FFF5';
-            ctx.fillRect(canvasResolution - 84, 63, 82, 20);
-            ctx.fillStyle = '#000';
-            ctx.fillText('PAUSED', canvasResolution - 3, 64);
-        }
+    if (fastSimulation) {
+        ctx.font = '60px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
+    } else if (simulationPaused) {
+        ctx.fillStyle = '#FFF5';
+        ctx.fillRect(canvasResolution - 84, 63, 82, 20);
+        ctx.fillStyle = '#000';
+        ctx.fillText('PAUSED', canvasResolution - 3, 64);
+    } else if (slowSimulation) {
+        ctx.fillStyle = '#FFF5';
+        ctx.fillRect(canvasResolution - 124, 63, 122, 20);
+        ctx.fillStyle = '#000';
+        ctx.fillText('SLOWMODE', canvasResolution - 3, 64);
     }
 };
 function updateFrame() {
-    if (!gridPaused || runTicks > 0 || simulatePaused) {
-        let max = simulatePaused ? 10 : 1;
+    if ((!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 == 0)) {
+        runTicks = 0; // lol
+        let max = fastSimulation ? 10 : 1;
         for (let i = 0; i < max; i++) {
-            runTicks--;
             /*
             update priority:
             -: fire
@@ -1269,13 +1273,16 @@ function updateFrame() {
             13: rotators
             -: monster
             */
+            randomSeed(ticks);
             let monsterCount = 0;
+            let fulfilledTargetCount = 0;
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
                     if (monsterGrid[y][x]) {
                         grid[y][x] = pixNum.MONSTER;
                         monsterCount++;
                     }
+                    if (targetGrid[y][x] && grid[y][x] == pixNum.GOAL) fulfilledTargetCount++;
                 }
             }
             let firePixelType = numPixels[pixNum.FIRE];
@@ -1328,15 +1335,17 @@ function updateFrame() {
                 }
             }
             let newMonsterCount = 0;
+            let newFulfilledTargetCount = 0;
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
                     if (monsterGrid[y][x]) newMonsterCount++;
+                    if (targetGrid[y][x] && grid[y][x] == pixNum.GOAL) newFulfilledTargetCount++;
                 }
             }
-            if (newMonsterCount != monsterCount && window.playMonsterDeathSound != null) window.playMonsterDeathSound();
-            frames.push(millis());
+            if (newMonsterCount != monsterCount && window.playMonsterDeathSound != undefined) window.playMonsterDeathSound();
+            if (newFulfilledTargetCount != fulfilledTargetCount && window.playTargetFillSound != undefined) window.playTargetFillSound();
+            frameList.push(millis());
             ticks = (ticks + 1) % 65536;
-            randomSeed(ticks);
         }
         inResetState = false;
     }
@@ -1381,8 +1390,10 @@ document.onkeydown = (e) => {
             selection.show = false;
         }
     } else if (key == 'enter') {
-        runTicks = 1;
-        if (gridPaused && !simulatePaused) tickSound();
+        if (simulationPaused) {
+            runTicks = 1;
+            tickSound();
+        }
     } else if (sandboxMode && key == 's' && e.ctrlKey) {
         document.getElementById('downloadSave').onclick();
     } else if (sandboxMode && key == 'o' && e.ctrlKey) {
@@ -1425,8 +1436,8 @@ document.onkeyup = (e) => {
     } else if (key == 'd') {
         camera.mRight = false;
     } else if (key == 'p') {
-        gridPaused = !gridPaused;
-        simulatePaused = false;
+        simulationPaused = !simulationPaused;
+        fastSimulation = false;
         updateTimeControlButtons();
         clickSound();
     } else if (key == 'shift') {
@@ -1481,55 +1492,67 @@ setInterval(function () {
 
 // game control buttons
 const pauseButton = document.getElementById('pause');
-const simulatePausedButton = document.getElementById('simulatePaused');
+const simulateSlowButton = document.getElementById('simulateSlow');
+const fastSimulationButton = document.getElementById('fastSimulation');
 const advanceTickButton = document.getElementById('advanceTick');
 function updateTimeControlButtons() {
-    if (gridPaused) {
+    if (simulationPaused) {
         pauseButton.style.backgroundColor = 'red';
         pauseButton.innerText = '▶';
         pauseButton.style.fontSize = '20px';
-        if (simulatePaused) {
-            simulatePausedButton.style.backgroundColor = 'lime';
-            advanceTickButton.style.backgroundColor = 'grey';
-            advanceTickButton.style.cursor = 'not-allowed';
-        } else {
-            simulatePausedButton.style.backgroundColor = 'red';
-            advanceTickButton.style.backgroundColor = 'lightgray';
-            advanceTickButton.style.cursor = '';
-        }
-        simulatePausedButton.style.cursor = '';
+        fastSimulationButton.style.backgroundColor = 'grey';
+        fastSimulationButton.style.cursor = 'not-allowed';
+        advanceTickButton.style.backgroundColor = 'lightgray';
+        advanceTickButton.style.cursor = '';
     } else {
         pauseButton.style.backgroundColor = 'lime';
         pauseButton.innerText = '▐ ▌';
         pauseButton.style.fontSize = '';
-        simulatePausedButton.style.backgroundColor = 'grey';
+        if (fastSimulation) {
+            fastSimulationButton.style.backgroundColor = 'lime';
+            advanceTickButton.style.backgroundColor = 'grey';
+            advanceTickButton.style.cursor = 'not-allowed';
+        } else {
+            fastSimulationButton.style.backgroundColor = 'red';
+            advanceTickButton.style.backgroundColor = 'lightgray';
+            advanceTickButton.style.cursor = '';
+        }
+        fastSimulationButton.style.cursor = '';
         advanceTickButton.style.backgroundColor = 'grey';
-        simulatePausedButton.style.cursor = 'not-allowed';
         advanceTickButton.style.cursor = 'not-allowed';
     }
 };
 document.getElementById('sizeUp').onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
     if (!brush.isSelection) brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
 };
 document.getElementById('sizeDown').onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
     if (!brush.isSelection) brush.size = Math.max(1, brush.size - 1);
 };
 pauseButton.onclick = (e) => {
-    gridPaused = !gridPaused;
-    simulatePaused = false;
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
+    simulationPaused = !simulationPaused;
+    fastSimulation = false;
     updateTimeControlButtons();
 };
-simulatePausedButton.onclick = (e) => {
-    if (gridPaused) simulatePaused = !simulatePaused;
+simulateSlowButton.onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
+    slowSimulation = !slowSimulation;
+};
+fastSimulationButton.onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
+    if (!simulationPaused) fastSimulation = !fastSimulation;
     updateTimeControlButtons();
 };
 advanceTickButton.onclick = (e) => {
-    runTicks = 1;
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
+    if (simulationPaused) runTicks = 1;
 };
 // save code inputs
 let writeSaveTimeout = setTimeout(() => { });
 saveCodeText.oninput = (e) => {
-    if (!sandboxMode) return;
+    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
     let index = saveCodeText.value.indexOf(';');
     if (index > 0) {
         gridSizeText.value = saveCodeText.value.substring(0, index);
@@ -1543,9 +1566,9 @@ saveCodeText.oninput = (e) => {
     }, 1000);
 };
 document.getElementById('generateSave').onclick = (e) => {
-    if (!sandboxMode) return;
-    gridPaused = true;
-    simulatePaused = false;
+    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+    simulationPaused = true;
+    fastSimulation = false;
     updateTimeControlButtons();
     saveCode = generateSaveCode();
     saveCodeText.value = saveCode;
@@ -1555,9 +1578,9 @@ document.getElementById('generateSave').onclick = (e) => {
     }
 };
 document.getElementById('uploadSave').onclick = (e) => {
-    if (!sandboxMode) return;
-    gridPaused = true;
-    simulatePaused = false;
+    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+    simulationPaused = true;
+    fastSimulation = false;
     updateTimeControlButtons();
     const input = document.createElement('input');
     input.type = 'file';
@@ -1578,9 +1601,9 @@ document.getElementById('uploadSave').onclick = (e) => {
     };
 };
 document.getElementById('downloadSave').onclick = (e) => {
-    if (!sandboxMode) return;
-    gridPaused = true;
-    simulatePaused = false;
+    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+    simulationPaused = true;
+    fastSimulation = false;
     updateTimeControlButtons();
     saveCode = saveCodeText.value;
     const encoded = `data:text/redpixel;base64,${btoa(saveCode)}`;
@@ -1591,8 +1614,8 @@ document.getElementById('downloadSave').onclick = (e) => {
 };
 document.getElementById('reset').onclick = async (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    gridPaused = true;
-    simulatePaused = false;
+    simulationPaused = true;
+    fastSimulation = false;
     updateTimeControlButtons();
     if (await modal('Reset?', 'Your current red simulation will be overwritten!', true)) {
         saveCode = saveCodeText.value.replace('\n', '');
@@ -1602,8 +1625,8 @@ document.getElementById('reset').onclick = async (e) => {
 };
 document.getElementById('restart').onclick = async (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    gridPaused = true;
-    simulatePaused = false;
+    simulationPaused = true;
+    fastSimulation = false;
     updateTimeControlButtons();
     if (await modal('Restart?', 'Your solution will be removed!', true)) {
         window.localStorage.removeItem(`challenge-${currentPuzzleId}`);
@@ -1611,7 +1634,7 @@ document.getElementById('restart').onclick = async (e) => {
     }
 };
 gridSizeText.oninput = (e) => {
-    if (!sandboxMode) return;
+    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
     gridSizeText.value = Math.max(1, Math.min(parseInt(gridSizeText.value.replace('e', '')), 500));
     if (gridSizeText.value != '') saveCode = gridSizeText.value + saveCode.substring(saveCode.indexOf(';'));
     saveCodeText.value = saveCode;
@@ -1640,8 +1663,8 @@ document.getElementById('changeResolution').onclick = (e) => {
 // menu
 document.getElementById('backToMenu').onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    gridPaused = true;
-    simulatePaused = false;
+    simulationPaused = true;
+    fastSimulation = false;
     updateTimeControlButtons();
     if (sandboxMode) {
         window.localStorage.setItem('saveCode', generateSaveCode());
@@ -1723,6 +1746,22 @@ setAudio('./monsterDeath.mp3', (buf) => {
     preloadQueue[0].buffer = buf;
     preloadQueue[0].connect(gain);
     window.playMonsterDeathSound = () => {
+        preloadQueue.shift().start();
+        const nextSource = audioContext.createBufferSource();
+        nextSource.buffer = buf;
+        nextSource.connect(gain);
+        preloadQueue.push(nextSource);
+    };
+});
+setAudio('./targetFilled.mp3', (buf) => {
+    const gain = audioContext.createGain();
+    gain.connect(audioContext.destination);
+    gain.gain.setValueAtTime(0.5, audioContext.currentTime);
+    const preloadQueue = [];
+    preloadQueue.push(audioContext.createBufferSource());
+    preloadQueue[0].buffer = buf;
+    preloadQueue[0].connect(gain);
+    window.playTargetFillSound = () => {
         preloadQueue.shift().start();
         const nextSource = audioContext.createBufferSource();
         nextSource.buffer = buf;

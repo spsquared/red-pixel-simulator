@@ -45,13 +45,20 @@
                         <button id="sizeUp" class="btick">▲</button>
                         <button id="sizeDown" class="btick">▼</button>
                     </td>
+                    <td colspan="2">
+                        <label for="simulateSlow" id="simulateSlowLabel">Slowmode:</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="simulateSlow" class="toggleInput bclick">
+                            <span class="toggleSlider"></span>
+                        </label>
+                    </td>
                 </tr>
                 <tr>
                     <td>
                         <button id="pause" class="bclick">▐ ▌</button>
                     </td>
                     <td>
-                        <button id="simulatePaused" class="bclick">>>></button>
+                        <button id="fastSimulation" class="bclick">>>></button>
                     </td>
                     <td>
                         <button id="advanceTick" class="btick">>II</button>
@@ -135,7 +142,7 @@
                     <td>Set brush to selected region</td>
                 </tr>
                 <tr>
-                    <td><b>[p]</b></td>
+                    <td><b>[P]</b></td>
                     <td>Pause</td>
                 </tr>
                 <tr>

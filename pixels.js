@@ -480,7 +480,7 @@ const pixels = {
                 fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(75, 50, 255, ${noise((x + i) / 4, (y + j) / 4, animationTime / 10) + 0.1})`;
+                        ctx.fillStyle = `rgb(75, 50, 255, ${noise((x + i) / 4, (y + j) / 4, frameCount / 10) + 0.1})`;
                         fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -533,7 +533,7 @@ const pixels = {
                 fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(255, 255, 0, ${noise((x + i) / 6, (y + j) / 6, animationTime / 30)})`;
+                        ctx.fillStyle = `rgb(255, 255, 0, ${noise((x + i) / 6, (y + j) / 6, frameCount / 30)})`;
                         fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -2156,7 +2156,7 @@ const pixels = {
         description: 'Rotates directional pixels clockwise',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(animationTime / 10) % 4], ctx);
+            imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(frameCount / 10) % 4], ctx);
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2232,7 +2232,7 @@ const pixels = {
         description: 'Rotates directional pixels counterclockwise',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(animationTime / 10) % 4], ctx);
+            imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(frameCount / 10) % 4], ctx);
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2637,6 +2637,13 @@ const pixels = {
                     }
                     break;
                 }
+                if (monsterGrid[y][removeX]) {
+                    if (random() < 0.2) {
+                        monsterGrid[y][removeX] = false;
+                        nextFireGrid[y][removeX] = true;
+                    }
+                    break;
+                }
             }
         },
         drawPreview: function (ctx) {
@@ -2696,6 +2703,13 @@ const pixels = {
                     if (random() < 0.2 - ((numPixels[grid[removeY][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
                         if (grid[removeY][x] != pixNum.LASER_SCATTERER) nextGrid[removeY][x] = pixNum.AIR;
                         if (grid[removeY][x] < pixNum.LASER_LEFT || grid[removeY][x] > pixNum.LASER_DOWN) nextFireGrid[removeY][x] = true;
+                    }
+                    break;
+                }
+                if (monsterGrid[removeY][x]) {
+                    if (random() < 0.2) {
+                        monsterGrid[removeY][x] = false;
+                        nextFireGrid[removeY][x] = true;
                     }
                     break;
                 }
@@ -2761,6 +2775,13 @@ const pixels = {
                     }
                     break;
                 }
+                if (monsterGrid[y][removeX]) {
+                    if (random() < 0.2) {
+                        monsterGrid[y][removeX] = false;
+                        nextFireGrid[y][removeX] = true;
+                    }
+                    break;
+                }
             }
         },
         drawPreview: function (ctx) {
@@ -2820,6 +2841,13 @@ const pixels = {
                     if (random() < 0.2 - ((numPixels[grid[removeY][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
                         if (grid[removeY][x] != pixNum.LASER_SCATTERER) nextGrid[removeY][x] = pixNum.AIR;
                         if (grid[removeY][x] < pixNum.LASER_LEFT || grid[removeY][x] > pixNum.LASER_DOWN) nextFireGrid[removeY][x] = true;
+                    }
+                    break;
+                }
+                if (monsterGrid[removeY][x]) {
+                    if (random() < 0.2) {
+                        monsterGrid[removeY][x] = false;
+                        nextFireGrid[removeY][x] = true;
                     }
                     break;
                 }
@@ -3423,6 +3451,91 @@ const pixels = {
         id: 'monster',
         numId: 0
     },
+    goal: {
+        name: 'Goal',
+        description: 'Must be pushed into targets in puzzles',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(255, 200, 0)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(255, 240, 0)';
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i + 1 / 5, y + j + 1 / 5, 3 / 5, 3 / 5, ctx);
+                }
+            }
+            abovectx.globalAlpha = opacity * 0.2;
+            abovectx.fillStyle = `rgb(255, 180, 0)`;
+            let margin = (Math.sin(frameCount * Math.PI / 120) + 1) / 4;
+            fillPixel(x - margin, y - margin, width + margin * 2, height + margin * 2, abovectx);
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 200, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 240, 0)';
+            ctx.fillRect(10, 10, 30, 30);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: true,
+        cloneable: false,
+        rotateable: false,
+        group: 4,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: true,
+        pickable: true,
+        id: 'goal',
+        numId: 0
+    },
+    target: {
+        name: 'Target',
+        description: 'Goal pixels must be pushed into it in puzzles',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            abovectx.globalAlpha = opacity * 0.2;
+            abovectx.fillStyle = `rgb(0, 255, 255)`;
+            let margin = (Math.sin(frameCount * Math.PI / 120) + 1) / 4;
+            fillPixel(x - margin, y - margin, width + margin * 2, height + margin * 2, abovectx);
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 200, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(10, 10, 30, 30);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(0, 200, 255)`;
+            fillPixel(0, 0, 1, 1 / 5);
+            fillPixel(0, 0, 1 / 5, 1);
+            fillPixel(0, 4 / 5, 1, 1 / 5);
+            fillPixel(4 / 5, 0, 1 / 5, 1);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 4,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: true,
+        pickable: true,
+        id: 'target',
+        numId: 0
+    },
     remove: {
         name: "Remove (brush only)",
         description: 'Unfortunately it\'s not THE red pixel',
@@ -3503,7 +3616,7 @@ const pixels = {
             ctx.fillRect(0, 0, canvasResolution, canvasResolution);
         },
         update: function (x, y) {
-            gridPaused = true;
+            simulationPaused = true;
             modal('Red Pixel Simulator', '86 7A 91 7A 8A 26 7C 87 86 86 76 26 7C 81 91 7A 26 94 87 90 26 90 88', false).then(() => window.location.reload());
         },
         drawPreview: function (ctx) {

@@ -4,7 +4,7 @@ const puzzles = [
         levels: [
             {
                 name: 'A Grid of Numbers',
-                description: `Welcome to <h style="color: red;">Red Pixel Simulator</h>!<br>&emsp;<h style="color: red;">Red Pixel Simulator</h> is a sandbox-puzzle game based solely on interactions between some numbers in a grid. (Almost) everything is completely deterministic based on simple interactions between pixels. For the purposes of the puzzles, your goal is to <h>defeat all the monsters</h> (the green things with faces) by destroying them using other pixels and to <h>move the goal pixels</h> <h>to the targets</h>.<br>&emsp;On the left of your screen is the <h>grid</h>. On the right is the <h>sidebar</h>, which contains all of the game controls. At the top, there is the <h>Pixel Picker</h>. Here you can see what and how many pixels you can place and select them by clicking on them. Below that, there are controls for your brush size (up and down) and simulation control; you can <h>pause</h>, <h>warp</h>, and <h>step</h> the simulation. In sandbox mode, the text box allows you to transfer and edit save codes. Below that the small buttons are a few settings, they're pretty self-explainatory.<br><h>At the bottom you can find all the controls available.</h><br><h>Let's get started! Go down and press the <b>run</b> button (it looks like a play button) to begin.</h>`,
+                description: `Welcome to <h style="color: red;">Red Pixel Simulator</h>!<br>&emsp;<h style="color: red;">Red Pixel Simulator</h> is a sandbox-puzzle game based solely on interactions between some numbers in a grid. (Almost) everything is completely deterministic based on simple interactions between pixels. For the purposes of the puzzles, your goal is to <h>defeat all the monsters</h> (the green things with faces) by destroying them using other pixels and to <h>move the goal pixels</h> <h>to the targets</h>.<br>&emsp;On the left of your screen is the <h>grid</h>. On the right is the <h>sidebar</h>, which contains all of the game controls. At the top, there is the <h>Pixel Picker</h>. Here you can see what and how many pixels you can place and select them by clicking on them. Below that, there are controls for your brush size (up and down) and simulation control; you can <h>pause</h>, <h>warp</h>, and <h>step</h> the simulation. You can also turn on <h>slowmode</h>, which is useful in puzzles where things move so fast you can't see them.<br>&emsp;In sandbox mode, the text box allows you to transfer and edit save codes. Below that the small buttons are a few settings, they're pretty self-explainatory.<br><h>At the bottom you can find all the controls available.</h><br><h>Let's get started! Go down and press the <b>run</b> button (it looks like a play button) to begin.</h>`,
                 saveCode: '20;0000;air-259:sand:air-19:grass:air-19:grass:water-12:mud:grass-6:dirt:water-8:mud-4:dirt-8:mud-2:water-3:mud-3:dirt-14:mud-3:dirt-35:;190:;190:;12a:1:65:',
                 inventory: {
                     air: 0
@@ -24,7 +24,7 @@ const puzzles = [
             },
             {
                 name: 'Mudslide',
-                description: `Oh no! Your only pixels are <h>wood</h>, which doesn't fall. Don't worry, though, because you can use that wood to <h>redirect the water</h>. It may seem like this challenge is impossible, but there is another way. <h>Water</h> turns <h>dirt</h> into <h>mud</h> when it touches it - <h>you can use this to your advantage by creating a mudslide.</h>`,
+                description: `Oh no! Your only pixels are <h>wood</h>, which doesn't fall. Don't worry, though, because you can use that wood to <h>redirect the water</h>. It may seem like this challenge is impossible, but there is another way.<br><h>Water</h> turns <h>dirt</h> into <h>mud</h> when it touches it - <h>you can use this to your advantage by creating a mudslide.</h>`,
                 saveCode: '25;000d;air-128:water:air-154:dirt:air-23:dirt-3:air-21:dirt-4:air-21:dirt-5:air-10:leaves-3:air-6:dirt-7:air-8:leaves-5:air-5:dirt-7:concrete:air-7:leaves-2:wood:leaves-2:air-4:dirt-8:concrete:air-9:wood:air-2:water-4:dirt-8:concrete:air-9:wood:air-2:mud-4:dirt-8:concrete:air-2:grass-2:air-3:grass-2:dirt:grass-2:dirt-12:concrete-5:grass:air:grass:dirt-22:grass:air:grass:dirt-23:grass:dirt-56:;271:;7:8:11:8:11:8:11:8:11:8:11:8:a:f:a:f:a:f:a:f:a:f:168:;21f:1:51:',
                 inventory: {
                     wood: 8
@@ -107,16 +107,80 @@ const puzzles = [
             }
         ]
     },
-    // {
-    //     name: 'Pixel Machines',
-    //     levels: [
-    //         {
-    //             name: 'Pushy Pistons',
-    //             description: 'These pixels can move on their own, I wonder if you can make a computer with them.',
-    //             saveCode
-    //         }
-    //     ]
-    // }
+    {
+        name: 'Pixel Machines',
+        levels: [
+            {
+                name: 'Pushy Pistons',
+                description: `These pixels can move on their own, I wonder if you can make a computer with them. Oh, by the way, watch out for the gunpowder.`,
+                saveCode: '32;0000;wall-33:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:concrete:lava-2:air-3:concrete:air-23:wall-2:concrete-7:air-23:wall-2:wood:air-5:wood:air-23:wall-2:wood:air-5:wood:air-23:wall-2:wood:air-5:wood:air-23:wall-2:wood:gunpowder-5:wood:air-21:wall:air:wall-2:wood:gunpowder-5:wood:air-21:wall:air:wall-2:wood-7:air-21:wall:air:wall-10:air-19:wall-2:water:wall-2:air-3:wall:air-24:wall:air:wall-2:air-2:wall:air-25:wall:air:wall-2:air:wall:air-26:wall:air:wall-3:air-15:sand-3:air-9:wall:air:wall-2:air-15:sand-5:air-8:wall:air:wall-2:air-13:wall-19:air-17:wall:air-12:wall-2:air-17:wall:air-12:wall-7:air-12:wall:air-12:wall-3:air-16:wall:air-9:wall-6:air-16:wall:air-12:wall-3:air-16:wall:air-12:wall-3:air-16:wall:air-12:wall-3:air-16:wall:air-12:wall-33:;400:;21:7:19:7:19:7:19:7:19:7:19:7:19:7:1c:3:127:f:1:1:f:f:1:1:f:f:1:1:f:3:3:9:1:1:f:2:5:8:1:1:34:3:1d:3:1d:3:1d:3:1d:3:1d:3:1d:3:1d:3:2a:;1e8:1:13:1:140:1:6e:1:1f:2:c:1:25:',
+                inventory: {
+                    piston_left: 1,
+                    piston_up: 1,
+                    piston_right: 2,
+                    piston_down: 1
+                },
+                id: '61263f9d-0719-44e9-8f1f-f514468f9556'
+            },
+            {
+                name: 'Spinny Rotator',
+                description: `Oh cool, we can rotate stuff now. Well, I already knew that. Anyways, you only have <h>rightwards pistons</h>, <h>clockwise rotators</h>, and <h>rightwards rotators</h>. And a <h>wall</h>, which is immovable. Use the existing rotators to your advantage.<br><h>The rotators with spinning textures will rotate pixels in their direction, and the static ones will rotate pixels to face the same way as them.</h>`,
+                saveCode: '40;0000;wall-17:air-3:wall-21:air-15:wall:air-3:wall:air-12:rotator_left:air-5:wall-2:air-15:wall:air-3:wall:air-3:rotator_counterclockwise:air-14:wall-2:air-15:wall:air-3:wall:air-18:wall-2:air-15:wall:air-3:wall:rotator_down:air-11:piston_left:air-5:wall-2:air-15:wall:air-3:wall:air-5:wall-6:air-7:wall-2:air-15:wall:air-3:wall:air-10:wall:air-7:wall-2:air-15:wall:lava-3:wall:air-10:wall:air-7:wall-2:air-19:wall:air-10:wall:air-7:wall-2:air-18:piston_left:wall:air-10:wall:air-7:wall-2:air-9:wall-4:air-6:wall:air-10:wall:air-7:wall-2:air-12:wall-13:air-5:wall:air-7:wall-2:rotator_counterclockwise:air-29:wall:air-7:wall-2:air-30:wall:air-7:wall-2:air-12:wall-11:air-3:rotator_left:air-3:wall:air-7:wall-2:air-30:wall:air-7:wall-2:air-30:rotator_left:air-7:wall-2:air-9:wall-22:air-7:wall-2:air-16:wall:air-21:wall-2:air-16:wall:air-21:wall-2:air-5:wall:air-10:wall:air-4:piston_right:air-11:rotator_up:air-4:wall-2:air-5:wall:air-10:wall:air-21:wall-2:air-5:wall:air-10:wall:air-21:wall-2:air-5:wall:air-10:wall-24:air-2:gunpowder-3:wall:air-32:wall-2:gunpowder-5:wall:air-32:wall-2:gunpowder-5:wall:air-31:rotator_down:wall-8:wood-2:air-29:rotator_down:wall-2:air-30:wall:air-7:wall-2:air-30:wall-4:air-4:wall-2:air-14:wall-3:air-7:rotator_left:wall-6:air:wall-2:air-4:wall-2:air-14:wall:rotator_counterclockwise:air-8:rotator_left:wall:air-4:wall:air-7:wall-2:air-10:rotator_up:concrete:piston_left:air:wall:air-9:rotator_left:wall:air-4:wall:air-4:wall:air-2:wall-17:air-9:rotator_left:wall:air-4:wall:rotator_up:air-2:rotator_clockwise:wall:air-2:wall-2:air-24:wall-2:air-4:wall-6:air-2:wall-2:air-24:wall-2:air-9:wall:air-2:wall-2:air-16:rotator_left:air-7:concrete:rotator_down:air:wall:air-10:wall-6:air-20:wall-2:air-12:wall-6:air-20:wall-2:air-10:rotator_left-2:wall-41:;640:;105:a:1e:a:16:12:1e:a:1e:a:122:10:18:10:18:5:1:a:18:5:1:a:18:5:1:a:1e:a:18:2:4:1d:b:1d:d:1b:d:1b:5:6:8:10:1:4:5:6:8:10:a:6:b:7:10:6:a:8:10:6:a:8:20:8:20:8:20:8:21:7:1f:9:1f:9:37:;174:1:11d:1:109:1:7a:2:b7:1:d0:1:69:1:34:;640:',
+                inventory: {
+                    wall: 1,
+                    piston_right: 8,
+                    rotator_right: 3,
+                    rotator_clockwise: 3
+                },
+                id: 'ce99e1d6-152a-48e0-b25b-0bad8f53a666'
+            },
+            {
+                name: 'Moving Machines',
+                description: `There's those <h>goal</h> (gold) and <h>target</h> (cyan) pixels I alluded to earlier. You must <h>push the goal pixels into the targets to win</h>Those yellow-orange pixels with horizontal and vertical lines are <h>sliders</h>- They <h>can only be pushed along one axis</h> and <h>can be rotated</h>, perhaps that will be useful here.<br>`,
+                saveCode: '50;0000;wall-51:air-8:piston_down:air-39:wall-2:air-48:wall-2:air-6:piston_right:air-28:leaves-3:air-10:wall-2:air-35:leaves-3:air-10:wall-2:air-7:piston_up:air-26:leaves-2:wood:leaves-2:air-9:wall-2:air-34:leaves-2:wood:leaves-2:air-9:wall-2:grass-8:air-28:wood:air-11:wall-2:dirt-8:grass-14:air-14:wood:air-2:grass-9:wall-2:dirt-22:grass-14:dirt:grass-2:dirt-9:wall-2:dirt-48:wall-2:dirt-48:wall-52:air-48:wall-2:air-48:wall-2:air-3:slider_horizontal:air-44:wall-2:air-48:wall-2:air-48:wall-2:air-48:wall-2:air-34:cloner_down:air-13:wall-2:air-8:wall-26:air:rotator_clockwise:air-3:rotator_clockwise:air-8:wall-2:air-8:wall:air-21:piston_down:air-2:wall:air-14:wall-2:air-8:wall:air-20:rotator_down:slider_vertical:air-2:wall:air-14:wall-2:air-8:wall:air-20:slider_vertical:air-3:wall:air:piston_up:air-12:wall-2:air-8:wall-4:piston_up:wall:piston_up-2:wall-5:piston_up:wall-7:air-4:wall:air:rotator_clockwise:air-3:rotator_clockwise:air-8:wall-2:air-8:wall:air-19:wall:air-4:wall:air-14:wall-2:air-8:wall:air-19:wall:air-4:wall:air-14:wall-2:air-4:slider_vertical:air-3:wall:air-19:wall:air-4:wall:air-14:wall-2:air-4:slider_vertical:air-3:wall-2:air-19:slider_horizontal-2:air-2:wall:air-14:wall-2:air-3:cloner_left:air-4:wall:air-19:wall:air-4:wall:air-14:wall-2:air-8:wall:air-19:wall:air-4:wall:air-14:wall-2:air-8:wall-26:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-20:air-8:wall-8:air-14:wall-2:air-26:wall:air-21:wall-2:air-26:wall:air-21:wall-2:air-26:wall:air-21:wall-2:air-24:wall:air:wall:air-21:wall-2:air-15:goal:air-10:wall:air-21:wall-2:air-26:wall:air-21:wall-2:air-26:wall:air-14:wall:air-6:wall-2:air-26:wall:air-21:wall-2:air-26:wall:air-21:wall-51:;9c4:;33:8:1:18:11:21:11:6:1:1a:11:21:11:7:1:19:11:21:19:19:27:b:d9:8:1a:e:2:8:1a:e:2:3:1:4:1a:e:2:8:1a:e:2:8:1a:e:2:8:1a:e:2:8:1b:d:3d:13:1f:13:1f:13:51:13:1f:13:20:12:20:12:1f:13:1f:6:1:c:48:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:43:11:11:e:2:11:11:e:2:11:11:e:2:11:11:e:2:f:1:1:11:e:2:11:11:e:2:11:11:7:1:6:2:11:11:e:2:11:11:e:33:;126:1:31:1:2f:1:1:1:3c5:1:77:2:22:1:d:2:3c8:;8b8:1:10b:',
+                inventory: {
+                    piston_left: 3,
+                    piston_up: 1,
+                    piston_right: 4,
+                    rotator_left: 2,
+                    rotator_right: 4,
+                    rotator_down: 5,
+                    rotator_clockwise: 4,
+                    rotator_counterclockwise: 2,
+                    slider_horizontal: 5,
+                    slider_vertical: 2
+                },
+                id: 'a47ec9c3-d9fa-4d01-8ac7-4ef6405a246e'
+            },
+            {
+                name: 'Green Lasers',
+                description: `Green lasers are bad for your health, and they're especially bad for pixels. Luckily, you have laser scatterers, which scatters the laser beam into harmless green light. Give it a try.`,
+                saveCode: '25;0000;wall-26:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-3:laser_down-3:air-11:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-9:wood-8:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-20:air-5:wall-2:air-23:wall-2:air-23:wall-2:air-23:wall-2:air-3:goal:air-19:wall-2:air-23:wall-2:air-23:wall-2:air-23:wall-8:laser_up-4:wall-14:;271:;1a:11:1:5:2:11:1:5:2:11:1:5:2:3:3:b:1:5:2:11:1:5:2:11:1:5:2:11:1:5:2:11:1:5:2:11:1:5:2:11:1:3:1:1:2:a:1:4:1:1:1:5:2:9:9:5:2:a:6:1:1:5:2:a:6:1:1:5:2:a:6:1:1:5:14:5:2:6:c:5:2:6:c:5:2:6:c:5:2:3:1:2:c:5:2:6:c:5:2:6:c:5:2:6:c:5:1a:;16b:2:17:3:ea:;110:1:160:',
+                inventory: {
+                    concrete: 1,
+                    piston_up: 1,
+                    piston_right: 8,
+                    slider_horizontal: 2,
+                    laser_scatterer: 3
+                },
+                id: '81224eff-f6dd-4268-a5aa-1d672e4ebf3a'
+            },
+            {
+                name: 'Breaking Thermodynamics',
+                description: `Instead of breaking the game, in this puzzle you'll be breaking the laws of thermodynamics! The pixels with blue and yellow arrows are <h>copiers</h>, and they... copy. These pixels here are special copiers called <h>cloners</h>; they are like copiers, but they can <h>push pixels</h> to make space for the mass it creates in violation of the laws of thermodynamics.<br>Some pixels are not cloneable, for example, goal pixels.`,
+                saveCode: '32;0000;wall-33:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-34:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-33:;400:;aa:2:1e:2:ea:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:21:;141:5:b:5:b:5:b:5:1cd:2:1e:4:1c:4:1b:5:1b:6:38:;400:',
+                inventory: {
+                    concrete: 3,
+                    push_cloner_left: 6,
+                    push_cloner_up: 2,
+                    push_cloner_right: 1,
+                    push_cloner_down: 3,
+                    slider_horizontal: 3
+                },
+                id: '3901eb61-fc2d-4ed7-b785-9a22bd33c0c3'
+            }
+        ]
+    }
 ];
 
 let currentPuzzleSection = 0;
@@ -131,8 +195,8 @@ let inWinScreen = false;
 function triggerWin() {
     if (inWinScreen) return;
     inWinScreen = true;
-    gridPaused = true;
-    simulatePaused = false;
+    simulationPaused = true;
+    fastSimulation = false;
     updateTimeControlButtons();
     if (window.playWinSound) window.playWinSound();
     winScreen.style.opacity = '1';

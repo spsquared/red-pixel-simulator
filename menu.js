@@ -193,6 +193,7 @@ sandboxButton.onclick = (e) => {
 };
 puzzleButton.onclick = (e) => {
     levelSelect.style.transform = 'translateY(100vh)';
+    saveCodeText.blur();
 };
 levelSelectClose.onclick = (e) => {
     levelSelect.style.transform = '';
@@ -218,30 +219,34 @@ function selectPuzzle() {
     transitionToGame();
 };
 
-// const coverCanvas = document.createElement('canvas');
-// const cctx = coverCanvas.getContext('2d');
-// coverCanvas.width = 500;
-// coverCanvas.height = 500;
-// cctx.fillStyle = '#FF0000';
-// cctx.fillRect(0, 0, 500, 500);
-// cctx.textBaseline = 'top';
-// cctx.textAlign = 'left';
-// cctx.font = '80px Lucida Console';
-// cctx.fillStyle = '#FFFFFF';
-// cctx.fillText('SP', 340, 30);
-// cctx.font = 'bold 60px Lucida Console';
-// cctx.fillText('2', 440, 24);
-// cctx.font = '150px Lucida Console';
-// cctx.fillStyle = '#FFFFFF7F';
-// cctx.fillText('Red', 26, 186);
-// cctx.fillText('Pixel', 26, 336);
-// cctx.shadowBlur = 10;
-// cctx.shadowColor = '#FFFFFFC0';
-// cctx.fillStyle = '#FFFFFF';
-// cctx.fillText('Red', 30, 180);
-// cctx.fillText('Pixel', 30, 330);
-// coverCanvas.style.position = 'absolute';
-// coverCanvas.style.top = '0px';
-// coverCanvas.style.left = '0px';
-// coverCanvas.style.zIndex = 10000;
-// document.body.appendChild(coverCanvas);
+if (Math.random() < 0.001) {
+    const coverCanvas = document.createElement('canvas');
+    const cctx = coverCanvas.getContext('2d');
+    coverCanvas.width = 500;
+    coverCanvas.height = 500;
+    cctx.fillStyle = '#FF0000';
+    cctx.fillRect(0, 0, 500, 500);
+    cctx.textBaseline = 'top';
+    cctx.textAlign = 'left';
+    cctx.font = '80px Lucida Console';
+    cctx.fillStyle = '#FFFFFF';
+    cctx.fillText('SP', 340, 30);
+    cctx.font = 'bold 60px Lucida Console';
+    cctx.fillText('2', 440, 24);
+    cctx.font = '150px Lucida Console';
+    cctx.fillStyle = '#FFFFFF7F';
+    cctx.fillText('Red', 26, 186);
+    cctx.fillText('Pixel', 26, 336);
+    cctx.shadowBlur = 10;
+    cctx.shadowColor = '#FFFFFFC0';
+    cctx.fillStyle = '#FFFFFF';
+    cctx.fillText('Red', 30, 180);
+    cctx.fillText('Pixel', 30, 330);
+    coverCanvas.style.position = 'absolute';
+    coverCanvas.style.top = '0px';
+    coverCanvas.style.left = '0px';
+    coverCanvas.style.zIndex = 10000;
+    // document.body.appendChild(coverCanvas);
+    document.getElementById('t_redpixel').style.backgroundImage = 'url(' + coverCanvas.toDataURL('image/png') + ')';
+    document.getElementById('t_redpixel').style.backgroundSize = 'contain';
+}
