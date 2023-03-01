@@ -492,7 +492,7 @@ const pixels = {
             updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = pixNum.AIR;
-                    nextGrid[actionY][actionX] = pixNum.CONCRETE;
+                    nextGrid[actionY][actionX] = pixNum.STONE;
                 }
             });
             if (y < gridSize - 1) {
@@ -2448,12 +2448,7 @@ const pixels = {
                     nextGrid[actionY][actionX] = pixNum.LAVA;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.CONCRETE, function (actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
-                    nextGrid[actionY][actionX] = pixNum.LAVA;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.CONCRETE_POWDER, function (actionX, actionY) {
+            updateTouchingPixel(x, y, pixNum.STONE, function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null && random() < 0.075) {
                     nextGrid[actionY][actionX] = pixNum.LAVA;
                 }
