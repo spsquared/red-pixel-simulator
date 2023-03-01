@@ -1802,7 +1802,7 @@ document.addEventListener('mousedown', function startAudio(e) {
 
 // resizing
 window.onresize = (e) => {
-    canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;
+    canvasSize = Math.min(window.innerWidth, window.innerHeight) - 21;
     canvasScale = canvasResolution / canvasSize;
     resetCanvases();
     canvasContainer.style.width = canvasSize + 20 + 'px';

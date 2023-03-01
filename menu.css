@@ -102,6 +102,14 @@
     font-size: 8vh;
     font-weight: bold;
 }
+#levelSelectBody {
+    height: 70vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+#levelSelectBody::-webkit-scrollbar {
+    width: 0px;
+}
 
 .levelGroup {
     width: 100%;

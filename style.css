@@ -8,6 +8,7 @@ body {
     user-select: none;
     word-wrap: break-word;
     scroll-snap-type: y mandatory;
+    overflow-x: hidden;
 }
 body::-webkit-scrollbar {
     width: 0px;
