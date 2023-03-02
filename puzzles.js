@@ -296,6 +296,7 @@ for (let section in puzzles) {
     for (let level in puzzles[section].levels) {
         const button = document.createElement('button');
         button.classList.add('levelButton');
+        button.classList.add('bclick');
         button.innerText = parseInt(level) + 1;
         button.onclick = (e) => {
             sandboxMode = false;
