@@ -1684,7 +1684,9 @@ function setAudio(n, fn) {
     const request = new XMLHttpRequest();
     request.open('GET', n, true);
     request.responseType = 'arraybuffer';
-    request.onload = () => audioContext.decodeAudioData(request.response, fn);
+    request.onload = () => {
+        if (this.status >= 200 && this.status < 400) audioContext.decodeAudioData(request.response, fn);
+    };
     request.send();
 };
 setAudio('./menu.mp3', (buf) => {
@@ -1707,70 +1709,58 @@ setAudio('./menu.mp3', (buf) => {
     };
 });
 setAudio('./click.mp3', (buf) => {
-    const gain = audioContext.createGain();
-    gain.connect(audioContext.destination);
-    gain.gain.setValueAtTime(0.5, audioContext.currentTime);
     const preloadQueue = [];
     preloadQueue.push(audioContext.createBufferSource());
     preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(gain);
+    preloadQueue[0].connect(audioContext.destination);
     window.playClickSound = () => {
         preloadQueue.shift().start();
         const nextSource = audioContext.createBufferSource();
         nextSource.buffer = buf;
-        nextSource.connect(gain);
+        nextSource.connect(audioContext.destination);
         preloadQueue.push(nextSource);
     };
     document.querySelectorAll('.bclick').forEach(e => e.addEventListener('click', window.playClickSound));
     document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('click', window.playClickSound));
 });
 setAudio('./tick.mp3', (buf) => {
-    const gain = audioContext.createGain();
-    gain.connect(audioContext.destination);
-    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
     const preloadQueue = [];
     preloadQueue.push(audioContext.createBufferSource());
     preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(gain);
+    preloadQueue[0].connect(audioContext.destination);
     window.playTickSound = () => {
         preloadQueue.shift().start();
         const nextSource = audioContext.createBufferSource();
         nextSource.buffer = buf;
-        nextSource.connect(gain);
+        nextSource.connect(audioContext.destination);
         preloadQueue.push(nextSource);
     };
     document.querySelectorAll('.btick').forEach(e => e.addEventListener('click', window.playTickSound));
     document.querySelectorAll('.pickerPixel').forEach(e => e.firstChild.addEventListener('mouseover', window.playTickSound));
 });
 setAudio('./monsterDeath.mp3', (buf) => {
-    const gain = audioContext.createGain();
-    gain.connect(audioContext.destination);
-    gain.gain.setValueAtTime(0.5, audioContext.currentTime);
     const preloadQueue = [];
     preloadQueue.push(audioContext.createBufferSource());
     preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(gain);
+    preloadQueue[0].connect(audioContext.destination);
     window.playMonsterDeathSound = () => {
         preloadQueue.shift().start();
         const nextSource = audioContext.createBufferSource();
         nextSource.buffer = buf;
-        nextSource.connect(gain);
+        nextSource.connect(audioContext.destination);
         preloadQueue.push(nextSource);
     };
 });
 setAudio('./targetFilled.mp3', (buf) => {
-    const gain = audioContext.createGain();
-    gain.connect(audioContext.destination);
-    gain.gain.setValueAtTime(0.5, audioContext.currentTime);
     const preloadQueue = [];
     preloadQueue.push(audioContext.createBufferSource());
     preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(gain);
+    preloadQueue[0].connect(audioContext.destination);
     window.playTargetFillSound = () => {
         preloadQueue.shift().start();
         const nextSource = audioContext.createBufferSource();
         nextSource.buffer = buf;
-        nextSource.connect(gain);
+        nextSource.connect(audioContext.destination);
         preloadQueue.push(nextSource);
     };
 });
