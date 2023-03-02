@@ -10,6 +10,7 @@ const t_top = document.getElementById('t_top');
 const t_bottom = document.getElementById('t_bottom');
 const sandboxButton = document.getElementById('sandboxButton');
 const puzzleButton = document.getElementById('puzzleButton');
+const multiplayerButton = document.getElementById('multiplayerButton');
 
 window.addEventListener('resize', (e) => {
     menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
@@ -38,11 +39,14 @@ window.addEventListener('DOMContentLoaded', (e) => {
         titleContainer.style.transform = 'translateY(-20vh)';
     }, 1500);
     setTimeout(() => {
-        sandboxButton.style.transform = 'translateY(-40vh)';
+        sandboxButton.style.transform = 'translateY(-45vh)';
     }, 2200);
     setTimeout(() => {
-        puzzleButton.style.transform = 'translateY(-40vh)';
+        puzzleButton.style.transform = 'translateY(-45vh)';
     }, 2400);
+    setTimeout(() => {
+        multiplayerButton.style.transform = 'translateY(-45vh)';
+    }, 2600);
     startTitleBob = setTimeout(titleBob, 3000);
 });
 
@@ -124,10 +128,13 @@ function transitionToMenu() {
     }, 800);
     titleContainer.style.transform = 'translateY(-20vh)';
     setTransitionTimeout(() => {
-        sandboxButton.style.transform = 'translateY(-40vh)';
+        sandboxButton.style.transform = 'translateY(-45vh)';
     }, 600);
     setTransitionTimeout(() => {
-        puzzleButton.style.transform = 'translateY(-40vh)';
+        puzzleButton.style.transform = 'translateY(-45vh)';
+    }, 700);
+    setTransitionTimeout(() => {
+        multiplayerButton.style.transform = 'translateY(-45vh)';
     }, 800);
     setTransitionTimeout(() => {
         titleBob();
@@ -144,11 +151,14 @@ function transitionToGame() {
     titleContainer.style.transform = 'translateY(-165vh)';
     document.getElementById('sidebar').scrollTo(0, 0);
     setTransitionTimeout(() => {
-        puzzleButton.style.transform = 'translateY(100vh)';
+        multiplayerButton.style.transform = 'translateY(100vh)';
     }, 200);
     setTransitionTimeout(() => {
-        sandboxButton.style.transform = 'translateY(100vh)';
+        puzzleButton.style.transform = 'translateY(100vh)';
     }, 300);
+    setTransitionTimeout(() => {
+        sandboxButton.style.transform = 'translateY(100vh)';
+    }, 400);
     setTransitionTimeout(() => {
         menuScreen.style.opacity = '0';
         inMenuScreen = false;

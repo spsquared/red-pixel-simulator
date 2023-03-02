@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="title" content="Red Pixel Simulator">
-    <meta name="description" content="A sandbox-puzzle game based on interactions of pixels on a grid">
+    <meta name="description" content="A sandbox-puzzle-RTS game based on interactions of pixels on a grid">
     <meta name="url" content="https://red-pixel-simulator.radioactivestuf.repl.co/">
     <meta name="image" content="https://red-pixel-simulator.radioactivestuf.repl.co/favicon.png">
     <meta property="og:title" content="Red Pixel Simulator">
-    <meta property="og:description" content="A sandbox-puzzle game based on interactions of pixels on a grid">
+    <meta property="og:description" content="A sandbox-puzzle-RTS game based on interactions of pixels on a grid">
     <meta property="og:url" content="https://red-pixel-simulator.radioactivestuf.repl.co/">
     <meta property="og:image" content="https://red-pixel-simulator.radioactivestuf.repl.co/favicon.png">
     <meta property="og:image:width" content="26">
@@ -187,6 +187,11 @@
                         <save save-id="small">50;</save>
                     </td></tr>
                     <tr><td class="save">
+                        <span style="font-weight: bold">spinny cool thing</span>
+                        <button class="loadSave bclick" onclick="loadPremade('spinnycoolthing');">Load</button><br>
+                        <save save-id="spinnycoolthing">5;049c;air:rotator_clockwise:push_cloner_down:rotator_clockwise:air-3:piston_right:air-3:piston_up:goal:piston_down:air-3:piston_left:air-3:rotator_clockwise:push_cloner_up:rotator_clockwise:;19:;1:3:2:3:2:3:2:3:2:3:1:;19:;2:1:13:1:2:</save>
+                    </td></tr>
+                    <tr><td class="save">
                         <span style="font-weight: bold">laser art</span>
                         <button class="loadSave bclick" onclick="loadPremade('lasers');">Load</button><br>
                         <save save-id="lasers">100;0;wall:laser_down-99:{laser_right:air-99:}99|</save>
@@ -195,11 +200,6 @@
                         <span style="font-weight: bold">nuke rain</span>
                         <button class="loadSave bclick" onclick="loadPremade('nukerain');">Load</button><br>
                         <save save-id="nukerain">100;0;rotator_right:piston_right:rotator_left:nuke_diffuser-6:rotator_right:air:piston_right:air-87:rotator_left:rotator_right:piston_right:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:air:piston_right:air-87:rotator_left:rotator_right:piston_right:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:air:piston_right:air-87:rotator_left:</save>
-                    </td></tr>
-                    <tr><td class="save">
-                        <span style="font-weight: bold">timer</span>
-                        <button class="loadSave bclick" onclick="loadPremade('timer');">Load</button><br>
-                        <save save-id="timer">100;0;air-4547:wall:air-99:rotator_right:air-112:rotator_down:wall:air-597:piston_down:air-185:wall:rotator_up:air-9:piston_left:air-2:piston_left:air-91:cloner_down:air-7:rotator_left:air-69:wall:rotator_down:air-28:wall:air-160:wall:air-19:wall:air-79:{wall:lava-19:wall:air-79:}38|wall-21:air-58:</save>
                     </td></tr>
                     <tr><td class="save">
                         <span style="font-weight: bold">stop the lag</span>
@@ -250,6 +250,7 @@
         </div>
         <button id="sandboxButton" class="bclick">SANDBOX</button>
         <button id="puzzleButton" class="bclick">PUZZLES</button>
+        <button id="multiplayerButton" class="bclick">PIXSIM</button>
         <div id="levelSelect">
             <button id="levelSelectClose" class="bclick">✖</button>
             <div id="levelSelectTitle">Puzzles</div>

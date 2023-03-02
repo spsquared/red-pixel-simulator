@@ -53,7 +53,7 @@
     top: 20vh;
 }
 
-#sandboxButton, #puzzleButton {
+#sandboxButton, #puzzleButton, #multiplayerButton {
     position: absolute;
     left: 35vw;
     width: 30vw;
@@ -61,10 +61,11 @@
     font-size: 4vh;
     border: 1vh outset gold;
     background-color: goldenrod;
+    box-shadow: 0px 0px 2vh rgba(255, 215, 0, 0.5);
     transition: 1500ms cubic-bezier(0.2, 0.2, 0, 1) transform;
     transform: none;
 }
-#sandboxButton:active, #puzzleButton:active {
+#sandboxButton:active, #puzzleButton:active, #multiplayerButton:active {
     border-style: inset;
 }
 #sandboxButton {
@@ -72,6 +73,14 @@
 }
 #puzzleButton {
     top: 114vh;
+}
+#multiplayerButton {
+    top: 128vh;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+#multiplayerButton:active {
+    border-style: outset;
 }
 
 #levelSelect {

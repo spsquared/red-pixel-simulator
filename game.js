@@ -744,10 +744,10 @@ function flow(x, y) {
             toSlide = -1;
         } else if (slideLeft > slideRight && slideRight != 0) {
             toSlide = 1;
-        // } else if (airLeft > airRight) {
-        //     toSlide = -1;
-        // } else if (airLeft < airRight) {
-        //     toSlide = 1;
+            // } else if (airLeft > airRight) {
+            //     toSlide = -1;
+            // } else if (airLeft < airRight) {
+            //     toSlide = 1;
         } else if (slideLeft != 0 && slideRight != 0) {
             if (ticks % 2 == 0) {
                 toSlide = -1;
@@ -868,17 +868,6 @@ function draw() {
     // update camera
     updateCamera();
 
-    // check win
-    let hasMonsters = false;
-    let hasUnfulfilledTargets = false;
-    search: for (let y = 0; y < gridSize; y++) {
-        for (let x = 0; x < gridSize; x++) {
-            if (monsterGrid[y][x]) hasMonsters = true;
-            if (targetGrid[y][x] && grid[y][x] != pixNum.GOAL) hasUnfulfilledTargets = true;
-            if (hasMonsters && hasUnfulfilledTargets) break search;
-        }
-    }
-    if (!hasMonsters && !hasUnfulfilledTargets && !sandboxMode) triggerWin();
     // simulate pixels
     updateFrame();
 
@@ -954,7 +943,7 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert) {
                     amount = 0;
                 }
             }
-            if (pixel) drawPixels(gridSize - amount - 1, i, amount, 1, type, 1, ctx);
+            if (pixel) drawPixels(gridSize - amount - 1, i, amount + 1, 1, type, 1, ctx);
         }
     } else {
         for (let i = 0; i < gridSize; i++) {
@@ -1209,24 +1198,27 @@ function drawUI() {
     if (debugInfo) {
         if (simulationPaused && fastSimulation) ctx.fillStyle = '#FFF';
         else ctx.fillStyle = '#0000004B';
-        ctx.fillRect(5, 20, 200, 100);
+        ctx.fillRect(5, 41, 200, 100);
         ctx.fillStyle = '#000';
         for (let i = 0; i < 100; i++) {
-            ctx.fillRect(5 + i * 2, 120 - fpsList[i], 2, fpsList[i]);
+            ctx.fillRect(5 + i * 2, 141 - fpsList[i], 2, fpsList[i]);
         }
-        ctx.fillText('Last 10 seconds:', 10, 24);
+        ctx.fillText('Last 10 seconds:', 10, 42);
     }
     let fpsText = `FPS: ${frameList.length}`;
+    let tickText = `Tick: ${ticks}`;
     let brushSizeText = `Brush Size: ${brush.size * 2 - 1}`;
     let brushPixelText = `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
     ctx.fillStyle = '#FFF5';
     ctx.fillRect(1, 0, ctx.measureText(fpsText).width + 4, 20);
+    ctx.fillRect(1, 21, ctx.measureText(tickText).width + 4, 20);
     ctx.fillRect(canvasResolution - ctx.measureText(brushSizeText).width - 4, 0, ctx.measureText(brushSizeText).width + 2, 20);
     ctx.fillRect(canvasResolution - ctx.measureText(brushPixelText).width - 4, 21, ctx.measureText(brushPixelText).width + 2, 20);
     ctx.fillRect(canvasResolution - ctx.measureText(zoomText).width - 4, 42, ctx.measureText(zoomText).width + 2, 20);
     ctx.fillStyle = '#000';
     ctx.fillText(fpsText, 3, 1);
+    ctx.fillText(tickText, 3, 22);
     while (lastFpsList + 100 < millis()) {
         lastFpsList += 100;
         fpsList.push(frameList.length);
@@ -1273,7 +1265,7 @@ function updateFrame() {
             13: rotators
             -: monster
             */
-            randomSeed(ticks);
+            randomSeed(ticks * 239);
             let monsterCount = 0;
             let fulfilledTargetCount = 0;
             for (let y = 0; y < gridSize; y++) {
@@ -1348,6 +1340,18 @@ function updateFrame() {
             ticks = (ticks + 1) % 65536;
         }
         inResetState = false;
+
+        // check win
+        let hasMonsters = false;
+        let hasUnfulfilledTargets = false;
+        search: for (let y = 0; y < gridSize; y++) {
+            for (let x = 0; x < gridSize; x++) {
+                if (monsterGrid[y][x]) hasMonsters = true;
+                if (targetGrid[y][x] && grid[y][x] != pixNum.GOAL) hasUnfulfilledTargets = true;
+                if (hasMonsters && hasUnfulfilledTargets) break search;
+            }
+        }
+        if (!hasMonsters && !hasUnfulfilledTargets && !sandboxMode) triggerWin();
     }
 };
 
@@ -1461,14 +1465,15 @@ document.onmousemove = (e) => {
 document.addEventListener('wheel', (e) => {
     if (mouseOver && !inMenuScreen) {
         if (holdingControl) {
+            let cScale = camera.scale;
             let percentX = (mX + camera.x) / (canvasSize * camera.scale);
             let percentY = (mY + camera.y) / (canvasSize * camera.scale);
             camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
             camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
             camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
-            tickSound();
             forceRedraw = true;
             document.onmousemove(e);
+            if (camera.scale != cScale) tickSound();
         } else if (!brush.isSelection) {
             let bsize = brush.size;
             if (e.deltaY > 0) {

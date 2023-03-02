@@ -2632,6 +2632,7 @@ const pixels = {
                 removeX--;
                 if (grid[y][removeX] != pixNum.AIR) {
                     if (random() < 0.2 - ((numPixels[grid[y][removeX]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                        // console.log(grid[y][removeX] != pixNum.LASER_SCATTERER)
                         if (grid[y][removeX] != pixNum.LASER_SCATTERER) nextGrid[y][removeX] = pixNum.AIR;
                         if (grid[y][removeX] < pixNum.LASER_LEFT || grid[y][removeX] > pixNum.LASER_DOWN) nextFireGrid[y][removeX] = true;
                     }

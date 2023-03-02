@@ -1,4 +1,5 @@
 const puzzles = [
+    // not using json for reasons unknown to mankind
     {
         name: 'World of Squares',
         levels: [
