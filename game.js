@@ -1685,7 +1685,7 @@ function setAudio(n, fn) {
     request.open('GET', n, true);
     request.responseType = 'arraybuffer';
     request.onload = () => {
-        if (this.status >= 200 && this.status < 400) audioContext.decodeAudioData(request.response, fn);
+        if (request.status >= 200 && request.status < 400) audioContext.decodeAudioData(request.response, fn);
     };
     request.send();
 };
