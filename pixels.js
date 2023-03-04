@@ -522,7 +522,7 @@ const pixels = {
     },
     lava: {
         name: 'Lava',
-        description: 'Try not to get burned, it also melts stuff and sets things on fire',
+        description: 'Try not to get burned, it also melts stuff and sets things on fire (and flows unrealistically)',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
@@ -540,6 +540,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
+            if (!validMovingPixel) return;
             updateTouchingPixel(x, y, pixNum.COLLAPSIBLE, function (actionX, actionY) {
                 if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
                     nextGrid[y][x] = pixNum.AIR;
@@ -2618,10 +2619,10 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < height; i++) {
-                let endX = x;
+                let endX = x - 1;
                 while (endX >= 0) {
+                    if (grid[y + i][endX] != pixNum.AIR || monsterGrid[y + i][endX]) break;
                     endX--;
-                    if (grid[y + i][endX] != pixNum.AIR) break;
                 }
                 fillPixel(endX + 1, y + 1 / 3 + i, x - endX - 1, 1 / 3, abovectx);
             }
@@ -2632,7 +2633,6 @@ const pixels = {
                 removeX--;
                 if (grid[y][removeX] != pixNum.AIR) {
                     if (random() < 0.2 - ((numPixels[grid[y][removeX]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
-                        // console.log(grid[y][removeX] != pixNum.LASER_SCATTERER)
                         if (grid[y][removeX] != pixNum.LASER_SCATTERER) nextGrid[y][removeX] = pixNum.AIR;
                         if (grid[y][removeX] < pixNum.LASER_LEFT || grid[y][removeX] > pixNum.LASER_DOWN) nextFireGrid[y][removeX] = true;
                     }
@@ -2688,10 +2688,10 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < width; i++) {
-                let endY = y;
+                let endY = y - 1;
                 while (endY >= 0) {
+                    if (grid[endY][x + i] != pixNum.AIR || monsterGrid[endY][x + i]) break;
                     endY--;
-                    if (endY >= 0 && grid[endY][x + i] != pixNum.AIR) break;
                 }
                 fillPixel(x + 1 / 3 + i, endY + 1, 1 / 3, y - endY - 1, abovectx);
             }
@@ -2757,10 +2757,10 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < height; i++) {
-                let endX = x + width - 1;
+                let endX = x + width;
                 while (endX < gridSize) {
+                    if (grid[y + i][endX] != pixNum.AIR || monsterGrid[y + i][endX]) break;
                     endX++;
-                    if (grid[y + i][endX] != pixNum.AIR) break;
                 }
                 fillPixel(x + width, y + 1 / 3 + i, endX - x - width, 1 / 3, abovectx);
             }
@@ -2826,10 +2826,10 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < width; i++) {
-                let endY = y + height - 1;
+                let endY = y + height;
                 while (endY < gridSize) {
+                    if (grid[endY][x + i] != pixNum.AIR || monsterGrid[endY][x + i]) break;
                     endY++;
-                    if (endY < gridSize && grid[endY][x + i] != pixNum.AIR) break;
                 }
                 fillPixel(x + 1 / 3 + i, y + height, 1 / 3, endY - y - height, abovectx);
             }
@@ -3713,7 +3713,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             const count = document.createElement('div');
             count.classList.add('pickerCount');
             box.append(count);
-            if (groups[pixels[id].group] == undefined) {
+            if (groups[pixels[id].group] === undefined) {
                 groups[pixels[id].group] = document.createElement('div');
             }
             groups[pixels[id].group].appendChild(box);

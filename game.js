@@ -320,7 +320,7 @@ function loadSaveCode() {
     }
 };
 function generateSaveCode() {
-    let saveCode = `${gridSize};${'0000'.substring(0, 4 - ticks.toString(16).length)}${ticks.toString(16)};`;
+    let saveCode = `${gridSize};${'0000'.substring(0, 4 - (ticks % 65536).toString(16).length)}${(ticks % 65536).toString(16)};`;
     let pixel = null;
     let amount = 0;
     for (let i = 0; i < gridSize; i++) {
@@ -409,8 +409,8 @@ const modalSubtitle = document.getElementById('modalSubtitle');
 const modalYes = document.getElementById('modalYes');
 const modalNo = document.getElementById('modalNo');
 const modalOk = document.getElementById('modalOk');
-function modal(title, subtitle, confirmation) {
-    if (!acceptInputs) return new Promise((resolve, reject) => reject('Modal already open'));
+async function modal(title, subtitle, confirmation) {
+    if (!acceptInputs) await new Promise((resolve, reject) => reject('Modal already open'));
     acceptInputs = false;
     modalTitle.innerHTML = title;
     modalSubtitle.innerHTML = subtitle;
@@ -435,7 +435,7 @@ function modal(title, subtitle, confirmation) {
         modalOk.onclick = null;
         acceptInputs = true;
     };
-    return new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
         modalYes.onclick = (e) => {
             hide();
             resolve(true);
@@ -665,62 +665,61 @@ function fall(x, y, xTravel, yTravel, isPassable) {
     }
 };
 function flow(x, y) {
-    if (y == gridSize) return;
+    if (y == gridSize) {
+        // still have to flow left and right to fill air gaps
+        return;
+    }
     if (grid[y + 1][x] == pixNum.AIR || grid[y + 1][x] == pixNum.COLLAPSIBLE || grid[y + 1][x] == pixNum.DELETER) {
         if (canMoveTo(x, y + 1)) {
             move(x, y, x, y + 1);
         }
     } else {
-        let left = x - 1;
-        let right = x + 1;
+        let left = x;
+        let right = x;
         let slideLeft = 0;
         let slideRight = 0;
-        let airLeft = 0;
-        let airRight = 0;
+        let airgapLeft = 0;
+        let airgapRight = 0;
         let foundLeftDrop = false;
         let foundRightDrop = false;
         let incrementLeft = canMoveTo(x - 1, y) && grid[y][x - 1] == pixNum.AIR;
         let incrementRight = canMoveTo(x + 1, y) && grid[y][x + 1] == pixNum.AIR;
-        let searchLeft = true;
-        let searchRight = true;
-        while (incrementLeft || incrementRight) {
-            if (incrementLeft) {
-                if (grid[y][left] != pixNum.AIR) {
-                    if (searchLeft && y > 0 && grid[y - 1][left] != pixNum.AIR) slideLeft = x - left;
-                    if (grid[y][left] == grid[y][x]) {
-                        searchLeft = false;
-                    } else {
-                        incrementLeft = false;
-                    }
-                } else {
-                    airLeft++;
-                }
-                if (searchLeft && grid[y + 1][left] == pixNum.AIR && grid[y][left] == pixNum.AIR) {
-                    slideLeft = x - left;
-                    foundLeftDrop = true;
-                    incrementLeft = false;
-                }
-                left--;
-                if (left < 0) incrementLeft = false;
+        while (incrementLeft) {
+            left--;
+            if (grid[y][left] != pixNum.AIR) {
+                if (grid[y][left] != grid[y][x]) slideLeft = x - left;
+                else if (grid[y][x + 1] != grid[y][x]) airgapLeft = 0;
+                incrementLeft = false;
+            } else if (grid[y + 1][left] == pixNum.AIR && grid[y][left] == pixNum.AIR) {
+                slideLeft = x - left;
+                foundLeftDrop = true;
+                incrementLeft = false;
             }
-            if (incrementRight) {
-                if (grid[y][right] != pixNum.AIR) {
-                    if (searchRight && y > 0 && grid[y - 1][right] != pixNum.AIR) slideRight = right - x;
-                    if (grid[y][right] == grid[y][x]) {
-                        searchRight = false;
-                    } else {
-                        incrementRight = false;
-                    }
-                } else {
-                    airRight++;
-                }
-                if (searchRight && grid[y + 1][right] == pixNum.AIR && grid[y][right] == pixNum.AIR) {
-                    slideRight = right - x;
-                    foundRightDrop = true;
-                    incrementRight = false;
-                }
-                right++;
-                if (right >= gridSize) incrementRight = false;
+            if (grid[y][left] == pixNum.AIR && y > 0 && grid[y - 1][left] != pixNum.AIR) {
+                airgapLeft++;
+            }
+            if (left < 0) {
+                slideLeft = x - left;
+                incrementLeft = false;
+            }
+        }
+        while (incrementRight) {
+            right++;
+            if (grid[y][right] != pixNum.AIR) {
+                if (grid[y][right] != grid[y][x]) slideRight = right - x;
+                else if (grid[y][x - 1] != grid[y][x]) airgapRight = 0;
+                incrementRight = false;
+            } else if (grid[y + 1][right] == pixNum.AIR && grid[y][right] == pixNum.AIR) {
+                slideRight = right - x;
+                foundRightDrop = true;
+                incrementRight = false;
+            }
+            if (grid[y][right] == pixNum.AIR && y > 0 && grid[y - 1][right] != pixNum.AIR) {
+                airgapRight++;
+            }
+            if (right >= gridSize) {
+                slideRight = right - x;
+                incrementRight = false;
             }
         }
         let toSlide = 0;
@@ -744,16 +743,16 @@ function flow(x, y) {
             toSlide = -1;
         } else if (slideLeft > slideRight && slideRight != 0) {
             toSlide = 1;
-            // } else if (airLeft > airRight) {
-            //     toSlide = -1;
-            // } else if (airLeft < airRight) {
-            //     toSlide = 1;
         } else if (slideLeft != 0 && slideRight != 0) {
             if (ticks % 2 == 0) {
                 toSlide = -1;
             } else {
                 toSlide = 1;
             }
+        } else if (airgapLeft > 0) {
+            toSlide = -1;
+        } else if (airgapRight > 0) {
+            toSlide = 1;
         }
         if (toSlide > 0) {
             if (foundRightDrop && grid[y + 1][x + 1] == pixNum.AIR) {
@@ -869,7 +868,7 @@ function draw() {
     updateCamera();
 
     // simulate pixels
-    updateFrame();
+    updateTick();
 
     // fps
     while (frameList[0] + 1000 < millis()) {
@@ -1247,7 +1246,7 @@ function drawUI() {
         ctx.fillText('SLOWMODE', canvasResolution - 3, 64);
     }
 };
-function updateFrame() {
+function updateTick() {
     if ((!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 == 0)) {
         runTicks = 0; // lol
         let max = fastSimulation ? 10 : 1;
@@ -1265,7 +1264,7 @@ function updateFrame() {
             13: rotators
             -: monster
             */
-            randomSeed(ticks * 239);
+            randomSeed((ticks % 65536) * 239);
             let monsterCount = 0;
             let fulfilledTargetCount = 0;
             for (let y = 0; y < gridSize; y++) {
@@ -1337,7 +1336,7 @@ function updateFrame() {
             if (newMonsterCount != monsterCount && window.playMonsterDeathSound != undefined) window.playMonsterDeathSound();
             if (newFulfilledTargetCount != fulfilledTargetCount && window.playTargetFillSound != undefined) window.playTargetFillSound();
             frameList.push(millis());
-            ticks = (ticks + 1) % 65536;
+            ticks++;
         }
         inResetState = false;
 
@@ -1503,7 +1502,7 @@ const advanceTickButton = document.getElementById('advanceTick');
 function updateTimeControlButtons() {
     if (simulationPaused) {
         pauseButton.style.backgroundColor = 'red';
-        pauseButton.innerText = '▶';
+        pauseButton.style.backgroundImage = 'url(/assets/play.svg)';
         pauseButton.style.fontSize = '20px';
         fastSimulationButton.style.backgroundColor = 'grey';
         fastSimulationButton.style.cursor = 'not-allowed';
@@ -1511,7 +1510,7 @@ function updateTimeControlButtons() {
         advanceTickButton.style.cursor = '';
     } else {
         pauseButton.style.backgroundColor = 'lime';
-        pauseButton.innerText = '▐ ▌';
+        pauseButton.style.backgroundImage = 'url(/assets/pause.svg)';
         pauseButton.style.fontSize = '';
         if (fastSimulation) {
             fastSimulationButton.style.backgroundColor = 'lime';
@@ -1596,7 +1595,7 @@ document.getElementById('uploadSave').onclick = (e) => {
         if (files.length == 0) return;
         const reader = new FileReader();
         reader.onload = async (e) => {
-            if (await modal('Load premade?', 'Your current red simulation will be overwritten!', true)) {
+            if (await modal('Load save?', 'Your current red simulation will be overwritten!', true)) {
                 saveCode = e.target.result;
                 saveCodeText.value = saveCode;
                 loadSaveCode();
@@ -1680,102 +1679,135 @@ document.getElementById('backToMenu').onclick = (e) => {
 
 // audio
 const audioContext = AudioContext ? new AudioContext() : false;
-function setAudio(n, fn) {
+function setAudio(file, cb) {
     const request = new XMLHttpRequest();
-    request.open('GET', n, true);
+    request.open('GET', file, true);
     request.responseType = 'arraybuffer';
     request.onload = () => {
-        if (request.status >= 200 && request.status < 400) audioContext.decodeAudioData(request.response, fn);
+        if (request.status >= 200 && request.status < 400) audioContext.decodeAudioData(request.response, cb);
     };
     request.send();
 };
-setAudio('./menu.mp3', (buf) => {
-    const gain = audioContext.createGain();
-    gain.connect(audioContext.destination);
-    gain.gain.setValueAtTime(0, audioContext.currentTime);
-    window.startMenuMusic = () => {
-        if (window.stopMenuMusic) window.stopMenuMusic();
-        const musicSource = audioContext.createBufferSource();
-        musicSource.buffer = buf;
-        musicSource.loop = true;
-        musicSource.connect(gain);
-        musicSource.start();
+const musicBuffers = new Map();;
+const activeMusic = [];
+let musicMuted = (window.localStorage.getItem('musicMuted') ?? false) == 1;
+const menuMuteButton = document.getElementById('menuMuteButton');
+const musicVolume = audioContext.createGain();
+musicVolume.connect(audioContext.destination);
+function playMusic(id) {
+    stopAllMusic();
+    if (musicBuffers.has(id)) {
+        const gain = audioContext.createGain();
+        const source = audioContext.createBufferSource();
+        activeMusic.push({
+            source: source,
+            gain: gain
+        });
+        gain.gain.setValueAtTime(0, audioContext.currentTime);
+        gain.connect(musicVolume);
+        source.buffer = musicBuffers.get(id);
+        source.loop = true;
+        source.connect(gain);
+        source.start();
         gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 1);
-        window.stopMenuMusic = () => {
-            gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
-            setTimeout(() => musicSource.stop(), 1000);
-            window.stopMenuMusic = null;
+        return true;
+    }
+    return false;
+};
+function stopAllMusic() {
+    for (const music of activeMusic) {
+        music.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
+        setTimeout(() => music.source.stop(), 1000);
+    }
+};
+function toggleMusic() {
+    musicMuted = !musicMuted;
+    if (musicMuted) {
+        musicVolume.gain.setValueAtTime(0, audioContext.currentTime);
+        menuMuteButton.style.backgroundImage = 'url(/assets/volumeMuted.svg';
+    } else {
+        musicVolume.gain.setValueAtTime(1, audioContext.currentTime);
+        menuMuteButton.style.backgroundImage = 'url(/assets/volumeUnmuted.svg';
+    }
+    window.localStorage.setItem('musicMuted', musicMuted ? 1 : 0);
+};
+menuMuteButton.onclick = toggleMusic;
+window.addEventListener('DOMContentLoaded', (e) => {
+    setAudio('./assets/menu.mp3', (buf) => {
+        musicBuffers.set('menu', buf);
+    });
+    setAudio('./assets/click.mp3', (buf) => {
+        const preloadQueue = [];
+        preloadQueue.push(audioContext.createBufferSource());
+        preloadQueue[0].buffer = buf;
+        preloadQueue[0].connect(audioContext.destination);
+        window.playClickSound = () => {
+            preloadQueue.shift().start();
+            const nextSource = audioContext.createBufferSource();
+            nextSource.buffer = buf;
+            nextSource.connect(audioContext.destination);
+            preloadQueue.push(nextSource);
         };
-    };
-});
-setAudio('./click.mp3', (buf) => {
-    const preloadQueue = [];
-    preloadQueue.push(audioContext.createBufferSource());
-    preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(audioContext.destination);
-    window.playClickSound = () => {
-        preloadQueue.shift().start();
-        const nextSource = audioContext.createBufferSource();
-        nextSource.buffer = buf;
-        nextSource.connect(audioContext.destination);
-        preloadQueue.push(nextSource);
-    };
-    document.querySelectorAll('.bclick').forEach(e => e.addEventListener('click', window.playClickSound));
-    document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('click', window.playClickSound));
-});
-setAudio('./tick.mp3', (buf) => {
-    const preloadQueue = [];
-    preloadQueue.push(audioContext.createBufferSource());
-    preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(audioContext.destination);
-    window.playTickSound = () => {
-        preloadQueue.shift().start();
-        const nextSource = audioContext.createBufferSource();
-        nextSource.buffer = buf;
-        nextSource.connect(audioContext.destination);
-        preloadQueue.push(nextSource);
-    };
-    document.querySelectorAll('.btick').forEach(e => e.addEventListener('click', window.playTickSound));
-    document.querySelectorAll('.pickerPixel').forEach(e => e.firstChild.addEventListener('mouseover', window.playTickSound));
-});
-setAudio('./monsterDeath.mp3', (buf) => {
-    const preloadQueue = [];
-    preloadQueue.push(audioContext.createBufferSource());
-    preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(audioContext.destination);
-    window.playMonsterDeathSound = () => {
-        preloadQueue.shift().start();
-        const nextSource = audioContext.createBufferSource();
-        nextSource.buffer = buf;
-        nextSource.connect(audioContext.destination);
-        preloadQueue.push(nextSource);
-    };
-});
-setAudio('./targetFilled.mp3', (buf) => {
-    const preloadQueue = [];
-    preloadQueue.push(audioContext.createBufferSource());
-    preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(audioContext.destination);
-    window.playTargetFillSound = () => {
-        preloadQueue.shift().start();
-        const nextSource = audioContext.createBufferSource();
-        nextSource.buffer = buf;
-        nextSource.connect(audioContext.destination);
-        preloadQueue.push(nextSource);
-    };
-});
-setAudio('./win.mp3', (buf) => {
-    const preloadQueue = [];
-    preloadQueue.push(audioContext.createBufferSource());
-    preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(audioContext.destination);
-    window.playWinSound = () => {
-        preloadQueue.shift().start();
-        const nextSource = audioContext.createBufferSource();
-        nextSource.buffer = buf;
-        nextSource.connect(audioContext.destination);
-        preloadQueue.push(nextSource);
-    };
+        document.querySelectorAll('.bclick').forEach(e => e.addEventListener('click', window.playClickSound));
+        document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('click', window.playClickSound));
+        document.querySelectorAll('.levelButton').forEach(e => e.addEventListener('click', window.playClickSound));
+    });
+    setAudio('./assets/tick.mp3', (buf) => {
+        const preloadQueue = [];
+        preloadQueue.push(audioContext.createBufferSource());
+        preloadQueue[0].buffer = buf;
+        preloadQueue[0].connect(audioContext.destination);
+        window.playTickSound = () => {
+            preloadQueue.shift().start();
+            const nextSource = audioContext.createBufferSource();
+            nextSource.buffer = buf;
+            nextSource.connect(audioContext.destination);
+            preloadQueue.push(nextSource);
+        };
+        document.querySelectorAll('.btick').forEach(e => e.addEventListener('click', window.playTickSound));
+        document.querySelectorAll('.pickerPixel').forEach(e => e.firstChild.addEventListener('mouseover', window.playTickSound));
+    });
+    setAudio('./assets/monsterDeath.mp3', (buf) => {
+        const preloadQueue = [];
+        preloadQueue.push(audioContext.createBufferSource());
+        preloadQueue[0].buffer = buf;
+        preloadQueue[0].connect(audioContext.destination);
+        window.playMonsterDeathSound = () => {
+            preloadQueue.shift().start();
+            const nextSource = audioContext.createBufferSource();
+            nextSource.buffer = buf;
+            nextSource.connect(audioContext.destination);
+            preloadQueue.push(nextSource);
+        };
+    });
+    setAudio('./assets/targetFilled.mp3', (buf) => {
+        const preloadQueue = [];
+        preloadQueue.push(audioContext.createBufferSource());
+        preloadQueue[0].buffer = buf;
+        preloadQueue[0].connect(audioContext.destination);
+        window.playTargetFillSound = () => {
+            preloadQueue.shift().start();
+            const nextSource = audioContext.createBufferSource();
+            nextSource.buffer = buf;
+            nextSource.connect(audioContext.destination);
+            preloadQueue.push(nextSource);
+        };
+    });
+    setAudio('./assets/win.mp3', (buf) => {
+        const preloadQueue = [];
+        preloadQueue.push(audioContext.createBufferSource());
+        preloadQueue[0].buffer = buf;
+        preloadQueue[0].connect(audioContext.destination);
+        window.playWinSound = () => {
+            preloadQueue.shift().start();
+            const nextSource = audioContext.createBufferSource();
+            nextSource.buffer = buf;
+            nextSource.connect(audioContext.destination);
+            preloadQueue.push(nextSource);
+        };
+    });
+    toggleMusic();
+    toggleMusic();
 });
 function tickSound() {
     if (window.playTickSound) window.playTickSound();
@@ -1785,13 +1817,9 @@ function clickSound() {
 };
 document.addEventListener('mousedown', function startAudio(e) {
     audioContext.resume();
-    if (inMenuScreen) {
-        if (window.startMenuMusic) window.startMenuMusic();
-        else setTimeout(function wait() {
-            if (window.startMenuMusic) { if (inMenuScreen) window.startMenuMusic(); }
-            else setTimeout(wait, 1000);
-        }, 1000);
-    }
+    if (inMenuScreen && !playMusic('menu')) setTimeout(function wait() {
+        if (inMenuScreen && !playMusic('menu')) setTimeout(wait, 1000);
+    }, 1000);
     document.removeEventListener('mousedown', startAudio);
 });
 
@@ -1814,7 +1842,7 @@ window.onresize = (e) => {
     } else {
         sidebar.style.top = '0px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - canvasSize - 20 + 'px');
-        let pickerWidth = (Math.round((window.innerWidth - canvasSize) / 62) - 1) * 62;
+        let pickerWidth = (Math.round((window.innerWidth - canvasSize - 20) / 62) - 1) * 62;
         pixelPicker.style.width = pickerWidth + 'px';
         pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
     }

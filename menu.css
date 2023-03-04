@@ -7,9 +7,9 @@
     background-color: black;
     transition: 1000ms linear opacity;
     opacity: 1;
-    z-index: 999;
     --title-left-offset: 20vw;
     overflow: hidden;
+    z-index: 997;
 }
 
 #titleContainer {
@@ -58,6 +58,8 @@
     left: 35vw;
     width: 30vw;
     height: 8vh;
+    margin: 0px 0px;
+    padding: 0px 0px;
     font-size: 4vh;
     border: 1vh outset gold;
     background-color: goldenrod;
@@ -83,6 +85,29 @@
     border-style: outset;
 }
 
+#menuMuteButton {
+    position: fixed;
+    bottom: 8px;
+    left: 8px;
+    width: 40px;
+    height: 40px;
+    background-image: url(/assets/volumeMuted.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+#levelSelectClose, #pixsimMenuClose {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    width: 40px;
+    height: 40px;
+    line-height: 10px;
+    background-color: red;
+    border-color: crimson;
+    z-index: 998;
+}
 #levelSelect {
     position: absolute;
     bottom: 110vh;
@@ -92,16 +117,6 @@
     background-color: #EFEFEF;
     border: 4px solid black;
     transition: 500ms ease-in-out transform;
-}
-#levelSelectClose {
-    position: absolute;
-    top: -14px;
-    right: -14px;
-    width: 40px;
-    height: 40px;
-    line-height: 10px;
-    background-color: red;
-    border-color: crimson;
 }
 #levelSelectTitle {
     width: 100%;
@@ -126,6 +141,52 @@
 }
 .levelButton {
     width: 100px;
+}
+
+#pixsimMenu {
+    position: absolute;
+    bottom: 110vh;
+    left: 30vw;
+    width: 40vw;
+    height: 80vh;
+    background-color: #EFEFEF;
+    border: 4px solid black;
+    transition: 500ms ease-in-out transform;
+}
+#pixsimMenuConnecting {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 40vw;
+    height: 80vh;
+    background-color: #EFEFEF;
+    transition: 200ms linear opacity;
+    text-align: center;
+}
+#pixsimMenuConnectingSpinner {
+    display: inline-block;
+    position: relative;
+    top: 20vh;
+    width: 10vh;
+    height: 10vh;
+    background-color: red;
+    box-shadow: 0px 0px 1vh rgba(255, 0, 0, 0.5);
+    animation: 1s linear spin infinite;
+}
+#pixSimMenuConnectingText {
+    display: inline-block;
+    position: relative;
+    top: 25vh;
+    font-size: 4vh;
+    margin: 0px 8px;
+}
+@keyframes spin {
+    from {
+        transform: rotateZ(0deg);
+    }
+    to {
+        transform: rotateZ(180deg);
+    }
 }
 
 #t_top, #t_bottom {
@@ -169,7 +230,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    #levelSelect {
+    #levelSelect, #pixsimMenu, #pixsimMenuConnecting {
         background-color: #333;
         border-color: white;
     }

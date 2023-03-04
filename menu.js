@@ -52,14 +52,14 @@ window.addEventListener('DOMContentLoaded', (e) => {
 
 let titleBobController = setInterval(() => { });
 function titleBob() {
-    titleContainer.style.transitionDuration = '2s';
+    titleContainer.style.transitionDuration = '3179ms';
     let timer = false;
     titleContainer.style.transform = 'translateY(-19vh)';
     titleBobController = setInterval(() => {
         timer = !timer;
         if (timer) titleContainer.style.transform = 'translateY(-21vh)';
         else titleContainer.style.transform = 'translateY(-19vh)';
-    }, 2000);
+    }, 3179);
 };
 let startTitleBob = setTimeout(() => { });
 
@@ -120,10 +120,8 @@ function transitionToMenu() {
         menuScreen.style.backgroundColor = '';
         t_top.style.transform = '';
         t_bottom.style.transform = '';
-        if (window.startMenuMusic) window.startMenuMusic();
-        else setTimeout(function wait() {
-            if (window.startMenuMusic) window.startMenuMusic();
-            else setTimeout(wait, 1000);
+        if (inMenuScreen && !playMusic('menu')) setTimeout(function wait() {
+            if (inMenuScreen && !playMusic('menu')) setTimeout(wait, 1000);
         }, 1000);
     }, 800);
     titleContainer.style.transform = 'translateY(-20vh)';
@@ -162,7 +160,7 @@ function transitionToGame() {
     setTransitionTimeout(() => {
         menuScreen.style.opacity = '0';
         inMenuScreen = false;
-        if (window.stopMenuMusic) window.stopMenuMusic();
+        stopAllMusic();
     }, 600);
     setTransitionTimeout(() => {
         menuScreen.style.pointerEvents = 'none';
@@ -175,6 +173,9 @@ function transitionToGame() {
 const levelSelect = document.getElementById('levelSelect');
 const levelSelectClose = document.getElementById('levelSelectClose');
 const levelSelectBody = document.getElementById('levelSelectBody');
+const pixsimMenu = document.getElementById('pixsimMenu');
+const pixsimMenuClose = document.getElementById('pixsimMenuClose');
+const pixsimMenuConnecting = document.getElementById('pixsimMenuConnecting');
 
 sandboxButton.onclick = (e) => {
     if (!acceptMenuInputs) return;
@@ -205,8 +206,23 @@ puzzleButton.onclick = (e) => {
     levelSelect.style.transform = 'translateY(100vh)';
     saveCodeText.blur();
 };
+multiplayerButton.onclick = (e) => {
+    // pixsimMenuConnecting.style.opacity = 1;
+    // pixsimMenuConnecting.style.pointerEvents = '';
+    // pixsimMenu.style.transform = 'translateY(100vh)';
+    // connectAPI().then(() => {
+    //     pixsimMenuConnecting.style.opacity = 0;
+    //     pixsimMenuConnecting.style.pointerEvents = 'none';
+    // }, (err) => {
+    //     modal('Could not connect to PixSim API:', `<span style="color: red;">${err.message}</span><br><button onclick="window.open('https://pixsim-api.radioactivestuf.repl.co');>Attempt manual wake</button>`).then(() => pixsimMenuClose.click());
+    // });
+};
 levelSelectClose.onclick = (e) => {
     levelSelect.style.transform = '';
+};
+pixsimMenuClose.onclick = (e) => {
+    disconnectAPI();
+    pixsimMenu.style.transform = '';
 };
 function selectPuzzle() {
     if (!acceptMenuInputs) return;

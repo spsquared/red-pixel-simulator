@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' 'unsafe-eval' 'unsafe-inline';
+        script-src 'self' 'unsafe-eval' 'unsafe-inline';
+        script-src-elem 'self' 'unsafe-eval' 'unsafe-inline';
+        img-src 'self' data:;
+        frame-src 'self' 'unsafe-eval' 'unsafe-inline';
+        connect-src 'self' http://pixsim-api.radioactivestuf.repl.co ws://pixsim-api.radioactivestuf.repl.co 'unsafe-eval' 'unsafe-inline';
+        ">
     <meta name="title" content="Red Pixel Simulator">
     <meta name="description" content="A sandbox-puzzle-RTS game based on interactions of pixels on a grid">
     <meta name="url" content="https://red-pixel-simulator.radioactivestuf.repl.co/">
@@ -15,9 +23,11 @@
     <meta property="og:image:width" content="26">
     <meta property="og:image:height" content="26">
     <title>Red Pixel Simulator</title>
-    <link rel="icon" href="./favicon.png" type="image/x-icon">
+    <link rel="icon" href="./assets/favicon.png" type="image/x-icon">
+    <script src="./p5.min.js"></script>
+    <script src="./socket.io.min.js"></script>
     <script src="./menu.js" defer></script>
-    <script src="./p5.min.js" defer></script>
+    <script src="./pixsim-api.js" defer></script>
     <script src="./game.js" defer></script>
     <script src="./pixels.js" defer></script>
     <script src="./puzzles.js" defer></script>
@@ -42,8 +52,8 @@
             <table><tbody>
                 <tr>
                     <td>
-                        <button id="sizeUp" class="btick">▲</button>
-                        <button id="sizeDown" class="btick">▼</button>
+                        <button id="sizeUp" class="btick"></button>
+                        <button id="sizeDown" class="btick"></button>
                     </td>
                     <td colspan="2">
                         <label for="simulateSlow" id="simulateSlowLabel">Slowmode:</label>
@@ -55,13 +65,13 @@
                 </tr>
                 <tr>
                     <td>
-                        <button id="pause" class="bclick">▐ ▌</button>
+                        <button id="pause" class="bclick"><img id="pauseSvg" src=""></button>
                     </td>
                     <td>
-                        <button id="fastSimulation" class="bclick">>>></button>
+                        <button id="fastSimulation" class="bclick"></button>
                     </td>
                     <td>
-                        <button id="advanceTick" class="btick">>II</button>
+                        <button id="advanceTick" class="btick"></button>
                     </td>
                 </tr>
             </tbody></table>
@@ -85,10 +95,10 @@
                         <button id="generateSave" class="bclick">GENERATE<br>SAVE CODE</button>
                     </td>
                     <td>
-                        <button id="uploadSave" class="bclick">UPLOAD<br>SAVE</button>
+                        <button id="uploadSave" class="bclick"><img src="/assets/upload.svg" style="height: 30px; margin-top: -6px; margin-bottom: -8px;"><br>UPLOAD</button>
                     </td>
                     <td>
-                        <button id="downloadSave" class="bclick">DOWNLOAD<br>SAVE</button>
+                        <button id="downloadSave" class="bclick"><img src="/assets/download.svg" style="height: 30px; margin-top: -6px; margin-bottom: -8px;"><br>DOWNLOAD</button>
                     </td>
                 </tr>
                 <tr>
@@ -197,6 +207,11 @@
                         <save save-id="lasers">100;0;wall:laser_down-99:{laser_right:air-99:}99|</save>
                     </td></tr>
                     <tr><td class="save">
+                        <span style="font-weight: bold">satisfying</span>
+                        <button class="loadSave bclick" onclick="loadPremade('satisfying');">Load</button><br>
+                        <save save-id="satisfying">100;0000;air-2:piston_down-98:air-2:goal-98:;2710:;0:2710:;2710:;12b:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:62:1:61:</save>
+                    </td></tr>
+                    <tr><td class="save">
                         <span style="font-weight: bold">nuke rain</span>
                         <button class="loadSave bclick" onclick="loadPremade('nukerain');">Load</button><br>
                         <save save-id="nukerain">100;0;rotator_right:piston_right:rotator_left:nuke_diffuser-6:rotator_right:air:piston_right:air-87:rotator_left:rotator_right:piston_right:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:air:piston_right:air-87:rotator_left:rotator_right:piston_right:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:air:piston_right:air-87:rotator_left:</save>
@@ -250,11 +265,38 @@
         </div>
         <button id="sandboxButton" class="bclick">SANDBOX</button>
         <button id="puzzleButton" class="bclick">PUZZLES</button>
-        <button id="multiplayerButton" class="bclick">PIXSIM</button>
+        <button id="multiplayerButton" class="bclick">MULTIPLAYER</button>
+        <button id="menuMuteButton"></button>
         <div id="levelSelect">
             <button id="levelSelectClose" class="bclick">✖</button>
             <div id="levelSelectTitle">Puzzles</div>
             <div id="levelSelectBody"></div>
+        </div>
+        <div id="pixsimMenu">
+            <button id="pixsimMenuClose" class="bclick">✖</button>
+            <div id="pixsimMenuConnecting">
+                <div id="pixsimMenuConnectingSpinner"></div><br>
+                <div id="pixSimMenuConnectingText">Connecting to PixSim API...</div>
+            </div>
+            <div id="pixsimMenuBody">
+                <!-- scrolls up for host and down for join when click -->
+                <div id="pixsimSelectType">
+                    <button id="pixsimSelectHost">HOST GAME</button>
+                    <button id="pixsimSelectJoin">JOIN GAME</button>
+                    <button id="pixsimSelectSpectate">SPECTATE GAME</button>
+                    <button id="pixsimSelectScrimmage">SCRIMMAGE</button>
+                </div>
+                <div id="pixsimHostBody">
+                    <!-- allow spectating, view join code, start button -->
+                </div>
+                <div id="pixsimJoinBody">
+                    <!-- spectate also comes here -->
+                    <!-- enter join code, leave -->
+                </div>
+                <div id="pixsimScrimmageBody">
+                    <!-- puts in waiting list for scrimmages and puts against random player -->
+                </div>
+            </div>
         </div>
         <div id="t_bottom"></div>
         <div id="t_top">
@@ -263,6 +305,11 @@
                 <td><div id="t_loadingText"><div>Red Pixel<br>Simulator</div></div></td>
             </tr></tbody></table></div>
         </div>
+    </div>
+    <div id="highPing">
+        <div style="color: yellow; font-weight: bold; font-size: 20px;">Unstable Network</div>
+        <div>Your connection is unstable and you may be disconnected during multiplayer games.</div>
+        <div id="highPingDisplay">Ping: 0ms</div>
     </div>
     <div id="modalContainer">
         <div id="modal">
