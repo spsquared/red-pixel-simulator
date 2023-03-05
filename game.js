@@ -383,6 +383,9 @@ function generateSaveCode() {
     return saveCode;
 };
 async function loadPremade(id) {
+    simulationPaused = true;
+    fastSimulation = false;
+    updateTimeControlButtons();
     if (await modal('Confirm load?', 'Your current red simulation will be overwritten!', true)) {
         document.querySelectorAll('save').forEach(e => {
             if (e.getAttribute('save-id') == id) {
@@ -439,7 +442,6 @@ function modal(title, subtitle, confirmation) {
     return new Promise((resolve, reject) => {
         modalYes.onclick = (e) => {
             hide();
-            console.log('e')
             resolve(true);
         };
         modalNo.onclick = (e) => {
