@@ -1,14 +1,17 @@
-const socket = io('https://PixSim-API.radioactivestuf.repl.co', {
+const apiURI = 'https://pixsim-api.radioactivestuf.repl.co';
+// const apiURI = 'http://localhost:503';
+const socket = io(apiURI, {
     path: '/pixsim-api',
     autoConnect: false,
     reconnection: false
 });
 let apiconnected = false;
-function handlePixSimAPIDisconnect() {
+async function handlePixSimAPIDisconnect() {
     if (apiconnected) {
-        modal('PixSim API', '<span style="color: red;">PixSim API was disconnected.</span>', false);
-        // kick out of game
         apiconnected = false;
+        await modal('PixSim API', '<span style="color: red;">PixSim API was disconnected.</span>', false);
+        // kick out of game
+        pixsimMenuClose.onclick();
     }
 };
 socket.on('disconnect', handlePixSimAPIDisconnect);
@@ -44,13 +47,15 @@ socket.on('pong', () => {
 });
 
 // connection
-async function connectAPI() {
+function APIconnect() {
     apiconnected = true;
-    await new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const wakeup = new XMLHttpRequest();
-        wakeup.open('GET', 'https://PixSim-API.radioactivestuf.repl.co');
+        wakeup.open('GET', apiURI);
         wakeup.onerror = (e) => {
-            reject(new Error(`wakeup call failed: ${wakeup.status}`));
+            console.log(e)
+            console.log(wakeup)
+            reject(new Error(`wakeup call failed: ${wakeup.status} ${wakeup.statusText}`));
         };
         wakeup.send();
         socket.connect();
@@ -58,7 +63,48 @@ async function connectAPI() {
         socket.once('error', reject);
     })
 };
-async function disconnectAPI() {
+function APIdisconnect() {
     apiconnected = false;
     socket.disconnect();
 };
+
+function APIcreateGame() {
+    return new Promise((resolve, reject) => {
+        if (!apiconnected || !socket.connected) reject(new Error('PixSim API not connected'));
+        socket.emit('createGame');
+        socket.once('gameCode', (code) => {
+            resolve(new GameHost(socket, code));
+        });
+    });
+};
+function APIgetPublicGames(type) {
+    return new Promise((resolve, reject) => {
+        if (!apiconnected || !socket.connected) reject(new Error('PixSim API not connected'));
+        socket.emit('getPublicRooms', type);
+        socket.once('publicRooms', resolve);
+    });
+};
+class GameHost {
+    #socket;
+    #code;
+    #state = 0;
+    constructor(socket, code) {
+        this.#socket = socket;
+        this.#code = code;
+    }
+
+    code() {
+        return this.#code;
+    }
+
+    end() {
+        switch (this.#state) {
+            case 0:
+                this.#socket.emit('cancelCreateGame');
+                break;
+        }
+    }
+}
+class GameClient {
+    #socket;
+}

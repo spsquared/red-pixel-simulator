@@ -10,7 +10,7 @@
         script-src-elem 'self' 'unsafe-eval' 'unsafe-inline';
         img-src 'self' data:;
         frame-src 'self' 'unsafe-eval' 'unsafe-inline';
-        connect-src 'self' http://pixsim-api.radioactivestuf.repl.co ws://pixsim-api.radioactivestuf.repl.co 'unsafe-eval' 'unsafe-inline';
+        connect-src 'self' http://pixsim-api.radioactivestuf.repl.co ws://pixsim-api.radioactivestuf.repl.co http://localhost:* ws://localhost:* 'unsafe-eval' 'unsafe-inline';
         ">
     <meta name="title" content="Red Pixel Simulator">
     <meta name="description" content="A sandbox-puzzle-RTS game based on interactions of pixels on a grid">
@@ -65,7 +65,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <button id="pause" class="bclick"><img id="pauseSvg" src=""></button>
+                        <button id="pause" class="bclick"></button>
                     </td>
                     <td>
                         <button id="fastSimulation" class="bclick"></button>
@@ -114,12 +114,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 50%;">
-                        <div>
-                            <button id="noNoise" class="bclick">Disable Noise</button>
-                            <button id="fadeEffect" class="bclick">Blur</button>
-                            <button id="changeResolution" class="bclick">Change resolution (requires reload)</button>
-                        </div>
+                    <td>
+                        <button id="noNoise" class="bclick">Disable Noise</button>
+                        <button id="fadeEffect" class="bclick">Blur</button>
+                        <button id="changeResolution" class="bclick">Change resolution (requires reload)</button>
                     </td>
                 </tr>
             </tbody></table>
@@ -128,7 +126,7 @@
             <h1>
                 &nbsp;Controls
             </h1>
-            <table id="controlsTable" class="tableHighlight"><tbody>
+            <table id="controlsTable" class="tableBorders"><tbody>
                 <tr>
                     <td><b>Left click</b></td>
                     <td>Place pixels</td>
@@ -186,7 +184,7 @@
                 <h1>
                     &nbsp;Premade save codes
                 </h1>
-                <table style="user-select: text;" class="tableHighlight"><tbody>
+                <table style="user-select: text;" class="tableBorders"><tbody>
                     <tr><td class="save">
                         <span style="font-weight: bold">water, lava, and nukes (default)</span>
                         <button class="loadSave bclick" onclick="loadPremade('default');">Load</button><br>
@@ -262,7 +260,7 @@
             </div>
         </div>
     </div>
-    <div id="menuScreen" style="background-color: black;">
+    <div id="menuScreen">
         <div id="titleContainer">
             <div id="t_redpixel"></div>
             <div id="t_textRed">Red</div>
@@ -272,32 +270,73 @@
         <button id="sandboxButton" class="bclick">SANDBOX</button>
         <button id="puzzleButton" class="bclick">PUZZLES</button>
         <button id="multiplayerButton" class="bclick">MULTIPLAYER</button>
-        <button id="menuMuteButton"></button>
+        <button id="menuMuteButton" class="bclick"></button>
         <div id="levelSelect">
-            <button id="levelSelectClose" class="bclick">✖</button>
+            <button id="levelSelectClose" class="bclick"></button>
             <div id="levelSelectTitle">Puzzles</div>
             <div id="levelSelectBody"></div>
         </div>
         <div id="pixsimMenu">
-            <button id="pixsimMenuClose" class="bclick">✖</button>
+            <button id="pixsimMenuClose" class="bclick"></button>
             <div id="pixsimMenuBody">
-                <!-- scrolls around for menus -->
-                <div id="pixsimSelectMenu">
-                    <h1>PixSim Multiplayer</h1>
-                    <button id="pixsimSelectHost">HOST GAME</button>
-                    <button id="pixsimSelectJoin">JOIN GAME</button>
-                    <button id="pixsimSelectSpectate">SPECTATE GAME</button>
-                    <button id="pixsimSelectScrimmage">SCRIMMAGE</button>
-                </div>
-                <div id="pixsimHostBody">
-                    <!-- allow spectating, view join code, start button -->
-                </div>
-                <div id="pixsimJoinBody">
-                    <!-- spectate also comes here -->
-                    <!-- enter join code, leave -->
-                </div>
-                <div id="pixsimScrimmageBody">
-                    <!-- puts in waiting list for scrimmages and puts against random player -->
+                <div id="pixsimMenuContents">
+                    <div id="pixsimSelectMenu">
+                        <h1>PixSim Multiplayer</h1>
+                        <button id="pixsimSelectHost" class="bclick">HOST GAME</button>
+                        <button id="pixsimSelectJoin" class="bclick">JOIN GAME</button>
+                        <button id="pixsimSelectSpectate" class="bclick">SPECTATE GAME</button>
+                        <button id="pixsimSelectScrimmage" class="bclick">SCRIMMAGE</button>
+                    </div>
+                    <div id="pixsimHostBody">
+                        <button class="pixsimBackButton bclick"></button>
+                        <h1>Host Game</h1>
+                        <div>
+                            <span style="font-size: 20px;">Join Code: </span>
+                            <span id="hostJoinCode">- - -</span>
+                        </div>
+                        <div id="hostGameTypeWrapper">
+                            <div id="hostGameTypePrevious" class="btick"></div>
+                            <div id="hostGameTypeName">???</div>
+                            <div id="hostGameTypeNext" class="btick"></div>
+                            <div id="hostGameTypeDescription">Unknown game type</div>
+                        </div>
+                        <div id="hostOptionsWrapper">
+                            <label for="hostAllowSpectators">Allow Spectators: </label>
+                            <label class="toggle" style="justify-self: start; margin-top: 8px; margin-left: 8px;">
+                                <input type="checkbox" id="hostAllowSpectators" class="toggleInput bclick" checked>
+                                <span class="toggleSlider"></span>
+                            </label>
+                            <label for="hostPublicGame">Public Game: </label>
+                            <label class="toggle" style="justify-self: start; margin-top: 8px; margin-left: 8px;">
+                                <input type="checkbox" id="hostPublicGame" class="toggleInput bclick" checked>
+                                <span class="toggleSlider"></span>
+                            </label>
+                        </div>
+                        <div id="hostOpponentCard">no opponent lol</div>
+                        <div id="hostSpectatorWrapper">
+                            <div style="font-size: 20px;">Spectators</div>
+                            <div id="hostSpectatorContent"></div>
+                        </div>
+                    </div>
+                    <div id="pixsimJoinBody">
+                        <button class="pixsimBackButton bclick"></button>
+                        <h1>Join Game</h1>
+                        <div id="joinGameCodeWrapper">
+                            <input type="text" id="joinGameCodeCode">
+                            <button id="joinGameCodeJoin" class="bclick">Join</button>
+                        </div>
+                        <div id="joinListWrapper">
+                            <div style="font-size: 20px;">Public Games</div>
+                            <div id="joinListContent"></div>
+                        </div>
+                        <!-- spectate also comes here -->
+                        <!-- enter join code, game type filter, leave -->
+                    </div>
+                    <div id="pixsimScrimmageBody">
+                        <button class="pixsimBackButton bclick"></button>
+                        <h1>Scrimmaging</h1>
+                        <!-- puts in waiting list for scrimmages and puts against random player -->
+                    </div>
                 </div>
             </div>
             <div id="pixsimMenuConnecting">

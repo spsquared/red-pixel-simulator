@@ -99,7 +99,10 @@
     right: -14px;
     width: 40px;
     height: 40px;
-    line-height: 10px;
+    background-image: url(/assets/close.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
     background-color: red;
     border-color: crimson;
     z-index: 998;
@@ -183,10 +186,18 @@
     height: 100%;
     overflow: hidden;
 }
+#pixsimMenuContents {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: 300ms cubic-bezier(0.4, 0, 0.6, 1) transform;
+    transform: none;
+}
 #pixsimSelectMenu, #pixsimHostBody, #pixsimJoinBody, #pixsimScrimmageBody {
     position: absolute;
     width: 100%;
     height: 100%;
+    text-align: center;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -210,8 +221,19 @@
 #pixsimSelectHost, #pixsimSelectJoin, #pixsimSelectSpectate, #pixsimSelectScrimmage {
     width: 80%;
     height: 48px;
-    font-size: 28px;
+    font-size: 24px;
     margin-top: 16px;
+}
+.pixsimBackButton {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 60px;
+    height: 40px;
+    background-image: url(/assets/backToMenu.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 80% 80%;
 }
 
 @keyframes spin {
@@ -221,6 +243,157 @@
     to {
         transform: rotateZ(180deg);
     }
+}
+
+#hostJoinCode {
+    margin: 8px 8px;
+    font-size: 20px;
+    font-family: Arial;
+}
+#hostGameTypeWrapper {
+    display: grid;
+    position: relative;
+    left: 10%;
+    width: 80%;
+    margin-top: 12px;
+    grid-template-columns: [c0] 20% [c1] 60% [c2] 20% [c3];
+    grid-template-rows: [r0] 40px [r1] minmax(40px, 100px) [r2];
+}
+#hostGameTypePrevious, #hostGameTypeName, #hostGameTypeNext, #hostGameTypeDescription {
+    border: 2px solid black;
+    margin: 0px 0px;
+}
+#hostGameTypePrevious, #hostGameTypeNext {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 80% 80%;
+    background-color: lightgrey;
+    cursor: pointer;
+}
+#hostGameTypePrevious {
+    grid-column-start: c0;
+    grid-row-start: r0;
+    background-image: url(/assets/previous.svg);
+}
+#hostGameTypeName {
+    grid-column-start: c1;
+    grid-row-start: r0;
+    vertical-align: middle;
+}
+#hostGameTypeNext {
+    grid-column-start: c2;
+    grid-row-start: r0;
+    background-image: url(/assets/next.svg);
+}
+#hostGameTypeDescription {
+    grid-column-start: c0;
+    grid-column-end: span c3;
+    grid-row-start: r1;
+}
+#hostOptionsWrapper {
+    display: grid;
+    grid-template-columns: [c0] 60% [c1] 40% [c2];
+    grid-template-rows: repeat(2, 35px);
+    justify-items: end;
+    align-items: center;
+    margin-top: 12px;
+}
+#hostOpponentCard {
+    position: relative;
+    left: calc(10% - 2px);
+    width: 80%;
+    height: 40px;
+    margin-top: 12px;
+    border: 2px solid black;
+}
+#hostSpectatorWrapper {
+    position: relative;
+    left: calc(10% - 2px);
+    width: 80%;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    border: 2px solid black;
+}
+#hostSpectatorContent {
+    border-top: 2px solid black;
+}
+
+#joinGameCodeWrapper {
+    position: relative;
+    left: calc(20% - 2px);
+    width: 60%;
+    height: 40px;
+    border: 2px solid black;
+}
+#joinGameCodeCode {
+    float: left;
+    width: calc(70% - 4px);
+    height: 40px;
+    font-size: 36px;
+    font-family: 'Lucida Console', Lucida, monospace;
+    background-color: #DDDDDD;
+    border: none;
+}
+#joinGameCodeJoin {
+    float: right;
+    width: 30%;
+    height: 40px;
+    font-size: 24px;
+    margin: 0px 0px;
+    padding: 0px 0px;
+    border: none;
+    background-color: limegreen;
+}
+#joinListWrapper {
+    position: relative;
+    left: calc(10% - 2px);
+    width: 80%;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    border: 2px solid black;
+    border-bottom: transparent;
+}
+#joinListContent {
+    border-top: 2px solid black;
+}
+.joinTile {
+    display: grid;
+    grid-template-columns: [c0] 62px [c1] calc(100% - 62px) [c2];
+    grid-template-rows: [r0] 20px [r1] 20px [r2] 20px [r3];
+    width: 100%;
+    height: 60px;
+    border-bottom: 2px solid black;
+    cursor: pointer;
+}
+.joinTileImg {
+    grid-column-start: c0;
+    grid-row-start: r0;
+    grid-row-end: span r3;
+    width: 60px;
+    height: 60px;
+    border-right: 2px solid black;
+}
+.joinTileCode {
+    grid-column-start: c1;
+    padding-left: 4px;
+    font-size: 18px;
+    font-family: Arial;
+    text-align: left;
+}
+.joinTileSub1 {
+    grid-column-start: c1;
+    grid-row-start: r1;
+    padding-left: 4px;
+    text-align: left;
+    font-family: 'Lucida Console', Lucida, monospace;
+}
+.joinTileSub2 {
+    grid-column-start: c1;
+    grid-row-start: r2;
+    padding-left: 4px;
+    text-align: left;
+    font-family: 'Lucida Console', Lucida, monospace;
+    opacity: 0.5;
 }
 
 #t_top, #t_bottom {
@@ -266,6 +439,10 @@
 @media (prefers-color-scheme: dark) {
     #levelSelect, #pixsimMenu, #pixsimMenuConnecting {
         background-color: #333;
+        border-color: white;
+    }
+    #hostGameTypePrevious, #hostGameTypeName, #hostGameTypeNext, #hostGameTypeDescription, #hostOpponentCard, #hostSpectatorWrapper, #hostSpectatorContent,
+    #joinGameCodeWrapper, #joinListWrapper, #joinListContent, .joinTile, .joinTileImg {
         border-color: white;
     }
 }

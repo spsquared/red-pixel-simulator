@@ -126,7 +126,7 @@ h {
 table {
     border-collapse: collapse;
 }
-.tableHighlight td {
+.tableBorders td {
     border: 2px solid black;
     padding: 2px 8px;
     overflow-wrap: break-word;
@@ -154,6 +154,7 @@ table {
 }
 
 #pixelPicker {
+    display: grid;
     border: 2px solid black;
     padding-bottom: 8px;
     padding-right: 2px;
@@ -307,6 +308,9 @@ table {
     background-color: lime;
 }
 
+#controlsTable {
+    width: calc((100% - 14px));
+}
 #controlsTable td:nth-child(1) {
     text-align: right;
 }
@@ -419,7 +423,7 @@ table {
     b, #levelName, #levelDescription, #pixelPicker, #pixelPickerDescription, .pickerPixel:hover {
         border-color: white;
     }
-    .tableHighlight td {
+    .tableBorders td {
         border-color: white;
     }
 

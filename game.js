@@ -668,6 +668,7 @@ function fall(x, y, xTravel, yTravel, isPassable) {
         }
     }
 };
+// fluid rewrite - moves directly to position instead of taking forever, more realistic
 function flow(x, y) {
     if (y == gridSize) {
         // still have to flow left and right to fill air gaps
@@ -887,13 +888,12 @@ function draw() {
         let iterations = 0;
         for (let ny = 0; ny < gridSize * 2; ny++) {
             for (let nx = 0; nx < gridSize * 2; nx++) {
-                // ctx.fillStyle = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, ${Math.random() * 0.5})`;
-                ctx.fillStyle = `rgba(0, 0, 0, ${Math.random() * 0.2})`;
+                ctx.fillStyle = `rgba(${Math.random()*64}, ${Math.random()*64}, ${Math.random()*64}, ${Math.random() * 0.2})`;
                 ctx.fillRect(nx * gridScale / 2, ny * gridScale / 2, gridScale / 2, gridScale / 2);
             }
         }
         function fry() {
-            const uri = canvas.toDataURL('image/jpeg', 0);
+            const uri = canvas.toDataURL('image/jpeg', 0.05 + Math.random() * 0.1);
             const img = new Image();
             img.onload = () => {
                 ctx.clearRect(0, 0, canvasResolution, canvasResolution);
@@ -1382,144 +1382,138 @@ function updateTick() {
 };
 
 // inputs
-document.onkeydown = (e) => {
-    if (e.target.matches('button')) {
-        e.preventDefault();
-        e.target.blur();
-    }
-    if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || inWinScreen || inMenuScreen) return;
-    const key = e.key.toLowerCase();
-    for (let i in pixels) {
-        if (pixels[i].key == key) {
-            brush.pixel = i;
-            pixelSelectors[brush.pixel].box.click();
+window.addEventListener('DOMContentLoaded', (e) => {
+    document.onkeydown = (e) => {
+        if (e.target.matches('button')) {
+            e.preventDefault();
+            e.target.blur();
         }
-    }
-    if (key == 'arrowup') {
-        if (!brush.isSelection) {
-            let bsize = brush.size;
-            brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
-            if (brush.size != bsize) tickSound();
+        if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || inWinScreen || inMenuScreen) return;
+        const key = e.key.toLowerCase();
+        for (let i in pixels) {
+            if (pixels[i].key == key) {
+                brush.pixel = i;
+                pixelSelectors[brush.pixel].box.click();
+            }
         }
-    } else if (key == 'arrowdown') {
-        if (!brush.isSelection) {
-            let bsize = brush.size;
-            brush.size = Math.max(1, brush.size - 1);
-            if (brush.size != bsize) tickSound();
-        }
-    } else if (sandboxMode && key == 'd' && e.ctrlKey) {
-        if (selection.show) {
-            selection.grid = [];
-            for (let y = selection.y1; y <= selection.y2; y++) {
-                selection.grid[y - selection.y1] = [];
-                for (let x = selection.x1; x <= selection.x2; x++) {
-                    selection.grid[y - selection.y1][x - selection.x1] = grid[y][x];
+        if (key == 'arrowup') {
+            if (!brush.isSelection) {
+                let bsize = brush.size;
+                brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
+                if (brush.size != bsize) tickSound();
+            }
+        } else if (key == 'arrowdown') {
+            if (!brush.isSelection) {
+                let bsize = brush.size;
+                brush.size = Math.max(1, brush.size - 1);
+                if (brush.size != bsize) tickSound();
+            }
+        } else if (sandboxMode && key == 'd' && e.ctrlKey) {
+            if (selection.show) {
+                selection.grid = [];
+                for (let y = selection.y1; y <= selection.y2; y++) {
+                    selection.grid[y - selection.y1] = [];
+                    for (let x = selection.x1; x <= selection.x2; x++) {
+                        selection.grid[y - selection.y1][x - selection.x1] = grid[y][x];
+                    }
+                }
+                brush.isSelection = true;
+                selection.show = false;
+            }
+        } else if (key == 'enter') {
+            if (simulationPaused) {
+                runTicks = 1;
+                tickSound();
+            }
+        } else if (sandboxMode && key == 's' && e.ctrlKey) {
+            document.getElementById('downloadSave').onclick();
+        } else if (sandboxMode && key == 'o' && e.ctrlKey) {
+            document.getElementById('uploadSave').onclick();
+        } else if (key == 'w') {
+            camera.mUp = true;
+        } else if (key == 's') {
+            camera.mDown = true;
+        } else if (key == 'a') {
+            camera.mLeft = true;
+        } else if (key == 'd') {
+            camera.mRight = true;
+        } else if (key == 'r') {
+            rotateBrush();
+        } else if (sandboxMode && key == 'n') {
+            for (let i = 0; i < gridSize; i += 5) {
+                for (let j = 0; j < gridSize; j += 5) {
+                    grid[j][i] = pixNum.VERY_HUGE_NUKE;
                 }
             }
-            brush.isSelection = true;
+        } else if (key == 'shift') {
+            removing = true;
+        } else if (key == 'control') {
+            holdingControl = true;
+        }
+        if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11' && key != '=' && key != '-') e.preventDefault();
+    };
+    document.onkeyup = (e) => {
+        if (e.target.matches('#saveCode') || !acceptInputs || inWinScreen || inMenuScreen) return;
+        const key = e.key.toLowerCase();
+        if (key == 'alt') {
+            debugInfo = !debugInfo;
+            clickSound();
+        } else if (key == 'w') {
+            camera.mUp = false;
+        } else if (key == 's') {
+            camera.mDown = false;
+        } else if (key == 'a') {
+            camera.mLeft = false;
+        } else if (key == 'd') {
+            camera.mRight = false;
+        } else if (key == 'p') {
+            simulationPaused = !simulationPaused;
+            fastSimulation = false;
+            updateTimeControlButtons();
+            clickSound();
+        } else if (key == 'shift') {
+            removing = false;
+        } else if (key == 'control') {
+            holdingControl = false;
+        } else if (key == 'escape') {
+            brush.isSelection = false;
             selection.show = false;
         }
-    } else if (key == 'enter') {
-        if (simulationPaused) {
-            runTicks = 1;
-            tickSound();
-        }
-    } else if (sandboxMode && key == 's' && e.ctrlKey) {
-        document.getElementById('downloadSave').onclick();
-    } else if (sandboxMode && key == 'o' && e.ctrlKey) {
-        document.getElementById('uploadSave').onclick();
-    } else if (key == 'w') {
-        camera.mUp = true;
-    } else if (key == 's') {
-        camera.mDown = true;
-    } else if (key == 'a') {
-        camera.mLeft = true;
-    } else if (key == 'd') {
-        camera.mRight = true;
-    } else if (key == 'r') {
-        rotateBrush();
-    } else if (sandboxMode && key == 'n') {
-        for (let i = 0; i < gridSize; i += 5) {
-            for (let j = 0; j < gridSize; j += 5) {
-                grid[j][i] = pixNum.VERY_HUGE_NUKE;
+        e.preventDefault();
+    };
+    document.onmousemove = (e) => {
+        mX = Math.round((e.pageX - 10) * canvasScale);
+        mY = Math.round((e.pageY - 10) * canvasScale);
+        let scale = gridSize / canvasSize / camera.scale / canvasScale;
+        mXGrid = Math.floor((mX + camera.x) * scale);
+        mYGrid = Math.floor((mY + camera.y) * scale);
+        mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
+    };
+    document.addEventListener('wheel', (e) => {
+        if (mouseOver && !inMenuScreen) {
+            if (holdingControl) {
+                let cScale = camera.scale;
+                let percentX = (mX + camera.x) / (canvasSize * camera.scale);
+                let percentY = (mY + camera.y) / (canvasSize * camera.scale);
+                camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
+                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
+                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+                forceRedraw = true;
+                document.onmousemove(e);
+                if (camera.scale != cScale) tickSound();
+            } else if (!brush.isSelection) {
+                let bsize = brush.size;
+                if (e.deltaY > 0) {
+                    brush.size = Math.max(1, brush.size - 1);
+                } else {
+                    brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
+                }
+                if (brush.size != bsize) tickSound();
             }
         }
-    } else if (key == 'shift') {
-        removing = true;
-    } else if (key == 'control') {
-        holdingControl = true;
-    }
-    if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11' && key != '=' && key != '-') e.preventDefault();
-};
-document.onkeyup = (e) => {
-    if (e.target.matches('#saveCode') || !acceptInputs || inWinScreen || inMenuScreen) return;
-    const key = e.key.toLowerCase();
-    if (key == 'alt') {
-        debugInfo = !debugInfo;
-        clickSound();
-    } else if (key == 'w') {
-        camera.mUp = false;
-    } else if (key == 's') {
-        camera.mDown = false;
-    } else if (key == 'a') {
-        camera.mLeft = false;
-    } else if (key == 'd') {
-        camera.mRight = false;
-    } else if (key == 'p') {
-        simulationPaused = !simulationPaused;
-        fastSimulation = false;
-        updateTimeControlButtons();
-        clickSound();
-    } else if (key == 'shift') {
-        removing = false;
-    } else if (key == 'control') {
-        holdingControl = false;
-    } else if (key == 'escape') {
-        brush.isSelection = false;
-        selection.show = false;
-    }
-    e.preventDefault();
-};
-document.onmousemove = (e) => {
-    mX = Math.round((e.pageX - 10) * canvasScale);
-    mY = Math.round((e.pageY - 10) * canvasScale);
-    let scale = gridSize / canvasSize / camera.scale / canvasScale;
-    mXGrid = Math.floor((mX + camera.x) * scale);
-    mYGrid = Math.floor((mY + camera.y) * scale);
-    mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
-};
-document.addEventListener('wheel', (e) => {
-    if (mouseOver && !inMenuScreen) {
-        if (holdingControl) {
-            let cScale = camera.scale;
-            let percentX = (mX + camera.x) / (canvasSize * camera.scale);
-            let percentY = (mY + camera.y) / (canvasSize * camera.scale);
-            camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
-            camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
-            camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
-            forceRedraw = true;
-            document.onmousemove(e);
-            if (camera.scale != cScale) tickSound();
-        } else if (!brush.isSelection) {
-            let bsize = brush.size;
-            if (e.deltaY > 0) {
-                brush.size = Math.max(1, brush.size - 1);
-            } else {
-                brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
-            }
-            if (brush.size != bsize) tickSound();
-        }
-    }
-    if (holdingControl) { e.preventDefault(); }
-}, { passive: false });
-hasFocus = false;
-setInterval(function () {
-    if (hasFocus && !document.hasFocus()) {
-        removing = false;
-        holdingControl = false;
-    }
-    hasFocus = document.hasFocus();
-}, 500);
+        if (holdingControl) { e.preventDefault(); }
+    }, { passive: false });
+})
 
 // game control buttons
 const pauseButton = document.getElementById('pause');

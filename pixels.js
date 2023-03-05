@@ -1657,8 +1657,8 @@ const pixels = {
         numId: 0
     },
     piston_left: {
-        name: 'Piston (Left)',
-        description: 'Closer to a flying machine, it pushes stuff',
+        name: 'Pusher (Left)',
+        description: 'Pushes pixels in its path',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = `rgb(75, 255, 255)`;
@@ -1733,8 +1733,8 @@ const pixels = {
         numId: 0
     },
     piston_up: {
-        name: 'Piston (Up)',
-        description: 'Closer to a flying machine, it pushes stuff',
+        name: 'Pusher (Up)',
+        description: 'Pushes pixels in its path',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = `rgb(75, 255, 255)`;
@@ -1809,8 +1809,8 @@ const pixels = {
         numId: 0
     },
     piston_right: {
-        name: 'Piston (Right)',
-        description: 'Closer to a flying machine, it pushes stuff',
+        name: 'Pusher (Right)',
+        description: 'Pushes pixels in its path',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = `rgb(75, 255, 255)`;
@@ -1885,8 +1885,8 @@ const pixels = {
         numId: 0
     },
     piston_down: {
-        name: 'Piston (Down)',
-        description: 'Closer to a flying machine, it pushes stuff',
+        name: 'Pusher (Down)',
+        description: 'Pushes pixels in its path',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = `rgb(75, 255, 255)`;

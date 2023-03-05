@@ -176,6 +176,11 @@ const levelSelectBody = document.getElementById('levelSelectBody');
 const pixsimMenu = document.getElementById('pixsimMenu');
 const pixsimMenuClose = document.getElementById('pixsimMenuClose');
 const pixsimMenuConnecting = document.getElementById('pixsimMenuConnecting');
+const pixsimSelectHostButton = document.getElementById('pixsimSelectHost');
+const pixsimSelectJoinButton = document.getElementById('pixsimSelectJoin');
+const pixsimSelectSpectateButton = document.getElementById('pixsimSelectSpectate');
+const pixsimSelectScrimmageButton = document.getElementById('pixsimSelectScrimmage');
+const pixsimMenuContents = document.getElementById('pixsimMenuContents');
 
 sandboxButton.onclick = (e) => {
     if (!acceptMenuInputs) return;
@@ -213,8 +218,9 @@ multiplayerButton.onclick = (e) => {
     pixsimMenu._open = true;
     pixsimMenuConnecting.style.opacity = 1;
     pixsimMenuConnecting.style.pointerEvents = '';
+    pixsimMenuContents.style.transform = '';
     pixsimMenu.style.transform = 'translateY(100vh)';
-    connectAPI().then(() => {
+    APIconnect().then(() => {
         pixsimMenuConnecting.style.opacity = 0;
         pixsimMenuConnecting.style.pointerEvents = 'none';
     }, (err) => {
@@ -227,7 +233,7 @@ levelSelectClose.onclick = (e) => {
 };
 pixsimMenuClose.onclick = (e) => {
     pixsimMenu._open = false;
-    disconnectAPI();
+    APIdisconnect();
     pixsimMenu.style.transform = '';
 };
 function selectPuzzle() {
@@ -251,6 +257,87 @@ function selectPuzzle() {
     levelSelect._open = false;
     transitionToGame();
 };
+
+pixsimSelectHostButton.onclick = (e) => {
+    pixsimMenuContents.style.transform = 'translateY(100%)';
+    APIcreateGame().then((gameHost) => {
+        const joinCodeDisp = document.getElementById('hostJoinCode');
+        joinCodeDisp.innerText = gameHost.code();
+        function cancelHostGame() {
+            gameHost.end();
+            pixsimMenuClose.removeEventListener('click', cancelHostGame);
+            document.querySelector('#pixsimHostBody .pixsimBackButton').removeEventListener('click', cancelHostGame);
+        };
+        pixsimMenuClose.addEventListener('click', cancelHostGame);
+        document.querySelector('#pixsimHostBody .pixsimBackButton').addEventListener('click', cancelHostGame);
+    });
+};
+pixsimSelectJoinButton.onclick = (e) => {
+    pixsimMenuContents.style.transform = 'translateY(-100%)';
+    const joinGameCodeCode = document.getElementById('joinGameCodeCode');
+    const joinGameCodeJoin = document.getElementById('joinGameCodeJoin');
+    joinGameCodeCode.value = '';
+    joinGameCodeJoin.onclick = (e) => {
+        modal('Unable to do that!', 'This feature hasn\'t been implmented yet.', false);
+    };
+    function refresh(data) {
+        const joinList = document.getElementById('joinListContent');
+        joinList.innerHTML = '';
+        function type(t) {
+            switch (t) {
+                case 'vaultwars':
+                    return 'Vault Wars';
+                case 'resourcerace':
+                    return 'Resource Race';
+                default:
+                    return 'Unknown';
+            }
+        };
+        for (let game of data) {
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('joinTile');
+            const img = new Image();
+            img.classList.add('joinTileImg');
+            const codeText = document.createElement('div');
+            codeText.classList.add('joinTileCode');
+            codeText.innerText = game.code;
+            wrapper.appendChild(codeText);
+            const sub1 = document.createElement('div');
+            sub1.classList.add('joinTileSub1');
+            sub1.innerText = `${type(game.type)} ❖ ${game.hostName}`;
+            wrapper.appendChild(sub1);
+            const sub2 = document.createElement('div');
+            sub2.classList.add('joinTileSub2');
+            sub2.innerText = game.allowsSpectators ? 'Spectators allowed' : 'Spectators not allowed';
+            wrapper.appendChild(sub2);
+            wrapper.appendChild(img);
+            wrapper.onclick = (e) => {
+                modal('Unable to do that!', 'This feature hasn\'t been implmented yet.', false);
+            };
+            joinList.appendChild(wrapper);
+        }
+    }
+    let refreshLoop = setInterval(() => {
+        APIgetPublicGames('all').then(refresh);
+    }, 20000);
+    function stopRefreshLoop() {
+        clearInterval(refreshLoop);
+        pixsimMenuClose.removeEventListener('click', stopRefreshLoop);
+        document.querySelector('#pixsimHostBody .pixsimBackButton').removeEventListener('click', stopRefreshLoop);
+    };
+    pixsimMenuClose.addEventListener('click', stopRefreshLoop);
+    document.querySelector('#pixsimJoinBody .pixsimBackButton').addEventListener('click', stopRefreshLoop);
+    APIgetPublicGames('all').then(refresh);
+};
+pixsimSelectSpectateButton.onclick = (e) => {
+    pixsimMenuContents.style.transform = 'translateY(-100%)';
+};
+pixsimSelectScrimmageButton.onclick = (e) => {
+    pixsimMenuContents.style.transform = 'translateX(-100%)';
+};
+document.querySelectorAll('.pixsimBackButton').forEach(e => e.onclick = (e) => {
+    pixsimMenuContents.style.transform = '';
+});
 
 if (Math.random() < 0.001) {
     const coverCanvas = document.createElement('canvas');
