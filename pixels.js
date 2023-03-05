@@ -378,7 +378,7 @@ const pixels = {
     },
     wet_ash: {
         name: 'Wet Ash',
-        description: 'Almost silt, it\'s nearly fluid',
+        description: 'Definitely not silt',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             if (noNoise) {

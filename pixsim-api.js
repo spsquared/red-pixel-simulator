@@ -27,7 +27,7 @@ setInterval(() => {
     if (pingReceived && socket.connected) {
         pingSend = performance.now();
         socket.emit('ping');
-        pingReceived = false;    
+        pingReceived = false;
     }
 }, 1000);
 socket.on('pong', () => {
@@ -37,7 +37,7 @@ socket.on('pong', () => {
     pingReceived = true;
     if (ping > 500 || jitter > 200) {
         highPingWarning.style.display = 'block';
-        highPingWarningPing.innerHTML =`Ping: ${Math.round(ping)}ms<br>Jitter: ${Math.round(jitter)}ms`;
+        highPingWarningPing.innerHTML = `Ping: ${Math.round(ping)}ms<br>Jitter: ${Math.round(jitter)}ms`;
     } else {
         highPingWarning.style.display = '';
     }

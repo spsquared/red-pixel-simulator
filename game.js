@@ -10,6 +10,7 @@ let backgroundColor = '#ffffff';
 let noNoise = false;
 let fadeEffect = 127;
 let debugInfo = false;
+let horribleLagMode = false;
 
 const canvasResolution = parseInt(window.localStorage.getItem('resolution') ?? 800);
 const NO_OFFSCREENCANVAS = typeof OffscreenCanvas == 'undefined';
@@ -25,7 +26,7 @@ function createCanvas2(size) {
 };
 const canvasContainer = document.getElementById('canvasContainer');
 const canvas = document.getElementById('canvas');
-const gameCanvas = createCanvas2(canvasResolution);
+const gameCanvas = document.createElement('canvas');
 const gridCanvas = createCanvas2(canvasResolution);
 const above = createCanvas2(canvasResolution);
 const fire = createCanvas2(canvasResolution);
@@ -409,8 +410,8 @@ const modalSubtitle = document.getElementById('modalSubtitle');
 const modalYes = document.getElementById('modalYes');
 const modalNo = document.getElementById('modalNo');
 const modalOk = document.getElementById('modalOk');
-async function modal(title, subtitle, confirmation) {
-    if (!acceptInputs) await new Promise((resolve, reject) => reject('Modal already open'));
+function modal(title, subtitle, confirmation) {
+    if (!acceptInputs) return new Promise((resolve, reject) => reject('Modal already open'));
     acceptInputs = false;
     modalTitle.innerHTML = title;
     modalSubtitle.innerHTML = subtitle;
@@ -435,9 +436,10 @@ async function modal(title, subtitle, confirmation) {
         modalOk.onclick = null;
         acceptInputs = true;
     };
-    await new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         modalYes.onclick = (e) => {
             hide();
+            console.log('e')
             resolve(true);
         };
         modalNo.onclick = (e) => {
@@ -877,6 +879,29 @@ function draw() {
 
     // ui
     drawUI();
+
+    // totally nothing
+    if (horribleLagMode) {
+        let iterations = 0;
+        for (let ny = 0; ny < gridSize * 2; ny++) {
+            for (let nx = 0; nx < gridSize * 2; nx++) {
+                // ctx.fillStyle = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, ${Math.random() * 0.5})`;
+                ctx.fillStyle = `rgba(0, 0, 0, ${Math.random() * 0.2})`;
+                ctx.fillRect(nx * gridScale / 2, ny * gridScale / 2, gridScale / 2, gridScale / 2);
+            }
+        }
+        function fry() {
+            const uri = canvas.toDataURL('image/jpeg', 0);
+            const img = new Image();
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvasResolution, canvasResolution);
+                ctx.drawImage(img, 0, 0);
+                if (++iterations < 5) fry();
+            }
+            img.src = uri;
+        };
+        fry();
+    }
 
     // set up for next frame
     frameCount++;
@@ -1356,7 +1381,7 @@ function updateTick() {
 
 // inputs
 document.onkeydown = (e) => {
-    if (e.target.matches('button') && (e.key == 'Tab' || e.key == 'Enter')) {
+    if (e.target.matches('button')) {
         e.preventDefault();
         e.target.blur();
     }
@@ -1610,7 +1635,7 @@ document.getElementById('downloadSave').onclick = (e) => {
     fastSimulation = false;
     updateTimeControlButtons();
     saveCode = saveCodeText.value;
-    const encoded = `data:text/redpixel;base64,${btoa(saveCode)}`;
+    const encoded = `data:text/redpixel;base64,${window.btoa(saveCode)}`;
     const a = document.createElement('a');
     a.href = encoded;
     a.download = `red-pixel-simulator_${Math.ceil(Math.random() * 1000)}.redpixel`;
@@ -1642,6 +1667,14 @@ gridSizeText.oninput = (e) => {
     gridSizeText.value = Math.max(1, Math.min(parseInt(gridSizeText.value.replace('e', '')), 500));
     if (gridSizeText.value != '') saveCode = gridSizeText.value + saveCode.substring(saveCode.indexOf(';'));
     saveCodeText.value = saveCode;
+};
+document.getElementById('screenshot').onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+    const encoded = gameCanvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = encoded;
+    a.download = `rps-screenshot_${Math.ceil(Math.random() * 1000)}.png`;
+    a.click();
 };
 // settings
 const noNoiseButton = document.getElementById('noNoise');

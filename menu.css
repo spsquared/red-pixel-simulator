@@ -34,14 +34,14 @@
 #t_textRed, #t_textPixel, #t_textSimulator {
     position: absolute;
     left: calc(var(--title-left-offset) + 1vw + 30vh);
-    font-family: "Lucida Console", Lucida, monospace;
+    font-family: 'Lucida Console', Lucida, monospace;
     font-size: 10vh;
     font-weight: bold;
     color: white;
     padding-top: 0.5vh;
     transition: none;
     transform: translateX(calc(100vw - 30vh - var(--title-left-offset)));
-    text-shadow: 0px 0px 5vh rgba(255, 255, 255, 0.5), -0.5vh 0.5vh 0vh rgba(255, 255, 255, 0.2);
+    text-shadow: 0px 0px 3vh rgba(255, 255, 255, 0.5), -0.5vh 0.5vh 0vh rgba(255, 255, 255, 0.2);
 }
 #t_textRed {
     top: 0vh;
@@ -78,11 +78,6 @@
 }
 #multiplayerButton {
     top: 128vh;
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-#multiplayerButton:active {
-    border-style: outset;
 }
 
 #menuMuteButton {
@@ -91,6 +86,7 @@
     left: 8px;
     width: 40px;
     height: 40px;
+    margin: 0px 0px;
     background-image: url(/assets/volumeMuted.svg);
     background-position: center;
     background-repeat: no-repeat;
@@ -111,8 +107,8 @@
 #levelSelect {
     position: absolute;
     bottom: 110vh;
-    left: 20vw;
-    width: 60vw;
+    left: calc(25vw - 4px);
+    width: 50vw;
     height: 80vh;
     background-color: #EFEFEF;
     border: 4px solid black;
@@ -146,7 +142,7 @@
 #pixsimMenu {
     position: absolute;
     bottom: 110vh;
-    left: 30vw;
+    left: calc(30vw - 4px);
     width: 40vw;
     height: 80vh;
     background-color: #EFEFEF;
@@ -180,6 +176,44 @@
     font-size: 4vh;
     margin: 0px 8px;
 }
+
+#pixsimMenuBody {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+#pixsimSelectMenu, #pixsimHostBody, #pixsimJoinBody, #pixsimScrimmageBody {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+#pixsimSelectMenu {
+    top: 0%;
+    left: 0%;
+    text-align: center;
+}
+#pixsimHostBody {
+    bottom: 100%;
+    left: 0%;
+}
+#pixsimJoinBody {
+    top: 100%;
+    left: 0%;
+}
+#pixsimScrimmageBody {
+    top: 0%;
+    left: 100%;
+}
+#pixsimSelectHost, #pixsimSelectJoin, #pixsimSelectSpectate, #pixsimSelectScrimmage {
+    width: 80%;
+    height: 48px;
+    font-size: 28px;
+    margin-top: 16px;
+}
+
 @keyframes spin {
     from {
         transform: rotateZ(0deg);
@@ -221,7 +255,7 @@
 #t_loadingText {
     display: inline-block;
     height: 16vh;
-    font-family: "Lucida Console", Lucida, monospace;
+    font-family: 'Lucida Console', Lucida, monospace;
     font-size: 8vh;
     font-weight: bold;
     color: white;

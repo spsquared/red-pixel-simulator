@@ -203,24 +203,30 @@ sandboxButton.onclick = (e) => {
     transitionToGame();
 };
 puzzleButton.onclick = (e) => {
+    if (levelSelect._open) return;
+    levelSelect._open = true;
     levelSelect.style.transform = 'translateY(100vh)';
     saveCodeText.blur();
 };
 multiplayerButton.onclick = (e) => {
-    // pixsimMenuConnecting.style.opacity = 1;
-    // pixsimMenuConnecting.style.pointerEvents = '';
-    // pixsimMenu.style.transform = 'translateY(100vh)';
-    // connectAPI().then(() => {
-    //     pixsimMenuConnecting.style.opacity = 0;
-    //     pixsimMenuConnecting.style.pointerEvents = 'none';
-    // }, (err) => {
-    //     modal('Could not connect to PixSim API:', `<span style="color: red;">${err.message}</span><br><button onclick="window.open('https://pixsim-api.radioactivestuf.repl.co');>Attempt manual wake</button>`).then(() => pixsimMenuClose.click());
-    // });
+    if (pixsimMenu._open) return;
+    pixsimMenu._open = true;
+    pixsimMenuConnecting.style.opacity = 1;
+    pixsimMenuConnecting.style.pointerEvents = '';
+    pixsimMenu.style.transform = 'translateY(100vh)';
+    connectAPI().then(() => {
+        pixsimMenuConnecting.style.opacity = 0;
+        pixsimMenuConnecting.style.pointerEvents = 'none';
+    }, (err) => {
+        modal('Could not connect to PixSim API:', `<span style="color: red;">${err.message}</span><br><button onclick="window.open('https://pixsim-api.radioactivestuf.repl.co');>Attempt manual wake</button>`).then(() => pixsimMenuClose.click());
+    });
 };
 levelSelectClose.onclick = (e) => {
+    levelSelect._open = false;
     levelSelect.style.transform = '';
 };
 pixsimMenuClose.onclick = (e) => {
+    pixsimMenu._open = false;
     disconnectAPI();
     pixsimMenu.style.transform = '';
 };
@@ -242,6 +248,7 @@ function selectPuzzle() {
     document.getElementById('premadeSaves').style.display = 'none';
     sandboxMode = false;
     levelSelect.style.transform = '';
+    levelSelect._open = false;
     transitionToGame();
 };
 

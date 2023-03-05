@@ -87,7 +87,10 @@
                         <button id="restart" class="bclick">Restart</button>
                     </td>
                     <td>
-                        <button id="backToMenu" class="bclick">Menu</button>
+                        <button id="backToMenu" class="bclick">
+                            <div style="display: inline-block; vertical-align: middle; height: 100%; padding-top: 1px;"><img src="/assets/backToMenu.svg" style="height: 20px;"></div>
+                            <div style="display: inline-block; vertical-align: middle; height: 100%; padding-top: 2px;">Menu</div>
+                        </button>
                     </td>
                 </tr>
                 <tr>
@@ -102,9 +105,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
+                    <td colspan="2">
                         <label id="gridSizeLabel" for="gridSize">Grid Size: </label>
                         <input id="gridSize" type="number" min="1" max="500" step="1">
+                    </td>
+                    <td>
+                        <button id="screenshot" class="bclick">Screenshot</button>
                     </td>
                 </tr>
                 <tr>
@@ -274,13 +280,10 @@
         </div>
         <div id="pixsimMenu">
             <button id="pixsimMenuClose" class="bclick">✖</button>
-            <div id="pixsimMenuConnecting">
-                <div id="pixsimMenuConnectingSpinner"></div><br>
-                <div id="pixSimMenuConnectingText">Connecting to PixSim API...</div>
-            </div>
             <div id="pixsimMenuBody">
-                <!-- scrolls up for host and down for join when click -->
-                <div id="pixsimSelectType">
+                <!-- scrolls around for menus -->
+                <div id="pixsimSelectMenu">
+                    <h1>PixSim Multiplayer</h1>
                     <button id="pixsimSelectHost">HOST GAME</button>
                     <button id="pixsimSelectJoin">JOIN GAME</button>
                     <button id="pixsimSelectSpectate">SPECTATE GAME</button>
@@ -297,6 +300,10 @@
                     <!-- puts in waiting list for scrimmages and puts against random player -->
                 </div>
             </div>
+            <div id="pixsimMenuConnecting">
+                <div id="pixsimMenuConnectingSpinner"></div><br>
+                <div id="pixSimMenuConnectingText">Connecting to PixSim API...</div>
+            </div>
         </div>
         <div id="t_bottom"></div>
         <div id="t_top">
@@ -308,7 +315,7 @@
     </div>
     <div id="highPing">
         <div style="color: yellow; font-weight: bold; font-size: 20px;">Unstable Network</div>
-        <div>Your connection is unstable and you may be disconnected during multiplayer games.</div>
+        <div>Your connection is unstable and you may be disconnected during multiplayer session.</div>
         <div id="highPingDisplay">Ping: 0ms</div>
     </div>
     <div id="modalContainer">

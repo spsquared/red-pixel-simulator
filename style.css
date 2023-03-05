@@ -1,9 +1,16 @@
+@font-face {
+    font-family: 'Cascadia';
+    font-weight: normal;
+    font-style: normal;
+    src: url(/assets/Cascadia.ttf) format('truetype');
+}
+
 .p5Canvas {
     display: none;
 }
 body {
     --max-sidebar-width: 600px;
-    font-family: "Courier New", Courier, monospace;
+    font-family: 'Cascadia', Courier, monospace;
     font-size: 14px;
     user-select: none;
     word-wrap: break-word;
@@ -89,7 +96,7 @@ button:active {
     left: 0px;
     width: 24px;
     height: 24px;
-    content: "";
+    content: '';
     background-color: darkgrey;
     transition: 0.1s linear;
     transform: translateX(-4px);
@@ -273,6 +280,11 @@ table {
     margin-top: 8px;
     font-size: 18px;
 }
+#screenshot {
+    width: 100px;
+    height: 40px;
+    font-size: 14px;
+}
 #noNoise, #fadeEffect, #changeResolution {
     margin-left: unset;
     font-size: 12px;
@@ -321,7 +333,7 @@ table {
 }
 #winText {
     color: black;
-    font-family: "Lucida Console", Lucida, monospace;
+    font-family: 'Lucida Console', Lucida, monospace;
     font-size: 60px;
     font-weight: bold;
     margin-bottom: 24px;
