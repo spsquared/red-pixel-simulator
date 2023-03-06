@@ -31,6 +31,8 @@ setInterval(() => {
         pingSend = performance.now();
         socket.emit('ping');
         pingReceived = false;
+    } else if (!socket.connected) {
+        highPingWarning.style.display = '';
     }
 }, 1000);
 socket.on('pong', () => {

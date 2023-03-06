@@ -260,8 +260,9 @@ function selectPuzzle() {
 
 pixsimSelectHostButton.onclick = (e) => {
     pixsimMenuContents.style.transform = 'translateY(100%)';
+    const joinCodeDisp = document.getElementById('hostJoinCode');
+    joinCodeDisp.innerText = '- - -';
     APIcreateGame().then((gameHost) => {
-        const joinCodeDisp = document.getElementById('hostJoinCode');
         joinCodeDisp.innerText = gameHost.code();
         function cancelHostGame() {
             gameHost.end();
@@ -278,7 +279,7 @@ pixsimSelectJoinButton.onclick = (e) => {
     const joinGameCodeJoin = document.getElementById('joinGameCodeJoin');
     joinGameCodeCode.value = '';
     joinGameCodeJoin.onclick = (e) => {
-        modal('Unable to do that!', 'This feature hasn\'t been implmented yet.', false);
+        modal('Unable to do that!', 'This feature hasn\'t been implemented yet.', false);
     };
     function refresh(data) {
         const joinList = document.getElementById('joinListContent');

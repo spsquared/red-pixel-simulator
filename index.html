@@ -13,11 +13,11 @@
         connect-src 'self' http://pixsim-api.radioactivestuf.repl.co ws://pixsim-api.radioactivestuf.repl.co http://localhost:* ws://localhost:* 'unsafe-eval' 'unsafe-inline';
         ">
     <meta name="title" content="Red Pixel Simulator">
-    <meta name="description" content="A sandbox-puzzle-RTS game based on interactions of pixels on a grid">
+    <meta name="description" content="A sandbox-puzzle-RTS game based on interactions of numbers on a grid">
     <meta name="url" content="https://red-pixel-simulator.radioactivestuf.repl.co/">
     <meta name="image" content="https://red-pixel-simulator.radioactivestuf.repl.co/favicon.png">
     <meta property="og:title" content="Red Pixel Simulator">
-    <meta property="og:description" content="A sandbox-puzzle-RTS game based on interactions of pixels on a grid">
+    <meta property="og:description" content="A sandbox-puzzle-RTS game based on interactions of numbers on a grid">
     <meta property="og:url" content="https://red-pixel-simulator.radioactivestuf.repl.co/">
     <meta property="og:image" content="https://red-pixel-simulator.radioactivestuf.repl.co/favicon.png">
     <meta property="og:image:width" content="26">
@@ -152,8 +152,20 @@
                     <td>Select region</td>
                 </tr>
                 <tr>
-                    <td><b>[Control] + [D]</b></td>
-                    <td>Set brush to selected region</td>
+                    <td><b>[Backspace]</b></td>
+                    <td>Delete selected region</td>
+                </tr>
+                <tr>
+                    <td><b>[Control] + [X]</b></td>
+                    <td>Cut selected region</td>
+                </tr>
+                <tr>
+                    <td><b>[Control] + [C]</b></td>
+                    <td>Copy selected region</td>
+                </tr>
+                <tr>
+                    <td><b>[Control] + [V]</b></td>
+                    <td>Paste selected region (as brush)</td>
                 </tr>
                 <tr>
                     <td><b>[P]</b></td>

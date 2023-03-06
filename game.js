@@ -1020,10 +1020,18 @@ function updateMouseControls() {
                 selection.y1 = mYGrid;
                 selection.show = true;
             }
-            selection.x2 = Math.max(selection.x1, mXGrid);
-            selection.y2 = Math.max(selection.y1, mYGrid);
-            selection.x1 = Math.min(selection.x1, mXGrid);
-            selection.y1 = Math.min(selection.y1, mYGrid);
+            if (mXGrid < selection.x1) {
+                selection.x2 = selection.x1;
+                selection.x1 = mXGrid;
+            } else {
+                selection.x2 = mXGrid;
+            }
+            if (mYGrid < selection.y1) {
+                selection.y2 = selection.y1;
+                selection.y1 = mYGrid;
+            } else {
+                selection.y2 = mYGrid;
+            }
         } else {
             clickLine(mXGrid, mYGrid, prevMXGrid, prevMYGrid, mouseButton == RIGHT || removing);
         }
@@ -1408,7 +1416,28 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 brush.size = Math.max(1, brush.size - 1);
                 if (brush.size != bsize) tickSound();
             }
-        } else if (sandboxMode && key == 'd' && e.ctrlKey) {
+        } else if (sandboxMode && key == 'x' && e.ctrlKey) {
+            if (selection.show) {
+                selection.grid = [];
+                for (let y = selection.y1; y <= selection.y2; y++) {
+                    selection.grid[y - selection.y1] = [];
+                    for (let x = selection.x1; x <= selection.x2; x++) {
+                        selection.grid[y - selection.y1][x - selection.x1] = grid[y][x];
+                        grid[y][x] = pixNum.AIR;
+                    }
+                }
+                selection.show = false;
+            }
+        } else if (sandboxMode && key == 'backspace') {
+            if (selection.show) {
+                for (let y = selection.y1; y <= selection.y2; y++) {
+                    for (let x = selection.x1; x <= selection.x2; x++) {
+                        grid[y][x] = pixNum.AIR;
+                    }
+                }
+                selection.show = false;
+            }
+        } else if (sandboxMode && key == 'c' && e.ctrlKey) {
             if (selection.show) {
                 selection.grid = [];
                 for (let y = selection.y1; y <= selection.y2; y++) {
@@ -1417,9 +1446,10 @@ window.addEventListener('DOMContentLoaded', (e) => {
                         selection.grid[y - selection.y1][x - selection.x1] = grid[y][x];
                     }
                 }
-                brush.isSelection = true;
                 selection.show = false;
             }
+        } else if (sandboxMode && key == 'v' && e.ctrlKey) {
+            if (selection.grid.length != 0) brush.isSelection = true;
         } else if (key == 'enter') {
             if (simulationPaused) {
                 runTicks = 1;
