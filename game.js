@@ -778,14 +778,16 @@ function rotatePixel(x, y, possibleRotations) {
     if (nextGrid[y][x] != null) return;
     let rotate = 0;
     let thisPixel = numPixels[grid[y][x]];
+    let touchedRotators = [];
     updateTouchingAnything(x, y, function (actionX, actionY) {
         let pixel = grid[actionY][actionX];
         if (pixel == pixNum.ROTATOR_CLOCKWISE) {
             rotate++;
         } else if (pixel == pixNum.ROTATOR_COUNTERCLOCKWISE) {
             rotate--;
-        } else if ((pixel >= pixNum.ROTATOR_LEFT && pixel <= pixNum.ROTATOR_DOWN) && numPixels[pixel].rotation != thisPixel.rotation) {
+        } else if ((pixel >= pixNum.ROTATOR_LEFT && pixel <= pixNum.ROTATOR_DOWN) && numPixels[pixel].rotation != thisPixel.rotation && touchedRotators.indexOf(pixel) == -1) {
             rotate += numPixels[pixel].rotation - thisPixel.rotation;
+            touchedRotators.push(pixel);
         }
     });
     if (rotate != 0) {
@@ -1020,18 +1022,8 @@ function updateMouseControls() {
                 selection.y1 = mYGrid;
                 selection.show = true;
             }
-            if (mXGrid < selection.x1) {
-                selection.x2 = selection.x1;
-                selection.x1 = mXGrid;
-            } else {
-                selection.x2 = mXGrid;
-            }
-            if (mYGrid < selection.y1) {
-                selection.y2 = selection.y1;
-                selection.y1 = mYGrid;
-            } else {
-                selection.y2 = mYGrid;
-            }
+            selection.x2 = mXGrid;
+            selection.y2 = mYGrid;
         } else {
             clickLine(mXGrid, mYGrid, prevMXGrid, prevMYGrid, mouseButton == RIGHT || removing);
         }
@@ -1190,14 +1182,18 @@ function drawBrush() {
     if (selection.show) {
         ctx.globalAlpha = 0.2;
         ctx.fillStyle = 'rgb(255, 255, 255)';
-        fillPixel(selection.x1, selection.y1, selection.x2 - selection.x1 + 1, selection.y2 - selection.y1 + 1, ctx);
+        let xmin = Math.min(selection.x1, selection.x2);
+        let xmax = Math.max(selection.x1, selection.x2);
+        let ymin = Math.min(selection.y1, selection.y2);
+        let ymax = Math.max(selection.y1, selection.y2);
+        fillPixel(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ctx);
         ctx.globalAlpha = 1;
         ctx.strokeStyle = 'rgb(0, 0, 0)';
         let scale = gridScale * camera.scale;
         ctx.setLineDash([scale / 2, scale / 2]);
         ctx.lineWidth = 2 * camera.scale;
         ctx.beginPath();
-        ctx.strokeRect(selection.x1 * scale - camera.x, selection.y1 * scale - camera.y, (selection.x2 - selection.x1 + 1) * scale, (selection.y2 - selection.y1 + 1) * scale);
+        ctx.strokeRect(xmin * scale - camera.x, ymin * scale - camera.y, (xmax - xmin + 1) * scale, (ymax - ymin + 1) * scale);
         ctx.stroke();
     }
 };
@@ -1419,10 +1415,14 @@ window.addEventListener('DOMContentLoaded', (e) => {
         } else if (sandboxMode && key == 'x' && e.ctrlKey) {
             if (selection.show) {
                 selection.grid = [];
-                for (let y = selection.y1; y <= selection.y2; y++) {
-                    selection.grid[y - selection.y1] = [];
-                    for (let x = selection.x1; x <= selection.x2; x++) {
-                        selection.grid[y - selection.y1][x - selection.x1] = grid[y][x];
+                let xmin = Math.min(selection.x1, selection.x2);
+                let xmax = Math.max(selection.x1, selection.x2);
+                let ymin = Math.min(selection.y1, selection.y2);
+                let ymax = Math.max(selection.y1, selection.y2);
+                for (let y = ymin; y <= ymax; y++) {
+                    selection.grid[y - ymin] = [];
+                    for (let x = xmin; x <= xmax; x++) {
+                        selection.grid[y - ymin][x - xmin] = grid[y][x];
                         grid[y][x] = pixNum.AIR;
                     }
                 }
@@ -1430,8 +1430,12 @@ window.addEventListener('DOMContentLoaded', (e) => {
             }
         } else if (sandboxMode && key == 'backspace') {
             if (selection.show) {
-                for (let y = selection.y1; y <= selection.y2; y++) {
-                    for (let x = selection.x1; x <= selection.x2; x++) {
+                let xmin = Math.min(selection.x1, selection.x2);
+                let xmax = Math.max(selection.x1, selection.x2);
+                let ymin = Math.min(selection.y1, selection.y2);
+                let ymax = Math.max(selection.y1, selection.y2);
+                for (let y = ymin; y <= ymax; y++) {
+                    for (let x = xmin; x <= xmax; x++) {
                         grid[y][x] = pixNum.AIR;
                     }
                 }
@@ -1440,10 +1444,14 @@ window.addEventListener('DOMContentLoaded', (e) => {
         } else if (sandboxMode && key == 'c' && e.ctrlKey) {
             if (selection.show) {
                 selection.grid = [];
-                for (let y = selection.y1; y <= selection.y2; y++) {
-                    selection.grid[y - selection.y1] = [];
-                    for (let x = selection.x1; x <= selection.x2; x++) {
-                        selection.grid[y - selection.y1][x - selection.x1] = grid[y][x];
+                let xmin = Math.min(selection.x1, selection.x2);
+                let xmax = Math.max(selection.x1, selection.x2);
+                let ymin = Math.min(selection.y1, selection.y2);
+                let ymax = Math.max(selection.y1, selection.y2);
+                for (let y = ymin; y <= ymax; y++) {
+                    selection.grid[y - ymin] = [];
+                    for (let x = xmin; x <= xmax; x++) {
+                        selection.grid[y - ymin][x - xmin] = grid[y][x];
                     }
                 }
                 selection.show = false;
