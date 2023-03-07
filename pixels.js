@@ -2378,6 +2378,58 @@ const pixels = {
         id: 'slider_vertical',
         numId: 0
     },
+    collapsible: {
+        name: 'Collapsible Box',
+        description: 'A box that will disintegrate when squished',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+        },
+        update: function (x, y) {
+            if (validMovingPixel(x, y) && y < gridSize - 1 && isAir(x, y + 1) && canMoveTo(x, y + 1)) {
+                move(x, y, x, y + 1);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 120, 210)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = `rgb(250, 180, 0)`;
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = `rgb(200, 100, 0)`;
+            ctx.fillRect(50 / 6, 50 / 6, 100 / 3, 100 / 3);
+            ctx.fillStyle = `rgb(250, 180, 0)`;
+            ctx.rotate(-Math.PI / 4);
+            ctx.fillRect(-Math.sqrt(2) * 25, Math.sqrt(2) * 25 - 5, Math.sqrt(2) * 50, 10);
+            ctx.resetTransform();
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(250, 180, 0)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(200, 100, 0)`;
+            fillPixel(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            ctx.fillStyle = `rgb(250, 180, 0)`;
+            ctx.rotate(-Math.PI / 4);
+            fillPixel(-Math.sqrt(2) / 2, Math.sqrt(2) / 2 - 0.1, Math.sqrt(2), 0.2);
+            ctx.resetTransform();
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 2,
+        flammability: 15,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 1,
+        key: Infinity,
+        updateStage: 9,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'collapsible',
+        numId: 0
+    },
     pump: {
         name: 'Water Pump',
         description: 'Violates the Laws of Thermodynamics to create water',
@@ -2477,58 +2529,6 @@ const pixels = {
         animated: false,
         pickable: true,
         id: 'lava_generator',
-        numId: 0
-    },
-    collapsible: {
-        name: 'Collapsible Box',
-        description: 'A box that will disintegrate when squished',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
-        },
-        update: function (x, y) {
-            if (validMovingPixel(x, y) && y < gridSize - 1 && isAir(x, y + 1) && canMoveTo(x, y + 1)) {
-                move(x, y, x, y + 1);
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 120, 210)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = `rgb(250, 180, 0)`;
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = `rgb(200, 100, 0)`;
-            ctx.fillRect(50 / 6, 50 / 6, 100 / 3, 100 / 3);
-            ctx.fillStyle = `rgb(250, 180, 0)`;
-            ctx.rotate(-Math.PI / 4);
-            ctx.fillRect(-Math.sqrt(2) * 25, Math.sqrt(2) * 25 - 5, Math.sqrt(2) * 50, 10);
-            ctx.resetTransform();
-        },
-        prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
-            ctx.fillStyle = `rgb(250, 180, 0)`;
-            fillPixel(0, 0, 1, 1);
-            ctx.fillStyle = `rgb(200, 100, 0)`;
-            fillPixel(1 / 6, 1 / 6, 2 / 3, 2 / 3);
-            ctx.fillStyle = `rgb(250, 180, 0)`;
-            ctx.rotate(-Math.PI / 4);
-            fillPixel(-Math.sqrt(2) / 2, Math.sqrt(2) / 2 - 0.1, Math.sqrt(2), 0.2);
-            ctx.resetTransform();
-            this.prerenderedFrames.push(toImage());
-        },
-        prerenderedFrames: [],
-        blastResistance: 2,
-        flammability: 15,
-        pushable: true,
-        cloneable: true,
-        rotateable: false,
-        group: 2,
-        key: Infinity,
-        updateStage: 9,
-        animatedNoise: false,
-        animated: false,
-        pickable: true,
-        id: 'collapsible',
         numId: 0
     },
     nuke_diffuser: {

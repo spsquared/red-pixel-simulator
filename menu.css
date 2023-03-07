@@ -248,7 +248,7 @@
 #hostJoinCode {
     margin: 8px 8px;
     font-size: 20px;
-    font-family: Arial;
+    font-family: 'Source Code Pro', Courier, monospace;
 }
 #hostGameTypeWrapper {
     display: grid;
@@ -330,7 +330,7 @@
     width: calc(70% - 4px);
     height: 40px;
     font-size: 36px;
-    font-family: 'Lucida Console', Lucida, monospace;
+    font-family: 'Source Code Pro', Courier, monospace;
     background-color: #DDDDDD;
     border: none;
 }
@@ -377,7 +377,7 @@
     grid-column-start: c1;
     padding-left: 4px;
     font-size: 18px;
-    font-family: Arial;
+    font-family: 'Source Code Pro', Courier, monospace;
     text-align: left;
 }
 .joinTileSub1 {

@@ -1,8 +1,14 @@
 @font-face {
-    font-family: 'Cascadia';
-    font-weight: normal;
+    font-family: 'Source Code Pro';
+    font-weight: 100, 200, 300, 400, 500, 600, 700, 800;
     font-style: normal;
-    src: url(/assets/Cascadia.ttf) format('truetype');
+    src: url(/assets/SourceCodePro.ttf) format('truetype');
+}
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 100, 200, 300, 400, 500, 600, 700, 800;
+    font-style: italic;
+    src: url(/assets/SourceCodePro-Italic.ttf) format('truetype');
 }
 
 .p5Canvas {
@@ -10,7 +16,7 @@
 }
 body {
     --max-sidebar-width: 600px;
-    font-family: 'Cascadia', Courier, monospace;
+    font-family: 'Source Code Pro', Courier, monospace;
     font-size: 14px;
     user-select: none;
     word-wrap: break-word;
@@ -59,7 +65,7 @@ button {
     margin: 4px 4px;
     padding: 4px 4px;
     font: 16px Arial;
-    font-weight: bolder;
+    font-weight: 600;
     background-color: lightgray;
     border: 5px outset #AAAAAA;
     cursor: pointer;
@@ -254,6 +260,8 @@ table {
     resize: vertical;
     word-wrap: break-word;
     word-break: break-all;
+    font-family: 'Source Code Pro', Courier, monospace;
+    font-weight: 300;
 }
 #generateSave, #uploadSave, #downloadSave {
     width: 100px;
@@ -298,7 +306,7 @@ table {
     background-color: lime;
 }
 .save {
-    font-weight: lighter;
+    font-weight: 300;
 }
 .loadSave {
     font-size: 12px;
