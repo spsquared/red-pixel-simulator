@@ -1003,7 +1003,6 @@ function updateMouseControls() {
     if (!fastSimulation && acceptInputs && !inWinScreen && mouseOver) {
         if (((mouseIsPressed && mouseButton == LEFT && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
             if (!brush.lineMode) {
-                console.log('omg')
                 brush.lineMode = true;
                 brush.lineStartX = mXGrid;
                 brush.lineStartY = mYGrid;
@@ -1049,7 +1048,17 @@ function updateMouseControls() {
     if (!mouseIsPressed || mouseButton != LEFT) selecting = false;
 };
 function rotateBrush() {
-
+    if (!brush.isSelection || selection.grid[0] == undefined) return;
+    const newGrid = [];
+    for (let i = 0; i < selection.grid[0].length; i++) {
+        newGrid[i] = [];
+    }
+    for (let i = 0; i < selection.grid.length; i++) {
+        for (let j = 0; j < selection.grid[i].length; j++) {
+            newGrid[j][selection.grid.length - i - 1] = selection.grid[i][j];
+        }
+    }
+    selection.grid = newGrid;
 };
 function clickLine(startX, startY, endX, endY, remove) {
     if (!sandboxMode && !inResetState) return;
@@ -1062,10 +1071,10 @@ function clickLine(startX, startY, endX, endY, remove) {
     let modifiedPixelCounts = [];
     let clickPixelNum = pixels[brush.pixel].numId;
     place: for (let i = 0; i <= distance; i++) {
-        let xmin = Math.max(0, Math.min(Math.floor(x) - brush.size + 1, gridSize - 1));
-        let xmax = Math.max(0, Math.min(Math.floor(x) + brush.size - 1, gridSize - 1));
-        let ymin = Math.max(0, Math.min(Math.floor(y) - brush.size + 1, gridSize - 1));
-        let ymax = Math.max(0, Math.min(Math.floor(y) + brush.size - 1, gridSize - 1));
+        let xmin = Math.max(0, Math.min(Math.round(x) - brush.size + 1, gridSize - 1));
+        let xmax = Math.max(0, Math.min(Math.round(x) + brush.size - 1, gridSize - 1));
+        let ymin = Math.max(0, Math.min(Math.round(y) - brush.size + 1, gridSize - 1));
+        let ymax = Math.max(0, Math.min(Math.round(y) + brush.size - 1, gridSize - 1));
         function act(cb) {
             for (let k = ymin; k <= ymax; k++) {
                 for (let j = xmin; j <= xmax; j++) {
@@ -1182,7 +1191,7 @@ function drawBrush() {
             ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
             ctx.stroke();
         } else if (brush.lineMode) {
-            // buh line mode how do i linearly interpolate?? old method too laggy!!!! too much loops!!!!!!!!!!
+            // use new canvas?
             let x = brush.lineStartX;
             let y = brush.lineStartY;
             let angle = Math.atan2(mYGrid - brush.lineStartY, mXGrid - brush.lineStartX);
@@ -1190,15 +1199,18 @@ function drawBrush() {
             let xtravel = Math.cos(angle);
             let ytravel = Math.sin(angle);
             let clickPixelNum = pixels[brush.pixel].numId;
+            abovectx.clearRect(0, 0, 600, 600);
             for (let i = 0; i <= distance; i++) {
-                let xmin = Math.max(0, Math.min(Math.floor(x) - brush.size + 1, gridSize - 1));
-                let xmax = Math.max(0, Math.min(Math.floor(x) + brush.size - 1, gridSize - 1));
-                let ymin = Math.max(0, Math.min(Math.floor(y) - brush.size + 1, gridSize - 1));
-                let ymax = Math.max(0, Math.min(Math.floor(y) + brush.size - 1, gridSize - 1));
-                drawPixels(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : clickPixelNum, 0.5, ctx)
+                let xmin = Math.max(0, Math.min(Math.round(x) - brush.size + 1, gridSize - 1));
+                let xmax = Math.max(0, Math.min(Math.round(x) + brush.size - 1, gridSize - 1));
+                let ymin = Math.max(0, Math.min(Math.round(y) - brush.size + 1, gridSize - 1));
+                let ymax = Math.max(0, Math.min(Math.round(y) + brush.size - 1, gridSize - 1));
+                drawPixels(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : clickPixelNum, 1, abovectx);
                 x += xtravel;
                 y += ytravel;
             }
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(above, 0, 0);
         } else {
             let x1 = Math.min(gridSize, Math.max(0, mXGrid - brush.size + 1));
             let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
@@ -1273,8 +1285,8 @@ function drawUI() {
     }
     let fpsText = `FPS: ${frameList.length}`;
     let tickText = `Tick: ${ticks}`;
-    let brushSizeText = `Brush Size: ${brush.size * 2 - 1}`;
-    let brushPixelText = `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
+    let brushSizeText = `Brush Size: ${(brush.isSelection && selection.grid[0] != undefined) ? '-' : brush.size * 2 - 1}`;
+    let brushPixelText = (brush.isSelection && selection.grid[0] != undefined) ? `Brush: Paste` : `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
     ctx.fillStyle = '#FFF5';
     ctx.fillRect(1, 0, ctx.measureText(fpsText).width + 4, 20);
@@ -1795,7 +1807,7 @@ function setAudio(file, cb) {
     };
     request.send();
 };
-const musicBuffers = new Map();;
+const musicBuffers = new Map();
 const activeMusic = [];
 let musicMuted = (window.localStorage.getItem('musicMuted') ?? false) == 1;
 const menuMuteButton = document.getElementById('menuMuteButton');
