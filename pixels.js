@@ -2399,8 +2399,8 @@ const pixels = {
             ctx.fillStyle = `rgb(200, 100, 0)`;
             ctx.fillRect(50 / 6, 50 / 6, 100 / 3, 100 / 3);
             ctx.fillStyle = `rgb(250, 180, 0)`;
-            ctx.rotate(-Math.PI / 4);
-            ctx.fillRect(-Math.sqrt(2) * 25, Math.sqrt(2) * 25 - 5, Math.sqrt(2) * 50, 10);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillRect(0, -5, Math.sqrt(2) * 50, 10);
             ctx.resetTransform();
         },
         prerender: function () {
@@ -2410,8 +2410,8 @@ const pixels = {
             ctx.fillStyle = `rgb(200, 100, 0)`;
             fillPixel(1 / 6, 1 / 6, 2 / 3, 2 / 3);
             ctx.fillStyle = `rgb(250, 180, 0)`;
-            ctx.rotate(-Math.PI / 4);
-            fillPixel(-Math.sqrt(2) / 2, Math.sqrt(2) / 2 - 0.1, Math.sqrt(2), 0.2);
+            ctx.rotate(Math.PI / 4);
+            fillPixel(0, -0.1, Math.sqrt(2), 0.2);
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },

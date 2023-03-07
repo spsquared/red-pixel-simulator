@@ -672,7 +672,6 @@ function fall(x, y, xTravel, yTravel, isPassable) {
         }
     }
 };
-// fluid rewrite - moves directly to position instead of taking forever, more realistic
 function flow(x, y) {
     if (y == gridSize) {
         // still have to flow left and right to fill air gaps
@@ -1056,6 +1055,14 @@ function rotateBrush() {
     for (let i = 0; i < selection.grid.length; i++) {
         for (let j = 0; j < selection.grid[i].length; j++) {
             newGrid[j][selection.grid.length - i - 1] = selection.grid[i][j];
+            let pixType = numPixels[selection.grid[i][j]] ?? numPixels[pixNum.MISSING];
+            if (pixType.rotation != undefined) {
+                if (pixType.numId == pixNum.SLIDER_HORIZONTAL || pixType.numId == pixNum.SLIDER_VERTICAL) {
+                    newGrid[j][selection.grid.length - i - 1] = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % 2) + 2) % 2);
+                } else {
+                    newGrid[j][selection.grid.length - i - 1] = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % 4) + 4) % 4);
+                }
+            }
         }
     }
     selection.grid = newGrid;

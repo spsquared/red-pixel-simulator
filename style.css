@@ -318,8 +318,14 @@ table {
 #controlsTable {
     width: calc((100% - 14px));
 }
-#controlsTable td:nth-child(1) {
+#controlsTable td {
+    width: 25%;
+}
+#controlsTable td:nth-child(1), #controlsTable td:nth-child(3) {
     text-align: right;
+}
+#controlsTable td:nth-child(2), #controlsTable td:nth-child(4) {
+    font-weight: 300;
 }
 
 #winScreen {
