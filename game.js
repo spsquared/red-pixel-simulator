@@ -120,7 +120,10 @@ let lastFpsList = -1;
 const brush = {
     pixel: 'wall',
     size: 1,
-    isSelection: false
+    lineMode: false,
+    isSelection: false,
+    lineStartX: 0,
+    lineStartY: 0
 };
 let mX = 0;
 let mY = 0;
@@ -150,6 +153,7 @@ const selection = {
 };
 let removing = false;
 let holdingControl = false;
+let holdingAlt = false;
 let acceptInputs = true;
 let inResetState = true;
 let forceRedraw = true;
@@ -890,7 +894,7 @@ function draw() {
         let iterations = 0;
         for (let ny = 0; ny < gridSize * 2; ny++) {
             for (let nx = 0; nx < gridSize * 2; nx++) {
-                ctx.fillStyle = `rgba(${Math.random()*64}, ${Math.random()*64}, ${Math.random()*64}, ${Math.random() * 0.2})`;
+                ctx.fillStyle = `rgba(${Math.random() * 64}, ${Math.random() * 64}, ${Math.random() * 64}, ${Math.random() * 0.2})`;
                 ctx.fillRect(nx * gridScale / 2, ny * gridScale / 2, gridScale / 2, gridScale / 2);
             }
         }
@@ -996,39 +1000,53 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert) {
 };
 function updateMouseControls() {
     if ((mouseIsPressed && mouseButton == RIGHT) || removing) brush.isSelection = false;
-    if (mouseIsPressed && !fastSimulation && acceptInputs && !inWinScreen && mouseOver) {
-        if (brush.isSelection && selection.grid[0] != undefined && sandboxMode) {
-            let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
-            let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
-            for (let y = 0; y < selection.grid.length; y++) {
-                if (y + offsetY >= 0 && y + offsetY < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
-                    if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
-                        grid[y + offsetY][x + offsetX] = selection.grid[y][x];
+    if (!fastSimulation && acceptInputs && !inWinScreen && mouseOver) {
+        if (((mouseIsPressed && mouseButton == LEFT && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
+            if (!brush.lineMode) {
+                console.log('omg')
+                brush.lineMode = true;
+                brush.lineStartX = mXGrid;
+                brush.lineStartY = mYGrid;
+            }
+            if (!mouseIsPressed || mouseButton != LEFT) {
+                brush.lineMode = false;
+                clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, mouseButton == RIGHT || removing);
+            }
+        } else if (mouseIsPressed) {
+            brush.lineMode = false;
+            if (brush.isSelection && selection.grid[0] != undefined && sandboxMode) {
+                let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
+                let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
+                for (let y = 0; y < selection.grid.length; y++) {
+                    if (y + offsetY >= 0 && y + offsetY < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
+                        if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
+                            grid[y + offsetY][x + offsetX] = selection.grid[y][x];
+                        }
                     }
                 }
+            } else if (mouseButton == CENTER) {
+                if (holdingControl) {
+                    camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * camera.scale) - canvasResolution));
+                    camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * camera.scale) - canvasResolution));
+                    forceRedraw = true;
+                } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
+                    pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
+                }
+            } else if (mouseButton == LEFT && holdingControl && sandboxMode) {
+                if (!selecting) {
+                    selecting = true;
+                    selection.x1 = mXGrid;
+                    selection.y1 = mYGrid;
+                    selection.show = true;
+                }
+                selection.x2 = mXGrid;
+                selection.y2 = mYGrid;
+            } else {
+                clickLine(prevMXGrid, prevMYGrid, mXGrid, mYGrid, mouseButton == RIGHT || removing);
             }
-        } else if (mouseButton == CENTER) {
-            if (holdingControl) {
-                camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * camera.scale) - canvasResolution));
-                camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * camera.scale) - canvasResolution));
-                forceRedraw = true;
-            } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
-                pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
-            }
-        } else if (mouseButton == LEFT && holdingControl && sandboxMode) {
-            if (!selecting) {
-                selecting = true;
-                selection.x1 = mXGrid;
-                selection.y1 = mYGrid;
-                selection.show = true;
-            }
-            selection.x2 = mXGrid;
-            selection.y2 = mYGrid;
-        } else {
-            clickLine(mXGrid, mYGrid, prevMXGrid, prevMYGrid, mouseButton == RIGHT || removing);
         }
     }
-    if (!mouseIsPressed || mouseButton != LEFT || !holdingControl) selecting = false;
+    if (!mouseIsPressed || mouseButton != LEFT) selecting = false;
 };
 function rotateBrush() {
 
@@ -1037,17 +1055,17 @@ function clickLine(startX, startY, endX, endY, remove) {
     if (!sandboxMode && !inResetState) return;
     let x = startX;
     let y = startY;
-    let angle = atan2(endY - startY, endX - startX);
-    let distance = sqrt(pow(endX - startX, 2) + pow(endY - startY, 2));
+    let angle = Math.atan2(endY - startY, endX - startX);
+    let distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+    let xtravel = Math.cos(angle);
+    let ytravel = Math.sin(angle);
     let modifiedPixelCounts = [];
     let clickPixelNum = pixels[brush.pixel].numId;
     place: for (let i = 0; i <= distance; i++) {
-        let gridX = Math.floor(x);
-        let gridY = Math.floor(y);
-        let xmin = Math.max(0, Math.min(gridX - brush.size + 1, gridSize - 1));
-        let xmax = Math.max(0, Math.min(gridX + brush.size - 1, gridSize - 1));
-        let ymin = Math.max(0, Math.min(gridY - brush.size + 1, gridSize - 1));
-        let ymax = Math.max(0, Math.min(gridY + brush.size - 1, gridSize - 1));
+        let xmin = Math.max(0, Math.min(Math.floor(x) - brush.size + 1, gridSize - 1));
+        let xmax = Math.max(0, Math.min(Math.floor(x) + brush.size - 1, gridSize - 1));
+        let ymin = Math.max(0, Math.min(Math.floor(y) - brush.size + 1, gridSize - 1));
+        let ymax = Math.max(0, Math.min(Math.floor(y) + brush.size - 1, gridSize - 1));
         function act(cb) {
             for (let k = ymin; k <= ymax; k++) {
                 for (let j = xmin; j <= xmax; j++) {
@@ -1124,8 +1142,8 @@ function clickLine(startX, startY, endX, endY, remove) {
                 })) break place;
             }
         }
-        x += cos(angle);
-        y += sin(angle);
+        x += xtravel;
+        y += ytravel;
     }
     for (let pixelType in modifiedPixelCounts) {
         if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
@@ -1141,7 +1159,7 @@ function clickLine(startX, startY, endX, endY, remove) {
 };
 function drawBrush() {
     if (!fastSimulation && !selecting) {
-        if (brush.isSelection && selection.grid[0] != undefined && !((mouseIsPressed && mouseButton == RIGHT) || removing)) {
+        if (brush.isSelection && selection.grid[0] != undefined) {
             let x1 = Math.min(gridSize, Math.max(0, Math.floor(mXGrid - selection.grid[0].length / 2)));
             let x2 = Math.min(gridSize - 1, Math.max(-1, Math.floor(mXGrid + selection.grid[0].length / 2) - 1));
             let y1 = Math.min(gridSize, Math.max(0, Math.floor(mYGrid - selection.grid.length / 2)));
@@ -1163,6 +1181,24 @@ function drawBrush() {
             ctx.beginPath();
             ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
             ctx.stroke();
+        } else if (brush.lineMode) {
+            // buh line mode how do i linearly interpolate?? old method too laggy!!!! too much loops!!!!!!!!!!
+            let x = brush.lineStartX;
+            let y = brush.lineStartY;
+            let angle = Math.atan2(mYGrid - brush.lineStartY, mXGrid - brush.lineStartX);
+            let distance = Math.sqrt(Math.pow(mXGrid - brush.lineStartX, 2) + Math.pow(mYGrid - brush.lineStartY, 2));
+            let xtravel = Math.cos(angle);
+            let ytravel = Math.sin(angle);
+            let clickPixelNum = pixels[brush.pixel].numId;
+            for (let i = 0; i <= distance; i++) {
+                let xmin = Math.max(0, Math.min(Math.floor(x) - brush.size + 1, gridSize - 1));
+                let xmax = Math.max(0, Math.min(Math.floor(x) + brush.size - 1, gridSize - 1));
+                let ymin = Math.max(0, Math.min(Math.floor(y) - brush.size + 1, gridSize - 1));
+                let ymax = Math.max(0, Math.min(Math.floor(y) + brush.size - 1, gridSize - 1));
+                drawPixels(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : clickPixelNum, 0.5, ctx)
+                x += xtravel;
+                y += ytravel;
+            }
         } else {
             let x1 = Math.min(gridSize, Math.max(0, mXGrid - brush.size + 1));
             let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
@@ -1222,7 +1258,7 @@ function updateCamera() {
 };
 function drawUI() {
     ctx.fillStyle = '#000';
-    ctx.font = '20px Arial';
+    ctx.font = '20px Source Code Pro';
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
     if (debugInfo) {
@@ -1261,7 +1297,7 @@ function drawUI() {
     ctx.fillText(brushPixelText, canvasResolution - 3, 22);
     ctx.fillText(zoomText, canvasResolution - 3, 43);
     if (fastSimulation) {
-        ctx.font = '60px Arial';
+        ctx.font = '60px Source Code Pro';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
@@ -1487,13 +1523,15 @@ window.addEventListener('DOMContentLoaded', (e) => {
             removing = true;
         } else if (key == 'control') {
             holdingControl = true;
+        } else if (key == 'alt') {
+            holdingAlt = true;
         }
         if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11' && key != '=' && key != '-') e.preventDefault();
     };
     document.onkeyup = (e) => {
         if (e.target.matches('#saveCode') || !acceptInputs || inWinScreen || inMenuScreen) return;
         const key = e.key.toLowerCase();
-        if (key == 'alt') {
+        if (key == 'z' && e.altKey) {
             debugInfo = !debugInfo;
             clickSound();
         } else if (key == 'w') {
@@ -1513,6 +1551,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
             removing = false;
         } else if (key == 'control') {
             holdingControl = false;
+        } else if (key == 'alt') {
+            holdingAlt = false;
         } else if (key == 'escape') {
             brush.isSelection = false;
             selection.show = false;
@@ -1551,7 +1591,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         }
         if (holdingControl) { e.preventDefault(); }
     }, { passive: false });
-})
+});
 
 // game control buttons
 const pauseButton = document.getElementById('pause');

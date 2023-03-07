@@ -261,7 +261,6 @@ table {
     word-wrap: break-word;
     word-break: break-all;
     font-family: 'Source Code Pro', Courier, monospace;
-    font-weight: 300;
 }
 #generateSave, #uploadSave, #downloadSave {
     width: 100px;
