@@ -2768,12 +2768,14 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < height; i++) {
-                let endX = x - 1;
-                while (endX >= 0) {
-                    if (grid[y + i][endX] != pixNum.AIR || monsterGrid[y + i][endX]) break;
-                    endX--;
+                let path = recursivelyTraceLaser(x, y + i, 0);
+                for (let line of path) {
+                    if (line[1] == line[3]) {
+                        fillPixel(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
+                    } else {
+                        fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
+                    }
                 }
-                fillPixel(endX + 1, y + 1 / 3 + i, x - endX - 1, 1 / 3, abovectx);
             }
         },
         update: function (x, y) {
@@ -2837,12 +2839,14 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < width; i++) {
-                let endY = y - 1;
-                while (endY >= 0) {
-                    if (grid[endY][x + i] != pixNum.AIR || monsterGrid[endY][x + i]) break;
-                    endY--;
+                let path = recursivelyTraceLaser(x + i, y, 1);
+                for (let line of path) {
+                    if (line[1] == line[3]) {
+                        fillPixel(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
+                    } else {
+                        fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
+                    }
                 }
-                fillPixel(x + 1 / 3 + i, endY + 1, 1 / 3, y - endY - 1, abovectx);
             }
         },
         update: function (x, y) {
@@ -2906,12 +2910,14 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < height; i++) {
-                let endX = x + width;
-                while (endX < gridSize) {
-                    if (grid[y + i][endX] != pixNum.AIR || monsterGrid[y + i][endX]) break;
-                    endX++;
+                let path = recursivelyTraceLaser(x + width, y + i, 2);
+                for (let line of path) {
+                    if (line[1] == line[3]) {
+                        fillPixel(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
+                    } else {
+                        fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
+                    }
                 }
-                fillPixel(x + width, y + 1 / 3 + i, endX - x - width, 1 / 3, abovectx);
             }
         },
         update: function (x, y) {
@@ -2975,12 +2981,14 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < width; i++) {
-                let endY = y + height;
-                while (endY < gridSize) {
-                    if (grid[endY][x + i] != pixNum.AIR || monsterGrid[endY][x + i]) break;
-                    endY++;
+                let path = recursivelyTraceLaser(x + i, y + height, 3);
+                for (let line of path) {
+                    if (line[1] == line[3]) {
+                        fillPixel(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
+                    } else {
+                        fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
+                    }
                 }
-                fillPixel(x + 1 / 3 + i, y + height, 1 / 3, endY - y - height, abovectx);
             }
         },
         update: function (x, y) {
@@ -3025,6 +3033,96 @@ const pixels = {
         animated: true,
         pickable: true,
         id: 'laser_down',
+        numId: 0
+    },
+    mirror_1: {
+        name: "Mirror",
+        description: 'Very reflective. Be careful around lasers, as it will redirect those to who knows where',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+        },
+        update: function (x, y) {},
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = `rgb(255, 255, 255)`;
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = `rgb(220, 220, 220)`;
+            ctx.fillRect(0, 30, 20, 20);
+            ctx.fillRect(10, 20, 20, 20);
+            ctx.fillRect(20, 10, 20, 20);
+            ctx.fillRect(30, 0, 20, 20);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(255, 255, 255)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(220, 220, 220)`;
+            fillPixel(0, 3 / 5, 2 / 5, 2 / 5);
+            fillPixel(1 / 5, 2 / 5, 2 / 5, 2 / 5);
+            fillPixel(2 / 5, 1 / 5, 2 / 5, 2 / 5);
+            fillPixel(3 / 5, 0, 2 / 5, 2 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 1,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 3,
+        group: 2,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'mirror_1',
+        numId: 0
+    },
+    mirror_2: {
+        name: "Mirror",
+        description: 'Very reflective. Be careful around lasers, as it will redirect those to who knows where',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+        },
+        update: function (x, y) {},
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = `rgb(255, 255, 255)`;
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = `rgb(220, 220, 220)`;
+            ctx.fillRect(0, 0, 20, 20);
+            ctx.fillRect(10, 10, 20, 20);
+            ctx.fillRect(20, 20, 20, 20);
+            ctx.fillRect(30, 30, 20, 20);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = `rgb(255, 255, 255)`;
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = `rgb(220, 220, 220)`;
+            fillPixel(0, 0, 2 / 5, 2 / 5);
+            fillPixel(1 / 5, 1 / 5, 2 / 5, 2 / 5);
+            fillPixel(2 / 5, 2 / 5, 2 / 5, 2 / 5);
+            fillPixel(3 / 5, 3 / 5, 2 / 5, 2 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 1,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 3,
+        group: 2,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'mirror_2',
         numId: 0
     },
     nuke: {

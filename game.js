@@ -533,17 +533,63 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
     ];
 };
 function recursivelyTraceLaser(x, y, dir) {
+    let endX;
+    let endY;
     switch (dir) {
         case 0:
-            break;
+            endX = x - 1;
+            while (endX >= 0) {
+                if (grid[y][endX] != pixNum.AIR || monsterGrid[y][endX]) break;
+                endX--;
+            }
+            if (endX >= 0 && grid[y][endX] == pixNum.MIRROR_1) {
+                return recursivelyTraceLaser(endX, y, 3).concat([[x, y, endX, y]]);
+            } else if (endX >= 0 && grid[y][endX] == pixNum.MIRROR_2) {
+                return recursivelyTraceLaser(endX, y, 1).concat([[x, y, endX, y]]);
+            } else {
+                return [[x, y, endX, y]];
+            }
         case 1:
-            break;
+            endY = y - 1;
+            while (endY >= 0) {
+                if (grid[endY][x] != pixNum.AIR || monsterGrid[endY][x]) break;
+                endY--;
+            }
+            if (endY >= 0 && grid[endY][x] == pixNum.MIRROR_1) {
+                return recursivelyTraceLaser(x, endY, 2).concat([[x, y, x, endY]]);
+            } else if (endY >= 0 && grid[endY][x] == pixNum.MIRROR_2) {
+                return recursivelyTraceLaser(x, endY, 0).concat([[x, y, x, endY]]);
+            } else {
+                return [[x, y, x, endY]];
+            }
         case 2:
-            break;
+            endX = x + 1;
+            while (endX < gridSize) {
+                if (grid[y][endX] != pixNum.AIR || monsterGrid[y][endX]) break;
+                endX++;
+            }
+            if (endX < gridSize && grid[y][endX] == pixNum.MIRROR_1) {
+                return recursivelyTraceLaser(endX, y, 1).concat([[x, y, endX, y]]);
+            } else if (endX < gridSize && grid[y][endX] == pixNum.MIRROR_2) {
+                return recursivelyTraceLaser(endX, y, 3).concat([[x, y, endX, y]]);
+            } else {
+                return [[x, y, endX, y]];
+            }
         case 3:
-            break;
+            endY = y + 1;
+            while (endY < gridSize) {
+                if (grid[endY][x] != pixNum.AIR || monsterGrid[endY][x]) break;
+                endY++;
+            }
+            if (endY < gridSize && grid[endY][x] == pixNum.MIRROR_1) {
+                return recursivelyTraceLaser(x, endY, 0).concat([[x, y, x, endY]]);
+            } else if (endY < gridSize && grid[endY][x] == pixNum.MIRROR_2) {
+                return recursivelyTraceLaser(x, endY, 2).concat([[x, y, x, endY]]);
+            } else {
+                return [[x, y, x, endY]];
+            }
         default:
-            return [];
+            return [[x, y, x, y]];
     }
 };
 function updatePixel(x, y, i) {
