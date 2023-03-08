@@ -532,6 +532,20 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
         (b1 * multiplier1) + (b2 * multiplier2),
     ];
 };
+function recursivelyTraceLaser(x, y, dir) {
+    switch (dir) {
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default:
+            return [];
+    }
+};
 function updatePixel(x, y, i) {
     let pixelType = numPixels[grid[y][x]];
     if (pixelType != undefined && pixelType.updateStage == i) {
@@ -585,10 +599,10 @@ function isAir(x, y) {
     return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.DELETER;
 };
 function isPassableFluid(x, y) {
-    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.LAVA || grid[y][x] == pixNum.DELETER;
+    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.LAVA || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.DELETER;
 };
-function isPassableNonLavaFluid(x, y) {
-    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.DELETER;
+function isPassableLiquid(x, y) {
+    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.LAVA || grid[y][x] == pixNum.DELETER;
 };
 function canMoveTo(x, y) {
     return nextGrid[y][x] == null || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.DELETER;
@@ -1344,7 +1358,7 @@ function updateTick() {
             1, 2, 3, 4: pistons
             5, 6, 7, 8: cloners
             9: gravity solids
-            10: liquids, concrete, and leaves
+            10: fluids, concrete, and leaves
             11: pumps
             12: lag
             13: rotators
@@ -1610,6 +1624,19 @@ window.addEventListener('DOMContentLoaded', (e) => {
         }
         if (holdingControl) { e.preventDefault(); }
     }, { passive: false });
+    hasFocus = false;
+    setInterval(() => {
+        if (hasFocus && !document.hasFocus()) {
+            camera.mUp = false;
+            camera.mDown = false;
+            camera.mLeft = false;
+            camera.mRight = false;
+            holdingControl = false;
+            holdingAlt = false;
+            removing = false;
+        };
+        hasFocus = document.hasFocus();
+    }, 2000);
 });
 
 // game control buttons

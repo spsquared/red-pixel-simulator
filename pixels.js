@@ -491,7 +491,7 @@ const pixels = {
             fireGrid[y][x] = false;
             updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null) {
-                    nextGrid[y][x] = pixNum.AIR;
+                    if (random() < 0.5) nextGrid[y][x] = pixNum.STEAM;
                     nextGrid[actionY][actionX] = pixNum.STONE;
                 }
             });
@@ -622,6 +622,147 @@ const pixels = {
         animated: true,
         pickable: true,
         id: 'lava',
+        numId: 0
+    },
+    steam: {
+        name: 'Steam',
+        description: 'Very hot steam that will give you second-degree burns if you\'re not careful',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = `rgb(210, 210, 210)`;
+                fillPixel(x, y, width, height, ctx);
+            } else {
+                ctx.fillStyle = `rgb(225, 225, 225)`;
+                fillPixel(x, y, width, height, ctx);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = `rgb(200, 200, 200, ${noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (random() < 0.005) {
+                if (random() < 0.5) nextGrid[y][x] = pixNum.WATER;
+                else nextGrid[y][x] = pixNum.AIR;
+                return;
+            }
+            updateTouchingAnything(x, y, function(actionX, actionY) {
+                if (grid[actionY][actionX] != pixNum.WATER && random() < (numPixels[grid[actionY][actionX]] ?? numPixels[pixNum.MISSING]).flammability / 20) {
+                    nextFireGrid[actionY][actionX] = true;
+                    if (random() < 0.5) nextGrid[y][x] = pixNum.WATER;
+                    else nextGrid[y][x] = pixNum.AIR;
+                }
+            });
+            if (y == 0) return;
+            if (isPassableLiquid(x, y-1)) {
+                if (canMoveTo(x, y - 1)) {
+                    move(x, y, x, y - 1);
+                }
+            } else {
+                let left = x;
+                let right = x;
+                let slideLeft = 0;
+                let slideRight = 0;
+                let foundLeftDrop = false;
+                let foundRightDrop = false;
+                let incrementLeft = canMoveTo(x - 1, y) && isPassableLiquid(x - 1, y);
+                let incrementRight = canMoveTo(x + 1, y) && isPassableLiquid(x + 1, y);
+                while (incrementLeft) {
+                    left--;
+                    if (!isPassableLiquid(left, y)) {
+                        if (grid[y][left] != pixNum.STEAM) slideLeft = x - left;
+                        incrementLeft = false;
+                    } else if (isPassableLiquid(left, y - 1) && isPassableLiquid(left, y)) {
+                        slideLeft = x - left;
+                        foundLeftDrop = true;
+                        incrementLeft = false;
+                    }
+                    if (left < 0) {
+                        slideLeft = x - left;
+                        incrementLeft = false;
+                    }
+                }
+                while (incrementRight) {
+                    right++;
+                    if (!isPassableLiquid(right, y)) {
+                        if (grid[y][right] != pixNum.STEAM) slideRight = right - x;
+                        incrementRight = false;
+                    } else if (isPassableLiquid(right, y - 1) && isPassableLiquid(right, y)) {
+                        slideRight = right - x;
+                        foundRightDrop = true;
+                        incrementRight = false;
+                    }
+                    if (right >= gridSize) {
+                        slideRight = right - x;
+                        incrementRight = false;
+                    }
+                }
+                let toSlide = 0;
+                if (foundLeftDrop && foundRightDrop) {
+                    if (slideLeft < slideRight && slideLeft != 0) {
+                        toSlide = -1;
+                    } else if (slideLeft > slideRight && slideRight != 0) {
+                        toSlide = 1;
+                    } else {
+                        if (ticks % 2 == 0) {
+                            toSlide = -1;
+                        } else {
+                            toSlide = 1;
+                        }
+                    }
+                } else if (foundLeftDrop) {
+                    toSlide = -1;
+                } else if (foundRightDrop) {
+                    toSlide = 1;
+                } else if (slideLeft < slideRight && slideLeft != 0) {
+                    toSlide = -1;
+                } else if (slideLeft > slideRight && slideRight != 0) {
+                    toSlide = 1;
+                } else if (slideLeft != 0 && slideRight != 0) {
+                    if (ticks % 2 == 0) {
+                        toSlide = -1;
+                    } else {
+                        toSlide = 1;
+                    }
+                }
+                if (toSlide > 0) {
+                    if (foundRightDrop && isPassableLiquid(x + 1, y - 1)) {
+                        move(x, y, x + 1, y - 1);
+                    } else {
+                        move(x, y, x + 1, y);
+                    }
+                } else if (toSlide < 0) {
+                    if (foundLeftDrop && isPassableLiquid(x - 1, y - 1)) {
+                        move(x, y, x - 1, y - 1);
+                    } else {
+                        move(x, y, x - 1, y);
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(210, 210, 210)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 0,
+        key: Infinity,
+        updateStage: 10,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'steam',
         numId: 0
     },
     concrete_powder: {
@@ -763,7 +904,7 @@ const pixels = {
                 nextGrid[actionY][actionX] = pixNum.SPONGE;
             });
             if (y < gridSize - 1) {
-                if ((isPassableNonLavaFluid(x, y + 1) || (grid[y + 1][x] == pixNum.LAVA && random() < 0.25)) && canMoveTo(x, y + 1)) {
+                if (isPassableFluid(x, y + 1) && (grid[y + 1][x] != pixNum.LAVA || random() < 0.25) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
                 }
             }
@@ -838,6 +979,7 @@ const pixels = {
                     if (nextFireGrid[j][i] || (i == x && j == y)) continue;
                     let flammability = (numPixels[grid[j][i]] ?? numPixels[pixNum.MISSING]).flammability;
                     if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0)) nextFireGrid[j][i] = true;
+                    if (grid[j][i] == pixNum.WATER && random() < 0.5) if (random() < 0.5) nextGrid[j][i] = pixNum.STEAM;
                 }
             }
         },
