@@ -650,7 +650,7 @@ const pixels = {
                 else nextGrid[y][x] = pixNum.AIR;
                 return;
             }
-            updateTouchingAnything(x, y, function(actionX, actionY) {
+            updateTouchingAnything(x, y, function (actionX, actionY) {
                 if (grid[actionY][actionX] != pixNum.WATER && random() < (numPixels[grid[actionY][actionX]] ?? numPixels[pixNum.MISSING]).flammability / 20) {
                     nextFireGrid[actionY][actionX] = true;
                     if (random() < 0.5) nextGrid[y][x] = pixNum.WATER;
@@ -658,7 +658,7 @@ const pixels = {
                 }
             });
             if (y == 0) return;
-            if (isPassableLiquid(x, y-1)) {
+            if (isPassableLiquid(x, y - 1)) {
                 if (canMoveTo(x, y - 1)) {
                     move(x, y, x, y - 1);
                 }
@@ -891,7 +891,7 @@ const pixels = {
     },
     sponge: {
         name: 'S.P.O.N.G.E.',
-        description: '<span style="font-style: italic;">Sample Providing Oceanic Nucleolic Green Egg</span><br>Don\'t ask',
+        description: '<span style="font-style: italic;">Sample Providing Oceanic Nucleolic Green Egg</span><br>buh',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = `rgb(225, 255, 75)`;
@@ -2102,6 +2102,82 @@ const pixels = {
         id: 'piston_down',
         numId: 0
     },
+    fan_left: {
+        name: 'Pusher (Down)',
+        description: 'Pushes pixels in its path',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(75, 255, 255)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(0, 125, 255)`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                return;
+            }
+            let moveY = null;
+            let lastCollapsible = null;
+            for (let i = y + 1; i <= gridSize - 1; i++) {
+                if (isAir(x, i)) {
+                    moveY = i;
+                    if (grid[i][x] == pixNum.DELETER) {
+                        moveY--;
+                    }
+                    break;
+                }
+                if (grid[i][x] == pixNum.COLLAPSIBLE) {
+                    lastCollapsible = i;
+                }
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_UP) {
+                    break;
+                }
+            }
+            if (moveY == null && lastCollapsible != null) {
+                moveY = lastCollapsible;
+            }
+            if (moveY != null) {
+                for (let i = moveY; i > y; i--) {
+                    if (!canMoveTo(x, i - 1)) return;
+                }
+                for (let i = moveY; i > y; i--) {
+                    nextGrid[i][x] = grid[i - 1][x];
+                    fireGrid[i][x] = fireGrid[i - 1][x];
+                }
+                nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(50 / 3, 25, 50 / 3, 25);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 3,
+        group: 1,
+        key: Infinity,
+        updateStage: 2,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'fan_left',
+        numId: 0
+    },
     rotator_left: {
         name: 'Rotator (Left)',
         description: 'Rotates directional pixels to face left',
@@ -2768,34 +2844,15 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < height; i++) {
-                let path = recursivelyTraceLaser(x, y + i, 0);
-                for (let line of path) {
-                    if (line[1] == line[3]) {
-                        fillPixel(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
-                    } else {
-                        fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
-                    }
-                }
+                drawLaserPath(getLaserPath(x, y + i, 0));
             }
         },
         update: function (x, y) {
-            let removeX = x;
-            while (removeX > 0) {
-                removeX--;
-                if (grid[y][removeX] != pixNum.AIR) {
-                    if (random() < 0.2 - ((numPixels[grid[y][removeX]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
-                        if (grid[y][removeX] != pixNum.LASER_SCATTERER) nextGrid[y][removeX] = pixNum.AIR;
-                        if (grid[y][removeX] < pixNum.LASER_LEFT || grid[y][removeX] > pixNum.LASER_DOWN) nextFireGrid[y][removeX] = true;
-                    }
-                    break;
-                }
-                if (monsterGrid[y][removeX]) {
-                    if (random() < 0.2) {
-                        monsterGrid[y][removeX] = false;
-                        nextFireGrid[y][removeX] = true;
-                    }
-                    break;
-                }
+            let path = getLaserPath(x, y, 0);
+            if (path[0][2] < 0 || path[0][2] >= gridSize || path[0][3] < 0 || path[0][3] >= gridSize) return;
+            if (random() < 0.2 - ((numPixels[grid[path[0][3]][path[0][2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[path[0][3]][path[0][2]] != pixNum.LASER_SCATTERER) nextGrid[path[0][3]][path[0][2]] = pixNum.AIR;
+                if (grid[path[0][3]][path[0][2]] < pixNum.LASER_LEFT || grid[path[0][3]][path[0][2]] > pixNum.LASER_DOWN) nextFireGrid[path[0][3]][path[0][2]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -2839,34 +2896,15 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < width; i++) {
-                let path = recursivelyTraceLaser(x + i, y, 1);
-                for (let line of path) {
-                    if (line[1] == line[3]) {
-                        fillPixel(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
-                    } else {
-                        fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
-                    }
-                }
+                drawLaserPath(getLaserPath(x + i, y, 1));
             }
         },
         update: function (x, y) {
-            let removeY = y;
-            while (removeY > 0) {
-                removeY--;
-                if (grid[removeY][x] != pixNum.AIR) {
-                    if (random() < 0.2 - ((numPixels[grid[removeY][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
-                        if (grid[removeY][x] != pixNum.LASER_SCATTERER) nextGrid[removeY][x] = pixNum.AIR;
-                        if (grid[removeY][x] < pixNum.LASER_LEFT || grid[removeY][x] > pixNum.LASER_DOWN) nextFireGrid[removeY][x] = true;
-                    }
-                    break;
-                }
-                if (monsterGrid[removeY][x]) {
-                    if (random() < 0.2) {
-                        monsterGrid[removeY][x] = false;
-                        nextFireGrid[removeY][x] = true;
-                    }
-                    break;
-                }
+            let path = getLaserPath(x, y, 1);
+            if (path[0][2] < 0 || path[0][2] >= gridSize || path[0][3] < 0 || path[0][3] >= gridSize) return;
+            if (random() < 0.2 - ((numPixels[grid[path[0][3]][path[0][2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[path[0][3]][path[0][2]] != pixNum.LASER_SCATTERER) nextGrid[path[0][3]][path[0][2]] = pixNum.AIR;
+                if (grid[path[0][3]][path[0][2]] < pixNum.LASER_LEFT || grid[path[0][3]][path[0][2]] > pixNum.LASER_DOWN) nextFireGrid[path[0][3]][path[0][2]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -2910,34 +2948,15 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < height; i++) {
-                let path = recursivelyTraceLaser(x + width, y + i, 2);
-                for (let line of path) {
-                    if (line[1] == line[3]) {
-                        fillPixel(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
-                    } else {
-                        fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
-                    }
-                }
+                drawLaserPath(getLaserPath(x + width - 1, y + i, 2));
             }
         },
         update: function (x, y) {
-            let removeX = x;
-            while (removeX < gridSize - 1) {
-                removeX++;
-                if (grid[y][removeX] != pixNum.AIR) {
-                    if (random() < 0.2 - ((numPixels[grid[y][removeX]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
-                        if (grid[y][removeX] != pixNum.LASER_SCATTERER) nextGrid[y][removeX] = pixNum.AIR;
-                        if (grid[y][removeX] < pixNum.LASER_LEFT || grid[y][removeX] > pixNum.LASER_DOWN) nextFireGrid[y][removeX] = true;
-                    }
-                    break;
-                }
-                if (monsterGrid[y][removeX]) {
-                    if (random() < 0.2) {
-                        monsterGrid[y][removeX] = false;
-                        nextFireGrid[y][removeX] = true;
-                    }
-                    break;
-                }
+            let path = getLaserPath(x, y, 2);
+            if (path[0][2] < 0 || path[0][2] >= gridSize || path[0][3] < 0 || path[0][3] >= gridSize) return;
+            if (random() < 0.2 - ((numPixels[grid[path[0][3]][path[0][2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[path[0][3]][path[0][2]] != pixNum.LASER_SCATTERER) nextGrid[path[0][3]][path[0][2]] = pixNum.AIR;
+                if (grid[path[0][3]][path[0][2]] < pixNum.LASER_LEFT || grid[path[0][3]][path[0][2]] > pixNum.LASER_DOWN) nextFireGrid[path[0][3]][path[0][2]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -2981,34 +3000,15 @@ const pixels = {
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = `rgb(71, 216, 159)`;
             for (let i = 0; i < width; i++) {
-                let path = recursivelyTraceLaser(x + i, y + height, 3);
-                for (let line of path) {
-                    if (line[1] == line[3]) {
-                        fillPixel(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
-                    } else {
-                        fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
-                    }
-                }
+                drawLaserPath(getLaserPath(x + i, y + height - 1, 3));
             }
         },
         update: function (x, y) {
-            let removeY = y;
-            while (removeY < gridSize - 1) {
-                removeY++;
-                if (grid[removeY][x] != pixNum.AIR) {
-                    if (random() < 0.2 - ((numPixels[grid[removeY][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
-                        if (grid[removeY][x] != pixNum.LASER_SCATTERER) nextGrid[removeY][x] = pixNum.AIR;
-                        if (grid[removeY][x] < pixNum.LASER_LEFT || grid[removeY][x] > pixNum.LASER_DOWN) nextFireGrid[removeY][x] = true;
-                    }
-                    break;
-                }
-                if (monsterGrid[removeY][x]) {
-                    if (random() < 0.2) {
-                        monsterGrid[removeY][x] = false;
-                        nextFireGrid[removeY][x] = true;
-                    }
-                    break;
-                }
+            let path = getLaserPath(x, y, 3);
+            if (path[0][2] < 0 || path[0][2] >= gridSize || path[0][3] < 0 || path[0][3] >= gridSize) return;
+            if (random() < 0.2 - ((numPixels[grid[path[0][3]][path[0][2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[path[0][3]][path[0][2]] != pixNum.LASER_SCATTERER) nextGrid[path[0][3]][path[0][2]] = pixNum.AIR;
+                if (grid[path[0][3]][path[0][2]] < pixNum.LASER_LEFT || grid[path[0][3]][path[0][2]] > pixNum.LASER_DOWN) nextFireGrid[path[0][3]][path[0][2]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -3040,9 +3040,10 @@ const pixels = {
         description: 'Very reflective. Be careful around lasers, as it will redirect those to who knows where',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
+            clearPixels(x, y, width, height, ctx);
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
-        update: function (x, y) {},
+        update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = `rgb(255, 255, 255)`;
@@ -3055,8 +3056,6 @@ const pixels = {
         },
         prerender: function () {
             const { ctx, fillPixel, toImage } = new PreRenderer();
-            ctx.fillStyle = `rgb(255, 255, 255)`;
-            fillPixel(0, 0, 1, 1);
             ctx.fillStyle = `rgb(220, 220, 220)`;
             fillPixel(0, 3 / 5, 2 / 5, 2 / 5);
             fillPixel(1 / 5, 2 / 5, 2 / 5, 2 / 5);
@@ -3085,9 +3084,10 @@ const pixels = {
         description: 'Very reflective. Be careful around lasers, as it will redirect those to who knows where',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
+            clearPixels(x, y, width, height, ctx);
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
-        update: function (x, y) {},
+        update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = `rgb(255, 255, 255)`;
@@ -3100,8 +3100,6 @@ const pixels = {
         },
         prerender: function () {
             const { ctx, fillPixel, toImage } = new PreRenderer();
-            ctx.fillStyle = `rgb(255, 255, 255)`;
-            fillPixel(0, 0, 1, 1);
             ctx.fillStyle = `rgb(220, 220, 220)`;
             fillPixel(0, 0, 2 / 5, 2 / 5);
             fillPixel(1 / 5, 1 / 5, 2 / 5, 2 / 5);

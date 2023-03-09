@@ -532,66 +532,6 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
         (b1 * multiplier1) + (b2 * multiplier2),
     ];
 };
-function recursivelyTraceLaser(x, y, dir) {
-    let endX;
-    let endY;
-    switch (dir) {
-        case 0:
-            endX = x - 1;
-            while (endX >= 0) {
-                if (grid[y][endX] != pixNum.AIR || monsterGrid[y][endX]) break;
-                endX--;
-            }
-            if (endX >= 0 && grid[y][endX] == pixNum.MIRROR_1) {
-                return recursivelyTraceLaser(endX, y, 3).concat([[x, y, endX, y]]);
-            } else if (endX >= 0 && grid[y][endX] == pixNum.MIRROR_2) {
-                return recursivelyTraceLaser(endX, y, 1).concat([[x, y, endX, y]]);
-            } else {
-                return [[x, y, endX, y]];
-            }
-        case 1:
-            endY = y - 1;
-            while (endY >= 0) {
-                if (grid[endY][x] != pixNum.AIR || monsterGrid[endY][x]) break;
-                endY--;
-            }
-            if (endY >= 0 && grid[endY][x] == pixNum.MIRROR_1) {
-                return recursivelyTraceLaser(x, endY, 2).concat([[x, y, x, endY]]);
-            } else if (endY >= 0 && grid[endY][x] == pixNum.MIRROR_2) {
-                return recursivelyTraceLaser(x, endY, 0).concat([[x, y, x, endY]]);
-            } else {
-                return [[x, y, x, endY]];
-            }
-        case 2:
-            endX = x + 1;
-            while (endX < gridSize) {
-                if (grid[y][endX] != pixNum.AIR || monsterGrid[y][endX]) break;
-                endX++;
-            }
-            if (endX < gridSize && grid[y][endX] == pixNum.MIRROR_1) {
-                return recursivelyTraceLaser(endX, y, 1).concat([[x, y, endX, y]]);
-            } else if (endX < gridSize && grid[y][endX] == pixNum.MIRROR_2) {
-                return recursivelyTraceLaser(endX, y, 3).concat([[x, y, endX, y]]);
-            } else {
-                return [[x, y, endX, y]];
-            }
-        case 3:
-            endY = y + 1;
-            while (endY < gridSize) {
-                if (grid[endY][x] != pixNum.AIR || monsterGrid[endY][x]) break;
-                endY++;
-            }
-            if (endY < gridSize && grid[endY][x] == pixNum.MIRROR_1) {
-                return recursivelyTraceLaser(x, endY, 0).concat([[x, y, x, endY]]);
-            } else if (endY < gridSize && grid[endY][x] == pixNum.MIRROR_2) {
-                return recursivelyTraceLaser(x, endY, 2).concat([[x, y, x, endY]]);
-            } else {
-                return [[x, y, x, endY]];
-            }
-        default:
-            return [[x, y, x, y]];
-    }
-};
 function updatePixel(x, y, i) {
     let pixelType = numPixels[grid[y][x]];
     if (pixelType != undefined && pixelType.updateStage == i) {
@@ -855,6 +795,99 @@ function rotatePixel(x, y, possibleRotations) {
     });
     if (rotate != 0) {
         nextGrid[y][x] = grid[y][x] - thisPixel.rotation + ((((thisPixel.rotation + rotate) % possibleRotations) + possibleRotations) % possibleRotations);
+    }
+};
+function getLaserPath(x, y, dir) {
+    let endX;
+    let endY;
+    switch (dir) {
+        case 0:
+            endX = x - 1;
+            while (endX >= 0) {
+                if (grid[y][endX] != pixNum.AIR || monsterGrid[y][endX]) break;
+                endX--;
+            }
+            if (endX >= 0 && grid[y][endX] == pixNum.MIRROR_1) {
+                return getLaserPath(endX, y, 3).concat([[x, y, endX, y]]);
+            } else if (endX >= 0 && grid[y][endX] == pixNum.MIRROR_2) {
+                return getLaserPath(endX, y, 1).concat([[x, y, endX, y]]);
+            } else {
+                return [[x, y, endX, y]];
+            }
+        case 1:
+            endY = y - 1;
+            while (endY >= 0) {
+                if (grid[endY][x] != pixNum.AIR || monsterGrid[endY][x]) break;
+                endY--;
+            }
+            if (endY >= 0 && grid[endY][x] == pixNum.MIRROR_1) {
+                return getLaserPath(x, endY, 2).concat([[x, y, x, endY]]);
+            } else if (endY >= 0 && grid[endY][x] == pixNum.MIRROR_2) {
+                return getLaserPath(x, endY, 0).concat([[x, y, x, endY]]);
+            } else {
+                return [[x, y, x, endY]];
+            }
+        case 2:
+            endX = x + 1;
+            while (endX < gridSize) {
+                if (grid[y][endX] != pixNum.AIR || monsterGrid[y][endX]) break;
+                endX++;
+            }
+            if (endX < gridSize && grid[y][endX] == pixNum.MIRROR_1) {
+                return getLaserPath(endX, y, 1).concat([[x, y, endX, y]]);
+            } else if (endX < gridSize && grid[y][endX] == pixNum.MIRROR_2) {
+                return getLaserPath(endX, y, 3).concat([[x, y, endX, y]]);
+            } else {
+                return [[x, y, endX, y]];
+            }
+        case 3:
+            endY = y + 1;
+            while (endY < gridSize) {
+                if (grid[endY][x] != pixNum.AIR || monsterGrid[endY][x]) break;
+                endY++;
+            }
+            if (endY < gridSize && grid[endY][x] == pixNum.MIRROR_1) {
+                return getLaserPath(x, endY, 0).concat([[x, y, x, endY]]);
+            } else if (endY < gridSize && grid[endY][x] == pixNum.MIRROR_2) {
+                return getLaserPath(x, endY, 2).concat([[x, y, x, endY]]);
+            } else {
+                return [[x, y, x, endY]];
+            }
+        default:
+            return [[x, y, x, y]];
+    }
+};
+function drawLaserPath(path) {
+    for (let line of path) {
+        if (line[1] == line[3]) {
+            fillPixel(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
+            if (grid[line[1]][line[0]] == pixNum.MIRROR_1 || grid[line[1]][line[0]] == pixNum.MIRROR_2) {
+                if (line[0] < line[2]) {
+                    fillPixel(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixel(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
+                    else fillPixel(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
+                } else {
+                    fillPixel(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixel(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
+                    else fillPixel(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
+                }
+                imagePixel(line[0], line[1], 1, 1, numPixels[grid[line[1]][line[0]]].prerenderedFrames[0], abovectx);
+            }
+        } else {
+            fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
+            if (grid[line[1]][line[0]] == pixNum.MIRROR_1 || grid[line[1]][line[0]] == pixNum.MIRROR_2) {
+                if (line[1] < line[3]) {
+                    fillPixel(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
+                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixel(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                    else fillPixel(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                } else {
+                    fillPixel(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
+                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixel(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                    else fillPixel(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                }
+                imagePixel(line[0], line[1], 1, 1, numPixels[grid[line[1]][line[0]]].prerenderedFrames[0], abovectx);
+            }
+        }
     }
 };
 function explode(x, y, size, chain) {
