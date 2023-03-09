@@ -8,6 +8,7 @@ let puzzleSaveCode;
 let sandboxMode = true;
 let backgroundColor = '#ffffff';
 let noNoise = false;
+let maxLaserDepth = 512;
 let fadeEffect = 127;
 let debugInfo = false;
 let horribleLagMode = false;
@@ -798,64 +799,69 @@ function rotatePixel(x, y, possibleRotations) {
     }
 };
 function getLaserPath(x, y, dir) {
-    let endX;
-    let endY;
-    switch (dir) {
-        case 0:
-            endX = x - 1;
-            while (endX >= 0) {
-                if (grid[y][endX] != pixNum.AIR || monsterGrid[y][endX]) break;
-                endX--;
-            }
-            if (endX >= 0 && grid[y][endX] == pixNum.MIRROR_1) {
-                return getLaserPath(endX, y, 3).concat([[x, y, endX, y]]);
-            } else if (endX >= 0 && grid[y][endX] == pixNum.MIRROR_2) {
-                return getLaserPath(endX, y, 1).concat([[x, y, endX, y]]);
-            } else {
-                return [[x, y, endX, y]];
-            }
-        case 1:
-            endY = y - 1;
-            while (endY >= 0) {
-                if (grid[endY][x] != pixNum.AIR || monsterGrid[endY][x]) break;
-                endY--;
-            }
-            if (endY >= 0 && grid[endY][x] == pixNum.MIRROR_1) {
-                return getLaserPath(x, endY, 2).concat([[x, y, x, endY]]);
-            } else if (endY >= 0 && grid[endY][x] == pixNum.MIRROR_2) {
-                return getLaserPath(x, endY, 0).concat([[x, y, x, endY]]);
-            } else {
-                return [[x, y, x, endY]];
-            }
-        case 2:
-            endX = x + 1;
-            while (endX < gridSize) {
-                if (grid[y][endX] != pixNum.AIR || monsterGrid[y][endX]) break;
-                endX++;
-            }
-            if (endX < gridSize && grid[y][endX] == pixNum.MIRROR_1) {
-                return getLaserPath(endX, y, 1).concat([[x, y, endX, y]]);
-            } else if (endX < gridSize && grid[y][endX] == pixNum.MIRROR_2) {
-                return getLaserPath(endX, y, 3).concat([[x, y, endX, y]]);
-            } else {
-                return [[x, y, endX, y]];
-            }
-        case 3:
-            endY = y + 1;
-            while (endY < gridSize) {
-                if (grid[endY][x] != pixNum.AIR || monsterGrid[endY][x]) break;
-                endY++;
-            }
-            if (endY < gridSize && grid[endY][x] == pixNum.MIRROR_1) {
-                return getLaserPath(x, endY, 0).concat([[x, y, x, endY]]);
-            } else if (endY < gridSize && grid[endY][x] == pixNum.MIRROR_2) {
-                return getLaserPath(x, endY, 2).concat([[x, y, x, endY]]);
-            } else {
-                return [[x, y, x, endY]];
-            }
-        default:
-            return [[x, y, x, y]];
+    if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) return [[0, 0, 0, 0]];
+    let path = [];
+    let cdir = dir;
+    let startX = x;
+    let startY = y;
+    let iterations = 0;
+    while (iterations < maxLaserDepth && startX >= 0 && startX < gridSize && startY >= 0 && startY < gridSize) {
+        let endX = startX;
+        let endY = startY;
+        switch (cdir) {
+            case 0:
+                endX = startX - 1;
+                while (endX >= 0) {
+                    if (grid[endY][endX] != pixNum.AIR || monsterGrid[endY][endX]) break;
+                    endX--;
+                }
+                path.push([startX, startY, endX, endY]);
+                if (endX >= 0 && grid[endY][endX] == pixNum.MIRROR_1) cdir = 3;
+                else if (endX >= 0 && grid[endY][endX] == pixNum.MIRROR_2) cdir = 1;
+                else return path;
+                break;
+            case 1:
+                endY = startY - 1;
+                while (endY >= 0) {
+                    if (grid[endY][endX] != pixNum.AIR || monsterGrid[endY][endX]) break;
+                    endY--;
+                }
+                path.push([startX, startY, endX, endY]);
+                if (endY >= 0 && grid[endY][endX] == pixNum.MIRROR_1) cdir = 2;
+                else if (endY >= 0 && grid[endY][endX] == pixNum.MIRROR_2) cdir = 0;
+                else return path;
+                break;
+            case 2:
+                endX = startX + 1;
+                while (endX < gridSize) {
+                    if (grid[endY][endX] != pixNum.AIR || monsterGrid[endY][endX]) break;
+                    endX++;
+                }
+                path.push([startX, startY, endX, endY]);
+                if (endX < gridSize && grid[endY][endX] == pixNum.MIRROR_1) cdir = 1;
+                else if (endX < gridSize && grid[endY][endX] == pixNum.MIRROR_2) cdir = 3;
+                else return path;
+                break;
+            case 3:
+                endY = startY + 1;
+                while (endY < gridSize) {
+                    if (grid[endY][endX] != pixNum.AIR || monsterGrid[endY][endX]) break;
+                    endY++;
+                }
+                path.push([startX, startY, endX, endY]);
+                if (endY < gridSize && grid[endY][endX] == pixNum.MIRROR_1) cdir = 0;
+                else if (endY < gridSize && grid[endY][endX] == pixNum.MIRROR_2) cdir = 2;
+                else return path;
+                break;
+            default:
+                path.push([startX, startY, endX, endY]);
+                return path;
+        }
+        startX = endX;
+        startY = endY;
+        iterations++;
     }
+    return path;
 };
 function drawLaserPath(path) {
     for (let line of path) {
@@ -1715,7 +1721,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             removing = false;
         };
         hasFocus = document.hasFocus();
-    }, 2000);
+    }, 200);
 });
 
 // game control buttons
