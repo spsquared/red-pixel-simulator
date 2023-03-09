@@ -81,12 +81,12 @@ const puzzles = [
                 description: `Quick, they're approaching by sea! Try and find a way to get them while they're still on the raft!`,
                 saveCode: '40;0000;air-1243:wood-12:air-25:water-3:wood-12:water-305:;640:;13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:13:15:230:;4b6:1:3:1:1:1:183:',
                 inventory: {
-                    sand: 20,
+                    sand: 5,
                     wood: 5,
                     water: 8,
                     concrete_powder: 9
                 },
-                id: '55f2433d-8012-4b75-a3bf-c00a182a6a43'
+                id: 'f6dd5428-9db5-4e69-8ffb-148d3733a88d'
             },
             {
                 name: 'Oh Well',
@@ -283,7 +283,7 @@ function loadPuzzle(section, level) {
         camera.x = 0;
         camera.y = 0;
     } catch (err) {
-        modal('Could not load puzzle:', `<span style="color: red;">${err.message}</span><br>Restart the puzzle if issues persist.`, false);
+        modal('Could not load puzzle:', `<span style="color: red;">${err.message}</span><br>Restart the puzzle if issues persist.`, false).then(transitionToMenu);
     }
 };
 for (let section in puzzles) {

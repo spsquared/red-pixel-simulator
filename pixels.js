@@ -2849,10 +2849,11 @@ const pixels = {
         },
         update: function (x, y) {
             let path = getLaserPath(x, y, 0);
-            if (path[0][2] < 0 || path[0][2] >= gridSize || path[0][3] < 0 || path[0][3] >= gridSize) return;
-            if (random() < 0.2 - ((numPixels[grid[path[0][3]][path[0][2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
-                if (grid[path[0][3]][path[0][2]] != pixNum.LASER_SCATTERER) nextGrid[path[0][3]][path[0][2]] = pixNum.AIR;
-                if (grid[path[0][3]][path[0][2]] < pixNum.LASER_LEFT || grid[path[0][3]][path[0][2]] > pixNum.LASER_DOWN) nextFireGrid[path[0][3]][path[0][2]] = true;
+            let last = path[path.length - 1];
+            if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
+            if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -2901,10 +2902,11 @@ const pixels = {
         },
         update: function (x, y) {
             let path = getLaserPath(x, y, 1);
-            if (path[0][2] < 0 || path[0][2] >= gridSize || path[0][3] < 0 || path[0][3] >= gridSize) return;
-            if (random() < 0.2 - ((numPixels[grid[path[0][3]][path[0][2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
-                if (grid[path[0][3]][path[0][2]] != pixNum.LASER_SCATTERER) nextGrid[path[0][3]][path[0][2]] = pixNum.AIR;
-                if (grid[path[0][3]][path[0][2]] < pixNum.LASER_LEFT || grid[path[0][3]][path[0][2]] > pixNum.LASER_DOWN) nextFireGrid[path[0][3]][path[0][2]] = true;
+            let last = path[path.length - 1];
+            if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
+            if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -2953,10 +2955,11 @@ const pixels = {
         },
         update: function (x, y) {
             let path = getLaserPath(x, y, 2);
-            if (path[0][2] < 0 || path[0][2] >= gridSize || path[0][3] < 0 || path[0][3] >= gridSize) return;
-            if (random() < 0.2 - ((numPixels[grid[path[0][3]][path[0][2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
-                if (grid[path[0][3]][path[0][2]] != pixNum.LASER_SCATTERER) nextGrid[path[0][3]][path[0][2]] = pixNum.AIR;
-                if (grid[path[0][3]][path[0][2]] < pixNum.LASER_LEFT || grid[path[0][3]][path[0][2]] > pixNum.LASER_DOWN) nextFireGrid[path[0][3]][path[0][2]] = true;
+            let last = path[path.length - 1];
+            if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
+            if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -3005,10 +3008,11 @@ const pixels = {
         },
         update: function (x, y) {
             let path = getLaserPath(x, y, 3);
-            if (path[0][2] < 0 || path[0][2] >= gridSize || path[0][3] < 0 || path[0][3] >= gridSize) return;
-            if (random() < 0.2 - ((numPixels[grid[path[0][3]][path[0][2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
-                if (grid[path[0][3]][path[0][2]] != pixNum.LASER_SCATTERER) nextGrid[path[0][3]][path[0][2]] = pixNum.AIR;
-                if (grid[path[0][3]][path[0][2]] < pixNum.LASER_LEFT || grid[path[0][3]][path[0][2]] > pixNum.LASER_DOWN) nextFireGrid[path[0][3]][path[0][2]] = true;
+            let last = path[path.length - 1];
+            if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
+            if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
             }
         },
         drawPreview: function (ctx) {
