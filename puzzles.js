@@ -179,7 +179,114 @@ const puzzles = [
                     slider_horizontal: 3
                 },
                 id: '3901eb61-fc2d-4ed7-b785-9a22bd33c0c3'
+            },
+            {
+                name: 'Targets',
+                description: `Hmmm, you have <h>multiple goals</h> to deliver now, but they all have to be moved at the same time? This one's a tricky one, I'll give you that.`,
+                saveCode: '40;0000;wall-41:air-38:wall-2:air-38:wall-2:air-38:wall-2:air-38:wall-2:air-38:wall-14:air-26:wall-2:sand-4:air-7:wall:air-26:wall-2:sand-6:air-5:wall:air-26:wall-2:piston_right:sand-6:air-4:wall:air-26:wall-10:air-3:wall:air-26:wall-2:air-4:wood:air-2:wood:air-3:wall:air-26:wall-2:air-4:wood:lava-2:wood:air-3:wall:air-26:wall-2:air-5:wood-2:air-4:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:wood:air-4:wood:air-5:wall:air-26:wall-2:wood:gunpowder-4:wood:air-5:wall:air-26:wall-2:wood:gunpowder-4:wood:air-5:wall:air-26:wall-2:wood:gunpowder-4:wood:air-5:wall:air-26:wall-2:wood-6:air-5:wall:air-26:wall-22:air-18:wall-2:air-38:wall-2:air-38:wall-2:air-8:goal:air-23:wall:air-5:wall-2:air-8:goal:air-23:wall:water-5:wall-2:air-8:goal:air-23:wall:water-5:wall-2:air-32:wall:water-5:wall-2:air-32:wall:water-5:wall-2:air-32:wall:water-5:wall-2:air-32:wall:water-5:wall-41:;640:;3e:11:17:11:17:11:17:11:17:11:17:11:17:11:372:12:16:12:16:8:1:9:16:8:1:9:16:8:1:9:16:12:16:12:16:12:16:12:3d:;399:1:cf:2:1d5:;2d:1:293:1:254:1:129:',
+                inventory: {
+                    concrete: 8,
+                    push_cloner_left: 1,
+                    piston_up: 3,
+                    piston_right: 4,
+                    slider_horizontal: 4
+                },
+                id: '47fa079a-cc83-4435-bba4-bc0288c3b60c'
+            },
+            {
+                name: 'Chaos',
+                description: `Oh wow, that's a lot of stuff. You've got <h>copiers</h> now, too. Well... good luck, this one took me a while to figure out. It's a messy one.`,
+                saveCode: '20;0000;wall-2:air:wall-17:piston_right-2:slider_vertical:air-16:wall-2:air-2:wall-17:air-13:piston_down:air-5:wall-2:air:piston_up:air-16:wall-2:air-18:wall:air-11:wall:air-7:wall:air-19:wall:air-19:wall:air:rotator_up:air:cloner_left:air-10:sand-5:wall-2:concrete-7:air-4:sand-7:wall-2:air-2:wall-2:air-6:sand-8:wall-4:air-7:concrete-9:wall-2:air-12:wall-2:air-4:wall-2:air-10:rotator_up:air-3:wall-2:air-2:wall-2:air-2:goal:air:wall:air-11:wall-4:air-2:push_cloner_up:air:wall:air-8:goal:air-4:wall-2:air-4:wall:air-13:wall-2:air-4:wall:air-13:wall-21:;190:;17:10:2:2:11:d:1:5:2:1:1:10:2:12:1:b:1:7:1:8:c:8:5d:c:8:a:1:3:6:2:1:1:1:b:4:2:1:1:1:8:1:4:2:4:1:d:2:4:1:d:15:;b8:1:d7:;26:1:c2:1:a6:',
+                inventory: {
+                    concrete: 4,
+                    cloner_left: 2,
+                    piston_left: 1,
+                    piston_up: 2,
+                    piston_right: 2,
+                    rotator_left: 1,
+                    rotator_up: 1,
+                    rotator_right: 1,
+                    rotator_down: 2,
+                    rotator_clockwise: 3,
+                    rotator_counterclockwise: 1,
+                    slider_horizontal: 8
+                },
+                id: '091325da-7cb3-4b75-95e5-897d3540cbc7'
+            },
+            {
+                name: 'Placement Test',
+                description: `You have very limited options in terms of placement locations here. Choose carefully!`,
+                saveCode: '40;0000;wall-41:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-11:wall-15:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-24:wall:air-6:wall-2:air-6:wall:air-24:wall:air-6:wall-2:air-6:wall:air-24:wall:air-6:wall-2:air-6:wall-8:air:goal:air-15:wall:air:goal:air-4:wall-2:air-31:wall:air-6:wall-2:air-28:wall-4:air-6:wall-2:air-18:wall:air-3:wall:air-15:wall-2:air-22:wall:air-15:wall-2:air-21:laser_right:wall:air-15:wall-2:air-22:wall:air-15:wall-2:air-22:wall:air-15:wall-2:air:wall:air-10:goal:air-9:wall:air-15:wall-2:air:wall:air-20:wall:air-15:wall-15:air-9:wall:air-15:wall-2:air-2:concrete:air:concrete:air-7:wood:air-9:wall:air-15:wall-2:air-12:wood:air-9:wall:air-15:wall-2:air-12:wood:air-9:wall:air-15:wall-2:air-12:wood:air-9:wall:air-15:wall-2:air-7:wall-7:gunpowder:air-7:wall:air:goal:air-13:wall-2:air-13:wall:air-8:wall:air-15:wall-2:air-13:wall:air-8:wall-9:air-7:wall-2:air-8:goal:air-4:wall:air-24:wall-2:air-13:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-41:;640:;3e:1:27:1:12:2:26:2:86:1:4:1:d:2:3c:3:22:1:21:1:6:2:4:1:1a:1:27:1:7:1:2e:1:1f:1:31:1:a:2:26:2:7b:2:1e:1:6:1:1:1:1f:1:17:1:f:1:17:1:27:1:17:2:e:2:26:1:2a:1:21:1:7:1:8:1:15:1:28:1:19:2:c:1:3:1:15:1:1c:1:c:1:1b:1:13:1:28:1:62:1:2f:;c3:1:ec:1:2b9:1:19c:1:38:;149:1:34:1:1df:1:14:1:1ac:1:11f:',
+                inventory: {
+                    wall: 1,
+                    dirt: 1,
+                    concrete: 2,
+                    push_cloner_left: 2,
+                    push_cloner_up: 3,
+                    push_cloner_right: 1,
+                    push_cloner_down: 1,
+                    piston_left: 7,
+                    piston_up: 6,
+                    piston_right: 6,
+                    piston_down: 6,
+                    rotator_left: 2,
+                    rotator_up: 3,
+                    rotator_down: 1,
+                    rotator_clockwise: 1,
+                    rotator_counterclockwise: 2,
+                    slider_horizontal: 7,
+                    slider_vertical: 7
+                },
+                id: '2c364258-5dbd-4351-bae3-14c003310d7e'
+            },
+            {
+                name: 'Danger Zone',
+                description: `Careful! Those purple glowy thingies are <h>deleters</h>- They delete stuff! One wrong move and everything is gone. Well, you can always restart if that happens.<br>The orange-ish boxes with a diagonal are <h>collapsible boxes</h>, they can be crushed when pushed into something.`,
+                saveCode: '40;0000;wall:deleter-10:wall-11:deleter-17:wall:slider_horizontal:air-20:deleter:air-17:deleter:wall:air-20:deleter:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:deleter:air-17:deleter:wall:air-20:deleter:air-17:deleter:wall:air-10:wall-3:air-5:wall-3:deleter-11:air:deleter-5:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-9:goal:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:concrete:air-7:concrete:wall:air-17:wall-2:air-10:wall:concrete-2:air-5:concrete-2:wall:air-17:wall-2:air-10:wall:concrete-3:air-3:concrete-3:wall:air-17:wall-2:air-10:wall-29:;640:;3e:11:17:11:17:11:17:11:17:11:17:11:17:11:17:11:17:11:52:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:9:1f:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1d:;588:1:26:3:25:4:24:3:3e:;521:1:11e:',
+                inventory: {
+                    sand: 1,
+                    concrete: 40,
+                    cloner_right: 7,
+                    push_cloner_up: 1,
+                    piston_up: 17,
+                    piston_right: 2,
+                    rotator_left: 5,
+                    rotator_down: 3,
+                    rotator_clockwise: 1,
+                    rotator_counterclockwise: 3,
+                    slider_horizontal: 6,
+                    slider_vertical: 6,
+                    collapsible: 6
+                },
+                id: '5b46792a-234b-4bd2-a841-5bddde153d68'
+            },
+            {
+                name: 'Laser Pointers but Stronger',
+                description: `Ah, a simple puzzle. Makes for a nice break from the brain-breaking machines. Anyways, those diagonal thingies are <h>mirrors</h>. <h>Mirrors reflect lasers</h>, so you can use this to redirect them to your targets. More interesting is that you have even numbers of everything (except mirrors).<br>Alright, I'm off to work on the PixSim API and think about the faults of society in a depressing manner. And maybe make some music too.`,
+                saveCode: '40;0000;wall-41:concrete:wall:air-36:wall-2:laser_right:glass:air-28:mirror_2:air-7:wall-2:concrete:wall:air-36:wall-2:rotator_counterclockwise:wall:air-3:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-8:wall-2:rotator_counterclockwise:wall:air-3:wood:gunpowder-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:gunpowder-2:wood:air-8:wall-2:concrete:wall:air-3:wood:gunpowder-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air:wall:wood:gunpowder-2:wood:air-8:wall-42:air-3:wall:air-28:slider_vertical:air-5:wall-2:air-3:wall:air-28:slider_vertical:air-5:wall-2:air-3:wall:air-28:slider_vertical:air-5:wall-2:air-3:glass:air-28:slider_vertical:air-5:wall-2:air-3:glass:air-28:slider_vertical:air-5:wall-6:air-26:wall-5:air-3:wall-2:mirror_1:air-2:glass:air-26:glass:laser_left:laser_right:glass:mirror_2:air-3:wall-2:air-3:wall:air-26:wall-4:glass:air-3:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:mirror_2:air-2:glass:air-4:mirror_2:air-16:mirror_2:air-12:wall-2:air-3:wall:air-7:collapsible:air-26:wall-2:air-3:wall:air-7:wall:air-26:wall-2:air-3:wall:air-2:mirror_1:air:mirror_1:air-2:wall:air-26:wall-2:air-3:wall:air-7:wall:air-26:wall-8:glass:wall-18:air-13:wall-2:air-3:glass:air-5:wall:air-14:wall:air-13:wall-2:wood:sand:wood:glass:air-5:wall:air-14:wall:air-13:wall-2:air:wood:air:glass:air-2:mirror_1:air-2:wall:air-14:wall:air-13:wall-2:air-3:glass:air-5:wall:air-14:wall:air-7:laser_scatterer:glass-3:air-2:wall-2:air-3:glass:air-5:wall:air-14:wall:air-13:wall-2:air-3:wall:air-5:wall:air-14:wall:air-13:wall-2:air-3:wall:air-5:wall:air-2:dirt-6:air-6:wall:air-13:wall-2:air-3:wall:air-5:wall:dirt-11:air-3:wall:air-13:wall-2:air-3:wall:air-5:wall:dirt-11:air-3:glass:air-13:wall-3:push_cloner_down:wall-2:air-5:wall:dirt-12:air-2:glass:air-7:mirror_1:air-5:wall-2:air:piston_right:wall-2:air-5:wall:dirt-13:air:wall:air-3:wood:gunpowder-7:wood:air:wall-2:air-9:wall:dirt-14:wall:air-3:wood:gunpowder-7:wood:air:wall-41:;640:;48:7:21:7:21:7:21:7:21:7:21:7:2e:1c:1:5:6:1c:1:5:6:1c:1:5:6:1c:1:5:6:1c:1:5:6:1a:5:3:6:1a:5:3:6:1a:5:3:6:22:6:22:6:22:6:22:6:22:6:4:1:10:1:c:6:7:1:1a:6:7:1:1a:6:2:1:1:1:2:1:1a:6:7:1:1a:1b:d:1b:d:1b:d:1b:d:1b:7:4:2:1b:d:1b:d:1b:d:f1:;ae:1:26:2:7:2:1b:1:1:2:1:2:2:1:1:2:1:2:d7:1:32b:1:1:1:1:1:28:1:ba:1:49:;640:',
+                inventory: {
+                    piston_left: 2,
+                    piston_right: 2,
+                    piston_down: 2,
+                    rotator_clockwise: 2,
+                    rotator_counterclockwise: 4,
+                    slider_horizontal: 2,
+                    slider_vertical: 2,
+                    glass: 8,
+                    mirror_1: 1,
+                    mirror_2: 1
+                },
+                id: '549382d2-999f-41dd-a945-1afb4f3047d6'
             }
+            // {
+            //     name: 'Massive Mess',
+            //     description: `<h>AAAAAAAAAAAAAAAAAAAAAA</h><br>undefined<br>Rick Astley???`,
+            //     saveCode: '',
+            //     inventory: {
+
+            //     },
+            //     id: 'buh'
+            // }
         ]
     }
 ];

@@ -591,6 +591,9 @@ function isPassableFluid(x, y) {
 function isPassableLiquid(x, y) {
     return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.LAVA || grid[y][x] == pixNum.DELETER;
 };
+function isTransparent(x, y) {
+    return (grid[y][x] == pixNum.AIR && !monsterGrid[y][x]) || grid[y][x] == pixNum.GLASS;
+};
 function canMoveTo(x, y) {
     return nextGrid[y][x] == null || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.DELETER;
 };
@@ -812,7 +815,7 @@ function getLaserPath(x, y, dir) {
             case 0:
                 endX = startX - 1;
                 while (endX >= 0) {
-                    if (grid[endY][endX] != pixNum.AIR || monsterGrid[endY][endX]) break;
+                    if (!isTransparent(endX, endY)) break;
                     endX--;
                 }
                 path.push([startX, startY, endX, endY]);
@@ -823,7 +826,7 @@ function getLaserPath(x, y, dir) {
             case 1:
                 endY = startY - 1;
                 while (endY >= 0) {
-                    if (grid[endY][endX] != pixNum.AIR || monsterGrid[endY][endX]) break;
+                    if (!isTransparent(endX, endY)) break;
                     endY--;
                 }
                 path.push([startX, startY, endX, endY]);
@@ -834,7 +837,7 @@ function getLaserPath(x, y, dir) {
             case 2:
                 endX = startX + 1;
                 while (endX < gridSize) {
-                    if (grid[endY][endX] != pixNum.AIR || monsterGrid[endY][endX]) break;
+                    if (!isTransparent(endX, endY)) break;
                     endX++;
                 }
                 path.push([startX, startY, endX, endY]);
@@ -845,7 +848,7 @@ function getLaserPath(x, y, dir) {
             case 3:
                 endY = startY + 1;
                 while (endY < gridSize) {
-                    if (grid[endY][endX] != pixNum.AIR || monsterGrid[endY][endX]) break;
+                    if (!isTransparent(endX, endY)) break;
                     endY++;
                 }
                 path.push([startX, startY, endX, endY]);

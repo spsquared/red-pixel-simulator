@@ -156,8 +156,6 @@ const pixels = {
         description: 'Basically wet dirt',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
-            ctx.fillStyle = `rgb(100, 60, 0)`;
-            fillPixel(x, y, width, height, ctx);
             if (noNoise) {
                 ctx.fillStyle = `rgb(100, 60, 0)`;
                 fillPixel(x, y, width, height, ctx);
@@ -2789,44 +2787,6 @@ const pixels = {
         id: 'nuke_diffuser',
         numId: 0
     },
-    laser_scatterer: {
-        name: 'Laser Scatterer',
-        description: 'Scatters lasers that pass through it and makes them useless',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = `rgb(220, 220, 255)`;
-            fillPixel(x, y, width, height, ctx);
-            ctx.fillStyle = `rgb(210, 210, 220)`;
-            for (let i = 0; i < width; i++) {
-                fillPixel(x + i, y, 1 / 4, height, ctx);
-                fillPixel(x + i + 1 / 2, y, 1 / 4, height, ctx);
-            }
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(220, 220, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(210, 210, 220)';
-            ctx.fillRect(0, 0, 25 / 2, 50);
-            ctx.fillRect(25, 0, 25 / 2, 50);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 1,
-        flammability: 0,
-        pushable: true,
-        cloneable: true,
-        rotateable: false,
-        group: 2,
-        key: Infinity,
-        updateStage: -1,
-        animatedNoise: false,
-        animated: false,
-        pickable: true,
-        id: 'laser_scatterer',
-        numId: 0
-    },
     laser_left: {
         name: "L.A.S.E.R. (Left)",
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
@@ -3039,9 +2999,91 @@ const pixels = {
         id: 'laser_down',
         numId: 0
     },
+    glass: {
+        name: 'Glass',
+        description: 'For some reason you can see it',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(240, 240, 245)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(2, 12, 10, 10);
+            ctx.fillRect(12, 2, 10, 10);
+            ctx.fillRect(38, 28, 10, 10);
+            ctx.fillRect(28, 38, 10, 10);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = 'rgb(240, 240, 245)';
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            fillPixel(1 / 25, 6 / 25, 1 / 5, 1 / 5);
+            fillPixel(6 / 25, 1 / 25, 1 / 5, 1 / 5);
+            fillPixel(19 / 25, 14 / 25, 1 / 5, 1 / 5);
+            fillPixel(14 / 25, 19 / 25, 1 / 5, 1 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 2,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'glass',
+        numId: 0
+    },
+    laser_scatterer: {
+        name: 'Laser Scatterer',
+        description: 'Scatters lasers that pass through it and makes them useless',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = `rgb(220, 220, 255)`;
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = `rgb(210, 210, 220)`;
+            for (let i = 0; i < width; i++) {
+                fillPixel(x + i, y, 1 / 4, height, ctx);
+                fillPixel(x + i + 1 / 2, y, 1 / 4, height, ctx);
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(220, 220, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(210, 210, 220)';
+            ctx.fillRect(0, 0, 25 / 2, 50);
+            ctx.fillRect(25, 0, 25 / 2, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 2,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'laser_scatterer',
+        numId: 0
+    },
     mirror_1: {
         name: "Mirror",
-        description: 'Very reflective. Be careful around lasers, as it will redirect those to who knows where',
+        description: 'Be careful around lasers, as it will redirect those to who knows where',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             clearPixels(x, y, width, height, ctx);
@@ -3053,22 +3095,42 @@ const pixels = {
             ctx.fillStyle = `rgb(255, 255, 255)`;
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = `rgb(220, 220, 220)`;
-            ctx.fillRect(0, 30, 20, 20);
-            ctx.fillRect(10, 20, 20, 20);
-            ctx.fillRect(20, 10, 20, 20);
-            ctx.fillRect(30, 0, 20, 20);
+            ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(25 / 3, 25, 50 / 3, 50 / 3);
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(25, 25 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(100 / 3, 0, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 25 / 3, 25 / 3);
+            ctx.fillRect(125 / 3, 0, 25 / 3, 25 / 3);
+            ctx.fillRect(125 / 3, 125 / 3, 25 / 3, 25 / 3);
+            ctx.fillRect(0, 125 / 3, 25 / 3, 25 / 3);
+            ctx.fillRect(0, 5 / 3, 50, 5);
+            ctx.fillRect(130 / 3, 0, 5, 50);
+            ctx.fillRect(0, 130 / 3, 50, 5);
+            ctx.fillRect(5 / 3, 0, 5, 50);
         },
         prerender: function () {
             const { ctx, fillPixel, toImage } = new PreRenderer();
             ctx.fillStyle = `rgb(220, 220, 220)`;
-            fillPixel(0, 3 / 5, 2 / 5, 2 / 5);
-            fillPixel(1 / 5, 2 / 5, 2 / 5, 2 / 5);
-            fillPixel(2 / 5, 1 / 5, 2 / 5, 2 / 5);
-            fillPixel(3 / 5, 0, 2 / 5, 2 / 5);
+            fillPixel(0, 2 / 3, 1 / 3, 1 / 3);
+            fillPixel(1 / 6, 1 / 2, 1 / 3, 1 / 3);
+            fillPixel(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixel(1 / 2, 1 / 6, 1 / 3, 1 / 3);
+            fillPixel(2 / 3, 0, 1 / 3, 1 / 3);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixel(0, 0, 1 / 6, 1 / 6);
+            fillPixel(5 / 6, 0, 1 / 6, 1 / 6);
+            fillPixel(5 / 6, 5 / 6, 1 / 6, 1 / 6);
+            fillPixel(0, 5 / 6, 1 / 6, 1 / 6);
+            fillPixel(0, 1 / 30, 1, 1 / 10);
+            fillPixel(13 / 15, 0, 1 / 10, 1);
+            fillPixel(0, 13 / 15, 1, 1 / 10);
+            fillPixel(1 / 30, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
-        blastResistance: 1,
+        blastResistance: 0,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -3085,7 +3147,7 @@ const pixels = {
     },
     mirror_2: {
         name: "Mirror",
-        description: 'Very reflective. Be careful around lasers, as it will redirect those to who knows where',
+        description: 'Be careful around lasers, as it will redirect those to who knows where',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             clearPixels(x, y, width, height, ctx);
@@ -3097,22 +3159,42 @@ const pixels = {
             ctx.fillStyle = `rgb(255, 255, 255)`;
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = `rgb(220, 220, 220)`;
-            ctx.fillRect(0, 0, 20, 20);
-            ctx.fillRect(10, 10, 20, 20);
-            ctx.fillRect(20, 20, 20, 20);
-            ctx.fillRect(30, 30, 20, 20);
+            ctx.fillRect(0, 0, 50 / 3, 50 / 3);
+            ctx.fillRect(25 / 3, 25 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(25, 25, 50 / 3, 50 / 3);
+            ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 25 / 3, 25 / 3);
+            ctx.fillRect(125 / 3, 0, 25 / 3, 25 / 3);
+            ctx.fillRect(125 / 3, 125 / 3, 25 / 3, 25 / 3);
+            ctx.fillRect(0, 125 / 3, 25 / 3, 25 / 3);
+            ctx.fillRect(0, 5 / 3, 50, 5);
+            ctx.fillRect(130 / 3, 0, 5, 50);
+            ctx.fillRect(0, 130 / 3, 50, 5);
+            ctx.fillRect(5 / 3, 0, 5, 50);
         },
         prerender: function () {
             const { ctx, fillPixel, toImage } = new PreRenderer();
             ctx.fillStyle = `rgb(220, 220, 220)`;
-            fillPixel(0, 0, 2 / 5, 2 / 5);
-            fillPixel(1 / 5, 1 / 5, 2 / 5, 2 / 5);
-            fillPixel(2 / 5, 2 / 5, 2 / 5, 2 / 5);
-            fillPixel(3 / 5, 3 / 5, 2 / 5, 2 / 5);
+            fillPixel(0, 0, 1 / 3, 1 / 3);
+            fillPixel(1 / 6, 1 / 6, 1 / 3, 1 / 3);
+            fillPixel(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixel(1 / 2, 1 / 2, 1 / 3, 1 / 3);
+            fillPixel(2 / 3, 2 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixel(0, 0, 1 / 6, 1 / 6);
+            fillPixel(5 / 6, 0, 1 / 6, 1 / 6);
+            fillPixel(5 / 6, 5 / 6, 1 / 6, 1 / 6);
+            fillPixel(0, 5 / 6, 1 / 6, 1 / 6);
+            fillPixel(0, 1 / 30, 1, 1 / 10);
+            fillPixel(13 / 15, 0, 1 / 10, 1);
+            fillPixel(0, 13 / 15, 1, 1 / 10);
+            fillPixel(1 / 30, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
-        blastResistance: 1,
+        blastResistance: 0,
         flammability: 0,
         pushable: true,
         cloneable: true,
