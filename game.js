@@ -785,7 +785,6 @@ function rotatePixel(x, y, possibleRotations) {
     if (nextGrid[y][x] != null) return;
     let rotate = 0;
     let thisPixel = numPixels[grid[y][x]];
-    if (thisPixel.id == 'mirror_1') console.log('aDSFDSAFDSAFDSAF')
     let touchedRotators = [];
     updateTouchingAnything(x, y, function (actionX, actionY) {
         let pixel = grid[actionY][actionX];
