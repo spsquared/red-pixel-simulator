@@ -523,7 +523,7 @@ function imagePixel(x, y, width, height, source, ctx) {
             ctx.drawImage(source, j * scale - camera.x, i * scale - camera.y, scale, scale);
         }
     }
-}
+};
 function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
     let multiplier1 = (Math.sin(frameCount * Math.PI / p) + 1) / 2;
     let multiplier2 = (Math.sin((frameCount + p) * Math.PI / p) + 1) / 2;
@@ -583,7 +583,7 @@ function validMovingPixel(x, y) {
     return nextGrid[y][x] == null;
 };
 function isAir(x, y) {
-    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.DELETER;
+    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.DELETER;
 };
 function isPassableFluid(x, y) {
     return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.LAVA || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.DELETER;
@@ -681,7 +681,7 @@ function flow(x, y) {
         // still have to flow left and right to fill air gaps
         return;
     }
-    if (grid[y + 1][x] == pixNum.AIR || grid[y + 1][x] == pixNum.COLLAPSIBLE || grid[y + 1][x] == pixNum.DELETER) {
+    if (isAir(x, y + 1)) {
         if (canMoveTo(x, y + 1)) {
             move(x, y, x, y + 1);
         }
@@ -694,20 +694,20 @@ function flow(x, y) {
         let airgapRight = 0;
         let foundLeftDrop = false;
         let foundRightDrop = false;
-        let incrementLeft = canMoveTo(x - 1, y) && grid[y][x - 1] == pixNum.AIR;
-        let incrementRight = canMoveTo(x + 1, y) && grid[y][x + 1] == pixNum.AIR;
+        let incrementLeft = canMoveTo(x - 1, y) && isAir(x - 1, y);
+        let incrementRight = canMoveTo(x + 1, y) && isAir(x + 1, y);
         while (incrementLeft) {
             left--;
-            if (grid[y][left] != pixNum.AIR) {
+            if (!isAir(left, y)) {
                 if (grid[y][left] != grid[y][x]) slideLeft = x - left;
                 else if (grid[y][x + 1] != grid[y][x]) airgapLeft = 0;
                 incrementLeft = false;
-            } else if (grid[y + 1][left] == pixNum.AIR && grid[y][left] == pixNum.AIR) {
+            } else if (isAir(left, y + 1)) {
                 slideLeft = x - left;
                 foundLeftDrop = true;
                 incrementLeft = false;
             }
-            if (grid[y][left] == pixNum.AIR && y > 0 && grid[y - 1][left] != pixNum.AIR) {
+            if (isAir(left, y) && y > 0 && !isAir(left, y - 1)) {
                 airgapLeft++;
             }
             if (left < 0) {
@@ -717,16 +717,16 @@ function flow(x, y) {
         }
         while (incrementRight) {
             right++;
-            if (grid[y][right] != pixNum.AIR) {
+            if (!isAir(right, y)) {
                 if (grid[y][right] != grid[y][x]) slideRight = right - x;
                 else if (grid[y][x - 1] != grid[y][x]) airgapRight = 0;
                 incrementRight = false;
-            } else if (grid[y + 1][right] == pixNum.AIR && grid[y][right] == pixNum.AIR) {
+            } else if (isAir(right, y + 1)) {
                 slideRight = right - x;
                 foundRightDrop = true;
                 incrementRight = false;
             }
-            if (grid[y][right] == pixNum.AIR && y > 0 && grid[y - 1][right] != pixNum.AIR) {
+            if (isAir(right, y) && y > 0 && !isAir(right, y - 1)) {
                 airgapRight++;
             }
             if (right >= gridSize) {
@@ -767,13 +767,13 @@ function flow(x, y) {
             toSlide = 1;
         }
         if (toSlide > 0) {
-            if (foundRightDrop && grid[y + 1][x + 1] == pixNum.AIR) {
+            if (foundRightDrop && isAir(x + 1, y + 1)) {
                 move(x, y, x + 1, y + 1);
             } else {
                 move(x, y, x + 1, y);
             }
         } else if (toSlide < 0) {
-            if (foundLeftDrop && grid[y + 1][x - 1] == pixNum.AIR) {
+            if (foundLeftDrop && isAir(x - 1, y + 1)) {
                 move(x, y, x - 1, y + 1);
             } else {
                 move(x, y, x - 1, y);
@@ -1722,6 +1722,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             holdingControl = false;
             holdingAlt = false;
             removing = false;
+            brush.lineMode = false;
         };
         hasFocus = document.hasFocus();
     }, 200);

@@ -487,7 +487,6 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
             fireGrid[y][x] = false;
-            let heated = false;
             if (updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null) {
                     if (random() < 0.8) nextGrid[y][x] = pixNum.STEAM;
@@ -669,7 +668,10 @@ const pixels = {
                 return false;
             })) return;
             if (y == 0) return;
-            if (isPassableLiquid(x, y - 1)) {
+            function isNotSteamAir(x, y) {
+                return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.DELETER;
+            };
+            if (isNotSteamAir(x, y - 1)) {
                 if (canMoveTo(x, y - 1)) {
                     move(x, y, x, y - 1);
                 }
@@ -680,14 +682,14 @@ const pixels = {
                 let slideRight = 0;
                 let foundLeftDrop = false;
                 let foundRightDrop = false;
-                let incrementLeft = canMoveTo(x - 1, y) && isPassableLiquid(x - 1, y);
-                let incrementRight = canMoveTo(x + 1, y) && isPassableLiquid(x + 1, y);
+                let incrementLeft = canMoveTo(x - 1, y) && isNotSteamAir(x - 1, y);
+                let incrementRight = canMoveTo(x + 1, y) && isNotSteamAir(x + 1, y);
                 while (incrementLeft) {
                     left--;
-                    if (!isPassableLiquid(left, y)) {
+                    if (!isNotSteamAir(left, y)) {
                         if (grid[y][left] != pixNum.STEAM) slideLeft = x - left;
                         incrementLeft = false;
-                    } else if (isPassableLiquid(left, y - 1) && isPassableLiquid(left, y)) {
+                    } else if (isNotSteamAir(left, y - 1) && isNotSteamAir(left, y)) {
                         slideLeft = x - left;
                         foundLeftDrop = true;
                         incrementLeft = false;
@@ -699,10 +701,10 @@ const pixels = {
                 }
                 while (incrementRight) {
                     right++;
-                    if (!isPassableLiquid(right, y)) {
+                    if (!isNotSteamAir(right, y)) {
                         if (grid[y][right] != pixNum.STEAM) slideRight = right - x;
                         incrementRight = false;
-                    } else if (isPassableLiquid(right, y - 1) && isPassableLiquid(right, y)) {
+                    } else if (isNotSteamAir(right, y - 1) && isNotSteamAir(right, y)) {
                         slideRight = right - x;
                         foundRightDrop = true;
                         incrementRight = false;
@@ -741,13 +743,13 @@ const pixels = {
                     }
                 }
                 if (toSlide > 0) {
-                    if (foundRightDrop && isPassableLiquid(x + 1, y - 1)) {
+                    if (foundRightDrop && isNotSteamAir(x + 1, y - 1)) {
                         move(x, y, x + 1, y - 1);
                     } else {
                         move(x, y, x + 1, y);
                     }
                 } else if (toSlide < 0) {
-                    if (foundLeftDrop && isPassableLiquid(x - 1, y - 1)) {
+                    if (foundLeftDrop && isNotSteamAir(x - 1, y - 1)) {
                         move(x, y, x - 1, y - 1);
                     } else {
                         move(x, y, x - 1, y);
