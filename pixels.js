@@ -313,7 +313,7 @@ const pixels = {
         rotateable: false,
         group: 0,
         key: Infinity,
-        updateStage: 10,
+        updateStage: 11,
         animatedNoise: false,
         animated: false,
         pickable: true,
@@ -458,7 +458,7 @@ const pixels = {
         rotateable: false,
         group: 0,
         key: Infinity,
-        updateStage: 10,
+        updateStage: 11,
         animatedNoise: false,
         animated: false,
         pickable: true,
@@ -487,12 +487,16 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
             fireGrid[y][x] = false;
-            updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
+            let heated = false;
+            if (updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null) {
-                    if (random() < 0.5) nextGrid[y][x] = pixNum.STEAM;
+                    if (random() < 0.8) nextGrid[y][x] = pixNum.STEAM;
+                    else nextGrid[y][x] = pixNum.AIR;
                     nextGrid[actionY][actionX] = pixNum.STONE;
+                    return true;
                 }
-            });
+                return false;
+            })) return;
             if (y < gridSize - 1) {
                 flow(x, y);
             }
@@ -511,7 +515,7 @@ const pixels = {
         rotateable: false,
         group: 0,
         key: Infinity,
-        updateStage: 10,
+        updateStage: 11,
         animatedNoise: true,
         animated: true,
         pickable: true,
@@ -540,15 +544,21 @@ const pixels = {
         update: function (x, y) {
             if (!validMovingPixel) return;
             updateTouchingPixel(x, y, pixNum.COLLAPSIBLE, function (actionX, actionY) {
-                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
+                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null && random() < 0.5) {
                     nextGrid[y][x] = pixNum.AIR;
                     nextGrid[actionY][actionX] = pixNum.SAND;
                 }
             });
             updateTouchingPixel(x, y, pixNum.LASER_SCATTERER, function (actionX, actionY) {
-                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null) {
+                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null && random() < 0.5) {
                     nextGrid[y][x] = pixNum.AIR;
                     nextGrid[actionY][actionX] = pixNum.SAND;
+                }
+            });
+            updateTouchingPixel(x, y, pixNum.SAND, function (actionX, actionY) {
+                if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null && random() < 0.5) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    nextGrid[actionY][actionX] = pixNum.GLASS;
                 }
             });
             let cooldownSpeed = 2;
@@ -615,7 +625,7 @@ const pixels = {
         rotateable: false,
         group: 0,
         key: Infinity,
-        updateStage: 10,
+        updateStage: 11,
         animatedNoise: true,
         animated: true,
         pickable: true,
@@ -648,13 +658,16 @@ const pixels = {
                 else nextGrid[y][x] = pixNum.AIR;
                 return;
             }
-            updateTouchingAnything(x, y, function (actionX, actionY) {
+            if (updateTouchingAnything(x, y, function (actionX, actionY) {
                 if (grid[actionY][actionX] != pixNum.WATER && random() < (numPixels[grid[actionY][actionX]] ?? numPixels[pixNum.MISSING]).flammability / 20) {
                     nextFireGrid[actionY][actionX] = true;
-                    if (random() < 0.5) nextGrid[y][x] = pixNum.WATER;
-                    else nextGrid[y][x] = pixNum.AIR;
+                    if (random() < 0.8) {
+                        nextGrid[y][x] = pixNum.WATER;
+                        return true;
+                    }
                 }
-            });
+                return false;
+            })) return;
             if (y == 0) return;
             if (isPassableLiquid(x, y - 1)) {
                 if (canMoveTo(x, y - 1)) {
@@ -965,7 +978,7 @@ const pixels = {
             if (random() < flammability / 1200 && nextGrid[y][x] == null && !isLava) {
                 if (grid[y][x] >= pixNum.LASER_UP && grid[y][x] <= pixNum.LASER_RIGHT) {
                     nextGrid[y][x] = pixNum.AIR;
-                    explode(x, y, 3);
+                    explode(x, y, 5);
                 } else if (grid[y][x] != pixNum.ASH && random() < 0.5) {
                     nextGrid[y][x] = pixNum.ASH;
                 } else {
@@ -977,7 +990,7 @@ const pixels = {
                     if (nextFireGrid[j][i] || (i == x && j == y)) continue;
                     let flammability = (numPixels[grid[j][i]] ?? numPixels[pixNum.MISSING]).flammability;
                     if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0)) nextFireGrid[j][i] = true;
-                    if (grid[j][i] == pixNum.WATER && random() < 0.5) if (random() < 0.5) nextGrid[j][i] = pixNum.STEAM;
+                    if (grid[j][i] == pixNum.WATER && random() < 0.5) nextGrid[j][i] = pixNum.STEAM;
                 }
             }
         },
@@ -2217,7 +2230,7 @@ const pixels = {
         rotation: 0,
         group: 1,
         key: Infinity,
-        updateStage: 13,
+        updateStage: 14,
         animatedNoise: false,
         animated: false,
         pickable: true,
@@ -2265,7 +2278,7 @@ const pixels = {
         rotation: 1,
         group: 1,
         key: Infinity,
-        updateStage: 13,
+        updateStage: 14,
         animatedNoise: false,
         animated: false,
         pickable: true,
@@ -2313,7 +2326,7 @@ const pixels = {
         rotation: 2,
         group: 1,
         key: Infinity,
-        updateStage: 13,
+        updateStage: 14,
         animatedNoise: false,
         animated: false,
         pickable: true,
@@ -2361,7 +2374,7 @@ const pixels = {
         rotation: 3,
         group: 1,
         key: Infinity,
-        updateStage: 13,
+        updateStage: 14,
         animatedNoise: false,
         animated: false,
         pickable: true,
@@ -2437,7 +2450,7 @@ const pixels = {
         rotateable: false,
         group: 1,
         key: Infinity,
-        updateStage: 13,
+        updateStage: 14,
         animatedNoise: false,
         animated: true,
         pickable: true,
@@ -2513,7 +2526,7 @@ const pixels = {
         rotateable: false,
         group: 1,
         key: Infinity,
-        updateStage: 13,
+        updateStage: 14,
         animatedNoise: false,
         animated: true,
         pickable: true,
@@ -2688,7 +2701,7 @@ const pixels = {
         rotateable: false,
         group: 2,
         key: Infinity,
-        updateStage: 11,
+        updateStage: 12,
         animatedNoise: false,
         animated: false,
         pickable: true,
@@ -2740,7 +2753,7 @@ const pixels = {
         rotateable: false,
         group: 2,
         key: Infinity,
-        updateStage: 11,
+        updateStage: 12,
         animatedNoise: false,
         animated: false,
         pickable: true,
@@ -2812,6 +2825,7 @@ const pixels = {
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
             if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
                 if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
             }
@@ -2865,6 +2879,7 @@ const pixels = {
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
             if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
                 if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
             }
@@ -2918,6 +2933,7 @@ const pixels = {
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
             if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
                 if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
             }
@@ -2971,6 +2987,7 @@ const pixels = {
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
             if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
                 if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
             }
@@ -3435,7 +3452,7 @@ const pixels = {
         rotateable: false,
         group: 3,
         key: Infinity,
-        updateStage: 12,
+        updateStage: 13,
         animatedNoise: false,
         animated: true,
         pickable: true,
@@ -3503,24 +3520,29 @@ const pixels = {
                         ctx.rotate(-rotationAmount);
                         ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
                     }
+                    abovectx.globalAlpha = opacity;
+                    abovectx.fillStyle = `rgb(255, 0, 0)`;
+                    for (let i = 0; i < width; i++) {
+                        drawLaserPath(getLaserPath(x + i, y + j, Math.floor(Math.random() * 4)));
+                    }
                 }
             }
         },
         update: function (x, y) {
             function chaos(actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null && random() < 0.4) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.2) {
                     nextGrid[actionY][actionX] = pixNum.CORRUPTION;
                 }
-                if (nextGrid[actionY][actionX] == null && random() < 0.2) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
                     nextGrid[actionY][actionX] = pixNum.LAVA;
                 }
                 if (nextGrid[actionY][actionX] == null && random() < 0.1) {
                     nextGrid[actionY][actionX] = pixNum.WATER;
                 }
-                if (nextGrid[actionY][actionX] == null && random() < 0.4) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.2) {
                     nextGrid[actionY][actionX] = pixNum.MISSING;
                 }
-                if (nextGrid[actionY][actionX] == null && random() < 0.5) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
                     nextGrid[actionY][actionX] = pixNum.AIR;
                 }
                 if (nextGrid[actionY][actionX] == null && random() < 0.1) {
@@ -3529,17 +3551,17 @@ const pixels = {
                 if (nextGrid[actionY][actionX] == null && random() < 0.1) {
                     nextGrid[actionY][actionX] = pixNum.LAVA_GENERATOR;
                 }
-                if (nextGrid[actionY][actionX] == null && random() < 0.2) {
-                    nextGrid[actionY][actionX] = pixNum.CLONER_DOWN;
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.PUSH_CLONER_DOWN;
                 }
-                if (nextGrid[actionY][actionX] == null && random() < 0.2) {
-                    nextGrid[actionY][actionX] = pixNum.CLONER_LEFT;
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.PUSH_CLONER_LEFT;
                 }
-                if (nextGrid[actionY][actionX] == null && random() < 0.2) {
-                    nextGrid[actionY][actionX] = pixNum.CLONER_RIGHT;
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.PUSH_CLONER_RIGHT;
                 }
-                if (nextGrid[actionY][actionX] == null && random() < 0.2) {
-                    nextGrid[actionY][actionX] = pixNum.CLONER_UP;
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.PUSH_CLONER_UP;
                 }
                 if (nextGrid[actionY][actionX] == null && random() < 0.1) {
                     nextGrid[actionY][actionX] = pixNum.PISTON_LEFT;
@@ -3551,9 +3573,27 @@ const pixels = {
                     nextGrid[actionY][actionX] = pixNum.PISTON_UP;
                 }
                 if (nextGrid[actionY][actionX] == null && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.PISTON_down;
+                    nextGrid[actionY][actionX] = pixNum.PISTON_DOWN;
                 }
-                if (nextGrid[actionY][actionX] == null && random() < 0.03) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.LASER_LEFT;
+                }
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.LASER_UP;
+                }
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.LASER_RIGHT;
+                }
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.LASER_DOWN;
+                }
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.MIRROR_1;
+                }
+                if (nextGrid[actionY][actionX] == null && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.MIRROR_2;
+                }
+                if (nextGrid[actionY][actionX] == null && random() < 0.05) {
                     nextGrid[actionY][actionX] = pixNum.NUKE;
                 }
                 if (nextGrid[actionY][actionX] == null && random() < 0.02) {
@@ -3572,6 +3612,14 @@ const pixels = {
             };
             updateTouchingPixel(x, y, pixNum.AIR, chaos);
             updateTouchingAnything(x, y, chaos);
+            let path = getLaserPath(x, y, Math.floor(random() * 4));
+            let last = path[path.length - 1];
+            if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
+            if (random() < 0.5 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
+                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
+            }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -3592,7 +3640,7 @@ const pixels = {
         rotateable: false,
         group: 3,
         key: Infinity,
-        updateStage: 12,
+        updateStage: 13,
         animatedNoise: false,
         animated: true,
         pickable: true,

@@ -1446,10 +1446,11 @@ function updateTick() {
             1, 2, 3, 4: pistons
             5, 6, 7, 8: cloners
             9: gravity solids
-            10: fluids, concrete, and leaves
-            11: pumps
-            12: lag
-            13: rotators
+            10: steam
+            11: fluids, concrete, and leaves
+            12: pumps
+            13: lag
+            14: rotators
             -: monster
             */
             randomSeed((ticks % 65536) * 239);
