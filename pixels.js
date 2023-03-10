@@ -2205,8 +2205,8 @@ const pixels = {
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX]
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
+                let pixel = grid[actionY][actionX];
+                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
                     rotatePixel(actionX, actionY, 2);
                 } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
@@ -2253,8 +2253,8 @@ const pixels = {
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX]
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
+                let pixel = grid[actionY][actionX];
+                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
                     rotatePixel(actionX, actionY, 2);
                 } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
@@ -2301,8 +2301,8 @@ const pixels = {
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX]
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
+                let pixel = grid[actionY][actionX];
+                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
                     rotatePixel(actionX, actionY, 2);
                 } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
@@ -2349,8 +2349,8 @@ const pixels = {
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX]
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
+                let pixel = grid[actionY][actionX];
+                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
                     rotatePixel(actionX, actionY, 2);
                 } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
@@ -2390,8 +2390,8 @@ const pixels = {
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX]
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
+                let pixel = grid[actionY][actionX];
+                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
                     rotatePixel(actionX, actionY, 2);
                 } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
@@ -2466,8 +2466,8 @@ const pixels = {
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX]
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL) {
+                let pixel = grid[actionY][actionX];
+                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
                     rotatePixel(actionX, actionY, 2);
                 } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
                     rotatePixel(actionX, actionY, 4);
@@ -3206,7 +3206,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: true,
-        rotation: 3,
+        rotation: 0,
         group: 2,
         key: Infinity,
         updateStage: -1,
@@ -3270,7 +3270,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: true,
-        rotation: 3,
+        rotation: 1,
         group: 2,
         key: Infinity,
         updateStage: -1,

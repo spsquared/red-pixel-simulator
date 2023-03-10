@@ -785,6 +785,7 @@ function rotatePixel(x, y, possibleRotations) {
     if (nextGrid[y][x] != null) return;
     let rotate = 0;
     let thisPixel = numPixels[grid[y][x]];
+    if (thisPixel.id == 'mirror_1') console.log('aDSFDSAFDSAFDSAF')
     let touchedRotators = [];
     updateTouchingAnything(x, y, function (actionX, actionY) {
         let pixel = grid[actionY][actionX];
@@ -1102,13 +1103,13 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert) {
 function updateMouseControls() {
     if ((mouseIsPressed && mouseButton == RIGHT) || removing) brush.isSelection = false;
     if (!fastSimulation && acceptInputs && !inWinScreen && mouseOver) {
-        if (((mouseIsPressed && mouseButton == LEFT && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
+        if (((mouseIsPressed && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
             if (!brush.lineMode) {
                 brush.lineMode = true;
                 brush.lineStartX = mXGrid;
                 brush.lineStartY = mYGrid;
             }
-            if (!mouseIsPressed || mouseButton != LEFT) {
+            if (!mouseIsPressed) {
                 brush.lineMode = false;
                 clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, mouseButton == RIGHT || removing);
             }
@@ -1300,7 +1301,6 @@ function drawBrush() {
             ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
             ctx.stroke();
         } else if (brush.lineMode) {
-            // use new canvas?
             let x = brush.lineStartX;
             let y = brush.lineStartY;
             let angle = Math.atan2(mYGrid - brush.lineStartY, mXGrid - brush.lineStartX);
@@ -1485,7 +1485,7 @@ function updateTick() {
             for (let explosion of currentExplosions) {
                 explode(...explosion);
             }
-            for (let updateStage = 0; updateStage <= 13; updateStage++) {
+            for (let updateStage = 0; updateStage <= 14; updateStage++) {
                 if (ticks % 2 == 0) {
                     for (let y = 0; y < gridSize; y++) {
                         for (let x = gridSize - 1; x >= 0; x--) {
