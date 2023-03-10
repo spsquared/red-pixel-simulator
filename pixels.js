@@ -3060,6 +3060,60 @@ const pixels = {
         id: 'glass',
         numId: 0
     },
+    reinforced_glass: {
+        name: 'Reinforced Glass',
+        description: 'Really heavy glass',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(240, 240, 245)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(2, 12, 10, 10);
+            ctx.fillRect(12, 2, 10, 10);
+            ctx.fillRect(38, 28, 10, 10);
+            ctx.fillRect(28, 38, 10, 10);
+            ctx.fillStyle = 'rgb(220, 220, 230)';
+            ctx.fillRect(0, 0, 50, 5);
+            ctx.fillRect(45, 0, 5, 50);
+            ctx.fillRect(0, 45, 50, 5);
+            ctx.fillRect(0, 0, 5, 50);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer();
+            ctx.fillStyle = 'rgb(240, 240, 245)';
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            fillPixel(1 / 25, 6 / 25, 1 / 5, 1 / 5);
+            fillPixel(6 / 25, 1 / 25, 1 / 5, 1 / 5);
+            fillPixel(19 / 25, 14 / 25, 1 / 5, 1 / 5);
+            fillPixel(14 / 25, 19 / 25, 1 / 5, 1 / 5);
+            ctx.fillStyle = 'rgb(220, 220, 230)';
+            fillPixel(0, 0, 1, 1 / 10);
+            fillPixel(9 / 10, 0, 1 / 10, 1);
+            fillPixel(0, 9 / 10, 1, 1 / 10);
+            fillPixel(0, 0, 1 / 10, 1);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 8,
+        flammability: 0,
+        pushable: false,
+        cloneable: true,
+        rotateable: false,
+        group: 2,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'reinforced_glass',
+        numId: 0
+    },
     laser_scatterer: {
         name: 'Laser Scatterer',
         description: 'Scatters lasers that pass through it and makes them useless',
