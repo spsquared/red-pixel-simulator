@@ -544,19 +544,16 @@ const pixels = {
             if (!validMovingPixel) return;
             updateTouchingPixel(x, y, pixNum.COLLAPSIBLE, function (actionX, actionY) {
                 if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null && random() < 0.5) {
-                    nextGrid[y][x] = pixNum.AIR;
                     nextGrid[actionY][actionX] = pixNum.SAND;
                 }
             });
             updateTouchingPixel(x, y, pixNum.LASER_SCATTERER, function (actionX, actionY) {
                 if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null && random() < 0.5) {
-                    nextGrid[y][x] = pixNum.AIR;
                     nextGrid[actionY][actionX] = pixNum.SAND;
                 }
             });
             updateTouchingPixel(x, y, pixNum.SAND, function (actionX, actionY) {
                 if (nextGrid[y][x] == null && nextGrid[actionY][actionX] == null && random() < 0.5) {
-                    nextGrid[y][x] = pixNum.AIR;
                     nextGrid[actionY][actionX] = pixNum.GLASS;
                 }
             });
