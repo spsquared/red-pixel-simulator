@@ -219,6 +219,7 @@ function loadSaveCode() {
         fastSimulation = false;
         runTicks = 0;
         ticks = 0;
+        stopAllMusicPixels();
         let sections = saveCode.split(';');
         if (isNaN(parseInt(sections[0]))) return;
         function parseSaveCode(code) {
@@ -1136,6 +1137,10 @@ function updateMouseControls() {
                     if (y + offsetY >= 0 && y + offsetY < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
                         if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
                             grid[y + offsetY][x + offsetX] = selection.grid[y][x];
+                            if (musicGrid[y][x]) {
+                                musicPixel(musicGrid[y][x], false);
+                                musicGrid[y][x] = 0;
+                            }
                         }
                     }
                 }
@@ -1215,6 +1220,10 @@ function clickLine(startX, startY, endX, endY, remove) {
                     fireGrid[y][x] = false;
                     monsterGrid[y][x] = false;
                     targetGrid[y][x] = false;
+                    if (musicGrid[y][x]) {
+                        musicPixel(musicGrid[y][x], false);
+                        musicGrid[y][x] = 0;
+                    }
                 });
             } else {
                 act(function (x, y) {
@@ -1226,6 +1235,10 @@ function clickLine(startX, startY, endX, endY, remove) {
                             pixelAmounts['fire']++;
                             modifiedPixelCounts[pixNum.FIRE] = true;
                             fireGrid[y][x] = false;
+                        }
+                        if (musicGrid[y][x]) {
+                            musicPixel(musicGrid[y][x], false);
+                            musicGrid[y][x] = 0;
                         }
                     }
                 });
@@ -1261,6 +1274,10 @@ function clickLine(startX, startY, endX, endY, remove) {
             if (sandboxMode) {
                 act(function (x, y) {
                     grid[y][x] = clickPixelNum;
+                    if (musicGrid[y][x]) {
+                        musicPixel(musicGrid[y][x], false);
+                        musicGrid[y][x] = 0;
+                    }
                 });
             } else {
                 modifiedPixelCounts[clickPixelNum] = true;
@@ -1270,6 +1287,10 @@ function clickLine(startX, startY, endX, endY, remove) {
                         modifiedPixelCounts[grid[y][x]] = true;
                         pixelAmounts[numPixels[grid[y][x]].id]++;
                         grid[y][x] = clickPixelNum;
+                        if (musicGrid[y][x]) {
+                            musicPixel(musicGrid[y][x], false);
+                            musicGrid[y][x] = 0;
+                        }
                         pixelAmounts[brush.pixel]--;
                     }
                     return pixelAmounts[brush.pixel] <= 0;
@@ -1746,8 +1767,10 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 holdingAlt = false;
                 removing = false;
                 brush.lineMode = false;
-            };
+                audioContext.suspend();
+            }
             hasFocus = document.hasFocus();
+            if (hasFocus) audioContext.resume();
         }, { timeout: 100 });
     }, 200);
 });
@@ -1936,6 +1959,7 @@ document.getElementById('backToMenu').onclick = (e) => {
     simulationPaused = true;
     fastSimulation = false;
     updateTimeControlButtons();
+    stopAllMusicPixels();
     if (sandboxMode) {
         window.localStorage.setItem('saveCode', generateSaveCode());
         window.localStorage.setItem('saveCodeText', saveCodeText.value);
@@ -2028,10 +2052,24 @@ function addMusicPixelOscillator(id, type, pitch) {
     oscillator.frequency.setValueAtTime(pitch, audioContext.currentTime);
     oscillator.connect(gain);
     oscillator.start();
+    let activePixels = 0;
     musicPixelOscillators.set(id, {
-        start: () => gain.gain.value = 1,
-        stop: () => gain.gain.value = 0
+        increment: () => {
+            activePixels++;
+            gain.gain.value = 0.1;
+        },
+        decrement: () => {
+            activePixels--;
+            if (activePixels <= 0) gain.gain.value = 0;
+        },
+        stop: () => {
+            activePixels = 0;
+            gain.gain.value = 0;
+        }
     });
+};
+function stopAllMusicPixels() {
+    musicPixelOscillators.forEach(n => n.stop());
 };
 window.addEventListener('DOMContentLoaded', (e) => {
     setAudio('./assets/menu.mp3', (buf) => {
@@ -2135,8 +2173,8 @@ function musicPixel(id, state) {
     if (musicPixelSounds.has(id)) {
         if (state) musicPixelSounds.get(id)();
     } else if (musicPixelOscillators.has(id)) {
-        if (state) musicPixelOscillators.get(id).start();
-        else musicPixelOscillators.get(id).stop();
+        if (state) musicPixelOscillators.get(id).increment();
+        else musicPixelOscillators.get(id).decrement();
     }
 };
 document.addEventListener('mousedown', function startAudio(e) {

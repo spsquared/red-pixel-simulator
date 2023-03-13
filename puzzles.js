@@ -306,6 +306,7 @@ function triggerWin() {
     simulationPaused = true;
     fastSimulation = false;
     updateTimeControlButtons();
+    stopAllMusicPixels();
     if (window.playWinSound) window.playWinSound();
     winScreen.style.opacity = '1';
     winScreen.style.pointerEvents = 'all';
