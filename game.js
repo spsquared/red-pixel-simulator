@@ -104,6 +104,8 @@ const lastFireGrid = [];
 const nextFireGrid = [];
 const monsterGrid = [];
 const targetGrid = [];
+const musicGrid = [];
+const lastMusicGrid = [];
 const placeableGrid = [];
 const lastPlaceableGrid = [];
 const noiseGrid = [];
@@ -174,6 +176,8 @@ function createGrid(size) {
     nextFireGrid.length = 0;
     monsterGrid.length = 0;
     targetGrid.length = 0;
+    musicGrid.length = 0;
+    lastMusicGrid.length = 0;
     placeableGrid.length = 0;
     lastPlaceableGrid.length = 0;
     noiseGrid.length = 0;
@@ -186,6 +190,8 @@ function createGrid(size) {
         nextFireGrid[i] = [];
         monsterGrid[i] = [];
         targetGrid[i] = [];
+        musicGrid[i] = [];
+        lastMusicGrid[i] = [];
         placeableGrid[i] = [];
         lastPlaceableGrid[i] = [];
         noiseGrid[i] = [];
@@ -198,6 +204,8 @@ function createGrid(size) {
             nextFireGrid[i][j] = false;
             monsterGrid[i][j] = false;
             targetGrid[i][j] = false;
+            musicGrid[i][j] = 0;
+            lastMusicGrid[i][j] = 0;
             placeableGrid[i][j] = true;
             lastPlaceableGrid[i][j] = true;
             noiseGrid[i][j] = noise(j / 2, i / 2);
@@ -1480,6 +1488,8 @@ function updateTick() {
                         fireGrid[y][x] = nextFireGrid[y][x];
                         nextFireGrid[y][x] = null;
                     }
+                    lastMusicGrid[y][x] = musicGrid[y][x];
+                    musicGrid[y][x] = 0;
                 }
             }
             let currentExplosions = pendingExplosions;
@@ -1522,6 +1532,8 @@ function updateTick() {
                 for (let x = 0; x < gridSize; x++) {
                     if (monsterGrid[y][x]) newMonsterCount++;
                     if (targetGrid[y][x] && grid[y][x] == pixNum.GOAL) newFulfilledTargetCount++;
+                    if (musicGrid[y][x] == 1 && lastMusicGrid[y][x] != 1 && window.playMusic1 != undefined) window.playMusic1();
+                    if (musicGrid[y][x] == 2 && lastMusicGrid[y][x] != 2 && window.playMusic2 != undefined) window.playMusic2();
                 }
             }
             if (newMonsterCount != monsterCount && window.playMonsterDeathSound != undefined) window.playMonsterDeathSound();
