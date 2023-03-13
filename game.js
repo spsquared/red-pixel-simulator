@@ -397,6 +397,8 @@ async function loadPremade(id) {
                 saveCode = e.innerHTML;
                 saveCodeText.value = saveCode;
                 loadSaveCode();
+                window.localStorage.setItem('saveCode', generateSaveCode());
+                window.localStorage.setItem('saveCodeText', saveCodeText.value);
             }
         });
     }
@@ -1156,15 +1158,16 @@ function rotateBrush() {
     }
     for (let i = 0; i < selection.grid.length; i++) {
         for (let j = 0; j < selection.grid[i].length; j++) {
-            newGrid[j][selection.grid.length - i - 1] = selection.grid[i][j];
+            let newPixel = selection.grid[i][j]
             let pixType = numPixels[selection.grid[i][j]] ?? numPixels[pixNum.MISSING];
             if (pixType.rotation != undefined) {
                 if (pixType.numId == pixNum.SLIDER_HORIZONTAL || pixType.numId == pixNum.SLIDER_VERTICAL) {
-                    newGrid[j][selection.grid.length - i - 1] = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % 2) + 2) % 2);
+                    newPixel = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % 2) + 2) % 2);
                 } else {
-                    newGrid[j][selection.grid.length - i - 1] = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % 4) + 4) % 4);
+                    newPixel = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % 4) + 4) % 4);
                 }
             }
+            newGrid[j][selection.grid.length - i - 1] = newPixel;
         }
     }
     selection.grid = newGrid;
@@ -1448,7 +1451,7 @@ function updateTick() {
             10: steam
             11: fluids, concrete, and leaves
             12: pumps
-            13: lag
+            13: lag, music
             14: rotators
             -: monster
             */
@@ -2041,6 +2044,32 @@ window.addEventListener('DOMContentLoaded', (e) => {
         preloadQueue[0].buffer = buf;
         preloadQueue[0].connect(audioContext.destination);
         window.playWinSound = () => {
+            preloadQueue.shift().start();
+            const nextSource = audioContext.createBufferSource();
+            nextSource.buffer = buf;
+            nextSource.connect(audioContext.destination);
+            preloadQueue.push(nextSource);
+        };
+    });
+    setAudio('./assets/music-1.mp3', (buf) => {
+        const preloadQueue = [];
+        preloadQueue.push(audioContext.createBufferSource());
+        preloadQueue[0].buffer = buf;
+        preloadQueue[0].connect(audioContext.destination);
+        window.playMusic1 = () => {
+            preloadQueue.shift().start();
+            const nextSource = audioContext.createBufferSource();
+            nextSource.buffer = buf;
+            nextSource.connect(audioContext.destination);
+            preloadQueue.push(nextSource);
+        };
+    });
+    setAudio('./assets/music-2.mp3', (buf) => {
+        const preloadQueue = [];
+        preloadQueue.push(audioContext.createBufferSource());
+        preloadQueue[0].buffer = buf;
+        preloadQueue[0].connect(audioContext.destination);
+        window.playMusic2 = () => {
             preloadQueue.shift().start();
             const nextSource = audioContext.createBufferSource();
             nextSource.buffer = buf;

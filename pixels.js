@@ -2113,8 +2113,8 @@ const pixels = {
         numId: 0
     },
     fan_left: {
-        name: 'Pusher (Down)',
-        description: 'Pushes pixels in its path',
+        name: 'Fan (Down)',
+        description: 'Pushes stuff in front of it',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = `rgb(75, 255, 255)`;
@@ -2184,7 +2184,7 @@ const pixels = {
         updateStage: 2,
         animatedNoise: false,
         animated: false,
-        pickable: true,
+        pickable: false,
         id: 'fan_left',
         numId: 0
     },
@@ -2726,6 +2726,11 @@ const pixels = {
                 explode(x, y, 5);
             });
             updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
+                    nextGrid[actionY][actionX] = pixNum.LAVA;
+                }
+            });
+            updateTouchingPixel(x, y, pixNum.STEAM, function (actionX, actionY) {
                 if (nextGrid[actionY][actionX] == null && random() < 0.075) {
                     nextGrid[actionY][actionX] = pixNum.LAVA;
                 }
