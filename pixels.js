@@ -1113,7 +1113,7 @@ const pixels = {
             ctx.fillRect(50 / 6, 50 / 4, 50 / 6, 25);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
@@ -1162,7 +1162,7 @@ const pixels = {
             ctx.fillRect(50 / 4, 50 / 6, 25, 50 / 6);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
@@ -1211,7 +1211,7 @@ const pixels = {
             ctx.fillRect(200 / 6, 50 / 4, 50 / 6, 25);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
@@ -1260,7 +1260,7 @@ const pixels = {
             ctx.fillRect(50 / 4, 200 / 6, 25, 50 / 6);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
@@ -1636,7 +1636,7 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
@@ -1684,7 +1684,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
@@ -1734,7 +1734,7 @@ const pixels = {
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
@@ -1782,7 +1782,7 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
@@ -2415,7 +2415,7 @@ const pixels = {
             ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(3);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 255, 255)';
@@ -2491,7 +2491,7 @@ const pixels = {
             ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(3);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 255, 255)';
@@ -2805,7 +2805,7 @@ const pixels = {
         numId: 0
     },
     laser_left: {
-        name: "L.A.S.E.R. (Left)",
+        name: 'L.A.S.E.R. (Left)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
@@ -2859,7 +2859,7 @@ const pixels = {
         numId: 0
     },
     laser_up: {
-        name: "L.A.S.E.R. (Up)",
+        name: 'L.A.S.E.R. (Up)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
@@ -2913,7 +2913,7 @@ const pixels = {
         numId: 0
     },
     laser_right: {
-        name: "L.A.S.E.R. (Right)",
+        name: 'L.A.S.E.R. (Right)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
@@ -2967,7 +2967,7 @@ const pixels = {
         numId: 0
     },
     laser_down: {
-        name: "L.A.S.E.R. (Down)",
+        name: 'L.A.S.E.R. (Down)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
@@ -3039,7 +3039,7 @@ const pixels = {
             ctx.fillRect(28, 38, 10, 10);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(25);
             ctx.fillStyle = 'rgb(240, 240, 245)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 255, 255)';
@@ -3088,7 +3088,7 @@ const pixels = {
             ctx.fillRect(0, 0, 5, 50);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(150);
             ctx.fillStyle = 'rgb(240, 240, 245)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 255, 255)';
@@ -3157,7 +3157,7 @@ const pixels = {
         numId: 0
     },
     mirror_1: {
-        name: "Mirror",
+        name: 'Mirror',
         description: 'Be careful around lasers, as it will redirect those to who knows where',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
@@ -3221,7 +3221,7 @@ const pixels = {
         numId: 0
     },
     mirror_2: {
-        name: "Mirror",
+        name: 'Mirror',
         description: 'Be careful around lasers, as it will redirect those to who knows where',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
@@ -3284,142 +3284,96 @@ const pixels = {
         id: 'mirror_2',
         numId: 0
     },
-    music_1: {
-        name: "Music Pixel (square wave)",
-        description: 'Makes funny square wave sound that hurts your ears',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridSize); y1++) {
-                for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridSize); x1++) {
-                    if (musicGrid[y1][x1]) imagePixel(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
-                    else imagePixel(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (grid[actionY][actionX] >= pixNum.MUSIC_1 && grid[actionY][actionX] <= pixNum.MUSIC_2) return false;
-                return true;
-            })) musicGrid[y][x] = 1;
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 0, 200)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            ctx.fillRect(0, 0, 50, 10);
-            ctx.fillRect(40, 0, 10, 50);
-            ctx.fillRect(0, 40, 50, 10);
-            ctx.fillRect(0, 0, 10, 50);
-            ctx.fillStyle = 'rgb(0, 180, 255)';
-            ctx.fillRect(10, 10, 30, 10);
-        },
-        prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
-            ctx.fillStyle = 'rgb(200, 0, 180)';
-            fillPixel(0, 0, 1, 1);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1 / 5);
-            fillPixel(4 / 5, 0, 1 / 5, 1);
-            fillPixel(0, 4 / 5, 1, 1 / 5);
-            fillPixel(0, 0, 1 / 5, 1);
-            ctx.fillStyle = 'rgb(0, 180, 255)';
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 1 / 5);
-            this.prerenderedFrames.push(toImage());
-            ctx.fillStyle = 'rgb(255, 0, 200)';
-            fillPixel(0, 0, 1, 1);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1 / 5);
-            fillPixel(4 / 5, 0, 1 / 5, 1);
-            fillPixel(0, 4 / 5, 1, 1 / 5);
-            fillPixel(0, 0, 1 / 5, 1);
-            ctx.fillStyle = 'rgb(0, 180, 255)';
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 1 / 5);
-            this.prerenderedFrames.push(toImage());
-        },
-        prerenderedFrames: [],
-        blastResistance: 0,
-        flammability: 0,
-        pushable: false,
-        cloneable: true,
-        rotateable: false,
-        group: 3,
-        key: Infinity,
-        updateStage: 13,
-        animatedNoise: false,
-        animated: true,
-        pickable: true,
-        id: 'music_1',
-        numId: 0
-    },
-    music_2: {
-        name: "Music Pixel (chip noise)",
+    music_1: generateMusicPixel(1, {
+        name: 'Music Pixel (Square Wave C7 Major Triad Hit)',
+        description: 'Makes funny C7 Major triad square wave sound that hurts your ears',
+        color: 'rgb(100, 255, 0)',
+        text: ''
+    }),
+    music_2: generateMusicPixel(2, {
+        name: 'Music Pixel (Chip Noise)',
         description: 'Makes funny chip noise sound that hurts your ears',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridSize); y1++) {
-                for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridSize); x1++) {
-                    if (musicGrid[y1][x1]) imagePixel(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
-                    else imagePixel(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (grid[actionY][actionX] >= pixNum.MUSIC_1 && grid[actionY][actionX] <= pixNum.MUSIC_2) return false;
-                return true;
-            })) musicGrid[y][x] = 2;
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 0, 200)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            ctx.fillRect(0, 0, 50, 10);
-            ctx.fillRect(40, 0, 10, 50);
-            ctx.fillRect(0, 40, 50, 10);
-            ctx.fillRect(0, 0, 10, 50);
-            ctx.fillStyle = 'rgb(100, 255, 0)';
-            ctx.fillRect(10, 10, 30, 10);
-        },
-        prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
-            ctx.fillStyle = 'rgb(200, 0, 180)';
-            fillPixel(0, 0, 1, 1);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1 / 5);
-            fillPixel(4 / 5, 0, 1 / 5, 1);
-            fillPixel(0, 4 / 5, 1, 1 / 5);
-            fillPixel(0, 0, 1 / 5, 1);
-            ctx.fillStyle = 'rgb(100, 255, 0)';
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 1 / 5);
-            this.prerenderedFrames.push(toImage());
-            ctx.fillStyle = 'rgb(255, 0, 200)';
-            fillPixel(0, 0, 1, 1);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1 / 5);
-            fillPixel(4 / 5, 0, 1 / 5, 1);
-            fillPixel(0, 4 / 5, 1, 1 / 5);
-            fillPixel(0, 0, 1 / 5, 1);
-            ctx.fillStyle = 'rgb(100, 255, 0)';
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 1 / 5);
-            this.prerenderedFrames.push(toImage());
-        },
-        prerenderedFrames: [],
-        blastResistance: 0,
-        flammability: 0,
-        pushable: false,
-        cloneable: true,
-        rotateable: false,
-        group: 3,
-        key: Infinity,
-        updateStage: 13,
-        animatedNoise: false,
-        animated: true,
-        pickable: true,
-        id: 'music_1',
-        numId: 0
-    },
+        color: 'rgb(200, 200, 200)',
+        text: ''
+    }),
+    music_3: generateMusicPixel(3, {
+        name: 'Music Pixel (Square Wave C₄)',
+        description: 'Makes funny C₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'C4'
+    }),
+    music_4: generateMusicPixel(4, {
+        name: 'Music Pixel (Square Wave C♯₄/D♭₄)',
+        description: 'Makes funny C♯₄/D♭₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'C♯4'
+    }),
+    music_5: generateMusicPixel(5, {
+        name: 'Music Pixel (Square Wave D₄)',
+        description: 'Makes funny D₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'D4'
+    }),
+    music_6: generateMusicPixel(6, {
+        name: 'Music Pixel (Square Wave D♯₄/E♭₄)',
+        description: 'Makes funny D♯₄/E♭₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'E♭4'
+    }),
+    music_7: generateMusicPixel(7, {
+        name: 'Music Pixel (Square Wave E₄)',
+        description: 'Makes funny E₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'E4'
+    }),
+    music_8: generateMusicPixel(8, {
+        name: 'Music Pixel (Square Wave F₄)',
+        description: 'Makes funny F₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'F4'
+    }),
+    music_9: generateMusicPixel(9, {
+        name: 'Music Pixel (Square Wave F♯₄/G♭₄)',
+        description: 'Makes funny F♯₄/G♭₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'F♯4'
+    }),
+    music_10: generateMusicPixel(10, {
+        name: 'Music Pixel (Square Wave G₄)',
+        description: 'Makes funny G₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'G4'
+    }),
+    music_11: generateMusicPixel(11, {
+        name: 'Music Pixel (Square Wave G♯₄/A♭₄)',
+        description: 'Makes funny G♯₄/A♭₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'A♭4'
+    }),
+    music_12: generateMusicPixel(12, {
+        name: 'Music Pixel (Square Wave A₄)',
+        description: 'Makes funny A₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'A4'
+    }),
+    music_13: generateMusicPixel(13, {
+        name: 'Music Pixel (Square Wave A♯₄/B♭₄)',
+        description: 'Makes funny A♯₄/B♭₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'B♭4'
+    }),
+    music_14: generateMusicPixel(14, {
+        name: 'Music Pixel (Square Wave B₄)',
+        description: 'Makes funny B₄ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'B4'
+    }),
+    music_15: generateMusicPixel(15, {
+        name: 'Music Pixel (Square Wave C₅)',
+        description: 'Makes funny C₅ square wave sound that hurts your ears',
+        color: 'rgb(0, 180, 255)',
+        text: 'C5'
+    }),
     nuke: {
         name: 'Nuke',
         description: 'TBH, kinda weak',
@@ -3999,7 +3953,7 @@ const pixels = {
             ctx.fillRect(50 / 4, 30, 25, 50 / 6);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(200, 20, 0)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 30, 0)';
@@ -4087,7 +4041,7 @@ const pixels = {
             ctx.fillRect(10, 10, 30, 30);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(5);
             ctx.fillStyle = 'rgb(0, 200, 255)';
             fillPixel(0, 0, 1, 1 / 5);
             fillPixel(0, 0, 1 / 5, 1);
@@ -4111,7 +4065,7 @@ const pixels = {
         numId: 0
     },
     remove: {
-        name: "Remove (brush only)",
+        name: 'Remove (brush only)',
         description: 'Unfortunately it\'s not THE red pixel',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
@@ -4157,7 +4111,7 @@ const pixels = {
             ctx.fillRect(25, 25, 25, 25);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(2);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 0, 255)';
@@ -4186,7 +4140,7 @@ const pixels = {
         description: 'What???',
         draw: function (x, y, width, height, opacity, ctx) {
             ctx.globalAlpha = opacity;
-            ctx.fillStyle = '#FF0000';
+            ctx.fillStyle = 'rgb(255, 0, 0)';
             ctx.fillRect(0, 0, canvasResolution, canvasResolution);
         },
         update: function (x, y) {
@@ -4245,6 +4199,83 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
                 pixelSelectors[id].box.style.display = '';
             }
         }
+    }
+};
+function generateMusicPixel(id, data) {
+    return {
+        name: data.name,
+        description: data.description,
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridSize); y1++) {
+                for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridSize); x1++) {
+                    if (musicGrid[y1][x1]) imagePixel(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
+                    else imagePixel(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (updateTouchingAnything(x, y, function (actionX, actionY) {
+                console.log(grid[actionY][actionX])
+                if (grid[actionY][actionX] >= pixNum.MUSIC_1 && grid[actionY][actionX] <= pixNum.MUSIC_15) return false;
+                return true;
+            })) musicGrid[y][x] = id;
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 200)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 10);
+            ctx.fillRect(40, 0, 10, 50);
+            ctx.fillRect(0, 40, 50, 10);
+            ctx.fillRect(0, 0, 10, 50);
+            ctx.fillStyle = data.color;
+            ctx.fillRect(10, 10, 30, 10);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.font = '16px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(data.text, 25, 20);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer(120);
+            ctx.fillStyle = 'rgb(200, 0, 180)';
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixel(0, 0, 1, 1 / 5);
+            fillPixel(4 / 5, 0, 1 / 5, 1);
+            fillPixel(0, 4 / 5, 1, 1 / 5);
+            fillPixel(0, 0, 1 / 5, 1);
+            ctx.fillStyle = data.color;
+            fillPixel(1 / 5, 1 / 5, 3 / 5, 1 / 5);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.font = '40px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(data.text, 60, 48);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(255, 0, 255)';
+            fillPixel(1 / 5, 2 / 5, 3 / 5, 2 / 5);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillText(data.text, 60, 48);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 0,
+        pushable: false,
+        cloneable: true,
+        rotateable: false,
+        musicPixel: 0,
+        group: 3,
+        key: Infinity,
+        updateStage: 13,
+        animatedNoise: false,
+        animated: true,
+        pickable: true,
+        id: `music_${id}`,
+        numId: 0
     }
 };
 

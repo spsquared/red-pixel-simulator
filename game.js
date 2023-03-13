@@ -494,18 +494,23 @@ function setup() {
 };
 
 // pixel utilities
-function PreRenderer() {
+function PreRenderer(size) {
+    size = size ?? 60;
     const rendCanvas = document.createElement('canvas');
-    rendCanvas.width = 60;
-    rendCanvas.height = 60;
+    rendCanvas.width = size;
+    rendCanvas.height = size;
     const rendctx = rendCanvas.getContext('2d');
+    rendCanvas.style.imageRendering = 'pixelated';
+    rendctx.imageSmoothingEnabled = false;
+    rendctx.webkitImageSmoothingEnabled = false;
+    rendctx.mozImageSmoothingEnabled = false;
     return {
         ctx: rendctx,
         fillPixel: function (x, y, width, height) {
-            rendctx.fillRect(x * 60, y * 60, width * 60, height * 60);
+            rendctx.fillRect(x * size, y * size, width * size, height * size);
         },
         toImage: function () {
-            const img = new Image(60);
+            const img = new Image(size, size);
             img.src = rendCanvas.toDataURL('image/png');
             return img;
         }
@@ -1532,8 +1537,10 @@ function updateTick() {
                 for (let x = 0; x < gridSize; x++) {
                     if (monsterGrid[y][x]) newMonsterCount++;
                     if (targetGrid[y][x] && grid[y][x] == pixNum.GOAL) newFulfilledTargetCount++;
-                    if (musicGrid[y][x] == 1 && lastMusicGrid[y][x] != 1 && window.playMusic1 != undefined) window.playMusic1();
-                    if (musicGrid[y][x] == 2 && lastMusicGrid[y][x] != 2 && window.playMusic2 != undefined) window.playMusic2();
+                    if (musicGrid[y][x] != lastMusicGrid[y][x]) {
+                        if (musicGrid[y][x] != 0) musicPixel(musicGrid[y][x], true);
+                        else if (musicGrid[y][x] == 0) musicPixel(lastMusicGrid[y][x], false);
+                    }
                 }
             }
             if (newMonsterCount != monsterCount && window.playMonsterDeathSound != undefined) window.playMonsterDeathSound();
@@ -1729,17 +1736,19 @@ window.addEventListener('DOMContentLoaded', (e) => {
     }, { passive: false });
     hasFocus = false;
     setInterval(() => {
-        if (hasFocus && !document.hasFocus()) {
-            camera.mUp = false;
-            camera.mDown = false;
-            camera.mLeft = false;
-            camera.mRight = false;
-            holdingControl = false;
-            holdingAlt = false;
-            removing = false;
-            brush.lineMode = false;
-        };
-        hasFocus = document.hasFocus();
+        window.requestIdleCallback(() => {
+            if (hasFocus && !document.hasFocus()) {
+                camera.mUp = false;
+                camera.mDown = false;
+                camera.mLeft = false;
+                camera.mRight = false;
+                holdingControl = false;
+                holdingAlt = false;
+                removing = false;
+                brush.lineMode = false;
+            };
+            hasFocus = document.hasFocus();
+        }, { timeout: 100 });
     }, 200);
 });
 
@@ -1935,7 +1944,9 @@ document.getElementById('backToMenu').onclick = (e) => {
 };
 
 // audio
-const audioContext = AudioContext ? new AudioContext() : false;
+const audioContext = new (window.AudioContext ?? window.webkitAudioContext ?? Error)();
+const globalVolume = audioContext.createGain();
+globalVolume.connect(audioContext.destination);
 function setAudio(file, cb) {
     const request = new XMLHttpRequest();
     request.open('GET', file, true);
@@ -1950,7 +1961,7 @@ const activeMusic = [];
 let musicMuted = (window.localStorage.getItem('musicMuted') ?? false) == 1;
 const menuMuteButton = document.getElementById('menuMuteButton');
 const musicVolume = audioContext.createGain();
-musicVolume.connect(audioContext.destination);
+musicVolume.connect(globalVolume);
 function playMusic(id) {
     stopAllMusic();
     if (musicBuffers.has(id)) {
@@ -1989,6 +2000,39 @@ function toggleMusic() {
     window.localStorage.setItem('musicMuted', musicMuted ? 1 : 0);
 };
 menuMuteButton.onclick = toggleMusic;
+const musicPixelSounds = new Map();
+const musicPixelOscillators = new Map();
+function addMusicPixelSound(id) {
+    setAudio(`./assets/music-${id}.mp3`, (buf) => {
+        const preloadQueue = [];
+        for (let i = 0; i < 5; i++) {
+            preloadQueue.unshift(audioContext.createBufferSource());
+            preloadQueue[0].buffer = buf;
+            preloadQueue[0].connect(globalVolume);
+        }
+        musicPixelSounds.set(id, function play() {
+            preloadQueue.shift().start();
+            const nextSource = audioContext.createBufferSource();
+            nextSource.buffer = buf;
+            nextSource.connect(globalVolume);
+            preloadQueue.push(nextSource);
+        });
+    });
+};
+function addMusicPixelOscillator(id, type, pitch) {
+    const gain = audioContext.createGain();
+    gain.gain.value = 0;
+    gain.connect(globalVolume);
+    const oscillator = audioContext.createOscillator();
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(pitch, audioContext.currentTime);
+    oscillator.connect(gain);
+    oscillator.start();
+    musicPixelOscillators.set(id, {
+        start: () => gain.gain.value = 1,
+        stop: () => gain.gain.value = 0
+    });
+};
 window.addEventListener('DOMContentLoaded', (e) => {
     setAudio('./assets/menu.mp3', (buf) => {
         musicBuffers.set('menu', buf);
@@ -1997,12 +2041,12 @@ window.addEventListener('DOMContentLoaded', (e) => {
         const preloadQueue = [];
         preloadQueue.push(audioContext.createBufferSource());
         preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(audioContext.destination);
+        preloadQueue[0].connect(globalVolume);
         window.playClickSound = () => {
             preloadQueue.shift().start();
             const nextSource = audioContext.createBufferSource();
             nextSource.buffer = buf;
-            nextSource.connect(audioContext.destination);
+            nextSource.connect(globalVolume);
             preloadQueue.push(nextSource);
         };
         document.querySelectorAll('.bclick').forEach(e => e.addEventListener('click', window.playClickSound));
@@ -2013,12 +2057,12 @@ window.addEventListener('DOMContentLoaded', (e) => {
         const preloadQueue = [];
         preloadQueue.push(audioContext.createBufferSource());
         preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(audioContext.destination);
+        preloadQueue[0].connect(globalVolume);
         window.playTickSound = () => {
             preloadQueue.shift().start();
             const nextSource = audioContext.createBufferSource();
             nextSource.buffer = buf;
-            nextSource.connect(audioContext.destination);
+            nextSource.connect(globalVolume);
             preloadQueue.push(nextSource);
         };
         document.querySelectorAll('.btick').forEach(e => e.addEventListener('click', window.playTickSound));
@@ -2028,12 +2072,12 @@ window.addEventListener('DOMContentLoaded', (e) => {
         const preloadQueue = [];
         preloadQueue.push(audioContext.createBufferSource());
         preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(audioContext.destination);
+        preloadQueue[0].connect(globalVolume);
         window.playMonsterDeathSound = () => {
             preloadQueue.shift().start();
             const nextSource = audioContext.createBufferSource();
             nextSource.buffer = buf;
-            nextSource.connect(audioContext.destination);
+            nextSource.connect(globalVolume);
             preloadQueue.push(nextSource);
         };
     });
@@ -2041,12 +2085,12 @@ window.addEventListener('DOMContentLoaded', (e) => {
         const preloadQueue = [];
         preloadQueue.push(audioContext.createBufferSource());
         preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(audioContext.destination);
+        preloadQueue[0].connect(globalVolume);
         window.playTargetFillSound = () => {
             preloadQueue.shift().start();
             const nextSource = audioContext.createBufferSource();
             nextSource.buffer = buf;
-            nextSource.connect(audioContext.destination);
+            nextSource.connect(globalVolume);
             preloadQueue.push(nextSource);
         };
     });
@@ -2054,41 +2098,30 @@ window.addEventListener('DOMContentLoaded', (e) => {
         const preloadQueue = [];
         preloadQueue.push(audioContext.createBufferSource());
         preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(audioContext.destination);
+        preloadQueue[0].connect(globalVolume);
         window.playWinSound = () => {
             preloadQueue.shift().start();
             const nextSource = audioContext.createBufferSource();
             nextSource.buffer = buf;
-            nextSource.connect(audioContext.destination);
+            nextSource.connect(globalVolume);
             preloadQueue.push(nextSource);
         };
     });
-    setAudio('./assets/music-1.mp3', (buf) => {
-        const preloadQueue = [];
-        preloadQueue.push(audioContext.createBufferSource());
-        preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(audioContext.destination);
-        window.playMusic1 = () => {
-            preloadQueue.shift().start();
-            const nextSource = audioContext.createBufferSource();
-            nextSource.buffer = buf;
-            nextSource.connect(audioContext.destination);
-            preloadQueue.push(nextSource);
-        };
-    });
-    setAudio('./assets/music-2.mp3', (buf) => {
-        const preloadQueue = [];
-        preloadQueue.push(audioContext.createBufferSource());
-        preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(audioContext.destination);
-        window.playMusic2 = () => {
-            preloadQueue.shift().start();
-            const nextSource = audioContext.createBufferSource();
-            nextSource.buffer = buf;
-            nextSource.connect(audioContext.destination);
-            preloadQueue.push(nextSource);
-        };
-    });
+    addMusicPixelSound(1);
+    addMusicPixelSound(2);
+    addMusicPixelOscillator(3, 'square', 261.63);
+    addMusicPixelOscillator(4, 'square', 277.18);
+    addMusicPixelOscillator(5, 'square', 293.66);
+    addMusicPixelOscillator(6, 'square', 311.13);
+    addMusicPixelOscillator(7, 'square', 329.63);
+    addMusicPixelOscillator(8, 'square', 349.23);
+    addMusicPixelOscillator(9, 'square', 369.99);
+    addMusicPixelOscillator(10, 'square', 392.00);
+    addMusicPixelOscillator(11, 'square', 415.30);
+    addMusicPixelOscillator(12, 'square', 440.00);
+    addMusicPixelOscillator(13, 'square', 466.16);
+    addMusicPixelOscillator(14, 'square', 493.88);
+    addMusicPixelOscillator(15, 'square', 523.25);
     toggleMusic();
     toggleMusic();
 });
@@ -2097,6 +2130,14 @@ function tickSound() {
 };
 function clickSound() {
     if (window.playClickSound) window.playClickSound();
+};
+function musicPixel(id, state) {
+    if (musicPixelSounds.has(id)) {
+        if (state) musicPixelSounds.get(id)();
+    } else if (musicPixelOscillators.has(id)) {
+        if (state) musicPixelOscillators.get(id).start();
+        else musicPixelOscillators.get(id).stop();
+    }
 };
 document.addEventListener('mousedown', function startAudio(e) {
     audioContext.resume();
