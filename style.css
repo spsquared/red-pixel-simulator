@@ -162,11 +162,46 @@ table {
 #pixelPicker {
     display: grid;
     border: 2px solid black;
-    padding-bottom: 8px;
-    padding-right: 2px;
+    border-bottom: none;
     margin-top: 8px;
     margin-right: 8px;
     text-align: justify;
+}
+.pixelGroup {
+    border-bottom: 2px solid black;
+}
+.pixelGroupHeader {
+    display: grid;
+    grid-template-columns: [c0] 24px [c1] 1fr [c2];
+    height: 24px;
+    font-size: 18px;
+    cursor: pointer;
+}
+.pixelGroupHeaderDropdownIcon {
+    grid-column-start: [c0];
+    grid-column-end: [c1];
+    width: 24px;
+    height: 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50%;
+    background-image: url(/assets/dropdown.svg);
+}
+.pixelGroupHeaderLabel {
+    grid-column-start: [c1];
+    grid-column-end: [c2];
+}
+.pixelGroupBody {
+    max-height: 0px;
+    transition: 200ms ease-out max-height;
+    overflow-y: hidden;
+}
+.pixelGroupContents {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 62px);
+    grid-template-rows: repeat(auto-fill, 62px);
+    padding-bottom: 2px;
+    border-top: 2px solid black;
 }
 .pickerPixel {
     position: relative;
@@ -175,7 +210,7 @@ table {
     height: 50px;
     margin-top: 6px;
     margin-left: 6px;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     margin-right: 2px;
     border: 2px solid transparent;
     transition: 50ms linear transform;
@@ -187,7 +222,7 @@ table {
 }
 .pickerPixelSelected {
     margin-top: 4px;
-    margin-left: 3.5px;
+    margin-left: 3px;
     margin-bottom: 0px;
     margin-right: 0px;
     border: 4px solid gold;
@@ -433,8 +468,11 @@ table {
         background-color: white;
     }
 
-    b, #levelName, #levelDescription, #pixelPicker, #pixelPickerDescription, .pickerPixel:hover {
+    b, #levelName, #levelDescription, #pixelPicker, .pixelGroup, .pixelGroupContents, #pixelPickerDescription, .pickerPixel:hover {
         border-color: white;
+    }
+    .pixelGroupHeaderDropdownIcon {
+        background-image: url(/assets/dropdown-light.svg);
     }
     .tableBorders td {
         border-color: white;

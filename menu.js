@@ -17,7 +17,7 @@ window.addEventListener('resize', (e) => {
 });
 menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
 
-window.addEventListener('DOMContentLoaded', (e) => {
+window.onload = (e) => {
     document.getElementById('tempCover').remove();
     setTimeout(() => {
         t_redpixel.style.transition = '200ms ease-in transform';
@@ -48,7 +48,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         multiplayerButton.style.transform = 'translateY(-45vh)';
     }, 2600);
     startTitleBob = setTimeout(titleBob, 3000);
-});
+};
 
 let titleBobController = setInterval(() => { });
 function titleBob() {

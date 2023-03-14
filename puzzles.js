@@ -420,7 +420,7 @@ for (let section in puzzles) {
     levelSelectBody.appendChild(block);
 }
 
-window.addEventListener('DOMContentLoaded', (e) => {
+window.addEventListener('load', (e) => {
     let i = 0;
     let key = window.localStorage.key(i);
     while (key != null) {

@@ -144,7 +144,10 @@ const camera = {
     mUp: false,
     mDown: false,
     mLeft: false,
-    mRight: false
+    mRight: false,
+    lastX: 0,
+    lastY: 0,
+    lastScale: 1
 };
 const selection = {
     x1: 0,
@@ -706,25 +709,20 @@ function flow(x, y) {
         let right = x;
         let slideLeft = 0;
         let slideRight = 0;
-        let airgapLeft = 0;
-        let airgapRight = 0;
         let foundLeftDrop = false;
         let foundRightDrop = false;
         let incrementLeft = canMoveTo(x - 1, y) && isAir(x - 1, y);
         let incrementRight = canMoveTo(x + 1, y) && isAir(x + 1, y);
+        // move directly to destination?
         while (incrementLeft) {
             left--;
-            if (!isAir(left, y)) {
+            if (!isAir(left, y) && grid[y + 1][left] != grid[y][x]) {
                 if (grid[y][left] != grid[y][x]) slideLeft = x - left;
-                else if (grid[y][x + 1] != grid[y][x]) airgapLeft = 0;
                 incrementLeft = false;
             } else if (isAir(left, y + 1)) {
                 slideLeft = x - left;
                 foundLeftDrop = true;
                 incrementLeft = false;
-            }
-            if (isAir(left, y) && y > 0 && !isAir(left, y - 1)) {
-                airgapLeft++;
             }
             if (left < 0) {
                 slideLeft = x - left;
@@ -733,17 +731,13 @@ function flow(x, y) {
         }
         while (incrementRight) {
             right++;
-            if (!isAir(right, y)) {
+            if (!isAir(right, y) && grid[y + 1][right] != grid[y][x]) {
                 if (grid[y][right] != grid[y][x]) slideRight = right - x;
-                else if (grid[y][x - 1] != grid[y][x]) airgapRight = 0;
                 incrementRight = false;
             } else if (isAir(right, y + 1)) {
                 slideRight = right - x;
                 foundRightDrop = true;
                 incrementRight = false;
-            }
-            if (isAir(right, y) && y > 0 && !isAir(right, y - 1)) {
-                airgapRight++;
             }
             if (right >= gridSize) {
                 slideRight = right - x;
@@ -777,10 +771,6 @@ function flow(x, y) {
             } else {
                 toSlide = 1;
             }
-        } else if (airgapLeft > 0) {
-            toSlide = -1;
-        } else if (airgapRight > 0) {
-            toSlide = 1;
         }
         if (toSlide > 0) {
             if (foundRightDrop && isAir(x + 1, y + 1)) {
@@ -1073,6 +1063,9 @@ function drawFrame() {
         drawBooleanGrid(targetGrid, targetGrid, pixNum.TARGET, targetctx);
         drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         forceRedraw = false;
+        camera.lastx = camera.x;
+        camera.lasty = camera.y;
+        camera.lastScale = camera.scale;
     }
     if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 != 0)) {
         frameList.push(millis());
@@ -1767,10 +1760,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 holdingAlt = false;
                 removing = false;
                 brush.lineMode = false;
-                audioContext.suspend();
             }
             hasFocus = document.hasFocus();
-            if (hasFocus) audioContext.resume();
         }, { timeout: 100 });
     }, 200);
 });
@@ -2026,7 +2017,7 @@ function toggleMusic() {
 menuMuteButton.onclick = toggleMusic;
 const musicPixelSounds = new Map();
 const musicPixelOscillators = new Map();
-function addMusicPixelSound(id) {
+async function addMusicPixelSound(id) {
     setAudio(`./assets/music-${id}.mp3`, (buf) => {
         const preloadQueue = [];
         for (let i = 0; i < 5; i++) {
@@ -2043,7 +2034,7 @@ function addMusicPixelSound(id) {
         });
     });
 };
-function addMusicPixelOscillator(id, type, pitch) {
+async function addMusicPixelOscillator(id, type, pitch) {
     const gain = audioContext.createGain();
     gain.gain.value = 0;
     gain.connect(globalVolume);
@@ -2160,6 +2151,43 @@ window.addEventListener('DOMContentLoaded', (e) => {
     addMusicPixelOscillator(13, 'square', 466.16);
     addMusicPixelOscillator(14, 'square', 493.88);
     addMusicPixelOscillator(15, 'square', 523.25);
+    addMusicPixelOscillator(16, 'square', 554.37);
+    addMusicPixelOscillator(17, 'square', 587.33);
+    addMusicPixelOscillator(18, 'square', 622.25);
+    addMusicPixelOscillator(19, 'square', 659.25);
+    addMusicPixelOscillator(20, 'square', 698.46);
+    addMusicPixelOscillator(21, 'square', 739.99);
+    addMusicPixelOscillator(22, 'square', 783.99);
+    addMusicPixelOscillator(23, 'square', 830.61);
+    addMusicPixelOscillator(24, 'square', 880.00);
+    addMusicPixelOscillator(25, 'square', 932.33);
+    addMusicPixelOscillator(26, 'square', 987.77);
+    addMusicPixelOscillator(27, 'square', 1046.50);
+    addMusicPixelOscillator(28, 'sawtooth', 261.63);
+    addMusicPixelOscillator(29, 'sawtooth', 277.18);
+    addMusicPixelOscillator(30, 'sawtooth', 293.66);
+    addMusicPixelOscillator(31, 'sawtooth', 311.13);
+    addMusicPixelOscillator(32, 'sawtooth', 329.63);
+    addMusicPixelOscillator(33, 'sawtooth', 349.23);
+    addMusicPixelOscillator(34, 'sawtooth', 369.99);
+    addMusicPixelOscillator(35, 'sawtooth', 392.00);
+    addMusicPixelOscillator(36, 'sawtooth', 415.30);
+    addMusicPixelOscillator(37, 'sawtooth', 440.00);
+    addMusicPixelOscillator(38, 'sawtooth', 466.16);
+    addMusicPixelOscillator(39, 'sawtooth', 493.88);
+    addMusicPixelOscillator(40, 'sawtooth', 523.25);
+    addMusicPixelOscillator(41, 'sawtooth', 554.37);
+    addMusicPixelOscillator(42, 'sawtooth', 587.33);
+    addMusicPixelOscillator(43, 'sawtooth', 622.25);
+    addMusicPixelOscillator(44, 'sawtooth', 659.25);
+    addMusicPixelOscillator(45, 'sawtooth', 698.46);
+    addMusicPixelOscillator(46, 'sawtooth', 739.99);
+    addMusicPixelOscillator(47, 'sawtooth', 783.99);
+    addMusicPixelOscillator(48, 'sawtooth', 830.61);
+    addMusicPixelOscillator(49, 'sawtooth', 880.00);
+    addMusicPixelOscillator(50, 'sawtooth', 932.33);
+    addMusicPixelOscillator(51, 'sawtooth', 987.77);
+    addMusicPixelOscillator(52, 'sawtooth', 1046.50);
     toggleMusic();
     toggleMusic();
 });
@@ -2184,6 +2212,10 @@ document.addEventListener('mousedown', function startAudio(e) {
     }, 1000);
     document.removeEventListener('mousedown', startAudio);
 });
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) globalVolume.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
+    else globalVolume.gain.linearRampToValueAtTime(1, audioContext.currentTime + 0.5);
+});
 
 // resizing
 window.onresize = (e) => {
@@ -2197,15 +2229,15 @@ window.onresize = (e) => {
     if (window.innerWidth - canvasSize < 400) {
         sidebar.style.top = Math.min(window.innerWidth, window.innerHeight) + 'px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 20 + 'px');
-        let pickerWidth = (Math.round((window.innerWidth - 20) / 62) - 1) * 62;
-        pixelPicker.style.width = pickerWidth + 'px';
+        let pickerWidth = (Math.round((window.innerWidth - 20) / 62) - 1) * 62 + 1;
+        pixelPicker.style.width = pickerWidth + 2 + 'px';
         pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
         canvasContainer.style.width = window.innerWidth + 'px';
     } else {
         sidebar.style.top = '0px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - canvasSize - 20 + 'px');
-        let pickerWidth = (Math.round((window.innerWidth - canvasSize - 20) / 62) - 1) * 62;
-        pixelPicker.style.width = pickerWidth + 'px';
+        let pickerWidth = (Math.round((window.innerWidth - canvasSize - 20) / 62) - 1) * 62 + 1;
+        pixelPicker.style.width = pickerWidth + 2+ 'px';
         pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
     }
     forceRedraw = true;
