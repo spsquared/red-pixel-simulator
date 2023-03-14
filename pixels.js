@@ -2203,14 +2203,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX];
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
-                    rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
-                    rotatePixel(actionX, actionY, 4);
-                }
-            });
+            updateTouchingAnything(x, y, rotatePixel);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2251,14 +2244,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX];
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
-                    rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
-                    rotatePixel(actionX, actionY, 4);
-                }
-            });
+            updateTouchingAnything(x, y, rotatePixel);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2299,14 +2285,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX];
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
-                    rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
-                    rotatePixel(actionX, actionY, 4);
-                }
-            });
+            updateTouchingAnything(x, y, rotatePixel);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2347,14 +2326,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX];
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
-                    rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
-                    rotatePixel(actionX, actionY, 4);
-                }
-            });
+            updateTouchingAnything(x, y, rotatePixel);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2388,14 +2360,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(frameCount / 10) % 4], ctx);
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX];
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
-                    rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
-                    rotatePixel(actionX, actionY, 4);
-                }
-            });
+            updateTouchingAnything(x, y, rotatePixel);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2464,14 +2429,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(frameCount / 10) % 4], ctx);
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                let pixel = grid[actionY][actionX];
-                if (pixel == pixNum.SLIDER_HORIZONTAL || pixel == pixNum.SLIDER_VERTICAL || pixel == pixNum.MIRROR_1 || pixel == pixNum.MIRROR_2) {
-                    rotatePixel(actionX, actionY, 2);
-                } else if ((pixel >= pixNum.CLONER_LEFT && pixel <= pixNum.PISTON_DOWN) || (pixel >= pixNum.LASER_LEFT && pixel <= pixNum.LASER_DOWN)) {
-                    rotatePixel(actionX, actionY, 4);
-                }
-            });
+            updateTouchingAnything(x, y, rotatePixel);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);

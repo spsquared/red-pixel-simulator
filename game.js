@@ -787,7 +787,10 @@ function flow(x, y) {
         }
     }
 };
-function rotatePixel(x, y, possibleRotations) {
+function possibleRotations(id) {
+    return (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2) ? 2 : 4;
+};
+function rotatePixel(x, y) {
     if (nextGrid[y][x] != null) return;
     let rotate = 0;
     let thisPixel = numPixels[grid[y][x]];
@@ -804,7 +807,8 @@ function rotatePixel(x, y, possibleRotations) {
         }
     });
     if (rotate != 0) {
-        nextGrid[y][x] = grid[y][x] - thisPixel.rotation + ((((thisPixel.rotation + rotate) % possibleRotations) + possibleRotations) % possibleRotations);
+        let rotations = possibleRotations(grid[y][x]);
+        nextGrid[y][x] = grid[y][x] - thisPixel.rotation + ((((thisPixel.rotation + rotate) % rotations) + rotations) % rotations);
     }
 };
 function getLaserPath(x, y, dir) {
@@ -1172,11 +1176,8 @@ function rotateBrush() {
             let newPixel = selection.grid[i][j]
             let pixType = numPixels[selection.grid[i][j]] ?? numPixels[pixNum.MISSING];
             if (pixType.rotation != undefined) {
-                if (pixType.numId == pixNum.SLIDER_HORIZONTAL || pixType.numId == pixNum.SLIDER_VERTICAL) {
-                    newPixel = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % 2) + 2) % 2);
-                } else {
-                    newPixel = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % 4) + 4) % 4);
-                }
+                let rotations = possibleRotations(grid[y][x]);
+                newPixel = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % rotations) + rotations) % rotations);
             }
             newGrid[j][selection.grid.length - i - 1] = newPixel;
         }
@@ -1668,6 +1669,18 @@ window.addEventListener('DOMContentLoaded', (e) => {
             camera.mLeft = true;
         } else if (key == 'd') {
             camera.mRight = true;
+        } else if (key == 'i') {
+            let pixType = pixels[brush.pixel];
+            if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation + 1].id].box.click();
+        } else if (key == 'k') {
+            let pixType = pixels[brush.pixel];
+            if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[(3 % possibleRotations(pixType.numId)) + pixType.numId - pixType.rotation].id].box.click();
+        } else if (key == 'j') {
+            let pixType = pixels[brush.pixel];
+            if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation].id].box.click();
+        } else if (key == 'l') {
+            let pixType = pixels[brush.pixel];
+            if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[(2 % possibleRotations(pixType.numId)) + pixType.numId - pixType.rotation].id].box.click();
         } else if (key == 'r') {
             rotateBrush();
         } else if (sandboxMode && key == 'n') {
