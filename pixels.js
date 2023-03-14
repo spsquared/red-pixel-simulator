@@ -2203,7 +2203,9 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, rotatePixel);
+            updateTouchingAnything(x, y, function (actionX, actionY) {
+                if (numPixels[grid[actionY][actionX]].rotation != undefined) rotatePixel(actionX, actionY);
+            });
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2244,7 +2246,9 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, rotatePixel);
+            updateTouchingAnything(x, y, function (actionX, actionY) {
+                if (numPixels[grid[actionY][actionX]].rotation != undefined) rotatePixel(actionX, actionY);
+            });
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2285,7 +2289,9 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, rotatePixel);
+            updateTouchingAnything(x, y, function (actionX, actionY) {
+                if (numPixels[grid[actionY][actionX]].rotation != undefined) rotatePixel(actionX, actionY);
+            });
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2326,7 +2332,9 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, rotatePixel);
+            updateTouchingAnything(x, y, function (actionX, actionY) {
+                if (numPixels[grid[actionY][actionX]].rotation != undefined) rotatePixel(actionX, actionY);
+            });
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2360,7 +2368,9 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(frameCount / 10) % 4], ctx);
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, rotatePixel);
+            updateTouchingAnything(x, y, function (actionX, actionY) {
+                if (numPixels[grid[actionY][actionX]].rotation != undefined) rotatePixel(actionX, actionY);
+            });
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2429,7 +2439,9 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(frameCount / 10) % 4], ctx);
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, rotatePixel);
+            updateTouchingAnything(x, y, function (actionX, actionY) {
+                if (numPixels[grid[actionY][actionX]].rotation != undefined) rotatePixel(actionX, actionY);
+            });
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);

@@ -792,8 +792,8 @@ function possibleRotations(id) {
 };
 function rotatePixel(x, y) {
     if (nextGrid[y][x] != null) return;
-    let rotate = 0;
     let thisPixel = numPixels[grid[y][x]];
+    let rotate = 0;
     let touchedRotators = [];
     updateTouchingAnything(x, y, function (actionX, actionY) {
         let pixel = grid[actionY][actionX];
