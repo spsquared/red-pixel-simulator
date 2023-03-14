@@ -4519,7 +4519,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             box.classList.add('pickerPixel');
             box.onclick = (e) => {
                 brush.pixel = id;
-                pixelPicker.children.forEach(section => section.children.forEach(div => div.classList.remove('pickerPixelSelected')));
+                pixelPicker.children.forEach(g => g.children[1].children[0].children.forEach(div => div.classList.remove('pickerPixelSelected')));
                 box.classList.add('pickerPixelSelected');
                 pixelPickerDescription.innerHTML = generateDescription(id);
             };
