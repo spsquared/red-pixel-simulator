@@ -3930,6 +3930,9 @@ const pixels = {
                     nextGrid[actionY][actionX] = pixNum.MIRROR_2;
                 }
                 if (nextGrid[actionY][actionX] == null && random() < 0.05) {
+                    nextGrid[actionY][actionX] = pixNum[`MUSIC_${Math.floor(random() * 52) + 1}`];
+                }
+                if (nextGrid[actionY][actionX] == null && random() < 0.05) {
                     nextGrid[actionY][actionX] = pixNum.NUKE;
                 }
                 if (nextGrid[actionY][actionX] == null && random() < 0.02) {
@@ -4362,13 +4365,17 @@ const numPixels = {};
 const pixNum = {};
 const pixelAmounts = {};
 const pixelSelectors = {};
+const pixelGroups = [];
 function resetPixelAmounts() {
-    for (let id in pixels) {
+    for (const group of pixelGroups) {
+        group.style.display = 'none';
+    }
+    for (const id in pixels) {
         pixelAmounts[id] = 0;
         updatePixelAmount(id, true);
     }
     pixelAmounts['air'] = Infinity;
-    updatePixelAmount('air', true);
+    updatePixelAmount('air', false, true);
 };
 function updatePixelAmount(id, hideEmpty, forceShow) {
     if (pixelSelectors[id] != undefined) {
@@ -4376,15 +4383,21 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
             pixelSelectors[id].count.innerText = '';
             pixelSelectors[id].box.classList.remove('pickerNoPixels');
             pixelSelectors[id].box.style.display = '';
+            pixelSelectors[id].parentGroup.style.display = '';
         } else {
             pixelSelectors[id].count.innerText = pixelAmounts[id] == Infinity ? '∞' : pixelAmounts[id];
             if (pixelAmounts[id] == 0 || pixelAmounts[id] == Infinity) {
                 pixelSelectors[id].box.classList.add('pickerNoPixels');
-                if (hideEmpty && !forceShow) pixelSelectors[id].box.style.display = 'none';
-                else if (forceShow) pixelSelectors[id].box.style.display = '';
+                if (forceShow) {
+                    pixelSelectors[id].box.style.display = '';
+                    pixelSelectors[id].parentGroup.style.display = '';
+                } else if (hideEmpty) {
+                    pixelSelectors[id].box.style.display = 'none';
+                }
             } else {
                 pixelSelectors[id].box.classList.remove('pickerNoPixels');
                 pixelSelectors[id].box.style.display = '';
+                pixelSelectors[id].parentGroup.style.display = '';
             }
         }
     }
@@ -4410,13 +4423,10 @@ function generateMusicPixel(id, data) {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 0, 200)';
-            ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            ctx.fillRect(0, 0, 50, 10);
-            ctx.fillRect(40, 0, 10, 50);
-            ctx.fillRect(0, 40, 50, 10);
-            ctx.fillRect(0, 0, 10, 50);
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 200)';
+            ctx.fillRect(10, 20, 30, 20);
             ctx.fillStyle = data.color;
             ctx.fillRect(10, 10, 30, 10);
             ctx.fillStyle = 'rgb(255, 255, 255)';
@@ -4427,13 +4437,10 @@ function generateMusicPixel(id, data) {
         },
         prerender: function () {
             const { ctx, fillPixel, toImage } = new PreRenderer(120);
-            ctx.fillStyle = 'rgb(200, 0, 180)';
-            fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1 / 5);
-            fillPixel(4 / 5, 0, 1 / 5, 1);
-            fillPixel(0, 4 / 5, 1, 1 / 5);
-            fillPixel(0, 0, 1 / 5, 1);
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(200, 0, 180)';
+            fillPixel(1 / 5, 2 / 5, 3 / 5, 2 / 5);
             ctx.fillStyle = data.color;
             fillPixel(1 / 5, 1 / 5, 3 / 5, 1 / 5);
             ctx.fillStyle = 'rgb(255, 255, 255)';
@@ -4472,10 +4479,9 @@ window.addEventListener('DOMContentLoaded', (e) => {
     };
     const canvas2 = document.createElement('canvas');
     const ctx2 = canvas2.getContext('2d');
-    let pixIndex = 0;``
+    let pixIndex = 0; ``
     canvas2.width = 50;
     canvas2.height = 50;
-    const groups = [];
     const groupNames = ['General', 'Mechanical', 'Lasers', 'Music', 'Destruction', 'Level Building'];
     for (const id in pixels) {
         const pixel = pixels[id];
@@ -4506,7 +4512,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             const count = document.createElement('div');
             count.classList.add('pickerCount');
             box.append(count);
-            if (groups[pixel.group] === undefined) {
+            if (pixelGroups[pixel.group] === undefined) {
                 const group = document.createElement('div');
                 group.classList.add('pixelGroup');
                 const groupHeader = document.createElement('div');
@@ -4532,22 +4538,23 @@ window.addEventListener('DOMContentLoaded', (e) => {
                     if (open) groupBody.style.maxHeight = groupContents.getBoundingClientRect().height + 'px';
                     else groupBody.style.maxHeight = '0px';
                 };
-                groups[pixel.group] = group;
+                pixelGroups[pixel.group] = group;
             }
-            groups[pixel.group].children[1].children[0].appendChild(box);
+            pixelGroups[pixel.group].children[1].children[0].appendChild(box);
             pixelSelectors[id] = {
                 box: box,
-                count: count
+                count: count,
+                parentGroup: pixelGroups[pixel.group]
             };
         }
     }
-    for (const group of groups) {
+    for (const group of pixelGroups) {
         pixelPicker.appendChild(group);
     }
     pixelSelectors[brush.pixel].box.onclick();
     resetPixelAmounts();
     window.addEventListener('load', (e) => {
-        for (const group of groups) {
+        for (const group of pixelGroups) {
             group.children[0].onclick();
         }
     });
