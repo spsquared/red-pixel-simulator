@@ -3251,316 +3251,502 @@ const pixels = {
         numId: 0
     },
     music_1: generateMusicPixel(1, {
-        name: 'Music Pixel (Square Wave C7 Major Triad Hit)',
+        name: 'Square Wave C7 Major Triad Hit',
         description: 'Makes funny C7 Major triad square wave sound that hurts your ears',
         color: 'rgb(100, 255, 0)',
         text: ''
     }),
     music_2: generateMusicPixel(2, {
-        name: 'Music Pixel (Chip Noise)',
+        name: 'Chip Noise',
         description: 'Makes funny chip noise sound that hurts your ears',
         color: 'rgb(200, 200, 200)',
         text: ''
     }),
     music_3: generateMusicPixel(3, {
-        name: 'Music Pixel (Square Wave C₄)',
+        name: 'Click Noise',
+        description: 'Makes funny button click sound that hurts your ears',
+        color: 'rgb(250, 0, 0)',
+        text: ''
+    }),
+    music_4: generateMusicPixel(4, {
+        name: 'Square Wave C₄',
         description: 'Makes funny C₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'C4'
     }),
-    music_4: generateMusicPixel(4, {
-        name: 'Music Pixel (Square Wave C♯₄/D♭₄)',
+    music_5: generateMusicPixel(5, {
+        name: 'Square Wave C♯₄/D♭₄',
         description: 'Makes funny C♯₄/D♭₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'C♯4'
     }),
-    music_5: generateMusicPixel(5, {
-        name: 'Music Pixel (Square Wave D₄)',
+    music_6: generateMusicPixel(6, {
+        name: 'Square Wave D₄',
         description: 'Makes funny D₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'D4'
     }),
-    music_6: generateMusicPixel(6, {
-        name: 'Music Pixel (Square Wave D♯₄/E♭₄)',
+    music_7: generateMusicPixel(7, {
+        name: 'Square Wave D♯₄/E♭₄',
         description: 'Makes funny D♯₄/E♭₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'E♭4'
     }),
-    music_7: generateMusicPixel(7, {
-        name: 'Music Pixel (Square Wave E₄)',
+    music_8: generateMusicPixel(8, {
+        name: 'Square Wave E₄',
         description: 'Makes funny E₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'E4'
     }),
-    music_8: generateMusicPixel(8, {
-        name: 'Music Pixel (Square Wave F₄)',
+    music_9: generateMusicPixel(9, {
+        name: 'Square Wave F₄',
         description: 'Makes funny F₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'F4'
     }),
-    music_9: generateMusicPixel(9, {
-        name: 'Music Pixel (Square Wave F♯₄/G♭₄)',
+    music_10: generateMusicPixel(10, {
+        name: 'Square Wave F♯₄/G♭₄',
         description: 'Makes funny F♯₄/G♭₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'F♯4'
     }),
-    music_10: generateMusicPixel(10, {
-        name: 'Music Pixel (Square Wave G₄)',
+    music_11: generateMusicPixel(11, {
+        name: 'Square Wave G₄',
         description: 'Makes funny G₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'G4'
     }),
-    music_11: generateMusicPixel(11, {
-        name: 'Music Pixel (Square Wave G♯₄/A♭₄)',
+    music_12: generateMusicPixel(12, {
+        name: 'Square Wave G♯₄/A♭₄',
         description: 'Makes funny G♯₄/A♭₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'A♭4'
     }),
-    music_12: generateMusicPixel(12, {
-        name: 'Music Pixel (Square Wave A₄)',
+    music_13: generateMusicPixel(13, {
+        name: 'Square Wave A₄',
         description: 'Makes funny A₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'A4'
     }),
-    music_13: generateMusicPixel(13, {
-        name: 'Music Pixel (Square Wave A♯₄/B♭₄)',
+    music_14: generateMusicPixel(14, {
+        name: 'Square Wave A♯₄/B♭₄',
         description: 'Makes funny A♯₄/B♭₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'B♭4'
     }),
-    music_14: generateMusicPixel(14, {
-        name: 'Music Pixel (Square Wave B₄)',
+    music_15: generateMusicPixel(15, {
+        name: 'Square Wave B₄',
         description: 'Makes funny B₄ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'B4'
     }),
-    music_15: generateMusicPixel(15, {
-        name: 'Music Pixel (Square Wave C₅)',
+    music_16: generateMusicPixel(16, {
+        name: 'Square Wave C₅',
         description: 'Makes funny C₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'C5'
     }),
-    music_16: generateMusicPixel(16, {
-        name: 'Music Pixel (Square Wave C♯₅/D♭₅)',
+    music_17: generateMusicPixel(17, {
+        name: 'Square Wave C♯₅/D♭₅',
         description: 'Makes funny C♯₅/D♭₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'C♯5'
     }),
-    music_17: generateMusicPixel(17, {
-        name: 'Music Pixel (Square Wave D₅)',
+    music_18: generateMusicPixel(18, {
+        name: 'Square Wave D₅',
         description: 'Makes funny D₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'D5'
     }),
-    music_18: generateMusicPixel(18, {
-        name: 'Music Pixel (Square Wave D♯₅/E♭₅)',
+    music_19: generateMusicPixel(19, {
+        name: 'Square Wave D♯₅/E♭₅',
         description: 'Makes funny D♯₅/E♭₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'E♭5'
     }),
-    music_19: generateMusicPixel(19, {
-        name: 'Music Pixel (Square Wave E₅)',
+    music_20: generateMusicPixel(20, {
+        name: 'Square Wave E₅',
         description: 'Makes funny E₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'E5'
     }),
-    music_20: generateMusicPixel(20, {
-        name: 'Music Pixel (Square Wave F₅)',
+    music_21: generateMusicPixel(21, {
+        name: 'Square Wave F₅',
         description: 'Makes funny F₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'F5'
     }),
-    music_21: generateMusicPixel(21, {
-        name: 'Music Pixel (Square Wave F♯₅/G♭₅)',
+    music_22: generateMusicPixel(22, {
+        name: 'Square Wave F♯₅/G♭₅',
         description: 'Makes funny F♯₅/G♭₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'F♯5'
     }),
-    music_22: generateMusicPixel(22, {
-        name: 'Music Pixel (Square Wave G₅)',
+    music_23: generateMusicPixel(23, {
+        name: 'Square Wave G₅',
         description: 'Makes funny G₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'G5'
     }),
-    music_23: generateMusicPixel(23, {
-        name: 'Music Pixel (Square Wave G♯₅/A♭₅)',
+    music_24: generateMusicPixel(24, {
+        name: 'Square Wave G♯₅/A♭₅',
         description: 'Makes funny G♯₅/A♭₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'A♭5'
     }),
-    music_24: generateMusicPixel(24, {
-        name: 'Music Pixel (Square Wave A₅)',
+    music_25: generateMusicPixel(25, {
+        name: 'Square Wave A₅',
         description: 'Makes funny A₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'A5'
     }),
-    music_25: generateMusicPixel(25, {
-        name: 'Music Pixel (Square Wave A♯₅/B♭₅)',
+    music_26: generateMusicPixel(26, {
+        name: 'Square Wave A♯₅/B♭₅',
         description: 'Makes funny A♯₅/B♭₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'B♭5'
     }),
-    music_26: generateMusicPixel(26, {
-        name: 'Music Pixel (Square Wave B₅)',
+    music_27: generateMusicPixel(27, {
+        name: 'Square Wave B₅',
         description: 'Makes funny B₅ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'B5'
     }),
-    music_27: generateMusicPixel(27, {
-        name: 'Music Pixel (Square Wave C₆)',
+    music_28: generateMusicPixel(28, {
+        name: 'Square Wave C₆',
         description: 'Makes funny C₆ square wave sound that hurts your ears',
         color: 'rgb(0, 180, 255)',
         text: 'C6'
     }),
-    music_28: generateMusicPixel(28, {
-        name: 'Music Pixel (Sawtooth Wave C₄)',
+    music_29: generateMusicPixel(29, {
+        name: 'Sawtooth Wave C₄',
         description: 'Makes funny C₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'C4'
     }),
-    music_29: generateMusicPixel(29, {
-        name: 'Music Pixel (Sawtooth Wave C♯₄/D♭₄)',
+    music_30: generateMusicPixel(30, {
+        name: 'Sawtooth Wave C♯₄/D♭₄',
         description: 'Makes funny C♯₄/D♭₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'C♯4'
     }),
-    music_30: generateMusicPixel(30, {
-        name: 'Music Pixel (Sawtooth Wave D₄)',
+    music_31: generateMusicPixel(31, {
+        name: 'Sawtooth Wave D₄',
         description: 'Makes funny D₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'D4'
     }),
-    music_31: generateMusicPixel(31, {
-        name: 'Music Pixel (Sawtooth Wave D♯₄/E♭₄)',
+    music_32: generateMusicPixel(32, {
+        name: 'Sawtooth Wave D♯₄/E♭₄',
         description: 'Makes funny D♯₄/E♭₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'E♭4'
     }),
-    music_32: generateMusicPixel(32, {
-        name: 'Music Pixel (Sawtooth Wave E₄)',
+    music_33: generateMusicPixel(33, {
+        name: 'Sawtooth Wave E₄',
         description: 'Makes funny E₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'E4'
     }),
-    music_33: generateMusicPixel(33, {
-        name: 'Music Pixel (Sawtooth Wave F₄)',
+    music_34: generateMusicPixel(34, {
+        name: 'Sawtooth Wave F₄',
         description: 'Makes funny F₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'F4'
     }),
-    music_34: generateMusicPixel(34, {
-        name: 'Music Pixel (Sawtooth Wave F♯₄/G♭₄)',
+    music_35: generateMusicPixel(35, {
+        name: 'Sawtooth Wave F♯₄/G♭₄',
         description: 'Makes funny F♯₄/G♭₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'F♯4'
     }),
-    music_35: generateMusicPixel(35, {
-        name: 'Music Pixel (Sawtooth Wave G₄)',
+    music_36: generateMusicPixel(36, {
+        name: 'Sawtooth Wave G₄',
         description: 'Makes funny G₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'G4'
     }),
-    music_36: generateMusicPixel(36, {
-        name: 'Music Pixel (Sawtooth Wave G♯₄/A♭₄)',
+    music_37: generateMusicPixel(37, {
+        name: 'Sawtooth Wave G♯₄/A♭₄',
         description: 'Makes funny G♯₄/A♭₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'A♭4'
     }),
-    music_37: generateMusicPixel(37, {
-        name: 'Music Pixel (Sawtooth Wave A₄)',
+    music_38: generateMusicPixel(38, {
+        name: 'Sawtooth Wave A₄',
         description: 'Makes funny A₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'A4'
     }),
-    music_38: generateMusicPixel(38, {
-        name: 'Music Pixel (Sawtooth Wave A♯₄/B♭₄)',
+    music_39: generateMusicPixel(39, {
+        name: 'Sawtooth Wave A♯₄/B♭₄',
         description: 'Makes funny A♯₄/B♭₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'B♭4'
     }),
-    music_39: generateMusicPixel(39, {
-        name: 'Music Pixel (Sawtooth Wave B₄)',
+    music_40: generateMusicPixel(40, {
+        name: 'Sawtooth Wave B₄',
         description: 'Makes funny B₄ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'B4'
     }),
-    music_40: generateMusicPixel(40, {
-        name: 'Music Pixel (Sawtooth Wave C₅)',
+    music_41: generateMusicPixel(41, {
+        name: 'Sawtooth Wave C₅',
         description: 'Makes funny C₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'C5'
     }),
-    music_41: generateMusicPixel(41, {
-        name: 'Music Pixel (Sawtooth Wave C♯₅/D♭₅)',
+    music_42: generateMusicPixel(42, {
+        name: 'Sawtooth Wave C♯₅/D♭₅',
         description: 'Makes funny C♯₅/D♭₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'C♯5'
     }),
-    music_42: generateMusicPixel(42, {
-        name: 'Music Pixel (Sawtooth Wave D₅)',
+    music_43: generateMusicPixel(43, {
+        name: 'Sawtooth Wave D₅',
         description: 'Makes funny D₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'D5'
     }),
-    music_43: generateMusicPixel(43, {
-        name: 'Music Pixel (Sawtooth Wave D♯₅/E♭₅)',
+    music_44: generateMusicPixel(44, {
+        name: 'Sawtooth Wave D♯₅/E♭₅',
         description: 'Makes funny D♯₅/E♭₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'E♭5'
     }),
-    music_44: generateMusicPixel(44, {
-        name: 'Music Pixel (Sawtooth Wave E₅)',
+    music_45: generateMusicPixel(45, {
+        name: 'Sawtooth Wave E₅',
         description: 'Makes funny E₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'E5'
     }),
-    music_45: generateMusicPixel(45, {
-        name: 'Music Pixel (Sawtooth Wave F₅)',
+    music_46: generateMusicPixel(46, {
+        name: 'Sawtooth Wave F₅',
         description: 'Makes funny F₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'F5'
     }),
-    music_46: generateMusicPixel(46, {
-        name: 'Music Pixel (Sawtooth Wave F♯₅/G♭₅)',
+    music_47: generateMusicPixel(47, {
+        name: 'Sawtooth Wave F♯₅/G♭₅',
         description: 'Makes funny F♯₅/G♭₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'F♯5'
     }),
-    music_47: generateMusicPixel(47, {
-        name: 'Music Pixel (Sawtooth Wave G₅)',
+    music_48: generateMusicPixel(48, {
+        name: 'Sawtooth Wave G₅',
         description: 'Makes funny G₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'G5'
     }),
-    music_48: generateMusicPixel(48, {
-        name: 'Music Pixel (Sawtooth Wave G♯₅/A♭₅)',
+    music_49: generateMusicPixel(49, {
+        name: 'Sawtooth Wave G♯₅/A♭₅',
         description: 'Makes funny G♯₅/A♭₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'A♭5'
     }),
-    music_49: generateMusicPixel(49, {
-        name: 'Music Pixel (Sawtooth Wave A₅)',
+    music_50: generateMusicPixel(50, {
+        name: 'Sawtooth Wave A₅',
         description: 'Makes funny A₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'A5'
     }),
-    music_50: generateMusicPixel(50, {
-        name: 'Music Pixel (Sawtooth Wave A♯₅/B♭₅)',
+    music_51: generateMusicPixel(51, {
+        name: 'Sawtooth Wave A♯₅/B♭₅',
         description: 'Makes funny A♯₅/B♭₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'B♭5'
     }),
-    music_51: generateMusicPixel(51, {
-        name: 'Music Pixel (Sawtooth Wave B₅)',
+    music_52: generateMusicPixel(52, {
+        name: 'Sawtooth Wave B₅',
         description: 'Makes funny B₅ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'B5'
     }),
-    music_52: generateMusicPixel(52, {
-        name: 'Music Pixel (Sawtooth Wave C₆)',
+    music_53: generateMusicPixel(53, {
+        name: 'Sawtooth Wave C₆',
         description: 'Makes funny C₆ sawtooth wave sound that hurts your ears',
         color: 'rgb(255, 200, 0)',
         text: 'C6'
+    }),
+    music_54: generateMusicPixel(54, {
+        name: 'Triangle Wave C₄',
+        description: 'Makes funny C₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'C4'
+    }),
+    music_55: generateMusicPixel(55, {
+        name: 'Triangle Wave C♯₄/D♭₄',
+        description: 'Makes funny C♯₄/D♭₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'C♯4'
+    }),
+    music_56: generateMusicPixel(56, {
+        name: 'Triangle Wave D₄',
+        description: 'Makes funny D₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'D4'
+    }),
+    music_57: generateMusicPixel(57, {
+        name: 'Triangle Wave D♯₄/E♭₄',
+        description: 'Makes funny D♯₄/E♭₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'E♭4'
+    }),
+    music_58: generateMusicPixel(58, {
+        name: 'Triangle Wave E₄',
+        description: 'Makes funny E₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'E4'
+    }),
+    music_59: generateMusicPixel(59, {
+        name: 'Triangle Wave F₄',
+        description: 'Makes funny F₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'F4'
+    }),
+    music_60: generateMusicPixel(60, {
+        name: 'Triangle Wave F♯₄/G♭₄',
+        description: 'Makes funny F♯₄/G♭₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'F♯4'
+    }),
+    music_61: generateMusicPixel(61, {
+        name: 'Triangle Wave G₄',
+        description: 'Makes funny G₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'G4'
+    }),
+    music_62: generateMusicPixel(62, {
+        name: 'Triangle Wave G♯₄/A♭₄',
+        description: 'Makes funny G♯₄/A♭₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'A♭4'
+    }),
+    music_63: generateMusicPixel(63, {
+        name: 'Triangle Wave A₄',
+        description: 'Makes funny A₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'A4'
+    }),
+    music_64: generateMusicPixel(64, {
+        name: 'Triangle Wave A♯₄/B♭₄',
+        description: 'Makes funny A♯₄/B♭₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'B♭4'
+    }),
+    music_65: generateMusicPixel(65, {
+        name: 'Triangle Wave B₄',
+        description: 'Makes funny B₄ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'B4'
+    }),
+    music_66: generateMusicPixel(66, {
+        name: 'Triangle Wave C₅',
+        description: 'Makes funny C₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'C5'
+    }),
+    music_67: generateMusicPixel(67, {
+        name: 'Triangle Wave C♯₅/D♭₅',
+        description: 'Makes funny C♯₅/D♭₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'C♯5'
+    }),
+    music_68: generateMusicPixel(68, {
+        name: 'Triangle Wave D₅',
+        description: 'Makes funny D₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'D5'
+    }),
+    music_69: generateMusicPixel(69, {
+        name: 'Triangle Wave D♯₅/E♭₅',
+        description: 'Makes funny D♯₅/E♭₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'E♭5'
+    }),
+    music_70: generateMusicPixel(70, {
+        name: 'Triangle Wave E₅',
+        description: 'Makes funny E₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'E5'
+    }),
+    music_71: generateMusicPixel(71, {
+        name: 'Triangle Wave F₅',
+        description: 'Makes funny F₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'F5'
+    }),
+    music_72: generateMusicPixel(72, {
+        name: 'Triangle Wave F♯₅/G♭₅',
+        description: 'Makes funny F♯₅/G♭₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'F♯5'
+    }),
+    music_73: generateMusicPixel(73, {
+        name: 'Triangle Wave G₅',
+        description: 'Makes funny G₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'G5'
+    }),
+    music_74: generateMusicPixel(74, {
+        name: 'Triangle Wave G♯₅/A♭₅',
+        description: 'Makes funny G♯₅/A♭₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'A♭5'
+    }),
+    music_75: generateMusicPixel(75, {
+        name: 'Triangle Wave A₅',
+        description: 'Makes funny A₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'A5'
+    }),
+    music_76: generateMusicPixel(76, {
+        name: 'Triangle Wave A♯₅/B♭₅',
+        description: 'Makes funny A♯₅/B♭₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'B♭5'
+    }),
+    music_77: generateMusicPixel(77, {
+        name: 'Triangle Wave B₅',
+        description: 'Makes funny B₅ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'B5'
+    }),
+    music_78: generateMusicPixel(78, {
+        name: 'Triangle Wave C₆',
+        description: 'Makes funny C₆ triangle wave sound that hurts your ears',
+        color: 'rgb(0, 230, 50)',
+        text: 'C6'
+    }),
+    music_82: generateMusicPixel(82, {
+        name: 'Clap',
+        description: 'Makes funny weird clap sound that hurts your ears',
+        color: 'rgb(150, 150, 150)',
+        text: 'Cp'
+    }),
+    music_83: generateMusicPixel(83, {
+        name: 'Hi-hat Cymbal 2',
+        description: 'Makes funny hi-hat cymbal sound that hurts your ears',
+        color: 'rgb(150, 150, 150)',
+        text: 'Cy2'
+    }),
+    music_84: generateMusicPixel(84, {
+        name: 'Hi-hat Cymbal 1',
+        description: 'Makes funny hi-hat cymbal sound that hurts your ears',
+        color: 'rgb(150, 150, 150)',
+        text: 'Cy1'
+    }),
+    music_85: generateMusicPixel(85, {
+        name: 'Maraca Shake',
+        description: 'Makes funny maraca sound that hurts your ears',
+        color: 'rgb(150, 150, 150)',
+        text: 'MS'
+    }),
+    music_86: generateMusicPixel(86, {
+        name: 'Tambourine Zill',
+        description: 'Makes funny tambourine sound that hurts your ears',
+        color: 'rgb(150, 150, 150)',
+        text: 'TZ'
     }),
     nuke: {
         name: 'Nuke',
@@ -4178,15 +4364,15 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 200, 0)';
             fillPixel(x, y, width, height, ctx);
             ctx.fillStyle = 'rgb(255, 240, 0)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 5, y + j + 1 / 5, 3 / 5, 3 / 5, ctx);
-                }
-            }
             abovectx.globalAlpha = opacity * 0.2;
             abovectx.fillStyle = 'rgb(255, 180, 0)';
             let margin = (Math.sin(frameCount * Math.PI / 120) + 1) / 4;
-            fillPixel(x - margin, y - margin, width + margin * 2, height + margin * 2, abovectx);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i + 1 / 5, y + j + 1 / 5, 3 / 5, 3 / 5, ctx);
+                    fillPixel(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
+                }
+            }
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -4221,7 +4407,11 @@ const pixels = {
             abovectx.globalAlpha = opacity * 0.2;
             abovectx.fillStyle = 'rgb(0, 255, 255)';
             let margin = (Math.sin(frameCount * Math.PI / 120) + 1) / 4;
-            fillPixel(x - margin, y - margin, width + margin * 2, height + margin * 2, abovectx);
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
+                }
+            }
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -4417,7 +4607,7 @@ function generateMusicPixel(id, data) {
         },
         update: function (x, y) {
             if (updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (grid[actionY][actionX] >= pixNum.MUSIC_1 && grid[actionY][actionX] <= pixNum.MUSIC_52) return false;
+                if (grid[actionY][actionX] >= pixNum.MUSIC_1 && grid[actionY][actionX] <= pixNum.MUSIC_86) return false;
                 return true;
             })) musicGrid[y][x] = id;
         },
@@ -4456,7 +4646,7 @@ function generateMusicPixel(id, data) {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
-        blastResistance: 0,
+        blastResistance: 12,
         flammability: 0,
         pushable: false,
         cloneable: true,
