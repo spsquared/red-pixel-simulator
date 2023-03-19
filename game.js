@@ -2261,13 +2261,15 @@ function musicPixel(id, state) {
         else musicPixelOscillators.get(id).decrement();
     }
 };
-document.addEventListener('mousedown', function startAudio(e) {
-    audioContext.resume();
-    if (inMenuScreen && !playMusic('menu')) setTimeout(function wait() {
-        if (inMenuScreen && !playMusic('menu')) setTimeout(wait, 1000);
-    }, 1000);
-    document.removeEventListener('mousedown', startAudio);
-});
+let waitForInteraction = setInterval(() => {
+    if (navigator.userActivation.hasBeenActive) {
+        audioContext.resume();
+        if (inMenuScreen && !playMusic('menu')) setTimeout(function wait() {
+            if (inMenuScreen && !playMusic('menu')) setTimeout(wait, 1000);
+        }, 1000);
+        clearInterval(waitForInteraction);
+    }
+}, 100);
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) globalVolume.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
     else globalVolume.gain.linearRampToValueAtTime(1, audioContext.currentTime + 0.5);
