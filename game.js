@@ -2088,9 +2088,6 @@ function stopAllMusicPixels() {
     musicPixelOscillators.forEach(n => n.stop());
 };
 window.addEventListener('DOMContentLoaded', (e) => {
-    setAudio('./assets/menu.mp3', (buf) => {
-        musicBuffers.set('menu', buf);
-    });
     setAudio('./assets/click.mp3', (buf) => {
         const preloadQueue = [];
         preloadQueue.push(audioContext.createBufferSource());
@@ -2160,6 +2157,9 @@ window.addEventListener('DOMContentLoaded', (e) => {
             nextSource.connect(globalVolume);
             preloadQueue.push(nextSource);
         };
+    });
+    setAudio('./assets/menu.mp3', (buf) => {
+        musicBuffers.set('menu', buf);
     });
     addMusicPixelSound(1);
     addMusicPixelSound(2);

@@ -93,6 +93,16 @@
     background-size: 100%;
 }
 
+#copyrightNotice {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    text-align: right;
+    vertical-align: bottom;
+    font: 12px 'Source Code Pro';
+    color: white;
+}
+
 #levelSelectClose, #pixsimMenuClose {
     position: absolute;
     top: -14px;
