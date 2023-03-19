@@ -1165,25 +1165,6 @@ function updateMouseControls() {
     }
     if (!mouseIsPressed || mouseButton != LEFT) selecting = false;
 };
-function rotateBrush() {
-    if (!brush.isSelection || selection.grid[0] == undefined) return;
-    const newGrid = [];
-    for (let i = 0; i < selection.grid[0].length; i++) {
-        newGrid[i] = [];
-    }
-    for (let i = 0; i < selection.grid.length; i++) {
-        for (let j = 0; j < selection.grid[i].length; j++) {
-            let newPixel = selection.grid[i][j]
-            let pixType = numPixels[selection.grid[i][j]] ?? numPixels[pixNum.MISSING];
-            if (pixType.rotation != undefined) {
-                let rotations = possibleRotations(grid[y][x]);
-                newPixel = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % rotations) + rotations) % rotations);
-            }
-            newGrid[j][selection.grid.length - i - 1] = newPixel;
-        }
-    }
-    selection.grid = newGrid;
-};
 function clickLine(startX, startY, endX, endY, remove) {
     if (!sandboxMode && !inResetState) return;
     let x = startX;
@@ -1633,6 +1614,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                     }
                 }
                 selection.show = false;
+                localStorage.setItem('clipboard', JSON.stringify(selection.grid));
             }
         } else if (sandboxMode && key == 'backspace') {
             if (selection.show) {
@@ -1661,9 +1643,13 @@ window.addEventListener('DOMContentLoaded', (e) => {
                     }
                 }
                 selection.show = false;
+                localStorage.setItem('clipboard', JSON.stringify(selection.grid));
             }
         } else if (sandboxMode && key == 'v' && e.ctrlKey) {
-            if (selection.grid.length != 0) brush.isSelection = true;
+            if (localStorage.getItem('clipboard') != undefined) {
+                selection.grid = JSON.parse(localStorage.getItem('clipboard'));
+                brush.isSelection = true;
+            }
         } else if (key == 'enter') {
             if (simulationPaused) {
                 runTicks = 1;
@@ -1694,7 +1680,24 @@ window.addEventListener('DOMContentLoaded', (e) => {
             let pixType = pixels[brush.pixel];
             if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[(2 % possibleRotations(pixType.numId)) + pixType.numId - pixType.rotation].id].box.click();
         } else if (key == 'r') {
-            rotateBrush();
+            if (!brush.isSelection || selection.grid[0] == undefined) return;
+            const newGrid = [];
+            for (let i = 0; i < selection.grid[0].length; i++) {
+                newGrid[i] = [];
+            }
+            for (let i = 0; i < selection.grid.length; i++) {
+                for (let j = 0; j < selection.grid[i].length; j++) {
+                    let newPixel = selection.grid[i][j]
+                    let pixType = numPixels[selection.grid[i][j]] ?? numPixels[pixNum.MISSING];
+                    if (pixType.rotation != undefined) {
+                        let rotations = possibleRotations(grid[y][x]);
+                        newPixel = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % rotations) + rotations) % rotations);
+                    }
+                    newGrid[j][selection.grid.length - i - 1] = newPixel;
+                }
+            }
+            selection.grid = newGrid;
+            localStorage.setItem('clipboard', JSON.stringify(selection.grid));
         } else if (sandboxMode && key == 'n') {
             for (let i = 0; i < gridSize; i += 5) {
                 for (let j = 0; j < gridSize; j += 5) {
