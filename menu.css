@@ -8,7 +8,8 @@
     transition: 1000ms linear opacity;
     opacity: 1;
     --title-left-offset: 20vw;
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: hidden;
     z-index: 997;
 }
 
@@ -25,7 +26,7 @@
     left: var(--title-left-offset);
     width: 30vh;
     height: 30vh;
-    background-color: red;
+    background-color: rgb(255, 0, 0);
     transition: none;
     transform-origin: center right;
     transform: translateX(calc(-10px - 30vh - var(--title-left-offset))) scale(2);
@@ -406,6 +407,111 @@
     opacity: 0.5;
 }
 
+#creditsAnimation {
+    position: absolute;
+    top: 110vh;
+    left: 0px;
+    width: 100vw;
+    font-size: 1vw;
+    animation: 80s linear;
+    animation-delay: 2s;
+    /* temp */
+    /* top: 0;
+    height: 100vh;
+    overflow-y: scroll;
+    background-color: black; */
+}
+.creditBlock {
+    min-height: 100vh;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    text-align: center;
+    color: white;
+}
+.creditBlock h1 {
+    font-size: 3vw;
+    line-height: 2vw;
+}
+.creditBlock p {
+    font-size: 2vw;
+    line-height: 2.5vw;
+    font-family: Arial;
+}
+.creditBlock br {
+    line-height: 5vw;
+}
+.creditLine {
+    width: 20%;
+    height: 0.2vw;
+    margin-top: 2vw;
+    margin-bottom: 4vw;
+    margin-left: 40%;
+    background-color: white;
+}
+.creditIcon {
+    display: inline;
+    position: relative;
+    top: 0.2vw;
+    width: 2vw;
+    height: 2vw;
+    margin-right: 0.5vw;
+    border-radius: 0.2vw;
+}
+#creditsLogo {
+    position: relative;
+    left: 30vw;
+    display: table-cell;
+    width: 29vw;
+    height: 29vw;
+    background-color: rgb(255, 0, 0);
+    text-align: left;
+    vertical-align: bottom;
+    font-family: 'Lucida Console', Lucida, monospace;
+    font-size: 5vw;
+    font-weight: bold;
+    line-height: 6vw;
+    padding-top: 1vw;
+    padding-left: 1vw;
+    box-shadow: 0px 0px 2vw rgba(255, 0, 0, 0.7);
+    text-shadow: -0.3vw 0.3vw 0vw rgba(255, 255, 255, 0.5);
+}
+#creditsName {
+    font-family: 'Lucida Console', Lucida, monospace;
+    font-size: 4vw;
+    font-weight: bold;
+    text-shadow: -0.3vw 0.3vw 0vw rgba(255, 255, 255, 0.5);
+}
+#creditsSPSPLogo {
+    width: 10vw;
+    height: 10vw;
+    margin-top: -2vw;
+    border-radius: 1vw;
+}
+#creditsMusicTable {
+    display: grid;
+    grid-template-columns: [s] 45fr [m] 55fr [e];
+    width: 50%;
+    margin-left: 25%;
+}
+#creditsMusicTable p {
+    margin: 1vw 1vw;
+}
+#creditsMusicTable p:nth-child(odd) {
+    text-align: right;
+    font-weight: 600;
+}
+#creditsMusicTable p:nth-child(even) {
+    text-align: left;
+}
+@keyframes scroll {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(calc(-100% - 110vh));
+    }
+}
+
 #t_top, #t_bottom {
     position: absolute;
     left: 0px;
@@ -432,7 +538,7 @@
     width: 16vh;
     height: 16vh;
     margin-right: 1vh;
-    background-color: red;
+    background-color: rgb(255, 0, 0);
     box-shadow: 0px 0px 1vh rgba(255, 0, 0, 0.7);
 }
 #t_loadingText {

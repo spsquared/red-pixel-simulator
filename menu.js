@@ -35,19 +35,19 @@ window.onload = (e) => {
     setTimeout(() => {
         t_textSimulator.style.transform = 'none';
     }, 1000);
-    setTimeout(() => {
+    setTransitionTimeout(() => {
         titleContainer.style.transform = 'translateY(-20vh)';
     }, 1500);
-    setTimeout(() => {
+    setTransitionTimeout(() => {
         sandboxButton.style.transform = 'translateY(-45vh)';
     }, 2200);
-    setTimeout(() => {
+    setTransitionTimeout(() => {
         puzzleButton.style.transform = 'translateY(-45vh)';
     }, 2400);
-    setTimeout(() => {
+    setTransitionTimeout(() => {
         multiplayerButton.style.transform = 'translateY(-45vh)';
     }, 2600);
-    startTitleBob = setTimeout(titleBob, 3000);
+    startTitleBob = setTransitionTimeout(titleBob, 3000);
 };
 
 let titleBobController = setInterval(() => { });
@@ -120,6 +120,7 @@ function transitionToMenu() {
         menuScreen.style.backgroundColor = '';
         t_top.style.transform = '';
         t_bottom.style.transform = '';
+        stopAllMusic();
         if (inMenuScreen && !playMusic('menu')) setTimeout(function wait() {
             if (inMenuScreen && !playMusic('menu')) setTimeout(wait, 1000);
         }, 1000);
@@ -168,6 +169,56 @@ function transitionToGame() {
     setTransitionTimeout(() => {
         menuScreen.style.visibility = 'hidden';
     }, 1600);
+};
+function clearMenuScreen() {
+    acceptMenuInputs = false;
+    for (let t of transitionTimeouts) {
+        clearInterval(t);
+    }
+    transitionTimeouts.length = 0;
+    clearInterval(titleBobController);
+    titleContainer.style.transitionDuration = '';
+    titleContainer.style.transform = 'translateY(-165vh)';
+    setTransitionTimeout(() => {
+        multiplayerButton.style.transform = 'translateY(100vh)';
+    }, 200);
+    setTransitionTimeout(() => {
+        puzzleButton.style.transform = 'translateY(100vh)';
+    }, 300);
+    setTransitionTimeout(() => {
+        sandboxButton.style.transform = 'translateY(100vh)';
+    }, 400);
+    setTransitionTimeout(() => {
+        inMenuScreen = false;
+        stopAllMusic();
+    }, 600);
+};
+function restoreMenuScreen() {
+    acceptMenuInputs = true;
+    for (let t of transitionTimeouts) {
+        clearInterval(t);
+    }
+    transitionTimeouts.length = 0;
+    inMenuScreen = true;
+    setTransitionTimeout(() => {
+        stopAllMusic();
+        if (inMenuScreen && !playMusic('menu')) setTimeout(function wait() {
+            if (inMenuScreen && !playMusic('menu')) setTimeout(wait, 1000);
+        }, 1000);
+    }, 800);
+    titleContainer.style.transform = 'translateY(-20vh)';
+    setTransitionTimeout(() => {
+        sandboxButton.style.transform = 'translateY(-45vh)';
+    }, 600);
+    setTransitionTimeout(() => {
+        puzzleButton.style.transform = 'translateY(-45vh)';
+    }, 700);
+    setTransitionTimeout(() => {
+        multiplayerButton.style.transform = 'translateY(-45vh)';
+    }, 800);
+    setTransitionTimeout(() => {
+        titleBob();
+    }, 1500);
 };
 
 const levelSelect = document.getElementById('levelSelect');
@@ -339,6 +390,29 @@ pixsimSelectScrimmageButton.onclick = (e) => {
 document.querySelectorAll('.pixsimBackButton').forEach(e => e.onclick = (e) => {
     pixsimMenuContents.style.transform = '';
 });
+
+const copyrightNotice = document.getElementById('copyrightNotice');
+const creditsAnimation = document.getElementById('creditsAnimation');
+copyrightNotice.onclick = (e) => {
+    if (!acceptMenuInputs) return;
+    e.preventDefault();
+    window.open('https://opensource.org/license/mit/');
+    return;
+    clearMenuScreen();
+    levelSelect._open = false;
+    levelSelect.style.transform = '';
+    pixsimMenu._open = false;
+    pixsimMenu.style.transform = '';
+    copyrightNotice.style.display = 'none';
+    creditsAnimation.style.animationName = 'scroll';
+    creditsAnimation.onanimationend = (e) => {
+        setTimeout(() => {
+            restoreMenuScreen();
+            copyrightNotice.style.display = '';
+            creditsAnimation.style.animationName = '';
+        }, 3000);
+    };
+};
 
 if (Math.random() < 0.001) {
     const coverCanvas = document.createElement('canvas');

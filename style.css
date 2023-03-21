@@ -355,6 +355,7 @@ table {
 }
 #controlsTable td {
     width: 25%;
+    height: 32px;
 }
 #controlsTable td:nth-child(1), #controlsTable td:nth-child(3) {
     text-align: right;

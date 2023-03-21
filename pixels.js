@@ -980,8 +980,10 @@ const pixels = {
                     explode(x, y, 5);
                 } else if (grid[y][x] != pixNum.ASH && random() < 0.5) {
                     nextGrid[y][x] = pixNum.ASH;
+                    monsterGrid[y][x] = false;
                 } else {
                     nextGrid[y][x] = pixNum.AIR;
+                    monsterGrid[y][x] = false;
                 }
             }
             for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridSize - 1); i++) {
@@ -2624,152 +2626,6 @@ const pixels = {
         id: 'collapsible',
         numId: 0
     },
-    pump: {
-        name: 'Water Pump',
-        description: 'Violates the Laws of Thermodynamics to create water',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(25, 125, 75)';
-            fillPixel(x, y, width, height, ctx);
-            ctx.fillStyle = 'rgb(75, 100, 255)';
-            fillPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
-            ctx.fillStyle = 'rgb(25, 125, 75)';
-            for (let i = 0; i < width - 1; i++) {
-                fillPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
-            }
-        },
-        update: function (x, y) {
-            updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
-                if (nextGrid[y][x] == null) {
-                    nextGrid[y][x] = pixNum.WATER;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null && random() < 0.125) {
-                    nextGrid[actionY][actionX] = pixNum.WATER;
-                }
-            });
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(25, 125, 75)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 100, 255)';
-            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 5,
-        flammability: 0,
-        pushable: true,
-        cloneable: true,
-        rotateable: false,
-        group: 2,
-        key: Infinity,
-        updateStage: 12,
-        animatedNoise: false,
-        animated: false,
-        pickable: true,
-        id: 'pump',
-        numId: 0
-    },
-    lava_generator: {
-        name: 'Lava Heater',
-        description: 'Violates the Laws of Thermodynamics to create lava',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(25, 125, 75)';
-            fillPixel(x, y, width, height, ctx);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
-            fillPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
-            ctx.fillStyle = 'rgb(25, 125, 75)';
-            for (let i = 0; i < width - 1; i++) {
-                fillPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
-            }
-        },
-        update: function (x, y) {
-            updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
-                explode(x, y, 5);
-            });
-            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
-                    nextGrid[actionY][actionX] = pixNum.LAVA;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.STEAM, function (actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
-                    nextGrid[actionY][actionX] = pixNum.LAVA;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.STONE, function (actionX, actionY) {
-                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
-                    nextGrid[actionY][actionX] = pixNum.LAVA;
-                }
-            });
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(25, 125, 75)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
-            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 5,
-        flammability: 0,
-        pushable: true,
-        cloneable: true,
-        rotateable: false,
-        group: 2,
-        key: Infinity,
-        updateStage: 12,
-        animatedNoise: false,
-        animated: false,
-        pickable: true,
-        id: 'lava_generator',
-        numId: 0
-    },
-    nuke_diffuser: {
-        name: 'Nuke Diffuser',
-        description: 'Doesn\'t cause diffusion, but will defuse nukes touching it',
-        draw: function (x, y, width, height, opacity, ctx) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(175, 50, 0)';
-            fillPixel(x, y, width, height, ctx);
-            ctx.fillStyle = 'rgb(225, 125, 0)';
-            for (let i = 0; i < width; i++) {
-                fillPixel(x + i + 1 / 3, y, 1 / 3, height, ctx);
-            }
-            for (let i = 0; i < height; i++) {
-                fillPixel(x, y + i + 1 / 3, width, 1 / 3, ctx);
-            }
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(175, 50, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 125, 0)';
-            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
-            ctx.fillRect(50 / 3, 0, 50 / 3, 50);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 19,
-        flammability: 2,
-        pushable: true,
-        cloneable: true,
-        rotateable: false,
-        group: 2,
-        key: Infinity,
-        updateStage: -1,
-        animatedNoise: false,
-        animated: false,
-        pickable: true,
-        id: 'nuke_diffuser',
-        numId: 0
-    },
     laser_left: {
         name: 'L.A.S.E.R. (Left)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
@@ -3748,6 +3604,152 @@ const pixels = {
         color: 'rgb(150, 150, 150)',
         text: 'TZ'
     }),
+    pump: {
+        name: 'Water Pump',
+        description: 'Violates the Laws of Thermodynamics to create water',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(25, 125, 75)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(75, 100, 255)';
+            fillPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
+            ctx.fillStyle = 'rgb(25, 125, 75)';
+            for (let i = 0; i < width - 1; i++) {
+                fillPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
+            }
+        },
+        update: function (x, y) {
+            updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
+                if (nextGrid[y][x] == null) {
+                    nextGrid[y][x] = pixNum.WATER;
+                }
+            });
+            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.125) {
+                    nextGrid[actionY][actionX] = pixNum.WATER;
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(25, 125, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 100, 255)';
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 4,
+        key: Infinity,
+        updateStage: 12,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'pump',
+        numId: 0
+    },
+    lava_generator: {
+        name: 'Lava Heater',
+        description: 'Violates the Laws of Thermodynamics to create lava',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(25, 125, 75)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            fillPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
+            ctx.fillStyle = 'rgb(25, 125, 75)';
+            for (let i = 0; i < width - 1; i++) {
+                fillPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
+            }
+        },
+        update: function (x, y) {
+            updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
+                explode(x, y, 5);
+            });
+            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
+                    nextGrid[actionY][actionX] = pixNum.LAVA;
+                }
+            });
+            updateTouchingPixel(x, y, pixNum.STEAM, function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
+                    nextGrid[actionY][actionX] = pixNum.LAVA;
+                }
+            });
+            updateTouchingPixel(x, y, pixNum.STONE, function (actionX, actionY) {
+                if (nextGrid[actionY][actionX] == null && random() < 0.075) {
+                    nextGrid[actionY][actionX] = pixNum.LAVA;
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(25, 125, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 4,
+        key: Infinity,
+        updateStage: 12,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'lava_generator',
+        numId: 0
+    },
+    nuke_diffuser: {
+        name: 'Nuke Diffuser',
+        description: 'Doesn\'t cause diffusion, but will defuse nukes touching it',
+        draw: function (x, y, width, height, opacity, ctx) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(175, 50, 0)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(225, 125, 0)';
+            for (let i = 0; i < width; i++) {
+                fillPixel(x + i + 1 / 3, y, 1 / 3, height, ctx);
+            }
+            for (let i = 0; i < height; i++) {
+                fillPixel(x, y + i + 1 / 3, width, 1 / 3, ctx);
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(175, 50, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 125, 0)';
+            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 19,
+        flammability: 2,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 4,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        pickable: true,
+        id: 'nuke_diffuser',
+        numId: 0
+    },
     nuke: {
         name: 'Nuke',
         description: 'TBH, kinda weak',
@@ -4116,7 +4118,7 @@ const pixels = {
                     nextGrid[actionY][actionX] = pixNum.MIRROR_2;
                 }
                 if (nextGrid[actionY][actionX] == null && random() < 0.05) {
-                    nextGrid[actionY][actionX] = pixNum[`MUSIC_${Math.floor(random() * 52) + 1}`];
+                    nextGrid[actionY][actionX] = pixNum[`MUSIC_${Math.floor(random() * 86) + 1}`];
                 }
                 if (nextGrid[actionY][actionX] == null && random() < 0.05) {
                     nextGrid[actionY][actionX] = pixNum.NUKE;

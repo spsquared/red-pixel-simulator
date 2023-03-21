@@ -1575,7 +1575,7 @@ function updateTick() {
 // inputs
 window.addEventListener('DOMContentLoaded', (e) => {
     document.onkeydown = (e) => {
-        if (e.target.matches('button')) {
+        if (e.target.matches('button') || e.key == 'Tab') {
             e.preventDefault();
             e.target.blur();
         }
