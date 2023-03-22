@@ -1349,13 +1349,16 @@ function drawBrush() {
             let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + brush.size - 1));
             drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx);
             ctx.globalAlpha = 1;
-            ctx.strokeStyle = 'rgb(0, 0, 0)';
+            // ctx.strokeStyle = 'rgb(0, 0, 0)';
+            ctx.strokeStyle = 'rgb(255, 255, 255)';
             let scale = gridScale * camera.scale;
             ctx.setLineDash([]);
             ctx.lineWidth = 2 * camera.scale;
+            ctx.globalCompositeOperation = 'difference';
             ctx.beginPath();
             ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
             ctx.stroke();
+            ctx.globalCompositeOperation='source-over';
         }
     }
     if (selection.show) {
