@@ -45,6 +45,7 @@ img {
     left: 8px;
     border: 2px solid black;
     /* image-rendering: pixelated; */
+    background-color: white;
     cursor: none;
 }
 
@@ -127,7 +128,7 @@ a {
     color: black;
 }
 h {
-    font-weight: bold
+    font-weight: bold;
 }
 table {
     border-collapse: collapse;
@@ -161,11 +162,16 @@ table {
 
 #pixelPicker {
     display: grid;
+    max-height: 70vh;
+    overflow-y: auto;
     border: 2px solid black;
     border-bottom: none;
     margin-top: 8px;
     margin-right: 8px;
     text-align: justify;
+}
+#pixelPicker::-webkit-scrollbar {
+    width: 0px;
 }
 .pixelGroup {
     border-bottom: 2px solid black;
@@ -241,7 +247,6 @@ table {
 }
 #pixelPickerDescription {
     border: 2px solid black;
-    border-top: none;
     padding: 8px 8px;
     margin-right: 8px;
     text-align: justify;
@@ -268,7 +273,7 @@ table {
     font-size: 18px;
     margin-left: 8px;
 }
-#pause, #fastSimulation, #advanceTick {
+#pause, #fastSimulation, #advanceTick, #saveRedprint, #openRedprint {
     width: 100px;
     height: 40px;
     background-position: center;
@@ -285,6 +290,14 @@ table {
 }
 #advanceTick {
     background-image: url(/assets/advanceTick.svg);
+}
+#saveRedprint {
+    background-size: 100% 100%;
+    background-image: url(/assets/save.svg);
+}
+#openRedprint {
+    background-size: 80% 80%;
+    background-image: url(/assets/open.svg);
 }
 
 #saveCode {
@@ -348,6 +361,17 @@ table {
     font: 14px Arial;
     padding: 2px 4px;
     background-color: lime;
+}
+
+#redprintEditor {
+    width: 100%;
+}
+#rpCanvas {
+    width: 30vw;
+    height: 30vw;
+    border: 2px solid black;
+    background-color: rgb(160, 200, 240);
+    cursor: none;
 }
 
 #controlsTable {

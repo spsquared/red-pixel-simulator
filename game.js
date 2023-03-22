@@ -15,25 +15,25 @@ let horribleLagMode = false;
 
 const canvasResolution = parseInt(window.localStorage.getItem('resolution') ?? 800);
 const NO_OFFSCREENCANVAS = typeof OffscreenCanvas == 'undefined';
-function createCanvas2(size) {
+function createCanvas2() {
     if (NO_OFFSCREENCANVAS) {
         const canvas = document.createElement('canvas');
-        canvas.width = size || 1;
-        canvas.height = size || 1;
+        canvas.width = canvasResolution;
+        canvas.height = canvasResolution;
         return canvas;
     } else {
-        return new OffscreenCanvas(size || 1, size || 1);
+        return new OffscreenCanvas(canvasResolution, canvasResolution);
     }
 };
 const canvasContainer = document.getElementById('canvasContainer');
 const canvas = document.getElementById('canvas');
 const gameCanvas = document.createElement('canvas');
-const gridCanvas = createCanvas2(canvasResolution);
-const above = createCanvas2(canvasResolution);
-const fire = createCanvas2(canvasResolution);
-const monster = createCanvas2(canvasResolution);
-const target = createCanvas2(canvasResolution);
-const placeable = createCanvas2(canvasResolution);
+const gridCanvas = createCanvas2();
+const above = createCanvas2();
+const fire = createCanvas2();
+const monster = createCanvas2();
+const target = createCanvas2();
+const placeable = createCanvas2();
 const ctx = canvas.getContext('2d');
 const gamectx = gameCanvas.getContext('2d');
 const gridctx = gridCanvas.getContext('2d');
@@ -89,12 +89,11 @@ const pixelPicker = document.getElementById('pixelPicker');
 const pixelPickerDescription = document.getElementById('pixelPickerDescription');
 const saveCodeText = document.getElementById('saveCode');
 const gridSizeText = document.getElementById('gridSize');
-resetCanvases();
 canvasContainer.addEventListener('contextmenu', e => e.preventDefault());
 pixelPicker.addEventListener('contextmenu', e => e.preventDefault());
 
 let gridScale = canvasResolution / gridSize;
-let canvasSize = Math.min(window.innerWidth, window.innerHeight) - 20;
+let canvasSize = Math.min(window.innerWidth, window.innerHeight) - 21;
 let canvasScale = canvasResolution / canvasSize;
 const grid = [];
 const lastGrid = [];
@@ -126,7 +125,8 @@ const brush = {
     lineMode: false,
     isSelection: false,
     lineStartX: 0,
-    lineStartY: 0
+    lineStartY: 0,
+    startsInRPE: false
 };
 let mX = 0;
 let mY = 0;
@@ -220,6 +220,7 @@ function loadSaveCode() {
     if (saveCode.length != 0) {
         simulationPaused = true;
         fastSimulation = false;
+        updateTimeControlButtons();
         runTicks = 0;
         ticks = 0;
         stopAllMusicPixels();
@@ -421,6 +422,7 @@ function loadStoredSave() {
     saveCode = window.localStorage.getItem(('saveCodeText')) ?? saveCode;
     saveCodeText.value = saveCode;
     simulationPaused = true;
+    fastSimulation = false;
     updateTimeControlButtons();
 };
 
@@ -528,18 +530,21 @@ function drawPixels(x, y, width, height, type, opacity, ctx) {
     }
 };
 function clearPixels(x, y, width, height, ctx) {
-    let scale = gridScale * camera.scale;
-    ctx.clearRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
+    // let scale = gridScale * camera.scale;
+    // ctx.clearRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
+    ctx.clearRect(x * gridScale, y * gridScale, width * gridScale, height * gridScale);
 };
 function fillPixel(x, y, width, height, ctx) {
-    let scale = gridScale * camera.scale;
-    ctx.fillRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
+    // let scale = gridScale * camera.scale;
+    // ctx.fillRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
+    ctx.fillRect(x * gridScale, y * gridScale, width * gridScale, height * gridScale);
 };
 function imagePixel(x, y, width, height, source, ctx) {
-    let scale = gridScale * camera.scale;
+    // let scale = gridScale * camera.scale;
     for (let i = y; i < y + height; i++) {
         for (let j = x; j < x + width; j++) {
-            ctx.drawImage(source, j * scale - camera.x, i * scale - camera.y, scale, scale);
+            // ctx.drawImage(source, j * scale - camera.x, i * scale - camera.y, scale, scale);
+            ctx.drawImage(source, j * gridScale, i * gridScale, gridScale, gridScale);
         }
     }
 };
@@ -955,6 +960,9 @@ function explode(x, y, size, chain) {
 function draw() {
     if (inMenuScreen) return;
 
+    // redprint editor
+    rpDraw();
+
     // draw pixels
     ctx.resetTransform();
     gamectx.resetTransform();
@@ -979,7 +987,7 @@ function draw() {
     gamectx.drawImage(monster, 0, 0);
     gamectx.drawImage(target, 0, 0);
     gamectx.drawImage(fire, 0, 0);
-    ctx.drawImage(gameCanvas, 0, 0);
+    ctx.drawImage(gameCanvas, -camera.x, -camera.y, canvasResolution * camera.scale, canvasResolution * camera.scale);
     if (inResetState || sandboxMode) ctx.drawImage(placeable, 0, 0);
     // mouse controls + brush
     updateMouseControls();
@@ -1145,7 +1153,6 @@ function updateMouseControls() {
                 if (holdingControl) {
                     camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * camera.scale) - canvasResolution));
                     camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * camera.scale) - canvasResolution));
-                    forceRedraw = true;
                 } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
                     pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
                 }
@@ -1289,6 +1296,7 @@ function clickLine(startX, startY, endX, endY, remove) {
 };
 function drawBrush() {
     if (!fastSimulation && !selecting) {
+        abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
         if (brush.isSelection && selection.grid[0] != undefined) {
             let x1 = Math.min(gridSize, Math.max(0, Math.floor(mXGrid - selection.grid[0].length / 2)));
             let x2 = Math.min(gridSize - 1, Math.max(-1, Math.floor(mXGrid + selection.grid[0].length / 2) - 1));
@@ -1299,10 +1307,12 @@ function drawBrush() {
             for (let y = 0; y < selection.grid.length; y++) {
                 for (let x = 0; x < selection.grid[y].length; x++) {
                     if (x + offsetX >= 0 && x + offsetX < gridSize && y + offsetY >= 0 && y + offsetY < gridSize) {
-                        drawPixels(x + offsetX, y + offsetY, 1, 1, selection.grid[y][x], 0.5, ctx);
+                        drawPixels(x + offsetX, y + offsetY, 1, 1, selection.grid[y][x], 0.5, abovectx);
                     }
                 }
             }
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(above, -camera.x, -camera.y, canvasResolution * camera.scale, canvasResolution * camera.scale);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(0, 0, 0)';
             let scale = gridScale * camera.scale;
@@ -1319,7 +1329,6 @@ function drawBrush() {
             let xtravel = Math.cos(angle);
             let ytravel = Math.sin(angle);
             let clickPixelNum = pixels[brush.pixel].numId;
-            abovectx.clearRect(0, 0, 600, 600);
             for (let i = 0; i <= distance; i++) {
                 let xmin = Math.max(0, Math.min(Math.round(x) - brush.size + 1, gridSize - 1));
                 let xmax = Math.max(0, Math.min(Math.round(x) + brush.size - 1, gridSize - 1));
@@ -1330,7 +1339,7 @@ function drawBrush() {
                 y += ytravel;
             }
             ctx.globalAlpha = 0.5;
-            ctx.drawImage(above, 0, 0);
+            ctx.drawImage(above, -camera.x, -camera.y, canvasResolution * camera.scale, canvasResolution * camera.scale);
             let x1 = Math.min(gridSize, Math.max(0, mXGrid - brush.size + 1));
             let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
             let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
@@ -1348,7 +1357,9 @@ function drawBrush() {
             let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
             let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
             let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + brush.size - 1));
-            drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx);
+            drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, abovectx);
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(above, -camera.x, -camera.y, canvasResolution * camera.scale, canvasResolution * camera.scale);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(0, 0, 0)';
             let scale = gridScale * camera.scale;
@@ -1360,13 +1371,15 @@ function drawBrush() {
         }
     }
     if (selection.show) {
-        ctx.globalAlpha = 0.2;
-        ctx.fillStyle = 'rgb(255, 255, 255)';
+        abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
+        abovectx.globalAlpha = 0.2;
+        abovectx.fillStyle = 'rgb(255, 255, 255)';
         let xmin = Math.min(selection.x1, selection.x2);
         let xmax = Math.max(selection.x1, selection.x2);
         let ymin = Math.min(selection.y1, selection.y2);
         let ymax = Math.max(selection.y1, selection.y2);
-        fillPixel(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ctx);
+        fillPixel(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, abovectx);
+        ctx.drawImage(above, -camera.x, -camera.y, canvasResolution * camera.scale, canvasResolution * camera.scale);
         ctx.globalAlpha = 1;
         ctx.strokeStyle = 'rgb(0, 0, 0)';
         let scale = gridScale * camera.scale;
@@ -1379,21 +1392,22 @@ function drawBrush() {
 };
 function updateCamera() {
     if ((!simulationPaused || !fastSimulation) && acceptInputs && !inWinScreen) {
+        let moved = false;
         if (camera.mUp && !camera.mDown) {
             camera.y = Math.max(0, Math.min(camera.y - 20, (canvasResolution * camera.scale) - canvasResolution));
-            forceRedraw = true;
+            moved = true;
         } else if (camera.mDown && !camera.mUp) {
             camera.y = Math.max(0, Math.min(camera.y + 20, (canvasResolution * camera.scale) - canvasResolution));
-            forceRedraw = true;
+            moved = true;
         }
         if (camera.mLeft && !camera.mRight) {
             camera.x = Math.max(0, Math.min(camera.x - 20, (canvasResolution * camera.scale) - canvasResolution));
-            forceRedraw = true;
+            moved = true;
         } else if (camera.mRight && !camera.mLeft) {
             camera.x = Math.max(0, Math.min(camera.x + 20, (canvasResolution * camera.scale) - canvasResolution));
-            forceRedraw = true;
+            moved = true;
         }
-        if (forceRedraw) {
+        if (moved) {
             let scale = gridSize / canvasSize / camera.scale / canvasScale;
             mXGrid = Math.floor((mX + camera.x) * scale);
             mYGrid = Math.floor((mY + camera.y) * scale);
@@ -1656,9 +1670,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 tickSound();
             }
         } else if (sandboxMode && key == 's' && e.ctrlKey) {
-            document.getElementById('downloadSave').onclick();
         } else if (sandboxMode && key == 'o' && e.ctrlKey) {
-            document.getElementById('uploadSave').onclick();
         } else if (key == 'w') {
             camera.mUp = true;
         } else if (key == 's') {
@@ -1732,6 +1744,30 @@ window.addEventListener('DOMContentLoaded', (e) => {
             fastSimulation = false;
             updateTimeControlButtons();
             clickSound();
+        } else if (key == '[' && mouseOver) {
+            let cScale = camera.scale;
+            let percentX = (mX + camera.x) / (canvasSize * camera.scale);
+            let percentY = (mY + camera.y) / (canvasSize * camera.scale);
+            camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 0.5   ), 8));
+            camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
+            camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+            if (camera.scale != cScale) tickSound();
+            let scale = gridSize / canvasSize / camera.scale / canvasScale;
+            mXGrid = Math.floor((mX + camera.x) * scale);
+            mYGrid = Math.floor((mY + camera.y) * scale);
+            mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
+        } else if (key == ']' && mouseOver) {
+            let cScale = camera.scale;
+            let percentX = (mX + camera.x) / (canvasSize * camera.scale);
+            let percentY = (mY + camera.y) / (canvasSize * camera.scale);
+            camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 2), 8));
+            camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
+            camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+            if (camera.scale != cScale) tickSound();
+            let scale = gridSize / canvasSize / camera.scale / canvasScale;
+            mXGrid = Math.floor((mX + camera.x) * scale);
+            mYGrid = Math.floor((mY + camera.y) * scale);
+            mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
         } else if (key == 'shift') {
             removing = false;
         } else if (key == 'control') {
@@ -1761,7 +1797,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
                 camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
                 camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
-                forceRedraw = true;
                 document.onmousemove(e);
                 if (camera.scale != cScale) tickSound();
             } else if (!brush.isSelection) {
@@ -1808,6 +1843,7 @@ function updateTimeControlButtons() {
         fastSimulationButton.style.cursor = 'not-allowed';
         advanceTickButton.style.backgroundColor = 'lightgray';
         advanceTickButton.style.cursor = '';
+        pauseMusicPixels();
     } else {
         pauseButton.style.backgroundColor = 'lime';
         pauseButton.style.backgroundImage = 'url(/assets/pause.svg)';
@@ -1824,6 +1860,7 @@ function updateTimeControlButtons() {
         fastSimulationButton.style.cursor = '';
         advanceTickButton.style.backgroundColor = 'grey';
         advanceTickButton.style.cursor = 'not-allowed';
+        resumeMusicPixels();
     }
 };
 document.getElementById('sizeUp').onclick = (e) => {
@@ -2072,13 +2109,22 @@ async function addMusicPixelOscillator(id, type, pitch) {
     oscillator.connect(gain);
     oscillator.start();
     let activePixels = 0;
+    let paused = false;
     musicPixelOscillators.set(id, {
         increment: () => {
             activePixels++;
-            gain.gain.value = 0.1 * activePixels;
+            if (!paused) gain.gain.value = 0.1 * activePixels;
         },
         decrement: () => {
             activePixels--;
+            if (!paused) gain.gain.value = 0.1 * activePixels;
+        },
+        pause: () => {
+            paused = true;
+            gain.gain.value = 0;
+        },
+        resume: () => {
+            paused = false;
             gain.gain.value = 0.1 * activePixels;
         },
         stop: () => {
@@ -2089,6 +2135,12 @@ async function addMusicPixelOscillator(id, type, pitch) {
 };
 function stopAllMusicPixels() {
     musicPixelOscillators.forEach(n => n.stop());
+};
+function pauseMusicPixels() {
+    musicPixelOscillators.forEach(n => n.pause());
+};
+function resumeMusicPixels() {
+    musicPixelOscillators.forEach(n => n.resume());
 };
 window.addEventListener('DOMContentLoaded', (e) => {
     setAudio('./assets/click.mp3', (buf) => {
@@ -2287,7 +2339,7 @@ window.onresize = (e) => {
     canvasContainer.style.height = canvasSize + 20 + 'px';
     canvas.style.width = canvasSize + 'px';
     canvas.style.height = canvasSize + 'px';
-    if (window.innerWidth - canvasSize < 400) {
+    if (window.innerWidth - canvasSize < 500) {
         sidebar.style.top = Math.min(window.innerWidth, window.innerHeight) + 'px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 20 + 'px');
         let pickerWidth = (Math.round((window.innerWidth - 20) / 62) - 1) * 62 + 1;

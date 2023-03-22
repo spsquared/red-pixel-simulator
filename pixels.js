@@ -4160,7 +4160,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 18,
+        blastResistance: NaN,
         flammability: NaN,
         pushable: true,
         cloneable: true,
@@ -4332,7 +4332,7 @@ const pixels = {
             ctx.fillRect(50 / 4, 30, 25, 50 / 6);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixel, toImage } = new PreRenderer();
             ctx.fillStyle = 'rgb(200, 20, 0)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 30, 0)';
@@ -4602,8 +4602,10 @@ function generateMusicPixel(id, data) {
             ctx.globalAlpha = opacity;
             for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridSize); y1++) {
                 for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridSize); x1++) {
-                    if (musicGrid[y1][x1]) imagePixel(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
-                    else imagePixel(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
+                    if (lastMusicGrid[y1][x1] != musicGrid[y1][x1]) {
+                        if (musicGrid[y1][x1]) imagePixel(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
+                        else imagePixel(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
+                    }
                 }
             }
         },
@@ -4687,7 +4689,11 @@ window.addEventListener('DOMContentLoaded', (e) => {
             box.classList.add('pickerPixel');
             box.onclick = (e) => {
                 brush.pixel = id;
-                pixelPicker.children.forEach(g => g.children[1].children[0].children.forEach(div => div.classList.remove('pickerPixelSelected')));
+                for (const pickGroup of pixelPicker.children) {
+                    for (const pickDiv of pickGroup.children[1].children[0].children) {
+                        pickDiv.classList.remove('pickerPixelSelected');
+                    }
+                }
                 box.classList.add('pickerPixelSelected');
                 pixelPickerDescription.innerHTML = generateDescription(id);
             };

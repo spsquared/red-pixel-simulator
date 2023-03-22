@@ -396,8 +396,6 @@ const creditsAnimation = document.getElementById('creditsAnimation');
 copyrightNotice.onclick = (e) => {
     if (!acceptMenuInputs) return;
     e.preventDefault();
-    window.open('https://opensource.org/license/mit/');
-    return;
     clearMenuScreen();
     levelSelect._open = false;
     levelSelect.style.transform = '';

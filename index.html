@@ -29,6 +29,7 @@
     <script src="./menu.js" defer></script>
     <script src="./pixsim-api.js" defer></script>
     <script src="./game.js" defer></script>
+    <script src="./redprint.js" defer></script>
     <script src="./pixels.js" defer></script>
     <script src="./puzzles.js" defer></script>
     <link rel="stylesheet" href="./style.css">
@@ -74,11 +75,9 @@
                         <button id="advanceTick" class="btick"></button>
                     </td>
                 </tr>
-            </tbody></table>
-            <table><tbody>
                 <tr>
-                    <td style="width: 100%;" rowspan="3">
-                        <textarea id="saveCode"></textarea>
+                    <td>
+                        <button id="screenshot" class="bclick">Screenshot</button>
                     </td>
                     <td>
                         <button id="reset" class="bclick">Reset</button>
@@ -93,31 +92,45 @@
                         </button>
                     </td>
                 </tr>
+            </tbody></table>
+            <table><tbody>
                 <tr>
-                    <td>
-                        <button id="generateSave" class="bclick">GENERATE<br>SAVE CODE</button>
+                    <td style="width: 100%">
+                        <textarea id="saveCode"></textarea>
                     </td>
-                    <td>
-                        <button id="uploadSave" class="bclick"><img src="/assets/upload.svg" style="height: 30px; margin-top: -6px; margin-bottom: -8px;"><br>UPLOAD</button>
-                    </td>
-                    <td>
-                        <button id="downloadSave" class="bclick"><img src="/assets/download.svg" style="height: 30px; margin-top: -6px; margin-bottom: -8px;"><br>DOWNLOAD</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <label id="gridSizeLabel" for="gridSize">Grid Size: </label>
-                        <input id="gridSize" type="number" min="1" max="500" step="1">
-                    </td>
-                    <td>
-                        <button id="screenshot" class="bclick">Screenshot</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button id="noNoise" class="bclick">Disable Noise</button>
-                        <button id="fadeEffect" class="bclick">Blur</button>
-                        <button id="changeResolution" class="bclick">Change resolution (requires reload)</button>
+                    <td style="vertical-align: top;">
+                        <table><tbody>
+                            <tr>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="generateSave" class="bclick">GENERATE<br>SAVE CODE</button>
+                                </td>
+                                <td>
+                                    <button id="uploadSave" class="bclick"><img src="/assets/upload.svg" style="height: 30px; margin-top: -6px; margin-bottom: -8px;"><br>UPLOAD</button>
+                                </td>
+                                <td>
+                                    <button id="downloadSave" class="bclick"><img src="/assets/download.svg" style="height: 30px; margin-top: -6px; margin-bottom: -8px;"><br>DOWNLOAD</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <label id="gridSizeLabel" for="gridSize">Grid Size: </label>
+                                    <input id="gridSize" type="number" min="1" max="500" step="1">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <button id="noNoise" class="bclick">Disable Noise</button>
+                                    <button id="fadeEffect" class="bclick">Blur</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <button id="changeResolution" class="bclick">Change resolution (requires reload)</button>
+                                </td>
+                            </tr>
+                        </tbody></table>
                     </td>
                 </tr>
             </tbody></table>
@@ -161,7 +174,7 @@
                     <td><b>[CTRL] + MMB</b> /<br><b>[W] [A] [S] [D]</b></td>
                     <td>Move camera</td>
                     <td><b>[CTRL] + [V]</b></td>
-                    <td>Paste selected region</td>
+                    <td>Paste selection clipboard</td>
                 </tr>
                 <tr>
                     <td><b>[R]</b></td>
@@ -173,13 +186,13 @@
                     <td><b>[P]</b></td>
                     <td>Pause</td>
                     <td><b>[CTRL] + [S]</b></td>
-                    <td>Download save code</td>
+                    <td>Save RedPrint</td>
                 </tr>
                 <tr>
                     <td><b>[ENTER]</b></td>
                     <td>Advance 1 tick</td>
                     <td><b>[CTRL] + [O]</b></td>
-                    <td>Upload save code</td>
+                    <td>Open RedPrint</td>
                 </tr>
             </tbody></table>
             <div id="premadeSaves">
@@ -271,11 +284,7 @@
         </div>
         <button id="sandboxButton" class="bclick">SANDBOX</button>
         <button id="puzzleButton" class="bclick">PUZZLES</button>
-        <!-- <button id="endlessModeButton" class="bclick">ENDLESS</button> -->
-        <!-- make video on singleplayer endless mode? omg leak?? game attacks your pixelite vault and you must defend it -->
         <button id="multiplayerButton" class="bclick">MULTIPLAYER</button>
-        <button id="menuMuteButton" class="bclick"></button>
-        <div id="copyrightNotice"><a href="https://opensource.org/license/mit/" target="_blank">Copyright &copy; 2023 Sampleprovider(sp) under MIT License</a></div>
         <div id="levelSelect">
             <button id="levelSelectClose" class="bclick"></button>
             <div id="levelSelectTitle">Puzzles</div>
@@ -352,6 +361,81 @@
                 <div id="pixSimMenuConnectingText">Connecting to PixSim API...</div>
             </div>
         </div>
+        <div id="creditsAnimation">
+            <!-- unreleased music? -->
+            <div class="creditBlock">
+                <div id="creditsLogo">Red<br>Pixel<br>Simulator</div>
+                <br><br>
+                <h1 id="creditsName">By Sampleprovider(sp)</h1>
+                <br>
+                <img id="creditsSPSPLogo" src="/assets/sp2logo.png">
+                <br><br>
+                <a href="https://opensource.org/license/mit/" target=_blank>Copyright &copy; 2023 Sampleprovider(sp) under MIT License</a>
+                <br>
+            </div>
+            <div class="creditBlock">
+                <div class="creditLine"></div>
+                <h1>Original Inspiration</h1>
+                <p><img class="creditIcon" src="/assets/splogo.png">Maitian Sha (A.K.A. sp)</p>
+                <br>
+                <h1>Design & Programming</h1>
+                <p><img class="creditIcon" src="/assets/sp2logo.png">Sampleprovider(sp)</p>
+                <br>
+                <h1>Level Building</h1>
+                <div>
+                    <p><img class="creditIcon" src="/assets/sp2logo.png">Sampleprovider(sp)</p>
+                    <p><img class="creditIcon" src="/assets/splogo.png">sp</p>
+                </div>
+                <br>
+                <h1>Sound Design</h1>
+                <p><img class="creditIcon" src="/assets/sp2logo.png">Sampleprovider(sp)</p>
+                <br>
+                <h1>Music</h1>
+                <div id="creditsMusicTable">
+                    <p>Lost Pixel</p>
+                    <p><img class="creditIcon" src="/assets/sp2logo.png">Sampleprovider(sp)</p>
+                    <p>Unreleased</p>
+                    <p><img class="creditIcon" src="/assets/sp2logo.png">Sampleprovider(sp)</p>
+                    <p>Unreleased</p>
+                    <p><img class="creditIcon" src="/assets/erikjlogo.png">Erik Ji</p>
+                </div>
+                <br>
+            </div>
+            <div class="creditBlock">
+                <div class="creditLine"></div>
+                <h1 style="font-size: 4vw; font-weight: 500;">PixSim API</h1>
+                <br>
+                <h1>Creative Game Design</h1>
+                <p><img class="creditIcon" src="/assets/splogo.png">sp</p>
+                <br>
+                <h1>Developers</h1>
+                <p><img class="creditIcon" src="/assets/sp2logo.png">Sampleprovider(sp)</p>
+                <p><img class="creditIcon" src="/assets/splogo.png">sp</p>
+                <!-- <p><img class="creditIcon" src="/assets/erikjlogo.png">Erik Ji</p> -->
+                <br>
+            </div>
+            <div class="creditBlock">
+                <div class="creditLine"></div>
+                <h1>Thanks</h1>
+                <div>
+                    <p><img class="creditIcon" src="/assets/splogo.png">sp - game inspiration and motivation</p>
+                    <p>LockGod Activate & C418 - music inspiration</p>
+                    <p>A lot of people on the internet - more inspiration</p>
+                </div>
+                <br>
+            </div>
+            <div class="creditBlock">
+                <div class="creditLine"></div>
+                <a href="https://red-pixel-simulator.radioactivestuf.repl.co/" target="_blank"><img style="display: inline; width: 20vw; height: 20vw;" src="/assets/RedPixelSimulatorOST-Cover.png"></a>
+                &emsp;
+                <a href="https://blue-pixel-simulator.maitiansha1.repl.co/" target="_blank"><img style="display: inline; width: 20vw; height: 20vw;" src="/assets/BluePixelSimulator.png"></a>
+                <br><br>
+                <a href="https://opensource.org/license/mit/" target=_blank>Copyright &copy; 2023 Sampleprovider(sp) under MIT License</a>
+                <br>
+            </div>
+        </div>
+        <button id="menuMuteButton" class="bclick"></button>
+        <div id="copyrightNotice"><a href="">Copyright &copy; 2023 Sampleprovider(sp) under MIT License</a></div>
         <div id="t_bottom"></div>
         <div id="t_top">
             <div id="t_loadingContainer"><table><tbody><tr>
