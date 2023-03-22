@@ -4602,7 +4602,7 @@ function generateMusicPixel(id, data) {
             ctx.globalAlpha = opacity;
             for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridSize); y1++) {
                 for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridSize); x1++) {
-                    if (lastMusicGrid[y1][x1] != musicGrid[y1][x1]) {
+                    if (lastMusicGrid[y1][x1] != musicGrid[y1][x1] || forceRedraw) {
                         if (musicGrid[y1][x1]) imagePixel(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
                         else imagePixel(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
                     }
@@ -4730,9 +4730,12 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 groupContents.classList.add('pixelGroupContents');
                 groupBody.appendChild(groupContents);
                 group.appendChild(groupBody);
-                let open = false;
+                let open = true;
                 groupHeader.onclick = (e) => {
                     open = !open;
+                    groupHeader._refresh();
+                };
+                groupHeader._refresh = () => {
                     if (open) groupBody.style.maxHeight = groupContents.getBoundingClientRect().height + 'px';
                     else groupBody.style.maxHeight = '0px';
                 };
@@ -4753,7 +4756,12 @@ window.addEventListener('DOMContentLoaded', (e) => {
     resetPixelAmounts();
     window.addEventListener('load', (e) => {
         for (const group of pixelGroups) {
-            group.children[0].onclick();
+            group.children[0]._refresh();
+        }
+    });
+    window.addEventListener('resize', () => {
+        for (const group of pixelGroups) {
+            group.children[0]._refresh();
         }
     });
 });

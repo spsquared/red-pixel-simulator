@@ -144,10 +144,7 @@ const camera = {
     mUp: false,
     mDown: false,
     mLeft: false,
-    mRight: false,
-    lastX: 0,
-    lastY: 0,
-    lastScale: 1
+    mRight: false
 };
 const selection = {
     x1: 0,
@@ -530,21 +527,18 @@ function drawPixels(x, y, width, height, type, opacity, ctx) {
     }
 };
 function clearPixels(x, y, width, height, ctx) {
-    // let scale = gridScale * camera.scale;
-    // ctx.clearRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
-    ctx.clearRect(x * gridScale, y * gridScale, width * gridScale, height * gridScale);
+    let scale = gridScale * camera.scale;
+    ctx.clearRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
 };
 function fillPixel(x, y, width, height, ctx) {
-    // let scale = gridScale * camera.scale;
-    // ctx.fillRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
-    ctx.fillRect(x * gridScale, y * gridScale, width * gridScale, height * gridScale);
+    let scale = gridScale * camera.scale;
+    ctx.fillRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
 };
 function imagePixel(x, y, width, height, source, ctx) {
-    // let scale = gridScale * camera.scale;
+    let scale = gridScale * camera.scale;
     for (let i = y; i < y + height; i++) {
         for (let j = x; j < x + width; j++) {
-            // ctx.drawImage(source, j * scale - camera.x, i * scale - camera.y, scale, scale);
-            ctx.drawImage(source, j * gridScale, i * gridScale, gridScale, gridScale);
+            ctx.drawImage(source, j * scale - camera.x, i * scale - camera.y, scale, scale);
         }
     }
 };
@@ -987,7 +981,7 @@ function draw() {
     gamectx.drawImage(monster, 0, 0);
     gamectx.drawImage(target, 0, 0);
     gamectx.drawImage(fire, 0, 0);
-    ctx.drawImage(gameCanvas, -camera.x, -camera.y, canvasResolution * camera.scale, canvasResolution * camera.scale);
+    ctx.drawImage(gameCanvas, 0, 0);
     if (inResetState || sandboxMode) ctx.drawImage(placeable, 0, 0);
     // mouse controls + brush
     updateMouseControls();
@@ -1075,9 +1069,6 @@ function drawFrame() {
         drawBooleanGrid(targetGrid, targetGrid, pixNum.TARGET, targetctx);
         drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         forceRedraw = false;
-        camera.lastx = camera.x;
-        camera.lasty = camera.y;
-        camera.lastScale = camera.scale;
     }
     if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 != 0)) {
         frameList.push(millis());
@@ -1153,6 +1144,7 @@ function updateMouseControls() {
                 if (holdingControl) {
                     camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * camera.scale) - canvasResolution));
                     camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * camera.scale) - canvasResolution));
+                    forceRedraw = true;
                 } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
                     pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
                 }
@@ -1296,7 +1288,6 @@ function clickLine(startX, startY, endX, endY, remove) {
 };
 function drawBrush() {
     if (!fastSimulation && !selecting) {
-        abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
         if (brush.isSelection && selection.grid[0] != undefined) {
             let x1 = Math.min(gridSize, Math.max(0, Math.floor(mXGrid - selection.grid[0].length / 2)));
             let x2 = Math.min(gridSize - 1, Math.max(-1, Math.floor(mXGrid + selection.grid[0].length / 2) - 1));
@@ -1307,12 +1298,10 @@ function drawBrush() {
             for (let y = 0; y < selection.grid.length; y++) {
                 for (let x = 0; x < selection.grid[y].length; x++) {
                     if (x + offsetX >= 0 && x + offsetX < gridSize && y + offsetY >= 0 && y + offsetY < gridSize) {
-                        drawPixels(x + offsetX, y + offsetY, 1, 1, selection.grid[y][x], 0.5, abovectx);
+                        drawPixels(x + offsetX, y + offsetY, 1, 1, selection.grid[y][x], 0.5, ctx);
                     }
                 }
             }
-            ctx.globalAlpha = 0.5;
-            ctx.drawImage(above, -camera.x, -camera.y, canvasResolution * camera.scale, canvasResolution * camera.scale);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(0, 0, 0)';
             let scale = gridScale * camera.scale;
@@ -1329,6 +1318,7 @@ function drawBrush() {
             let xtravel = Math.cos(angle);
             let ytravel = Math.sin(angle);
             let clickPixelNum = pixels[brush.pixel].numId;
+            abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
             for (let i = 0; i <= distance; i++) {
                 let xmin = Math.max(0, Math.min(Math.round(x) - brush.size + 1, gridSize - 1));
                 let xmax = Math.max(0, Math.min(Math.round(x) + brush.size - 1, gridSize - 1));
@@ -1339,7 +1329,7 @@ function drawBrush() {
                 y += ytravel;
             }
             ctx.globalAlpha = 0.5;
-            ctx.drawImage(above, -camera.x, -camera.y, canvasResolution * camera.scale, canvasResolution * camera.scale);
+            ctx.drawImage(above, 0, 0);
             let x1 = Math.min(gridSize, Math.max(0, mXGrid - brush.size + 1));
             let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
             let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
@@ -1357,9 +1347,7 @@ function drawBrush() {
             let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
             let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
             let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + brush.size - 1));
-            drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, abovectx);
-            ctx.globalAlpha = 0.5;
-            ctx.drawImage(above, -camera.x, -camera.y, canvasResolution * camera.scale, canvasResolution * camera.scale);
+            drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(0, 0, 0)';
             let scale = gridScale * camera.scale;
@@ -1371,15 +1359,13 @@ function drawBrush() {
         }
     }
     if (selection.show) {
-        abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
-        abovectx.globalAlpha = 0.2;
-        abovectx.fillStyle = 'rgb(255, 255, 255)';
+        ctx.globalAlpha = 0.2;
+        ctx.fillStyle = 'rgb(255, 255, 255)';
         let xmin = Math.min(selection.x1, selection.x2);
         let xmax = Math.max(selection.x1, selection.x2);
         let ymin = Math.min(selection.y1, selection.y2);
         let ymax = Math.max(selection.y1, selection.y2);
-        fillPixel(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, abovectx);
-        ctx.drawImage(above, -camera.x, -camera.y, canvasResolution * camera.scale, canvasResolution * camera.scale);
+        fillPixel(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ctx);
         ctx.globalAlpha = 1;
         ctx.strokeStyle = 'rgb(0, 0, 0)';
         let scale = gridScale * camera.scale;
@@ -1392,22 +1378,21 @@ function drawBrush() {
 };
 function updateCamera() {
     if ((!simulationPaused || !fastSimulation) && acceptInputs && !inWinScreen) {
-        let moved = false;
         if (camera.mUp && !camera.mDown) {
             camera.y = Math.max(0, Math.min(camera.y - 20, (canvasResolution * camera.scale) - canvasResolution));
-            moved = true;
+            forceRedraw = true;
         } else if (camera.mDown && !camera.mUp) {
             camera.y = Math.max(0, Math.min(camera.y + 20, (canvasResolution * camera.scale) - canvasResolution));
-            moved = true;
+            forceRedraw = true;
         }
         if (camera.mLeft && !camera.mRight) {
             camera.x = Math.max(0, Math.min(camera.x - 20, (canvasResolution * camera.scale) - canvasResolution));
-            moved = true;
+            forceRedraw = true;
         } else if (camera.mRight && !camera.mLeft) {
             camera.x = Math.max(0, Math.min(camera.x + 20, (canvasResolution * camera.scale) - canvasResolution));
-            moved = true;
+            forceRedraw = true;
         }
-        if (moved) {
+        if (forceRedraw) {
             let scale = gridSize / canvasSize / camera.scale / canvasScale;
             mXGrid = Math.floor((mX + camera.x) * scale);
             mYGrid = Math.floor((mY + camera.y) * scale);
@@ -1751,6 +1736,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 0.5   ), 8));
             camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
             camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+            forceRedraw = true;
             if (camera.scale != cScale) tickSound();
             let scale = gridSize / canvasSize / camera.scale / canvasScale;
             mXGrid = Math.floor((mX + camera.x) * scale);
@@ -1763,6 +1749,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 2), 8));
             camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
             camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+            forceRedraw = true;
             if (camera.scale != cScale) tickSound();
             let scale = gridSize / canvasSize / camera.scale / canvasScale;
             mXGrid = Math.floor((mX + camera.x) * scale);
@@ -1797,6 +1784,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
                 camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
                 camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+                forceRedraw = true;
                 document.onmousemove(e);
                 if (camera.scale != cScale) tickSound();
             } else if (!brush.isSelection) {
