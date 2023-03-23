@@ -39,13 +39,13 @@ window.onload = (e) => {
         titleContainer.style.transform = 'translateY(-20vh)';
     }, 1500);
     setTransitionTimeout(() => {
-        sandboxButton.style.transform = 'translateY(-45vh)';
+        sandboxButton.style.transform = 'translateY(-55vh)';
     }, 2200);
     setTransitionTimeout(() => {
-        puzzleButton.style.transform = 'translateY(-45vh)';
+        puzzleButton.style.transform = 'translateY(-55vh)';
     }, 2400);
     setTransitionTimeout(() => {
-        multiplayerButton.style.transform = 'translateY(-45vh)';
+        multiplayerButton.style.transform = 'translateY(-55vh)';
     }, 2600);
     startTitleBob = setTransitionTimeout(titleBob, 3000);
 };
@@ -127,13 +127,13 @@ function transitionToMenu() {
     }, 800);
     titleContainer.style.transform = 'translateY(-20vh)';
     setTransitionTimeout(() => {
-        sandboxButton.style.transform = 'translateY(-45vh)';
+        sandboxButton.style.transform = 'translateY(-55vh)';
     }, 600);
     setTransitionTimeout(() => {
-        puzzleButton.style.transform = 'translateY(-45vh)';
+        puzzleButton.style.transform = 'translateY(-55vh)';
     }, 700);
     setTransitionTimeout(() => {
-        multiplayerButton.style.transform = 'translateY(-45vh)';
+        multiplayerButton.style.transform = 'translateY(-55vh)';
     }, 800);
     setTransitionTimeout(() => {
         titleBob();
@@ -150,13 +150,13 @@ function transitionToGame() {
     titleContainer.style.transform = 'translateY(-165vh)';
     document.getElementById('sidebar').scrollTo(0, 0);
     setTransitionTimeout(() => {
-        multiplayerButton.style.transform = 'translateY(100vh)';
+        multiplayerButton.style.transform = '';
     }, 200);
     setTransitionTimeout(() => {
-        puzzleButton.style.transform = 'translateY(100vh)';
+        puzzleButton.style.transform = '';
     }, 300);
     setTransitionTimeout(() => {
-        sandboxButton.style.transform = 'translateY(100vh)';
+        sandboxButton.style.transform = '';
     }, 400);
     setTransitionTimeout(() => {
         menuScreen.style.opacity = '0';
@@ -180,13 +180,13 @@ function clearMenuScreen() {
     titleContainer.style.transitionDuration = '';
     titleContainer.style.transform = 'translateY(-165vh)';
     setTransitionTimeout(() => {
-        multiplayerButton.style.transform = 'translateY(100vh)';
+        multiplayerButton.style.transform = '';
     }, 200);
     setTransitionTimeout(() => {
-        puzzleButton.style.transform = 'translateY(100vh)';
+        puzzleButton.style.transform = '';
     }, 300);
     setTransitionTimeout(() => {
-        sandboxButton.style.transform = 'translateY(100vh)';
+        sandboxButton.style.transform = '';
     }, 400);
     setTransitionTimeout(() => {
         inMenuScreen = false;
@@ -208,13 +208,13 @@ function restoreMenuScreen() {
     }, 800);
     titleContainer.style.transform = 'translateY(-20vh)';
     setTransitionTimeout(() => {
-        sandboxButton.style.transform = 'translateY(-45vh)';
+        sandboxButton.style.transform = 'translateY(-55vh)';
     }, 600);
     setTransitionTimeout(() => {
-        puzzleButton.style.transform = 'translateY(-45vh)';
+        puzzleButton.style.transform = 'translateY(-55vh)';
     }, 700);
     setTransitionTimeout(() => {
-        multiplayerButton.style.transform = 'translateY(-45vh)';
+        multiplayerButton.style.transform = 'translateY(-55vh)';
     }, 800);
     setTransitionTimeout(() => {
         titleBob();

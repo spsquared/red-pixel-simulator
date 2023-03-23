@@ -356,7 +356,7 @@ function generateSaveCode() {
         }
     }
     amount++;
-    if (pixel != '') {
+    if (pixel != null) {
         if (amount == 1) {
             saveCode += `${(numPixels[pixel] ?? numPixels[pixNum.MISSING]).id}:`;
         } else {
@@ -489,6 +489,8 @@ function setup() {
 
     loadStoredSave();
 
+    startRPDrawLoop();
+
     setInterval(() => {
         if (sandboxMode) {
             window.localStorage.setItem('saveCode', generateSaveCode());
@@ -519,11 +521,11 @@ function PreRenderer(size) {
         }
     }
 };
-function drawPixels(x, y, width, height, type, opacity, ctx) {
+function drawPixels(x, y, width, height, type, opacity, ctx, avoidGrid) {
     if (numPixels[type]) {
-        numPixels[type].draw(x, y, width, height, opacity, ctx);
+        numPixels[type].draw(x, y, width, height, opacity, ctx, avoidGrid);
     } else {
-        numPixels[pixNum.MISSING].draw(x, y, width, height, opacity, ctx);
+        numPixels[pixNum.MISSING].draw(x, y, width, height, opacity, ctx, avoidGrid);
     }
 };
 function clearPixels(x, y, width, height, ctx) {
@@ -954,10 +956,7 @@ function explode(x, y, size, chain) {
 function draw() {
     if (inMenuScreen) return;
 
-    // redprint editor
-    rpDraw();
-
-    // draw pixels
+    // reset stuff
     ctx.resetTransform();
     gamectx.resetTransform();
     gridctx.resetTransform();
@@ -966,7 +965,6 @@ function draw() {
     monsterctx.resetTransform();
     targetctx.resetTransform();
     placeablectx.resetTransform();
-    drawFrame();
     ctx.globalAlpha = 1;
     gamectx.globalAlpha = 1;
     gridctx.globalAlpha = 1;
@@ -975,18 +973,13 @@ function draw() {
     monsterctx.globalAlpha = 1;
     targetctx.globalAlpha = 1;
     placeablectx.globalAlpha = 1;
-    // copy layers
-    gamectx.drawImage(gridCanvas, 0, 0);
-    gamectx.drawImage(above, 0, 0);
-    gamectx.drawImage(monster, 0, 0);
-    gamectx.drawImage(target, 0, 0);
-    gamectx.drawImage(fire, 0, 0);
-    ctx.drawImage(gameCanvas, 0, 0);
-    if (inResetState || sandboxMode) ctx.drawImage(placeable, 0, 0);
+
+    // frame
+    drawFrame();
+
     // mouse controls + brush
     updateMouseControls();
     drawBrush();
-    ctx.globalAlpha = 1;
 
     // update camera
     updateCamera();
@@ -1069,6 +1062,16 @@ function drawFrame() {
         drawBooleanGrid(targetGrid, targetGrid, pixNum.TARGET, targetctx);
         drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         forceRedraw = false;
+        // copy layers
+        ctx.globalAlpha = 1;
+        gamectx.globalAlpha = 1;
+        gamectx.drawImage(gridCanvas, 0, 0);
+        gamectx.drawImage(above, 0, 0);
+        gamectx.drawImage(monster, 0, 0);
+        gamectx.drawImage(target, 0, 0);
+        gamectx.drawImage(fire, 0, 0);
+        ctx.drawImage(gameCanvas, 0, 0);
+        if (inResetState || sandboxMode) ctx.drawImage(placeable, 0, 0);
     }
     if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 != 0)) {
         frameList.push(millis());
@@ -1252,6 +1255,7 @@ function clickLine(startX, startY, endX, endY, remove) {
                         musicPixel(musicGrid[y][x], false);
                         musicGrid[y][x] = 0;
                     }
+                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
                 });
             } else {
                 modifiedPixelCounts[clickPixelNum] = true;
@@ -1266,6 +1270,7 @@ function clickLine(startX, startY, endX, endY, remove) {
                             musicGrid[y][x] = 0;
                         }
                         pixelAmounts[brush.pixel]--;
+                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
                     }
                     return pixelAmounts[brush.pixel] <= 0;
                 })) break place;
@@ -1335,21 +1340,6 @@ function drawBrush() {
             let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
             let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + brush.size - 1));
             ctx.globalAlpha = 1;
-            ctx.strokeStyle = 'rgb(0, 0, 0)';
-            let scale = gridScale * camera.scale;
-            ctx.setLineDash([]);
-            ctx.lineWidth = 2 * camera.scale;
-            ctx.beginPath();
-            ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
-            ctx.stroke();
-        } else {
-            let x1 = Math.min(gridSize, Math.max(0, mXGrid - brush.size + 1));
-            let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
-            let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
-            let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + brush.size - 1));
-            drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx);
-            ctx.globalAlpha = 1;
-            // ctx.strokeStyle = 'rgb(0, 0, 0)';
             ctx.strokeStyle = 'rgb(255, 255, 255)';
             let scale = gridScale * camera.scale;
             ctx.setLineDash([]);
@@ -1358,7 +1348,23 @@ function drawBrush() {
             ctx.beginPath();
             ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
             ctx.stroke();
-            ctx.globalCompositeOperation='source-over';
+            ctx.globalCompositeOperation = 'source-over';
+        } else {
+            let x1 = Math.min(gridSize, Math.max(0, mXGrid - brush.size + 1));
+            let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
+            let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
+            let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + brush.size - 1));
+            drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx);
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = 'rgb(255, 255, 255)';
+            let scale = gridScale * camera.scale;
+            ctx.setLineDash([]);
+            ctx.lineWidth = 2 * camera.scale;
+            ctx.globalCompositeOperation = 'difference';
+            ctx.beginPath();
+            ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
+            ctx.stroke();
+            ctx.globalCompositeOperation = 'source-over';
         }
     }
     if (selection.show) {
@@ -1581,7 +1587,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             e.preventDefault();
             e.target.blur();
         }
-        if (e.target.matches('#saveCode') || e.target.matches('#gridSize') || !acceptInputs || inWinScreen || inMenuScreen) return;
+        if (e.target.matches('input') || e.target.matches('textarea') || !acceptInputs || inWinScreen || inMenuScreen) return;
         const key = e.key.toLowerCase();
         for (let i in pixels) {
             if (pixels[i].key == key) {
@@ -1736,7 +1742,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             let cScale = camera.scale;
             let percentX = (mX + camera.x) / (canvasSize * camera.scale);
             let percentY = (mY + camera.y) / (canvasSize * camera.scale);
-            camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 0.5   ), 8));
+            camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 0.5), 8));
             camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
             camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
             forceRedraw = true;
@@ -2341,7 +2347,7 @@ window.onresize = (e) => {
         sidebar.style.top = '0px';
         document.body.style.setProperty('--max-sidebar-width', window.innerWidth - canvasSize - 20 + 'px');
         let pickerWidth = (Math.round((window.innerWidth - canvasSize - 20) / 62) - 1) * 62 + 1;
-        pixelPicker.style.width = pickerWidth + 2+ 'px';
+        pixelPicker.style.width = pickerWidth + 2 + 'px';
         pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
     }
     forceRedraw = true;

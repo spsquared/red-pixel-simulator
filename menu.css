@@ -72,13 +72,13 @@
     border-style: inset;
 }
 #sandboxButton {
-    top: 100vh;
+    top: 110vh;
 }
 #puzzleButton {
-    top: 114vh;
+    top: 124vh;
 }
 #multiplayerButton {
-    top: 128vh;
+    top: 138vh;
 }
 
 #menuMuteButton {
@@ -297,8 +297,7 @@
     background-image: url(/assets/next.svg);
 }
 #hostGameTypeDescription {
-    grid-column-start: c0;
-    grid-column-end: span c3;
+    grid-column: c0 / c3;
     grid-row-start: r1;
 }
 #hostOptionsWrapper {
@@ -378,8 +377,7 @@
 }
 .joinTileImg {
     grid-column-start: c0;
-    grid-row-start: r0;
-    grid-row-end: span r3;
+    grid-row: r0 / r3;
     width: 60px;
     height: 60px;
     border-right: 2px solid black;
@@ -413,7 +411,7 @@
     left: 0px;
     width: 100vw;
     font-size: 1vw;
-    animation: 80s linear;
+    animation: 100s linear;
     animation-delay: 2s;
     /* temp */
     /* top: 0;

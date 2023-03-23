@@ -2,7 +2,7 @@ const pixels = {
     air: {
         name: 'Air',
         description: 'It\'s air... What else would it be?',
-        draw: function (x, y, width, height, opacity, ctx) { },
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) { },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -28,7 +28,7 @@ const pixels = {
     wall: {
         name: 'Wall',
         description: 'An immovable wall (good luck finding an unstoppable force-OH NO)',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(0, 0, 0)';
             fillPixel(x, y, width, height, ctx);
@@ -58,7 +58,7 @@ const pixels = {
     dirt: {
         name: 'Dirt',
         description: 'Wash your hands after handling it, it\'s pretty dirty',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(125, 75, 0)';
             fillPixel(x, y, width, height, ctx);
@@ -97,7 +97,7 @@ const pixels = {
     grass: {
         name: 'Grass',
         description: 'Go touch some',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(25, 175, 25)';
             fillPixel(x, y, width, height, ctx);
@@ -154,7 +154,7 @@ const pixels = {
     mud: {
         name: 'Mud',
         description: 'Basically wet dirt',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(100, 60, 0)';
@@ -164,7 +164,7 @@ const pixels = {
                 fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(105, 70, 0, ${noiseGrid[y + j][x + i]})`;
+                        ctx.fillStyle = `rgb(105, 70, 0, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
                         fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -206,7 +206,7 @@ const pixels = {
     sand: {
         name: 'Sand',
         description: 'Weird yellow powdery stuff that falls',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 225, 125)';
             fillPixel(x, y, width, height, ctx);
@@ -239,7 +239,7 @@ const pixels = {
     wood: {
         name: 'Wood',
         description: 'Just some logs',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(175, 125, 75)';
             fillPixel(x, y, width, height, ctx);
@@ -275,7 +275,7 @@ const pixels = {
     leaves: {
         name: 'Leaves',
         description: 'Lush green leaves... or was it leafs?',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 220, 0)';
             fillPixel(x, y, width, height, ctx);
@@ -323,7 +323,7 @@ const pixels = {
     ash: {
         name: 'Ash',
         description: 'Burnt stuff, doesn\'t burn easily',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(100, 110, 120)';
@@ -333,7 +333,7 @@ const pixels = {
                 fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(120, 130, 140, ${noiseGrid[y + j][x + i]})`;
+                        ctx.fillStyle = `rgb(120, 130, 140, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
                         fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -377,7 +377,7 @@ const pixels = {
     wet_ash: {
         name: 'Wet Ash',
         description: 'Definitely not silt',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(80, 80, 90)';
@@ -387,7 +387,7 @@ const pixels = {
                 fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(85, 85, 90, ${noiseGrid[y + j][x + i]})`;
+                        ctx.fillStyle = `rgb(85, 85, 90, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
                         fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -428,7 +428,7 @@ const pixels = {
     stone: {
         name: 'Stone',
         description: 'Very stony and hard',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(110, 110, 110)';
             fillPixel(x, y, width, height, ctx);
@@ -468,7 +468,7 @@ const pixels = {
     water: {
         name: 'Water',
         description: 'Unrealistically flows and may or may not be wet',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(75, 100, 255)';
@@ -524,7 +524,7 @@ const pixels = {
     lava: {
         name: 'Lava',
         description: 'Try not to get burned, it also melts stuff and sets things on fire (and flows unrealistically)',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(255, 100, 0)';
@@ -631,7 +631,7 @@ const pixels = {
     steam: {
         name: 'Steam',
         description: 'Very hot steam that will give you second-degree burns if you\'re not careful',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(210, 210, 210)';
@@ -641,7 +641,7 @@ const pixels = {
                 fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(200, 200, 200, ${noiseGrid[y + j][x + i]})`;
+                        ctx.fillStyle = `rgb(200, 200, 200, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
                         fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -778,7 +778,7 @@ const pixels = {
     concrete_powder: {
         name: 'Concrete Powder',
         description: 'Like sand, but hardens into concrete when in contact with water',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(150, 150, 150)';
             fillPixel(x, y, width, height, ctx);
@@ -815,7 +815,7 @@ const pixels = {
     concrete: {
         name: 'Concrete',
         description: 'Hard stuff that doesn\'t move easily, behaves similarly to stone but does not melt',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 75, 75)';
             fillPixel(x, y, width, height, ctx);
@@ -855,7 +855,7 @@ const pixels = {
     plant: {
         name: 'P.L.A.N.T.',
         description: '<span style="font-style: italic;">Persistent Loud Aesthetic Nail Tables.</span><br>No, it doesn\'t actually stand for anything. But it does consume concrete alarmingly fast',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixel(x, y, width, height, ctx);
@@ -902,7 +902,7 @@ const pixels = {
     sponge: {
         name: 'S.P.O.N.G.E.',
         description: '<span style="font-style: italic;">Sample Providing Oceanic Nucleolic Green Egg</span><br>buh',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(225, 255, 75)';
             fillPixel(x, y, width, height, ctx);
@@ -943,7 +943,7 @@ const pixels = {
     fire: {
         name: 'Fire',
         description: 'AAAAAA! It burns!',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             if (noNoise) {
                 ctx.globalAlpha = opacity / 2;
                 ctx.fillStyle = 'rgb(255, 180, 0)';
@@ -954,7 +954,7 @@ const pixels = {
                 fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(255, 255, 0, ${noiseGrid[y + j][x + i]})`;
+                        ctx.fillStyle = `rgb(255, 255, 0, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
                         fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -1019,7 +1019,7 @@ const pixels = {
     gunpowder: {
         name: 'Gunpowder',
         description: 'A low explosive that explodes when lit on fire',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(50, 25, 25)';
@@ -1029,7 +1029,7 @@ const pixels = {
                 fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(55, 40, 40, ${noiseGrid[y + j][x + i]})`;
+                        ctx.fillStyle = `rgb(55, 40, 40, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
                         fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -1065,7 +1065,7 @@ const pixels = {
     c4: {
         name: 'C-4',
         description: 'A high explosive that can only be triggered by other explosions',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(245, 245, 200)';
             fillPixel(x, y, width, height, ctx);
@@ -1095,7 +1095,7 @@ const pixels = {
     cloner_left: {
         name: 'Copier (Left)',
         description: 'Copies pixels from its right to its left',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1144,7 +1144,7 @@ const pixels = {
     cloner_up: {
         name: 'Copier (Up)',
         description: 'Copies pixels from below it to above it',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1193,7 +1193,7 @@ const pixels = {
     cloner_right: {
         name: 'Copier (Right)',
         description: 'Copies pixels from its left to its right',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1242,7 +1242,7 @@ const pixels = {
     cloner_down: {
         name: 'Copier (Down)',
         description: 'Copies pixels from above it to below it',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1291,7 +1291,7 @@ const pixels = {
     push_cloner_left: {
         name: 'Cloner (Left)',
         description: 'Clones pixels from its right to its left, pushing pixels in the way',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1373,7 +1373,7 @@ const pixels = {
     push_cloner_up: {
         name: 'Cloner (Up)',
         description: 'Clones pixels from below it to above it, pushing pixels in the way',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1455,7 +1455,7 @@ const pixels = {
     push_cloner_right: {
         name: 'Cloner (Right)',
         description: 'Clones pixels from its left to its right, pushing pixels in the way',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1537,7 +1537,7 @@ const pixels = {
     push_cloner_down: {
         name: 'Cloner (Down)',
         description: 'Clones pixels from above it to below it, pushing pixels in the way',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1619,7 +1619,7 @@ const pixels = {
     super_cloner_left: {
         name: 'Super Copier (Left)',
         description: 'Copies pixels from its right to its left, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1667,7 +1667,7 @@ const pixels = {
     super_cloner_up: {
         name: 'Super Copier (Up)',
         description: 'Copies pixels from below it to above it, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1717,7 +1717,7 @@ const pixels = {
     super_cloner_right: {
         name: 'Super Copier (Right)',
         description: 'Copies pixels from its left to its right, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1765,7 +1765,7 @@ const pixels = {
     super_cloner_down: {
         name: 'Super Copier (Down)',
         description: 'Copies pixels from above it to below it, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -1813,7 +1813,7 @@ const pixels = {
     piston_left: {
         name: 'Pusher (Left)',
         description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 255)';
             fillPixel(x, y, width, height, ctx);
@@ -1889,7 +1889,7 @@ const pixels = {
     piston_up: {
         name: 'Pusher (Up)',
         description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 255)';
             fillPixel(x, y, width, height, ctx);
@@ -1965,7 +1965,7 @@ const pixels = {
     piston_right: {
         name: 'Pusher (Right)',
         description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 255)';
             fillPixel(x, y, width, height, ctx);
@@ -2041,7 +2041,7 @@ const pixels = {
     piston_down: {
         name: 'Pusher (Down)',
         description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 255)';
             fillPixel(x, y, width, height, ctx);
@@ -2117,7 +2117,7 @@ const pixels = {
     fan_left: {
         name: 'Fan (Down)',
         description: 'Pushes stuff in front of it',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 255)';
             fillPixel(x, y, width, height, ctx);
@@ -2193,7 +2193,7 @@ const pixels = {
     rotator_left: {
         name: 'Rotator (Left)',
         description: 'Rotates directional pixels to face left',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(x, y, width, height, ctx);
@@ -2236,7 +2236,7 @@ const pixels = {
     rotator_up: {
         name: 'Rotator (Up)',
         description: 'Rotates directional pixels to face up',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(x, y, width, height, ctx);
@@ -2279,7 +2279,7 @@ const pixels = {
     rotator_right: {
         name: 'Rotator (Right)',
         description: 'Rotates directional pixels to face right',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(x, y, width, height, ctx);
@@ -2322,7 +2322,7 @@ const pixels = {
     rotator_down: {
         name: 'Rotator (Down)',
         description: 'Rotates directional pixels to face down',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(x, y, width, height, ctx);
@@ -2365,7 +2365,7 @@ const pixels = {
     rotator_clockwise: {
         name: 'Rotator (Clockwise)',
         description: 'Rotates directional pixels clockwise',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(frameCount / 10) % 4], ctx);
         },
@@ -2436,7 +2436,7 @@ const pixels = {
     rotator_counterclockwise: {
         name: 'Rotator (Counterclockwise)',
         description: 'Rotates directional pixels counterclockwise',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(frameCount / 10) % 4], ctx);
         },
@@ -2507,7 +2507,7 @@ const pixels = {
     slider_horizontal: {
         name: 'Horizontal Slider',
         description: 'Can only be pushed left and right',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 180, 0)';
             fillPixel(x, y, width, height, ctx);
@@ -2544,7 +2544,7 @@ const pixels = {
     slider_vertical: {
         name: 'Vertical Slider',
         description: 'Can only be pushed up and down',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(250, 180, 0)';
             fillPixel(x, y, width, height, ctx);
@@ -2581,7 +2581,7 @@ const pixels = {
     collapsible: {
         name: 'Collapsible Box',
         description: 'A box that will disintegrate when squished',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -2629,7 +2629,7 @@ const pixels = {
     laser_left: {
         name: 'L.A.S.E.R. (Left)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
             fillPixel(x, y, width, height, ctx);
@@ -2683,7 +2683,7 @@ const pixels = {
     laser_up: {
         name: 'L.A.S.E.R. (Up)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
             fillPixel(x, y, width, height, ctx);
@@ -2737,7 +2737,7 @@ const pixels = {
     laser_right: {
         name: 'L.A.S.E.R. (Right)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
             fillPixel(x, y, width, height, ctx);
@@ -2791,7 +2791,7 @@ const pixels = {
     laser_down: {
         name: 'L.A.S.E.R. (Down)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
             fillPixel(x, y, width, height, ctx);
@@ -2845,7 +2845,7 @@ const pixels = {
     glass: {
         name: 'Glass',
         description: 'For some reason you can see it',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -2889,7 +2889,7 @@ const pixels = {
     reinforced_glass: {
         name: 'Reinforced Glass',
         description: 'Really heavy glass',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -2943,7 +2943,7 @@ const pixels = {
     laser_scatterer: {
         name: 'Laser Scatterer',
         description: 'Scatters lasers that pass through it and makes them useless',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(220, 220, 255)';
             fillPixel(x, y, width, height, ctx);
@@ -2981,7 +2981,7 @@ const pixels = {
     mirror_1: {
         name: 'Mirror',
         description: 'Be careful around lasers, as it will redirect those to who knows where',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             clearPixels(x, y, width, height, ctx);
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -3045,7 +3045,7 @@ const pixels = {
     mirror_2: {
         name: 'Mirror',
         description: 'Be careful around lasers, as it will redirect those to who knows where',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             clearPixels(x, y, width, height, ctx);
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -3607,7 +3607,7 @@ const pixels = {
     pump: {
         name: 'Water Pump',
         description: 'Violates the Laws of Thermodynamics to create water',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(25, 125, 75)';
             fillPixel(x, y, width, height, ctx);
@@ -3656,7 +3656,7 @@ const pixels = {
     lava_generator: {
         name: 'Lava Heater',
         description: 'Violates the Laws of Thermodynamics to create lava',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(25, 125, 75)';
             fillPixel(x, y, width, height, ctx);
@@ -3713,7 +3713,7 @@ const pixels = {
     nuke_diffuser: {
         name: 'Nuke Diffuser',
         description: 'Doesn\'t cause diffusion, but will defuse nukes touching it',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(175, 50, 0)';
             fillPixel(x, y, width, height, ctx);
@@ -3753,7 +3753,7 @@ const pixels = {
     nuke: {
         name: 'Nuke',
         description: 'TBH, kinda weak',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(0, 255, 125)';
             fillPixel(x, y, width, height, ctx);
@@ -3800,7 +3800,7 @@ const pixels = {
     huge_nuke: {
         name: 'Huge Nuke',
         description: 'KABOOM!',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 60, 255)';
             fillPixel(x, y, width, height, ctx);
@@ -3847,7 +3847,7 @@ const pixels = {
     very_huge_nuke: {
         name: 'Very Huge Nuke',
         description: 'AAAAAAAAAAAAAAAAAAAAA',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 0, 70)';
             fillPixel(x, y, width, height, ctx);
@@ -3894,7 +3894,7 @@ const pixels = {
     deleter: {
         name: 'Deleter',
         description: 'undefined',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(x, y, width, height, ctx);
@@ -3933,7 +3933,7 @@ const pixels = {
     lag_spike_generator: {
         name: 'lag_spike_generator',
         description: 'Not that laggy',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -3986,7 +3986,7 @@ const pixels = {
     corruption: {
         name: '�',
         description: '<span style="color: red">�</span>',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -4177,7 +4177,7 @@ const pixels = {
     spin: {
         name: 'Spin',
         description: 'SPINNY CARRIER GO WEEEEEEEEEEEEEEEEEEEEEEEEE!!',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -4213,7 +4213,7 @@ const pixels = {
     placementUnRestriction: {
         name: 'Allow Placement',
         description: 'Remove placement restrictions in sandbox levels',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
         },
         update: function (x, y) { },
@@ -4243,7 +4243,7 @@ const pixels = {
     placementRestriction: {
         name: 'Prevent Placement',
         description: 'Prevents players from placing pixels in sandbox levels',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity * 0.2;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -4295,7 +4295,7 @@ const pixels = {
     monster: {
         name: 'Monster',
         description: 'The bad pixels in challenge puzzles',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -4361,7 +4361,7 @@ const pixels = {
     goal: {
         name: 'Goal',
         description: 'Must be pushed into targets in puzzles',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 200, 0)';
             fillPixel(x, y, width, height, ctx);
@@ -4403,7 +4403,7 @@ const pixels = {
     target: {
         name: 'Target',
         description: 'Goal pixels must be pushed into it in puzzles',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
             abovectx.globalAlpha = opacity * 0.2;
@@ -4450,7 +4450,7 @@ const pixels = {
     remove: {
         name: 'Remove (brush only)',
         description: 'Unfortunately it\'s not THE red pixel',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 0, 0)';
             fillPixel(x, y, width, height, ctx);
@@ -4480,7 +4480,7 @@ const pixels = {
     missing: {
         name: 'Missing Pixel',
         description: 'Check your save code, it probably has pixels that don\'t exist in it',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
@@ -4521,7 +4521,7 @@ const pixels = {
     red: {
         name: 'Red Pixel',
         description: 'What???',
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 0, 0)';
             ctx.fillRect(0, 0, canvasResolution, canvasResolution);
@@ -4594,17 +4594,23 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
         }
     }
 };
+
 function generateMusicPixel(id, data) {
     return {
         name: data.name,
         description: data.description,
-        draw: function (x, y, width, height, opacity, ctx) {
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridSize); y1++) {
-                for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridSize); x1++) {
-                    if (lastMusicGrid[y1][x1] != musicGrid[y1][x1] || forceRedraw) {
-                        if (musicGrid[y1][x1]) imagePixel(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
-                        else imagePixel(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
+            if (avoidGrid) {
+                imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            } else {
+                for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridSize); y1++) {
+                    for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridSize); x1++) {
+                        if (lastMusicGrid[y1][x1] != musicGrid[y1][x1] || forceRedraw || lastGrid[y1][x1] != grid[y1][x1]) {
+                            if (musicGrid[y1][x1] == -1) musicGrid[y1][x1] = 0;
+                            if (musicGrid[y1][x1]) imagePixel(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
+                            else imagePixel(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
+                        }
                     }
                 }
             }
