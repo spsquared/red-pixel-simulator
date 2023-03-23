@@ -83,6 +83,7 @@ function resetCanvases() {
     placeablectx.imageSmoothingEnabled = false;
     placeablectx.webkitImageSmoothingEnabled = false;
     placeablectx.mozImageSmoothingEnabled = false;
+    rpResetCanvases();
 };
 const sidebar = document.getElementById('sidebar');
 const pixelPicker = document.getElementById('pixelPicker');
@@ -2139,7 +2140,7 @@ function pauseMusicPixels() {
 function resumeMusicPixels() {
     musicPixelOscillators.forEach(n => n.resume());
 };
-window.addEventListener('DOMContentLoaded', (e) => {
+window.addEventListener('load', (e) => {
     setAudio('./assets/click.mp3', (buf) => {
         const preloadQueue = [];
         preloadQueue.push(audioContext.createBufferSource());

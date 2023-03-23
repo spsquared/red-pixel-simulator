@@ -2640,6 +2640,7 @@ const pixels = {
                     fillPixel(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
                 }
             }
+            if (avoidGrid) return;
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
             for (let i = 0; i < height; i++) {
@@ -2694,6 +2695,7 @@ const pixels = {
                     fillPixel(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2, ctx);
                 }
             }
+            if (avoidGrid) return;
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
             for (let i = 0; i < width; i++) {
@@ -2748,6 +2750,7 @@ const pixels = {
                     fillPixel(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
                 }
             }
+            if (avoidGrid) return;
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
             for (let i = 0; i < height; i++) {
@@ -2802,6 +2805,7 @@ const pixels = {
                     fillPixel(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2, ctx);
                 }
             }
+            if (avoidGrid) return;
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
             for (let i = 0; i < width; i++) {

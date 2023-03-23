@@ -63,6 +63,9 @@
                             <span class="toggleSlider"></span>
                         </label>
                     </td>
+                    <td>
+                        <button id="saveRedprint" class="bclick"></button>
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -73,6 +76,9 @@
                     </td>
                     <td>
                         <button id="advanceTick" class="btick"></button>
+                    </td>
+                    <td>
+                        <button id="openRedprint" class="bclick"></button>
                     </td>
                 </tr>
                 <tr>
@@ -134,6 +140,27 @@
                     </td>
                 </tr>
             </tbody></table>
+        </div>
+        <div id="redprintEditor">
+            <canvas id="rpCanvas"></canvas>
+            <div id="redprintEditorSidebar">
+                <div id="redprintEditorSidebarDetailContainer">
+                    <div id="redprintEditorSidebarDetails">
+                        <div id="rpEditorTitle">RedPrint Editor</div>
+                        <input type="text" id="rpName" maxlength="32" value="Default Name">
+                        <textarea id="rpDescription">Default description</textarea>
+                        <input type="number" id="rpGW" min="1" max="64" value="10">
+                        <input type="number" id="rpGH" min="1" max="64" value="10">
+                        <button id="rpSave" class="bclick">
+                            <div style="display: inline-block; padding-top: 1px; transform: scale(120%);"><img src="/assets/save.svg" style="height: 20px;"></div>
+                            <div style="display: inline-block; padding-top: 3px;">Save RedPrint</div>
+                        </button>
+                        <button id="rpDownload" class="bclick"></button>
+                        <button id="rpUpload" class="bclick"></button>
+                    </div>
+                </div>
+                <div id="rpListContainer"></div>
+            </div>
         </div>
         <div>
             <h1>
