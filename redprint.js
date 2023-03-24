@@ -322,14 +322,17 @@ document.getElementById('saveRedprint').onclick = (e) => {
         if (success) {
             createRPGrid(selection.grid[0].length, selection.grid.length);
             for (let i = 0; i < selection.grid.length; i++) {
-                rpGrid[i] = selection.grid[i];
+                rpGrid[i] = Array.from(selection.grid[i]);
             }
         }
     });
 };
 document.getElementById('openRedprint').onclick = (e) => {
     if (rpGridWidth == 0 || rpGridHeight == 0 || rpGrid.length == 0) return;
-    selection.grid = rpGrid;
+    selection.grid = [];
+    for (let i = 0; i < rpGridHeight; i++) {
+        selection.grid[i] = Array.from(rpGrid[i]);
+    }
     localStorage.setItem('clipboard', JSON.stringify(selection.grid));
     brush.isSelection = true;
 };
@@ -389,7 +392,10 @@ function refreshRedPrintList() {
             clickSound();
             let tempCode = generateRPCode();
             loadRPCode(redprint.code);
-            selection.grid = rpGrid;
+            selection.grid = [];
+            for (let i = 0; i < rpGridHeight; i++) {
+                selection.grid[i] = Array.from(rpGrid[i]);
+            }
             localStorage.setItem('clipboard', JSON.stringify(selection.grid));
             brush.isSelection = true;
             loadRPCode(tempCode);
