@@ -15,7 +15,8 @@
     display: none;
 }
 body {
-    --max-sidebar-width: 600px;
+    --canvas-size: min(100vw, 100vh);
+    --max-sidebar-width: calc(100vw - var(--canvas-size));
     font-family: 'Source Code Pro', Courier, monospace;
     font-size: 14px;
     user-select: none;
@@ -30,36 +31,6 @@ body::-webkit-scrollbar {
 img {
     -webkit-user-drag: none;
     image-rendering: pixelated;
-}
-
-#canvasContainer {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-}
-#canvas {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    border: 2px solid black;
-    /* image-rendering: pixelated; */
-    background-color: white;
-    cursor: none;
-}
-
-#sidebar {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: var(--max-sidebar-width);
-    height: 100vh;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    user-select: none;
 }
 
 button {
@@ -141,6 +112,49 @@ table {
     vertical-align: top;
 }
 
+#canvasContainer {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: var(--canvas-size);
+    height: var(--canvas-size);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+#canvas {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: calc(var(--canvas-size) - 20px);
+    height: calc(var(--canvas-size) - 20px);
+    border: 2px solid black;
+    background-color: white;
+    cursor: none;
+}
+
+#sidebar {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: var(--max-sidebar-width);
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    user-select: none;
+}
+
+@media (orientation: portrait) {
+    body {
+        --max-widebar-width: 100vw;
+    }
+    #sidebar {
+        top: var(--canvas-size);
+        width: 100vw;
+    }
+}
+
 #levelName {
     border: 2px solid black;
     padding: 8px 8px;
@@ -161,6 +175,7 @@ table {
 }
 
 #pixelPicker {
+    width: unset;
     display: grid;
     max-height: 70vh;
     overflow-y: auto;

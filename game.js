@@ -2344,32 +2344,9 @@ window.onresize = (e) => {
     canvasSize = Math.min(window.innerWidth, window.innerHeight) - 21;
     canvasScale = canvasResolution / canvasSize;
     resetCanvases();
-    canvasContainer.style.width = canvasSize + 20 + 'px';
-    canvasContainer.style.height = canvasSize + 20 + 'px';
-    canvas.style.width = canvasSize + 'px';
-    canvas.style.height = canvasSize + 'px';
-    if (window.innerWidth - canvasSize < 500) {
-        sidebar.style.top = Math.min(window.innerWidth, window.innerHeight) + 'px';
-        document.body.style.setProperty('--max-sidebar-width', window.innerWidth - 20 + 'px');
-        let pickerWidth = (Math.round((window.innerWidth - 20) / 62) - 1) * 62 + 1;
-        pixelPicker.style.width = pickerWidth + 2 + 'px';
-        pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
-        canvasContainer.style.width = window.innerWidth + 'px';
-    } else {
-        sidebar.style.top = '0px';
-        document.body.style.setProperty('--max-sidebar-width', window.innerWidth - canvasSize - 20 + 'px');
-        let pickerWidth = (Math.round((window.innerWidth - canvasSize - 20) / 62) - 1) * 62 + 1;
-        pixelPicker.style.width = pickerWidth + 2 + 'px';
-        pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
-    }
+    let pickerWidth = (Math.round((window.innerWidth - canvasSize - 20) / 62) - 1) * 62 + 1;
+    if (window.innerWidth / window.innerHeight <= 1) pickerWidth = (Math.round((window.innerWidth) / 62) - 1) * 62 + 1;
+    pixelPicker.style.width = pickerWidth + 2 + 'px';
+    pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
     forceRedraw = true;
 };
-// const preventMotion = (e) => {
-//     if (mouseOver) {
-//         window.scrollTo(0, 0);
-//         e.preventDefault();
-//         e.stopPropagation();
-//     }
-// };
-// window.addEventListener("scroll", preventMotion, false);
-// window.addEventListener("touchmove", preventMotion, false);
