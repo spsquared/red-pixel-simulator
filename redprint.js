@@ -169,14 +169,6 @@ function generateRPCode() {
     return rpCode;
 };
 
-// very temp
-window.addEventListener('load', () => {
-    createRPGrid(10, 20);
-    for (let i = 0; i < pixNum.RED; i++) {
-        if (i != pixNum.SPIN) rpGrid[Math.floor(i / rpGridWidth)][i % rpGridWidth] = i;
-    }
-});
-
 // draw
 function rpDraw() {
     if (inMenuScreen) return;
@@ -229,7 +221,7 @@ function rpDraw() {
 // copy + paste, brush size, & history
 const rpUnplaceablePixels = ['fire', 'placementUnRestriction', 'placementRestriction', 'monster', 'target', 'remove'];
 function rpUpdateMouseControls() {
-    if (rpUnplaceablePixels.indexOf(brush.pixel) == -1 && mouseIsPressed && rpMXGrid >= 0 && rpMXGrid < rpGridWidth && rpMYGrid >= 0 && rpMYGrid < rpGridHeight) {
+    if (rpUnplaceablePixels.indexOf(brush.pixel) == -1 && mouseIsPressed && rpMX >= 0 && rpMX < rpCanvasRes && rpMY >= 0 && rpMY < rpCanvasRes) {
         if (mouseButton == CENTER) brush.pixel = numPixels[rpGrid[rpMYGrid][rpMXGrid]].id;
         else if ((mouseButton == RIGHT || removing)) {
             let xmin = Math.max(0, rpMXGrid - brush.size + 1);

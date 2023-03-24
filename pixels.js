@@ -4469,7 +4469,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: true,
-        alwaysRedraw: false,
+        alwaysRedraw: true,
         pickable: true,
         id: 'goal',
         numId: 0
@@ -4517,7 +4517,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: true,
-        alwaysRedraw: false,
+        alwaysRedraw: true,
         pickable: true,
         id: 'target',
         numId: 0

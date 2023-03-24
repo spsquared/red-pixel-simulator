@@ -1027,7 +1027,7 @@ function draw() {
     prevMY = mY;
 };
 function drawFrame() {
-    if (!fastSimulation || frameCount % 20 == 0) {
+    if (!fastSimulation || frameCount % 10 == 0) {
         ctx.clearRect(0, 0, canvasResolution, canvasResolution);
         gamectx.fillStyle = backgroundColor + (255 - fadeEffect).toString(16);
         gamectx.fillRect(0, 0, canvasResolution, canvasResolution);
@@ -1138,9 +1138,9 @@ function updateMouseControls() {
                     if (y + offsetY >= 0 && y + offsetY < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
                         if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
                             grid[y + offsetY][x + offsetX] = selection.grid[y][x];
-                            if (musicGrid[y][x]) {
-                                musicPixel(musicGrid[y][x], false);
-                                musicGrid[y][x] = 0;
+                            if (musicGrid[y + offsetY][x + offsetX]) {
+                                musicPixel(musicGrid[y + offsetY][x + offsetX], false);
+                                musicGrid[y + offsetY][x + offsetX] = 0;
                             }
                         }
                     }
@@ -1166,6 +1166,9 @@ function updateMouseControls() {
                 clickLine(prevMXGrid, prevMYGrid, mXGrid, mYGrid, mouseButton == RIGHT || removing);
             }
         }
+    } else if (!mouseIsPressed && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
+        brush.lineMode = false;
+        clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, mouseButton == RIGHT || removing);
     }
     if (!mouseIsPressed || mouseButton != LEFT) selecting = false;
 };
