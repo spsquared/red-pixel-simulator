@@ -361,10 +361,20 @@
     margin-top: 12px;
     margin-bottom: 8px;
     border: 2px solid black;
-    border-bottom: transparent;
 }
 #joinListContent {
     border-top: 2px solid black;
+    max-height: 50vh;
+    overflow-y: scroll;
+}
+#joinListContent::-webkit-scrollbar {
+    width: 8px;
+}
+#joinListContent::-webkit-scrollbar-track {
+    background-color: darkgrey;
+}
+#joinListContent::-webkit-scrollbar-thumb {
+    background-color: gray;
 }
 .joinTile {
     display: grid;

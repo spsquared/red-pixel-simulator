@@ -341,13 +341,16 @@ table {
     height: 40px;
     font-size: 14px;
 }
-#noNoise, #fadeEffect, #changeResolution {
+#noNoise, #noAnimation, #fadeEffect, #changeResolution {
     margin-left: unset;
     font-size: 12px;
     border-width: 3px;
 }
 #noNoise {
     background-color: red;
+}
+#noAnimation {
+    background-color: lime;
 }
 #fadeEffect {
     background-color: lime;
@@ -502,6 +505,7 @@ table {
     display: grid;
     grid-row: 3;
     grid-column: 2;
+    white-space: nowrap;
 }
 .rplOpen, .rplExport, .rplDelete {
     width: 20px;

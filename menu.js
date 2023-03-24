@@ -401,6 +401,7 @@ copyrightNotice.onclick = (e) => {
     levelSelect.style.transform = '';
     pixsimMenu._open = false;
     pixsimMenu.style.transform = '';
+    APIdisconnect();
     copyrightNotice.style.display = 'none';
     creditsAnimation.style.animationName = 'scroll';
     creditsAnimation.onanimationend = (e) => {

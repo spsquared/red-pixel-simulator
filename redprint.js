@@ -226,27 +226,46 @@ function rpDraw() {
     rpUpdateMouseControls();
     rpDrawBrush();
 };
-// will implement copy + paste in future
+// copy + paste, brush size, & history
 const rpUnplaceablePixels = ['fire', 'placementUnRestriction', 'placementRestriction', 'monster', 'target', 'remove'];
 function rpUpdateMouseControls() {
     if (rpUnplaceablePixels.indexOf(brush.pixel) == -1 && mouseIsPressed && rpMXGrid >= 0 && rpMXGrid < rpGridWidth && rpMYGrid >= 0 && rpMYGrid < rpGridHeight) {
         if (mouseButton == CENTER) brush.pixel = numPixels[rpGrid[rpMYGrid][rpMXGrid]].id;
-        else if ((mouseButton == RIGHT || removing)) rpGrid[rpMYGrid][rpMXGrid] = pixNum.AIR;
-        else rpGrid[rpMYGrid][rpMXGrid] = pixels[brush.pixel].numId;
+        else if ((mouseButton == RIGHT || removing)) {
+            let xmin = Math.max(0, rpMXGrid - brush.size + 1);
+            let xmax = Math.min(rpGridWidth - 1, rpMXGrid + brush.size - 1);
+            let ymin = Math.max(0, rpMYGrid - brush.size + 1);
+            let ymax = Math.min(rpGridHeight - 1, rpMYGrid + brush.size - 1);
+            for (let y = ymin; y <= ymax; y++) {
+                for (let x = xmin; x <= xmax; x++) {
+                    rpGrid[y][x] = pixNum.AIR;
+                }
+            }
+        } else {
+            let xmin = Math.max(0, rpMXGrid - brush.size + 1);
+            let xmax = Math.min(rpGridWidth - 1, rpMXGrid + brush.size - 1);
+            let ymin = Math.max(0, rpMYGrid - brush.size + 1);
+            let ymax = Math.min(rpGridHeight - 1, rpMYGrid + brush.size - 1);
+            for (let y = ymin; y <= ymax; y++) {
+                for (let x = xmin; x <= xmax; x++) {
+                    rpGrid[y][x] = pixels[brush.pixel].numId;
+                }
+            }
+        }
     }
 };
 function rpDrawBrush() {
     let offsetX = rpCanvasRes / 2 - rpGridScale * rpGridWidth / 2;
     let offsetY = rpCanvasRes / 2 - rpGridScale * rpGridHeight / 2;
     rpDCtx.clearRect(0, 0, canvasResolution, canvasResolution);
-    drawPixels(rpMXGrid, rpMYGrid, 1, 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, rpDCtx, true);
-    rpCtx.drawImage(rpDCanvas, offsetX, offsetY);
+    drawPixels(rpMXGrid - brush.size + 1, rpMYGrid - brush.size + 1, brush.size * 2 - 1, brush.size * 2 - 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, rpDCtx, true);
+    rpCtx.drawImage(rpDCanvas, 0, 0, rpGridWidth * gridScale, rpGridHeight * gridScale, offsetX, offsetY, rpGridWidth * rpGridScale, rpGridHeight * rpGridScale);
     rpCtx.fillStyle = 'rgb(255, 255, 255)';
     rpCtx.strokeStyle = 'rgb(255, 255, 255)';
     rpCtx.globalCompositeOperation = 'difference';
     rpCtx.fillRect(rpMX - 5, rpMY - 5, 10, 10);
     rpCtx.beginPath();
-    rpCtx.strokeRect(rpMXGrid * rpGridScale + offsetX, rpMYGrid * rpGridScale + offsetY, rpGridScale, rpGridScale);
+    rpCtx.strokeRect((rpMXGrid - brush.size + 1) * rpGridScale + offsetX, (rpMYGrid - brush.size + 1) * rpGridScale + offsetY, (brush.size * 2 - 1) * rpGridScale, (brush.size * 2 - 1) * rpGridScale);
     rpCtx.stroke();
     rpCtx.globalCompositeOperation = 'source-over';
 };
@@ -284,6 +303,13 @@ function startRPDrawLoop() {
 };
 
 window.addEventListener('DOMContentLoaded', (e) => {
+    document.addEventListener('keydown', (e) => {
+        if (e.target.matches('input') || e.target.matches('textarea') || !acceptInputs || inWinScreen || inMenuScreen) return;
+        const key = e.key.toLowerCase();
+        if (key == 'z' && e.ctrlKey) {
+            // undo!!!!!!!!!!!
+        }
+    });
     document.addEventListener('mousemove', (e) => {
         const rect = rpCanvas.getBoundingClientRect();
         rpMX = Math.round((e.pageX - rect.left) * rpCanvasScale);
@@ -337,6 +363,10 @@ document.getElementById('openRedprint').onclick = (e) => {
     brush.isSelection = true;
 };
 document.getElementById('rpSave').onclick = (e) => {
+    if (redPrints.length >= 100) {
+        modal('<span style="color: red">Too Many RedPrints!</span>', 'You have reached the maximum amount of RedPrints that can be stored safely. Please delete some RedPrints.<br>This will be resolved when we (eventually) implement an account system and RedPrints will be stored globally.');
+        return;
+    }
     const thumbCanvas = document.createElement('canvas');
     thumbCanvas.width = 200;
     thumbCanvas.height = 200;
@@ -419,7 +449,7 @@ function refreshRedPrintList() {
 };
 document.getElementById('rpDownload').onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
-    const encoded = `data:text/redprint;base64,${window.btoa(`${rpNameInput.value.replace('|', '/')}|${rpDescriptionInput.value.replace('|', '/')}|${generateRPCode()}`)}`;
+    const encoded = `data:text/redprint;base64,${window.btoa(`${rpNameInput.value.replaceAll('|', '/')}|${rpDescriptionInput.value.replaceAll('|', '/')}|${generateRPCode()}`)}`;
     const a = document.createElement('a');
     a.href = encoded;
     a.download = `redprint_${Math.ceil(Math.random() * 1000)}.redprint`;

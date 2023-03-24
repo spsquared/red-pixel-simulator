@@ -8,6 +8,7 @@ let puzzleSaveCode;
 let sandboxMode = true;
 let backgroundColor = '#ffffff';
 let noNoise = false;
+let noAnimations = false;
 let maxLaserDepth = 512;
 let fadeEffect = 127;
 let debugInfo = false;
@@ -1046,7 +1047,7 @@ function drawFrame() {
                 amount++;
                 if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
                     let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
-                    if (curr != pixNum.AIR && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, gridctx);
+                    if (curr != pixNum.AIR && (redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations) || forceRedraw)) drawPixels(j - amount, i, amount, 1, curr, 1, gridctx);
                     else if (curr == pixNum.AIR && (redrawing || forceRedraw)) clearPixels(j - amount, i, amount, 1, gridctx);
                     curr = grid[i][j];
                     redrawing = grid[i][j] != lastGrid[i][j];
@@ -1055,7 +1056,7 @@ function drawFrame() {
                 lastGrid[i][j] = grid[i][j];
             }
             let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
-            if (curr != pixNum.AIR && (redrawing || pixelType.animated || (pixelType.animatedNoise && !noNoise) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, gridctx);
+            if (curr != pixNum.AIR && (redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, gridctx);
             else if (curr == pixNum.AIR && (redrawing || forceRedraw)) clearPixels(gridSize - amount - 1, i, amount + 1, 1, gridctx);
         }
         drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
@@ -1304,7 +1305,7 @@ function drawBrush() {
             for (let y = 0; y < selection.grid.length; y++) {
                 for (let x = 0; x < selection.grid[y].length; x++) {
                     if (x + offsetX >= 0 && x + offsetX < gridSize && y + offsetY >= 0 && y + offsetY < gridSize) {
-                        drawPixels(x + offsetX, y + offsetY, 1, 1, selection.grid[y][x], 0.5, ctx);
+                        drawPixels(x + offsetX, y + offsetY, 1, 1, selection.grid[y][x], 0.5, ctx, true);
                     }
                 }
             }
@@ -1988,11 +1989,18 @@ document.getElementById('screenshot').onclick = (e) => {
 };
 // settings
 const noNoiseButton = document.getElementById('noNoise');
+const noAnimationsButton = document.getElementById('noAnimation');
 const fadeEffectButton = document.getElementById('fadeEffect');
 noNoiseButton.onclick = (e) => {
     noNoise = !noNoise;
     if (noNoise) noNoiseButton.style.backgroundColor = 'lime';
     else noNoiseButton.style.backgroundColor = 'red';
+    forceRedraw = true;
+};
+noAnimationsButton.onclick = (e) => {
+    noAnimations = !noAnimations;
+    if (!noAnimations) noAnimationsButton.style.backgroundColor = 'lime';
+    else noAnimationsButton.style.backgroundColor = 'red';
     forceRedraw = true;
 };
 fadeEffectButton.onclick = (e) => {

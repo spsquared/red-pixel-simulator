@@ -21,6 +21,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'air',
         numId: 0
@@ -51,6 +52,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'wall',
         numId: 0
@@ -90,6 +92,7 @@ const pixels = {
         updateStage: 9,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'dirt',
         numId: 0
@@ -147,6 +150,7 @@ const pixels = {
         updateStage: 9,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'grass',
         numId: 0
@@ -199,6 +203,7 @@ const pixels = {
         updateStage: 9,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'mud',
         numId: 0
@@ -232,6 +237,7 @@ const pixels = {
         updateStage: 9,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'sand',
         numId: 0
@@ -268,6 +274,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'wood',
         numId: 0
@@ -316,6 +323,7 @@ const pixels = {
         updateStage: 11,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'leaves',
         numId: 0
@@ -370,6 +378,7 @@ const pixels = {
         updateStage: 9,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'ash',
         numId: 0
@@ -421,6 +430,7 @@ const pixels = {
         updateStage: 9,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'wet_ash',
         numId: 0
@@ -461,6 +471,7 @@ const pixels = {
         updateStage: 11,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'stone',
         numId: 0
@@ -478,7 +489,7 @@ const pixels = {
                 fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(75, 50, 255, ${noise((x + i) / 4, (y + j) / 4, frameCount / 10) + 0.1})`;
+                        ctx.fillStyle = `rgb(75, 50, 255, ${noise((x + i) / 4, (y + j) / 4, noAnimations ? 0 : (frameCount / 10)) + 0.1})`;
                         fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -517,6 +528,7 @@ const pixels = {
         updateStage: 11,
         animatedNoise: true,
         animated: true,
+        alwaysRedraw: false,
         pickable: true,
         id: 'water',
         numId: 0
@@ -534,7 +546,7 @@ const pixels = {
                 fillPixel(x, y, width, height, ctx);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(255, 255, 0, ${noise((x + i) / 6, (y + j) / 6, frameCount / 30)})`;
+                        ctx.fillStyle = `rgb(255, 255, 0, ${noise((x + i) / 6, (y + j) / 6, noAnimations ? 0 : (frameCount / 30))})`;
                         fillPixel(x + i, y + j, 1, 1, ctx);
                     }
                 }
@@ -624,6 +636,7 @@ const pixels = {
         updateStage: 11,
         animatedNoise: true,
         animated: true,
+        alwaysRedraw: false,
         pickable: true,
         id: 'lava',
         numId: 0
@@ -771,6 +784,7 @@ const pixels = {
         updateStage: 10,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'steam',
         numId: 0
@@ -808,6 +822,7 @@ const pixels = {
         updateStage: 9,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'concrete_powder',
         numId: 0
@@ -848,6 +863,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'concrete',
         numId: 0
@@ -895,6 +911,7 @@ const pixels = {
         updateStage: 0,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'plant',
         numId: 0
@@ -936,6 +953,7 @@ const pixels = {
         updateStage: 0,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'sponge',
         numId: 0
@@ -1012,6 +1030,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'fire',
         numId: 0
@@ -1058,6 +1077,7 @@ const pixels = {
         updateStage: 9,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'gunpowder',
         numId: 0
@@ -1088,6 +1108,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'c4',
         numId: 0
@@ -1137,6 +1158,7 @@ const pixels = {
         updateStage: 7,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'cloner_left',
         numId: 0
@@ -1186,6 +1208,7 @@ const pixels = {
         updateStage: 5,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'cloner_up',
         numId: 0
@@ -1235,6 +1258,7 @@ const pixels = {
         updateStage: 8,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'cloner_right',
         numId: 0
@@ -1284,6 +1308,7 @@ const pixels = {
         updateStage: 6,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'cloner_down',
         numId: 0
@@ -1366,6 +1391,7 @@ const pixels = {
         updateStage: 7,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'push_cloner_left',
         numId: 0
@@ -1448,6 +1474,7 @@ const pixels = {
         updateStage: 5,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'push_cloner_up',
         numId: 0
@@ -1530,6 +1557,7 @@ const pixels = {
         updateStage: 8,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'push_cloner_right',
         numId: 0
@@ -1612,6 +1640,7 @@ const pixels = {
         updateStage: 6,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'push_cloner_down',
         numId: 0
@@ -1660,6 +1689,7 @@ const pixels = {
         updateStage: 7,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: false,
         id: 'super_cloner_left',
         numId: 0
@@ -1710,6 +1740,7 @@ const pixels = {
         updateStage: 5,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: false,
         id: 'super_cloner_up',
         numId: 0
@@ -1758,6 +1789,7 @@ const pixels = {
         updateStage: 8,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: false,
         id: 'super_cloner_right',
         numId: 0
@@ -1806,6 +1838,7 @@ const pixels = {
         updateStage: 6,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: false,
         id: 'super_cloner_down',
         numId: 0
@@ -1882,6 +1915,7 @@ const pixels = {
         updateStage: 3,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'piston_left',
         numId: 0
@@ -1958,6 +1992,7 @@ const pixels = {
         updateStage: 1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'piston_up',
         numId: 0
@@ -2034,6 +2069,7 @@ const pixels = {
         updateStage: 4,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'piston_right',
         numId: 0
@@ -2110,6 +2146,7 @@ const pixels = {
         updateStage: 2,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'piston_down',
         numId: 0
@@ -2186,6 +2223,7 @@ const pixels = {
         updateStage: 2,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: false,
         id: 'fan_left',
         numId: 0
@@ -2229,6 +2267,7 @@ const pixels = {
         updateStage: 14,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'rotator_left',
         numId: 0
@@ -2272,6 +2311,7 @@ const pixels = {
         updateStage: 14,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'rotator_up',
         numId: 0
@@ -2315,6 +2355,7 @@ const pixels = {
         updateStage: 14,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'rotator_right',
         numId: 0
@@ -2358,6 +2399,7 @@ const pixels = {
         updateStage: 14,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'rotator_down',
         numId: 0
@@ -2429,6 +2471,7 @@ const pixels = {
         updateStage: 14,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: false,
         pickable: true,
         id: 'rotator_clockwise',
         numId: 0
@@ -2500,6 +2543,7 @@ const pixels = {
         updateStage: 14,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: false,
         pickable: true,
         id: 'rotator_counterclockwise',
         numId: 0
@@ -2537,6 +2581,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'slider_horizontal',
         numId: 0
@@ -2574,6 +2619,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'slider_vertical',
         numId: 0
@@ -2622,6 +2668,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'collapsible',
         numId: 0
@@ -2677,6 +2724,7 @@ const pixels = {
         updateStage: 0,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: true,
         pickable: true,
         id: 'laser_left',
         numId: 0
@@ -2732,6 +2780,7 @@ const pixels = {
         updateStage: 0,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: true,
         pickable: true,
         id: 'laser_up',
         numId: 0
@@ -2787,6 +2836,7 @@ const pixels = {
         updateStage: 0,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: true,
         pickable: true,
         id: 'laser_right',
         numId: 0
@@ -2842,6 +2892,7 @@ const pixels = {
         updateStage: 0,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: true,
         pickable: true,
         id: 'laser_down',
         numId: 0
@@ -2886,6 +2937,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'glass',
         numId: 0
@@ -2940,6 +2992,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'reinforced_glass',
         numId: 0
@@ -2978,6 +3031,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'laser_scatterer',
         numId: 0
@@ -3042,6 +3096,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'mirror_1',
         numId: 0
@@ -3106,6 +3161,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'mirror_2',
         numId: 0
@@ -3653,6 +3709,7 @@ const pixels = {
         updateStage: 12,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'pump',
         numId: 0
@@ -3710,6 +3767,7 @@ const pixels = {
         updateStage: 12,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'lava_generator',
         numId: 0
@@ -3750,6 +3808,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'nuke_diffuser',
         numId: 0
@@ -3797,6 +3856,7 @@ const pixels = {
         updateStage: 0,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'nuke',
         numId: 0
@@ -3844,6 +3904,7 @@ const pixels = {
         updateStage: 0,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'huge_nuke',
         numId: 0
@@ -3891,6 +3952,7 @@ const pixels = {
         updateStage: 0,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'very_huge_nuke',
         numId: 0
@@ -3930,6 +3992,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: false,
         pickable: true,
         id: 'deleter',
         numId: 0
@@ -3983,6 +4046,7 @@ const pixels = {
         updateStage: 13,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: true,
         pickable: true,
         id: 'lag_spike_generator',
         numId: 0
@@ -4174,6 +4238,7 @@ const pixels = {
         updateStage: 13,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: true,
         pickable: true,
         id: 'corruption',
         numId: 0
@@ -4210,6 +4275,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: false,
         pickable: false,
         id: 'spin',
         numId: 0
@@ -4240,6 +4306,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'placementUnRestriction',
         numId: 0
@@ -4292,6 +4359,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'placementRestriction',
         numId: 0
@@ -4358,6 +4426,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: true,
         id: 'monster',
         numId: 0
@@ -4400,6 +4469,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: false,
         pickable: true,
         id: 'goal',
         numId: 0
@@ -4447,6 +4517,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: false,
         pickable: true,
         id: 'target',
         numId: 0
@@ -4477,6 +4548,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: false,
         id: 'remove',
         numId: 0
@@ -4518,6 +4590,7 @@ const pixels = {
         animatedNoise: false,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: false,
         id: 'missing',
         numId: 0
@@ -4552,6 +4625,7 @@ const pixels = {
         animatedNoise: false,
         animatedNoise: false,
         animated: false,
+        alwaysRedraw: false,
         pickable: false,
         id: 'red',
         numId: 0
@@ -4671,6 +4745,7 @@ function generateMusicPixel(id, data) {
         updateStage: 13,
         animatedNoise: false,
         animated: true,
+        alwaysRedraw: false,
         pickable: true,
         id: `music_${id}`,
         numId: 0
