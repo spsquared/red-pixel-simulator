@@ -4668,7 +4668,7 @@ function generateMusicPixel(id, data) {
         updateStage: 13,
         animatedNoise: false,
         animated: true,
-        alwaysRedraw: false,
+        alwaysRedraw: true,
         pickable: true,
         id: `music_${id}`,
         numId: 0
