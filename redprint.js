@@ -334,7 +334,7 @@ rpGHInput.onkeydown = (e) => {
         clickSound();
     }
 };
-document.getElementById('saveRedprint').onclick = (e) => {
+document.getElementById('importRedprint').onclick = (e) => {
     if (selection.grid.length == 0) return;
     modal('Copy to RedPrint Editor?', 'Any unsaved work will be lost!', true).then((success) => {
         if (success) {
@@ -345,7 +345,7 @@ document.getElementById('saveRedprint').onclick = (e) => {
         }
     });
 };
-document.getElementById('openRedprint').onclick = (e) => {
+document.getElementById('exportRedprint').onclick = (e) => {
     if (rpGridWidth == 0 || rpGridHeight == 0 || rpGrid.length == 0) return;
     selection.grid = [];
     for (let i = 0; i < rpGridHeight; i++) {

@@ -288,7 +288,7 @@ table {
     font-size: 18px;
     margin-left: 8px;
 }
-#pause, #fastSimulation, #advanceTick, #saveRedprint, #openRedprint {
+#pause, #fastSimulation, #advanceTick, #importRedprint, #exportRedprint {
     width: 100px;
     height: 40px;
     background-position: center;
@@ -306,11 +306,11 @@ table {
 #advanceTick {
     background-image: url(/assets/advanceTick.svg);
 }
-#saveRedprint {
+#importRedprint {
     background-size: 90% 90%;
     background-image: url(/assets/rp-save.svg);
 }
-#openRedprint {
+#exportRedprint {
     background-size: 90% 90%;
     background-image: url(/assets/rp-load.svg);
 }

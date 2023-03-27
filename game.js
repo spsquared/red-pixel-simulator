@@ -1334,7 +1334,7 @@ function drawBrush() {
                 let xmax = Math.max(0, Math.min(Math.round(x) + brush.size - 1, gridSize - 1));
                 let ymin = Math.max(0, Math.min(Math.round(y) - brush.size + 1, gridSize - 1));
                 let ymax = Math.max(0, Math.min(Math.round(y) + brush.size - 1, gridSize - 1));
-                drawPixels(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : clickPixelNum, 1, abovectx);
+                drawPixels(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : clickPixelNum, 1, abovectx, true);
                 x += xtravel;
                 y += ytravel;
             }
@@ -1359,7 +1359,7 @@ function drawBrush() {
             let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
             let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
             let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + brush.size - 1));
-            drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx);
+            drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx, true);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(255, 255, 255)';
             let scale = gridScale * camera.scale;
@@ -1668,8 +1668,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 runTicks = 1;
                 tickSound();
             }
-        } else if (sandboxMode && key == 's' && e.ctrlKey) {
-        } else if (sandboxMode && key == 'o' && e.ctrlKey) {
         } else if (key == 'w') {
             camera.mUp = true;
         } else if (key == 's') {
