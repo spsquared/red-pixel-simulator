@@ -372,6 +372,17 @@ document.getElementById('rpSave').onclick = (e) => {
         code: generateRPCode(),
         thumbnail: thumbCanvas.toDataURL('image/png')
     };
+    for (let i in redPrints) {
+        if (redPrints[i].name == rpNameInput.value) {
+            modal('Overwrite existing RedPrint?', 'Two or more RedPrints have the same name. Saving will overwrite the previous RedPrint!', true).then((success) => {
+                if (success) {
+                    redPrints[i] = redprint;
+                    refreshRedPrintList();
+                }
+            });
+            return;
+        }
+    }
     redPrints.unshift(redprint);
     refreshRedPrintList();
 };

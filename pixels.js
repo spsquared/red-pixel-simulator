@@ -2151,83 +2151,6 @@ const pixels = {
         id: 'piston_down',
         numId: 0
     },
-    fan_left: {
-        name: 'Fan (Down)',
-        description: 'Pushes stuff in front of it',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(x, y, width, height, ctx);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
-                nextGrid[y][x] = pixNum.ASH;
-                return;
-            }
-            let moveY = null;
-            let lastCollapsible = null;
-            for (let i = y + 1; i <= gridSize - 1; i++) {
-                if (isAir(x, i)) {
-                    moveY = i;
-                    if (grid[i][x] == pixNum.DELETER) {
-                        moveY--;
-                    }
-                    break;
-                }
-                if (grid[i][x] == pixNum.COLLAPSIBLE) {
-                    lastCollapsible = i;
-                }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_UP) {
-                    break;
-                }
-            }
-            if (moveY == null && lastCollapsible != null) {
-                moveY = lastCollapsible;
-            }
-            if (moveY != null) {
-                for (let i = moveY; i > y; i--) {
-                    if (!canMoveTo(x, i - 1)) return;
-                }
-                for (let i = moveY; i > y; i--) {
-                    nextGrid[i][x] = grid[i - 1][x];
-                    fireGrid[i][x] = fireGrid[i - 1][x];
-                }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            ctx.fillRect(50 / 3, 25, 50 / 3, 25);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 10,
-        flammability: 6,
-        pushable: true,
-        cloneable: true,
-        rotateable: true,
-        rotation: 3,
-        group: 1,
-        key: Infinity,
-        updateStage: 2,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: false,
-        id: 'fan_left',
-        numId: 0
-    },
     rotator_left: {
         name: 'Rotator (Left)',
         description: 'Rotates directional pixels to face left',
@@ -2409,7 +2332,7 @@ const pixels = {
         description: 'Rotates directional pixels clockwise',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(frameCount / 10) % 4], ctx);
+            imagePixel(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2481,7 +2404,7 @@ const pixels = {
         description: 'Rotates directional pixels counterclockwise',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[Math.floor(frameCount / 10) % 4], ctx);
+            imagePixel(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2680,7 +2603,7 @@ const pixels = {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
             fillPixel(x, y, width, height, ctx);
-            let color = colorAnimate(255, 0, 144, 60, 112, 255, 18);
+            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
             ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -2698,7 +2621,7 @@ const pixels = {
             let path = getLaserPath(x, y, 0);
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
-            if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+            if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
                 if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
                 if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
@@ -2736,7 +2659,7 @@ const pixels = {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
             fillPixel(x, y, width, height, ctx);
-            let color = colorAnimate(255, 0, 144, 60, 112, 255, 18);
+            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
             ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -2754,7 +2677,7 @@ const pixels = {
             let path = getLaserPath(x, y, 1);
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
-            if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+            if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
                 if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
                 if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
@@ -2792,7 +2715,7 @@ const pixels = {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
             fillPixel(x, y, width, height, ctx);
-            let color = colorAnimate(255, 0, 144, 60, 112, 255, 18);
+            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
             ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -2810,7 +2733,7 @@ const pixels = {
             let path = getLaserPath(x, y, 2);
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
-            if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+            if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
                 if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
                 if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
@@ -2848,7 +2771,7 @@ const pixels = {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
             fillPixel(x, y, width, height, ctx);
-            let color = colorAnimate(255, 0, 144, 60, 112, 255, 18);
+            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
             ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -2866,7 +2789,7 @@ const pixels = {
             let path = getLaserPath(x, y, 3);
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
-            if (random() < 0.2 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
+            if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
                 if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
                 if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
@@ -3675,7 +3598,7 @@ const pixels = {
             fillPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
             ctx.fillStyle = 'rgb(25, 125, 75)';
             for (let i = 0; i < width - 1; i++) {
-                fillPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
+                fillPixel(x + i + 2 / 3, y + 1 / 3, 2 / 3, height - 2 / 3, ctx);
             }
         },
         update: function (x, y) {
@@ -3725,7 +3648,7 @@ const pixels = {
             fillPixel(x + 1 / 3, y + 1 / 3, width - 2 / 3, height - 2 / 3, ctx);
             ctx.fillStyle = 'rgb(25, 125, 75)';
             for (let i = 0; i < width - 1; i++) {
-                fillPixel(x + i + 5 / 6, y + 1 / 3, 1 / 3, height - 2 / 3, ctx);
+                fillPixel(x + i + 2 / 3, y + 1 / 3, 2 / 3, height - 2 / 3, ctx);
             }
         },
         update: function (x, y) {
@@ -3964,7 +3887,7 @@ const pixels = {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixel(x, y, width, height, ctx);
-            let color = colorAnimate(200, 0, 255, 255, 0, 255, 96);
+            let color = noAnimations ? [200, 0, 255] : colorAnimate(200, 0, 255, 255, 0, 255, 96);
             ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
