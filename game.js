@@ -500,6 +500,11 @@ function setup() {
     }, 30000);
 };
 
+// utilities
+function getDistance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1));
+};
+
 // pixel utilities
 function PreRenderer(size) {
     size = size ?? 60;
@@ -912,30 +917,36 @@ function drawLaserPath(path) {
         }
     }
 };
-function explode(x, y, size, chain) {
-    chain = chain ?? 2;
+function explode(x, y, size) {
     nextGrid[y][x] = pixNum.AIR;
-    grid[y][x] = pixNum.WALL;
-    let chained = false;
+    grid[y][x] = pixNum.AIR;
+    let chained = 0;
+    let rays = size * 2;
+    for (let i = 0; i < rays; i++) {
+        let angle = 2 * Math.PI / rays;
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+        // sector???
+    }
     for (let cy = y - size; cy <= y + size; cy++) {
         for (let cx = x - size; cx <= x + size; cx++) {
             if (cy >= 0 && cy < gridSize && cx >= 0 && cx < gridSize) {
-                if (random() < (1 - (dist(x, y, cx, cy) / size)) * ((20 - (numPixels[grid[cy][cx]] ?? numPixels[pixNum.MISSING]).blastResistance) / (45 - size))) {
+                if (random() < (1 - (getDistance(x, y, cx, cy) / size)) * ((20 - (numPixels[grid[cy][cx]] ?? numPixels[pixNum.MISSING]).blastResistance) / (45 - size))) {
                     nextGrid[cy][cx] = pixNum.AIR;
                     monsterGrid[cy][cx] = false;
-                    if (chain > 0 && !chained) {
+                    if (chained < 5 && getDistance(x, y, cx, cy) > 5 && random() < 0.8 - (getDistance(x, y, cx, cy) / size)) {
                         if (grid[cy][cx] == pixNum.NUKE) {
-                            pendingExplosions.push([cx, cy, 10, chain - 1]);
+                            pendingExplosions.push([cx, cy, 10]);
                             grid[cy][cx] = pixNum.AIR;
-                            chained = true;
+                            chained++;
                         } else if (grid[cy][cx] == pixNum.HUGE_NUKE) {
-                            pendingExplosions.push([cx, cy, 20, chain - 1]);
+                            pendingExplosions.push([cx, cy, 20]);
                             grid[cy][cx] = pixNum.AIR;
-                            chained = true;
+                            chained++;
                         } else if (grid[cy][cx] == pixNum.VERY_HUGE_NUKE) {
-                            pendingExplosions.push([cx, cy, 40, chain - 1]);
+                            pendingExplosions.push([cx, cy, 40]);
                             grid[cy][cx] = pixNum.AIR;
-                            chained = true;
+                            chained++;
                         }
                     }
                     if (grid[cy][cx] == pixNum.GUNPOWDER) {
@@ -945,7 +956,7 @@ function explode(x, y, size, chain) {
                         pendingExplosions.push([cx, cy, 15, 1]);
                         grid[cy][cx] = pixNum.WALL;
                     }
-                    if (random() < 0.5 - (dist(x, y, cx, cy) / size)) {
+                    if (random() < 0.5 - (getDistance(x, y, cx, cy) / size)) {
                         fireGrid[cy][cx] = true;
                     }
                 }
@@ -1116,186 +1127,6 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert) {
         }
     }
 };
-function updateMouseControls() {
-    if ((mouseIsPressed && mouseButton == RIGHT) || removing) brush.isSelection = false;
-    if (!fastSimulation && acceptInputs && !inWinScreen && mouseOver) {
-        if (((mouseIsPressed && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
-            if (!brush.lineMode) {
-                brush.lineMode = true;
-                brush.lineStartX = mXGrid;
-                brush.lineStartY = mYGrid;
-            }
-            if (!mouseIsPressed) {
-                brush.lineMode = false;
-                clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, mouseButton == RIGHT || removing);
-            }
-        } else if (mouseIsPressed) {
-            brush.lineMode = false;
-            if (brush.isSelection && selection.grid[0] != undefined && sandboxMode) {
-                let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
-                let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
-                for (let y = 0; y < selection.grid.length; y++) {
-                    if (y + offsetY >= 0 && y + offsetY < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
-                        if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
-                            grid[y + offsetY][x + offsetX] = selection.grid[y][x];
-                            if (musicGrid[y + offsetY][x + offsetX]) {
-                                musicPixel(musicGrid[y + offsetY][x + offsetX], false);
-                                musicGrid[y + offsetY][x + offsetX] = 0;
-                            }
-                        }
-                    }
-                }
-            } else if (mouseButton == CENTER) {
-                if (holdingControl) {
-                    camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * camera.scale) - canvasResolution));
-                    camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * camera.scale) - canvasResolution));
-                    forceRedraw = true;
-                } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
-                    pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
-                }
-            } else if (mouseButton == LEFT && holdingControl && sandboxMode) {
-                if (!selecting) {
-                    selecting = true;
-                    selection.x1 = mXGrid;
-                    selection.y1 = mYGrid;
-                    selection.show = true;
-                }
-                selection.x2 = mXGrid;
-                selection.y2 = mYGrid;
-            } else {
-                clickLine(prevMXGrid, prevMYGrid, mXGrid, mYGrid, mouseButton == RIGHT || removing);
-            }
-        }
-    } else if (!mouseIsPressed && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
-        brush.lineMode = false;
-        clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, mouseButton == RIGHT || removing);
-    }
-    if (!mouseIsPressed || mouseButton != LEFT) selecting = false;
-};
-function clickLine(startX, startY, endX, endY, remove) {
-    if (!sandboxMode && !inResetState) return;
-    let x = startX;
-    let y = startY;
-    let angle = Math.atan2(endY - startY, endX - startX);
-    let distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-    let xtravel = Math.cos(angle);
-    let ytravel = Math.sin(angle);
-    let modifiedPixelCounts = [];
-    let clickPixelNum = pixels[brush.pixel].numId;
-    place: for (let i = 0; i <= distance; i++) {
-        let xmin = Math.max(0, Math.min(Math.round(x) - brush.size + 1, gridSize - 1));
-        let xmax = Math.max(0, Math.min(Math.round(x) + brush.size - 1, gridSize - 1));
-        let ymin = Math.max(0, Math.min(Math.round(y) - brush.size + 1, gridSize - 1));
-        let ymax = Math.max(0, Math.min(Math.round(y) + brush.size - 1, gridSize - 1));
-        function act(cb) {
-            for (let k = ymin; k <= ymax; k++) {
-                for (let j = xmin; j <= xmax; j++) {
-                    if (cb(j, k)) return true;
-                }
-            }
-            return false;
-        };
-        if (remove) {
-            if (sandboxMode) {
-                act(function (x, y) {
-                    grid[y][x] = pixNum.AIR;
-                    fireGrid[y][x] = false;
-                    monsterGrid[y][x] = false;
-                    targetGrid[y][x] = false;
-                    if (musicGrid[y][x]) {
-                        musicPixel(musicGrid[y][x], false);
-                        musicGrid[y][x] = 0;
-                    }
-                });
-            } else {
-                act(function (x, y) {
-                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
-                        pixelAmounts[numPixels[grid[y][x]].id]++;
-                        modifiedPixelCounts[grid[y][x]] = true;
-                        grid[y][x] = pixNum.AIR;
-                        if (fireGrid[y][x]) {
-                            pixelAmounts['fire']++;
-                            modifiedPixelCounts[pixNum.FIRE] = true;
-                            fireGrid[y][x] = false;
-                        }
-                        if (musicGrid[y][x]) {
-                            musicPixel(musicGrid[y][x], false);
-                            musicGrid[y][x] = 0;
-                        }
-                    }
-                });
-            }
-        } else if (brush.pixel == 'fire') {
-            if (sandboxMode) act(function (x, y) {
-                fireGrid[y][x] = true;
-            });
-            else act(function (x, y) {
-                if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
-                    fireGrid[y][x] = true;
-                    pixelAmounts[brush.pixel]--;
-                }
-                return pixelAmounts[brush.pixel] <= 0;
-            });
-        } else if (brush.pixel == 'placementRestriction') {
-            if (sandboxMode) act(function (x, y) {
-                placeableGrid[y][x] = false;
-            })
-        } else if (brush.pixel == 'placementUnRestriction') {
-            if (sandboxMode) act(function (x, y) {
-                placeableGrid[y][x] = true;
-            })
-        } else if (brush.pixel == 'monster') {
-            if (sandboxMode) act(function (x, y) {
-                monsterGrid[y][x] = true;
-            });
-        } else if (brush.pixel == 'target') {
-            if (sandboxMode) act(function (x, y) {
-                targetGrid[y][x] = true;
-            });
-        } else {
-            if (sandboxMode) {
-                act(function (x, y) {
-                    grid[y][x] = clickPixelNum;
-                    if (musicGrid[y][x]) {
-                        musicPixel(musicGrid[y][x], false);
-                        musicGrid[y][x] = 0;
-                    }
-                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
-                });
-            } else {
-                modifiedPixelCounts[clickPixelNum] = true;
-                if (pixelAmounts[brush.pixel] <= 0) break place;
-                if (act(function (x, y) {
-                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
-                        modifiedPixelCounts[grid[y][x]] = true;
-                        pixelAmounts[numPixels[grid[y][x]].id]++;
-                        grid[y][x] = clickPixelNum;
-                        if (musicGrid[y][x]) {
-                            musicPixel(musicGrid[y][x], false);
-                            musicGrid[y][x] = 0;
-                        }
-                        pixelAmounts[brush.pixel]--;
-                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
-                    }
-                    return pixelAmounts[brush.pixel] <= 0;
-                })) break place;
-            }
-        }
-        x += xtravel;
-        y += ytravel;
-    }
-    for (let pixelType in modifiedPixelCounts) {
-        if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
-    }
-    if (!sandboxMode) {
-        saveCode = generateSaveCode();
-        window.localStorage.setItem(`challenge-${currentPuzzleId}`, JSON.stringify({
-            code: saveCode,
-            pixels: pixelAmounts
-        }));
-        saveCodeText.value = saveCode;
-    }
-};
 function drawBrush() {
     if (!fastSimulation && !selecting) {
         if (brush.isSelection && selection.grid[0] != undefined) {
@@ -1321,29 +1152,14 @@ function drawBrush() {
             ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
             ctx.stroke();
         } else if (brush.lineMode) {
-            let x = brush.lineStartX;
-            let y = brush.lineStartY;
-            let angle = Math.atan2(mYGrid - brush.lineStartY, mXGrid - brush.lineStartX);
-            let distance = Math.sqrt(Math.pow(mXGrid - brush.lineStartX, 2) + Math.pow(mYGrid - brush.lineStartY, 2));
-            let xtravel = Math.cos(angle);
-            let ytravel = Math.sin(angle);
-            let clickPixelNum = pixels[brush.pixel].numId;
+            const clickPixelNum = ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
             abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
-            for (let i = 0; i <= distance; i++) {
-                let xmin = Math.max(0, Math.min(Math.round(x) - brush.size + 1, gridSize - 1));
-                let xmax = Math.max(0, Math.min(Math.round(x) + brush.size - 1, gridSize - 1));
-                let ymin = Math.max(0, Math.min(Math.round(y) - brush.size + 1, gridSize - 1));
-                let ymax = Math.max(0, Math.min(Math.round(y) + brush.size - 1, gridSize - 1));
-                drawPixels(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : clickPixelNum, 1, abovectx, true);
-                x += xtravel;
-                y += ytravel;
-            }
+            brushActionLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, (rect) => {
+                drawPixels(rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, clickPixelNum, 1, abovectx, true);
+            });
             ctx.globalAlpha = 0.5;
             ctx.drawImage(above, 0, 0);
-            let x1 = Math.min(gridSize, Math.max(0, mXGrid - brush.size + 1));
-            let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
-            let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
-            let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + brush.size - 1));
+            let rect = calcBrushRectCoordinates(mXGrid, mYGrid);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(255, 255, 255)';
             let scale = gridScale * camera.scale;
@@ -1351,15 +1167,12 @@ function drawBrush() {
             ctx.lineWidth = 2 * camera.scale;
             ctx.globalCompositeOperation = 'difference';
             ctx.beginPath();
-            ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
+            ctx.strokeRect(rect.xmin * scale - camera.x, rect.ymin * scale - camera.y, (rect.xmax - rect.xmin + 1) * scale, (rect.ymax - rect.ymin + 1) * scale);
             ctx.stroke();
             ctx.globalCompositeOperation = 'source-over';
         } else {
-            let x1 = Math.min(gridSize, Math.max(0, mXGrid - brush.size + 1));
-            let x2 = Math.min(gridSize - 1, Math.max(-1, mXGrid + brush.size - 1));
-            let y1 = Math.min(gridSize, Math.max(0, mYGrid - brush.size + 1));
-            let y2 = Math.min(gridSize - 1, Math.max(-1, mYGrid + brush.size - 1));
-            drawPixels(x1, y1, x2 - x1 + 1, y2 - y1 + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx, true);
+            let rect = calcBrushRectCoordinates(mXGrid, mYGrid)
+            drawPixels(rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx, true);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(255, 255, 255)';
             let scale = gridScale * camera.scale;
@@ -1367,7 +1180,7 @@ function drawBrush() {
             ctx.lineWidth = 2 * camera.scale;
             ctx.globalCompositeOperation = 'difference';
             ctx.beginPath();
-            ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
+            ctx.strokeRect(rect.xmin * scale - camera.x, rect.ymin * scale - camera.y, (rect.xmax - rect.xmin + 1) * scale, (rect.ymax - rect.ymin + 1) * scale);
             ctx.stroke();
             ctx.globalCompositeOperation = 'source-over';
         }
@@ -1582,6 +1395,221 @@ function updateTick() {
             }
         }
         if (!hasMonsters && !hasUnfulfilledTargets && !sandboxMode) triggerWin();
+    }
+};
+
+// brush
+function calcBrushRectCoordinates(x, y) {
+    return {
+        xmin: Math.max(0, Math.min(x - brush.size + 1, gridSize - 1)),
+        xmax: Math.max(0, Math.min(x + brush.size - 1, gridSize - 1)),
+        ymin: Math.max(0, Math.min(y - brush.size + 1, gridSize - 1)),
+        ymax: Math.max(0, Math.min(y + brush.size - 1, gridSize - 1))
+    };
+};
+function updateMouseControls() {
+    if ((mouseIsPressed && mouseButton == RIGHT) || removing) brush.isSelection = false;
+    if (!fastSimulation && acceptInputs && !inWinScreen && mouseOver) {
+        if (((mouseIsPressed && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
+            if (!brush.lineMode) {
+                brush.lineMode = true;
+                brush.lineStartX = mXGrid;
+                brush.lineStartY = mYGrid;
+            }
+            if (!mouseIsPressed) {
+                brush.lineMode = false;
+                clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, mouseButton == RIGHT || removing);
+            }
+        } else if (mouseIsPressed) {
+            brush.lineMode = false;
+            if (brush.isSelection && selection.grid[0] != undefined && sandboxMode) {
+                let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
+                let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
+                for (let y = 0; y < selection.grid.length; y++) {
+                    if (y + offsetY >= 0 && y + offsetY < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
+                        if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
+                            grid[y + offsetY][x + offsetX] = selection.grid[y][x];
+                            if (musicGrid[y + offsetY][x + offsetX]) {
+                                musicPixel(musicGrid[y + offsetY][x + offsetX], false);
+                                musicGrid[y + offsetY][x + offsetX] = 0;
+                            }
+                        }
+                    }
+                }
+            } else if (mouseButton == CENTER) {
+                if (holdingControl) {
+                    camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * camera.scale) - canvasResolution));
+                    camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * camera.scale) - canvasResolution));
+                    forceRedraw = true;
+                } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
+                    pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
+                }
+            } else if (mouseButton == LEFT && holdingControl && sandboxMode) {
+                if (!selecting) {
+                    selecting = true;
+                    selection.x1 = mXGrid;
+                    selection.y1 = mYGrid;
+                    selection.show = true;
+                }
+                selection.x2 = mXGrid;
+                selection.y2 = mYGrid;
+            } else {
+                clickLine(prevMXGrid, prevMYGrid, mXGrid, mYGrid, mouseButton == RIGHT || removing);
+            }
+        }
+    } else if (!mouseIsPressed && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
+        brush.lineMode = false;
+        clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, mouseButton == RIGHT || removing);
+    }
+    if (!mouseIsPressed || mouseButton != LEFT) selecting = false;
+};
+function brushActionLine(x1, y1, x2, y2, cb) {
+    let slope = (y2 - y1) / (x2 - x1);
+    if (!isFinite(slope)) {
+        cb({
+            xmin: Math.max(0, Math.min(x1 - brush.size + 1, gridSize - 1)),
+            xmax: Math.max(0, Math.min(x1 + brush.size - 1, gridSize - 1)),
+            ymin: Math.max(0, Math.min(Math.min(y2, y1) - brush.size + 1, gridSize - 1)),
+            ymax: Math.max(0, Math.min(Math.max(y2, y1) + brush.size - 1, gridSize - 1))
+        });
+    } else if (slope == 0) {
+        cb({
+            xmin: Math.max(0, Math.min(Math.min(x2, x1) - brush.size + 1, gridSize - 1)),
+            xmax: Math.max(0, Math.min(Math.max(x2, x1) + brush.size - 1, gridSize - 1)),
+            ymin: Math.max(0, Math.min(y1 - brush.size + 1, gridSize - 1)),
+            ymax: Math.max(0, Math.min(y1 + brush.size - 1, gridSize - 1))
+        });
+    } else if (Math.abs(slope) > 1) {
+        slope = 1 / slope;
+        let min = y2 < y1 ? x2 : x1;
+        let start = Math.min(y2, y1);
+        let end = Math.max(y2, y1);
+        for (let y = start; y <= end; y++) {
+            let x = Math.round(slope * (y - start)) + min;
+            cb(calcBrushRectCoordinates(x, y));
+        }
+    } else {
+        let min = x2 < x1 ? y2 : y1;
+        let start = Math.min(x2, x1);
+        let end = Math.max(x2, x1);
+        for (let x = start; x <= end; x++) {
+            let y = Math.round(slope * (x - start)) + min;
+            cb(calcBrushRectCoordinates(x, y));
+        }
+    }
+};
+function clickLine(x1, y1, x2, y2, remove) {
+    if (!sandboxMode && !inResetState) return;
+    let modifiedPixelCounts = [];
+    let clickPixelNum = pixels[brush.pixel].numId;
+    let skipToEnd = false;
+    brushActionLine(x1, y1, x2, y2, (rect) => {
+        if (skipToEnd) return;
+        function act(cb) {
+            for (let k = rect.ymin; k <= rect.ymax; k++) {
+                for (let j = rect.xmin; j <= rect.xmax; j++) {
+                    if (cb(j, k)) return true;
+                }
+            }
+            return false;
+        };
+        if (remove) {
+            if (sandboxMode) {
+                act(function (x, y) {
+                    grid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                    monsterGrid[y][x] = false;
+                    targetGrid[y][x] = false;
+                    if (musicGrid[y][x]) {
+                        musicPixel(musicGrid[y][x], false);
+                        musicGrid[y][x] = 0;
+                    }
+                });
+            } else {
+                act(function (x, y) {
+                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
+                        pixelAmounts[numPixels[grid[y][x]].id]++;
+                        modifiedPixelCounts[grid[y][x]] = true;
+                        grid[y][x] = pixNum.AIR;
+                        if (fireGrid[y][x]) {
+                            pixelAmounts['fire']++;
+                            modifiedPixelCounts[pixNum.FIRE] = true;
+                            fireGrid[y][x] = false;
+                        }
+                        if (musicGrid[y][x]) {
+                            musicPixel(musicGrid[y][x], false);
+                            musicGrid[y][x] = 0;
+                        }
+                    }
+                });
+            }
+        } else if (brush.pixel == 'fire') {
+            if (sandboxMode) act(function (x, y) {
+                fireGrid[y][x] = true;
+            });
+            else act(function (x, y) {
+                if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
+                    fireGrid[y][x] = true;
+                    pixelAmounts[brush.pixel]--;
+                }
+                return pixelAmounts[brush.pixel] <= 0;
+            });
+        } else if (brush.pixel == 'placementRestriction') {
+            if (sandboxMode) act(function (x, y) {
+                placeableGrid[y][x] = false;
+            })
+        } else if (brush.pixel == 'placementUnRestriction') {
+            if (sandboxMode) act(function (x, y) {
+                placeableGrid[y][x] = true;
+            })
+        } else if (brush.pixel == 'monster') {
+            if (sandboxMode) act(function (x, y) {
+                monsterGrid[y][x] = true;
+            });
+        } else if (brush.pixel == 'target') {
+            if (sandboxMode) act(function (x, y) {
+                targetGrid[y][x] = true;
+            });
+        } else {
+            if (sandboxMode) {
+                act(function (x, y) {
+                    grid[y][x] = clickPixelNum;
+                    if (musicGrid[y][x]) {
+                        musicPixel(musicGrid[y][x], false);
+                        musicGrid[y][x] = 0;
+                    }
+                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
+                });
+            } else {
+                modifiedPixelCounts[clickPixelNum] = true;
+                if (pixelAmounts[brush.pixel] <= 0) skipToEnd = true;
+                else if (act(function (x, y) {
+                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
+                        modifiedPixelCounts[grid[y][x]] = true;
+                        pixelAmounts[numPixels[grid[y][x]].id]++;
+                        grid[y][x] = clickPixelNum;
+                        if (musicGrid[y][x]) {
+                            musicPixel(musicGrid[y][x], false);
+                            musicGrid[y][x] = 0;
+                        }
+                        pixelAmounts[brush.pixel]--;
+                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
+                    }
+                    return pixelAmounts[brush.pixel] <= 0;
+                })) skipToEnd = true;
+            }
+        }
+    });
+    for (let pixelType in modifiedPixelCounts) {
+        if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
+    }
+    if (!sandboxMode) {
+        saveCode = generateSaveCode();
+        window.localStorage.setItem(`challenge-${currentPuzzleId}`, JSON.stringify({
+            code: saveCode,
+            pixels: pixelAmounts
+        }));
+        saveCodeText.value = saveCode;
     }
 };
 
