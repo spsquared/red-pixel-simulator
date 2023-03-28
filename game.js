@@ -1401,10 +1401,10 @@ function updateTick() {
 // brush
 function calcBrushRectCoordinates(x, y) {
     return {
-        xmin: Math.max(0, Math.min(x - brush.size + 1, gridSize - 1)),
-        xmax: Math.max(0, Math.min(x + brush.size - 1, gridSize - 1)),
-        ymin: Math.max(0, Math.min(y - brush.size + 1, gridSize - 1)),
-        ymax: Math.max(0, Math.min(y + brush.size - 1, gridSize - 1))
+        xmin: Math.max(0, Math.min(x - brush.size + 1, gridSize)),
+        xmax: Math.max(-1, Math.min(x + brush.size - 1, gridSize - 1)),
+        ymin: Math.max(0, Math.min(y - brush.size + 1, gridSize)),
+        ymax: Math.max(-1, Math.min(y + brush.size - 1, gridSize - 1))
     };
 };
 function updateMouseControls() {
