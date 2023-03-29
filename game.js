@@ -921,13 +921,13 @@ function explode(x, y, size) {
     nextGrid[y][x] = pixNum.AIR;
     grid[y][x] = pixNum.AIR;
     let chained = 0;
-    let rays = size * 2;
-    for (let i = 0; i < rays; i++) {
-        let angle = 2 * Math.PI / rays;
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-        // sector???
-    }
+    // let rays = size * 2;
+    // for (let i = 0; i < rays; i++) {
+    //     let angle = 2 * Math.PI / rays;
+    //     let cos = Math.cos(angle);
+    //     let sin = Math.sin(angle);
+    //     // sector???
+    // }
     for (let cy = y - size; cy <= y + size; cy++) {
         for (let cx = x - size; cx <= x + size; cx++) {
             if (cy >= 0 && cy < gridSize && cx >= 0 && cx < gridSize) {

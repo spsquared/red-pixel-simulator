@@ -3564,16 +3564,16 @@ const pixels = {
         text: 'Cp'
     }),
     music_83: generateMusicPixel(83, {
-        name: 'Hi-hat Cymbal 2',
-        description: 'Makes funny hi-hat cymbal sound that hurts your ears',
-        color: 'rgb(150, 150, 150)',
-        text: 'Cy2'
-    }),
-    music_84: generateMusicPixel(84, {
         name: 'Hi-hat Cymbal 1',
         description: 'Makes funny hi-hat cymbal sound that hurts your ears',
         color: 'rgb(150, 150, 150)',
         text: 'Cy1'
+    }),
+    music_84: generateMusicPixel(84, {
+        name: 'Hi-hat Cymbal 2',
+        description: 'Makes funny hi-hat cymbal sound that hurts your ears',
+        color: 'rgb(150, 150, 150)',
+        text: 'Cy2'
     }),
     music_85: generateMusicPixel(85, {
         name: 'Maraca Shake',
