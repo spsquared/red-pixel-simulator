@@ -709,9 +709,7 @@ function flow(x, y) {
         return;
     }
     if (isAir(x, y + 1)) {
-        if (canMoveTo(x, y + 1)) {
-            move(x, y, x, y + 1);
-        }
+        if (canMoveTo(x, y + 1)) move(x, y, x, y + 1);
     } else {
         let left = x;
         let right = x;
@@ -781,15 +779,15 @@ function flow(x, y) {
             }
         }
         if (toSlide > 0) {
-            if (foundRightDrop && isAir(x + 1, y + 1)) {
+            if (foundRightDrop && isAir(x + 1, y + 1) && canMoveTo(x + 1, y + 1)) {
                 move(x, y, x + 1, y + 1);
-            } else {
+            } else if (canMoveTo(x + 1, y)) {
                 move(x, y, x + 1, y);
             }
         } else if (toSlide < 0) {
-            if (foundLeftDrop && isAir(x - 1, y + 1)) {
+            if (foundLeftDrop && isAir(x - 1, y + 1) && canMoveTo(x - 1, y + 1)) {
                 move(x, y, x - 1, y + 1);
-            } else {
+            } else if (canMoveTo(x - 1, y)) {
                 move(x, y, x - 1, y);
             }
         }
