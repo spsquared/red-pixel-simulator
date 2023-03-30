@@ -2006,14 +2006,6 @@ gridSizeText.oninput = (e) => {
     if (gridSizeText.value != '') saveCode = gridSizeText.value + saveCode.substring(saveCode.indexOf(';'));
     saveCodeText.value = saveCode;
 };
-document.getElementById('screenshot').onclick = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
-    const encoded = gameCanvas.toDataURL('image/png');
-    const a = document.createElement('a');
-    a.href = encoded;
-    a.download = `rps-screenshot_${Math.ceil(Math.random() * 1000)}.png`;
-    a.click();
-};
 // settings
 const noNoiseButton = document.getElementById('noNoise');
 const noAnimationsButton = document.getElementById('noAnimation');

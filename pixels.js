@@ -848,7 +848,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 15,
+        blastResistance: 18,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -2724,10 +2724,13 @@ const pixels = {
             let path = getLaserPath(x, y, 0);
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
-            if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
-                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
-                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
-                if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
+            if (monsterGrid[last[3]][last[2]]) {
+                if (random() < numPixels[pixNum.MONSTER].flammability / 100) monsterGrid[last[3]][last[2]] = false;
+            } else {
+                if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
+                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                } else if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -2780,10 +2783,13 @@ const pixels = {
             let path = getLaserPath(x, y, 1);
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
-            if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
-                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
-                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
-                if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
+            if (monsterGrid[last[3]][last[2]]) {
+                if (random() < numPixels[pixNum.MONSTER].flammability / 100) monsterGrid[last[3]][last[2]] = false;
+            } else {
+                if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
+                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                } else if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -2836,10 +2842,13 @@ const pixels = {
             let path = getLaserPath(x, y, 2);
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
-            if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
-                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
-                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
-                if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
+            if (monsterGrid[last[3]][last[2]]) {
+                if (random() < numPixels[pixNum.MONSTER].flammability / 100) monsterGrid[last[3]][last[2]] = false;
+            } else {
+                if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
+                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                } else if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -2892,10 +2901,13 @@ const pixels = {
             let path = getLaserPath(x, y, 3);
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
-            if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
-                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
-                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
-                if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
+            if (monsterGrid[last[3]][last[2]]) {
+                if (random() < numPixels[pixNum.MONSTER].flammability / 100) monsterGrid[last[3]][last[2]] = false;
+            } else {
+                if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) {
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
+                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                } else if (random() < (numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
         },
         drawPreview: function (ctx) {

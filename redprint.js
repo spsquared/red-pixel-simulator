@@ -302,7 +302,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             // undo!!!!!!!!!!!
         }
     });
-    document.addEventListener('mousemove', (e) => {
+    function mouseMove(e) {
         const rect = rpCanvas.getBoundingClientRect();
         rpMX = Math.round((e.pageX - rect.left) * rpCanvasScale);
         rpMY = Math.round((e.pageY - rect.top - window.scrollY) * rpCanvasScale);
@@ -312,9 +312,14 @@ window.addEventListener('DOMContentLoaded', (e) => {
         rpMXGrid = Math.floor((rpMX + rpCamera.x - offsetX) * scale);
         rpMYGrid = Math.floor((rpMY + rpCamera.y - offsetY) * scale);
         rpMouseOver = rpMX >= 0 && rpMX < rpCanvasRes && rpMY >= 0 && rpMY < rpCanvasRes;
-    });
+    };
+    document.addEventListener('mousemove', mouseMove);
+    document.addEventListener('wheel', mouseMove);
 });
-window.addEventListener('load', refreshRedPrintList);
+window.addEventListener('load', (e) => {
+    createRPGrid(10, 10);
+    refreshRedPrintList();
+});
 
 // inputs
 const rpGWInput = document.getElementById('rpGW');
