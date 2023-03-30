@@ -4584,6 +4584,7 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
             pixelSelectors[id].box.classList.remove('pickerNoPixels');
             pixelSelectors[id].box.style.display = '';
             pixelSelectors[id].parentGroup.style.display = '';
+            pixelSelectors[id].parentGroup.children[0]._refresh();
         } else {
             pixelSelectors[id].count.innerText = pixelAmounts[id] == Infinity ? '∞' : pixelAmounts[id];
             if (pixelAmounts[id] == 0 || pixelAmounts[id] == Infinity) {
@@ -4591,6 +4592,7 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
                 if (forceShow) {
                     pixelSelectors[id].box.style.display = '';
                     pixelSelectors[id].parentGroup.style.display = '';
+                    pixelSelectors[id].parentGroup.children[0]._refresh();
                 } else if (hideEmpty) {
                     pixelSelectors[id].box.style.display = 'none';
                 }
@@ -4598,6 +4600,7 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
                 pixelSelectors[id].box.classList.remove('pickerNoPixels');
                 pixelSelectors[id].box.style.display = '';
                 pixelSelectors[id].parentGroup.style.display = '';
+                pixelSelectors[id].parentGroup.children[0]._refresh();
             }
         }
     }
