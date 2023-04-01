@@ -65,6 +65,11 @@ let startTitleBob = setTimeout(() => { });
 
 let acceptMenuInputs = true;
 const transitionTimeouts = [];
+const loadingTips = [
+    'Using a combination of rotators and sliders you can create a slow-flying flying machine that moves at half the pace of a regular one.',
+    'Try Blue Pixel Simulator!',
+    ''
+];
 function setTransitionTimeout(cb, ms) {
     let t = setTimeout(() => {
         cb();
@@ -275,7 +280,7 @@ multiplayerButton.onclick = (e) => {
         pixsimMenuConnecting.style.opacity = 0;
         pixsimMenuConnecting.style.pointerEvents = 'none';
     }, (err) => {
-        modal('Could not connect to PixSim API:', `<span style="color: red;">${err.message}</span><br><button onclick="window.open('https://pixsim-api.radioactivestuf.repl.co');>Attempt manual wake</button>`).then(() => pixsimMenuClose.click());
+        modal('Could not connect to PixSim API:', `<span style="color: red;">${err.message}</span>`).then(() => pixsimMenuClose.click());
     });
 };
 levelSelectClose.onclick = (e) => {

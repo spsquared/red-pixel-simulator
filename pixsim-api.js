@@ -1,4 +1,4 @@
-const apiURI = 'https://pixsim-api.radioactivestuf.repl.co';
+const apiURI = 'https://pixsim-api.spsquared.repl.co';
 // const apiURI = 'http://localhost:503';
 const socket = io(apiURI, {
     path: '/pixsim-api',
