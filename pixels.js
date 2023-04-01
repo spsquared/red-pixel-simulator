@@ -4210,6 +4210,48 @@ const pixels = {
         id: 'spin',
         numId: 0
     },
+    rickastley: {
+        name: 'Rick Astley',
+        description: 'Never gonna give you up<br>Never gonna let you down<br>Never gonna run around and desert you<br>Never gonna make you cry<br>Never gonna say goodby<br>Never gonna tell a lie and hurt you',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            let scale = gridScale * camera.scale;
+            if (this.prerenderedFrames[0]) ctx.drawImage(this.prerenderedFrames[0], x * scale - camera.x, y * scale - camera.y, width * scale, height * scale, x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
+        },
+        update: function (x, y) {
+            if (window.rickastley) return;
+            musicPixel(87, true);
+            window.rickastley = true;
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            let rickastley = new Image();
+            rickastley.src = './assets/rickastley.png';
+            rickastley.onload = (e) => {
+                ctx.drawImage(rickastley, 0, 0, canvasResolution, canvasResolution);
+                this.prerenderedFrames.push(toImage());
+            };
+        },
+        prerenderedFrames: [],
+        blastResistance: Infinity,
+        flammability: -Infinity,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 4,
+        key: Infinity,
+        updateStage: 0,
+        animatedNoise: false,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'rickastley',
+        numId: 0
+    },
     placementUnRestriction: {
         name: 'Allow Placement',
         description: 'Remove placement restrictions in sandbox levels',
@@ -4691,7 +4733,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
     };
     const canvas2 = document.createElement('canvas');
     const ctx2 = canvas2.getContext('2d');
-    let pixIndex = 0; ``
+    let pixIndex = 0;
     canvas2.width = 50;
     canvas2.height = 50;
     const groupNames = ['General', 'Mechanical', 'Lasers', 'Music', 'Destruction', 'Level Building'];

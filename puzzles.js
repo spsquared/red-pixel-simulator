@@ -109,20 +109,6 @@ const puzzles = [
         ]
     },
     {
-        name: 'Square Caves',
-        levels: [
-            {
-                name: 'Down in the Mines',
-                description: `<i>[music]</i> Oh wait, we're lost. It's fine, though.<br><i>Monster appears.</i><br>Nevermind, it's not fine. You might want to kill those things before they kill you. I'm not sure how they're supposed to kill you, but I think you should get rid of them anyways.`,
-                saveCode: '50;0000;stone-9:air-5:stone-45:air-5:stone-45:air-5:stone-45:air-5:stone-45:air-5:stone-9:air-17:stone-19:air-5:stone-9:air-17:stone-19:air-5:stone-9:air-17:stone-19:air-5:stone-18:air-3:stone-24:air-5:stone-18:air-3:stone-24:air-5:stone-18:air-3:stone-24:air-5:stone-18:air-3:stone-24:air-5:stone-18:air-3:stone-24:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-11:air-45:stone-5:air-45:stone-5:air-45:stone-5:air-45:stone-5:air-45:stone-9:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-25:stone-25:air-25:stone-25:air-25:stone-25:air-5:stone-45:air-5:stone-45:air-5:stone-45:air-5:stone-45:air-5:stone-45:air-5:stone-45:air-5:stone-45:air-5:stone-45:air-5:stone-45:air-5:stone-36:;9c4:;0:9c4:;338:1:1:1:47a:1:20e:;9c4:',
-                inventory: {
-
-                },
-                id: 'buh'
-            }
-        ]
-    },
-    {
         name: 'Pixel Machines',
         levels: [
             {

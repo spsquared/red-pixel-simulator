@@ -1,5 +1,5 @@
-const apiURI = 'https://pixsim-api.radioactivestuf.repl.co';
-// const apiURI = 'http://localhost:503';
+// const apiURI = 'https://pixsim-api.radioactivestuf.repl.co';
+const apiURI = 'http://localhost:503';
 const socket = io(apiURI, {
     path: '/pixsim-api',
     autoConnect: false,
@@ -55,19 +55,38 @@ function APIconnect() {
         const wakeup = new XMLHttpRequest();
         wakeup.open('GET', apiURI);
         wakeup.onerror = (e) => {
-            console.log(e)
-            console.log(wakeup)
             reject(new Error(`wakeup call failed: ${wakeup.status} ${wakeup.statusText}`));
         };
         wakeup.send();
         socket.connect();
-        socket.once('connect', resolve);
+        socket.once('connect', () => {
+            socket.once('requestClientInfo', async (key) => {
+                if (window.crypto.subtle !== undefined) {
+                    RSA.key = await window.crypto.subtle.importKey('jwk', key, {name: "RSA-OAEP", hash: "SHA-256"}, false, ['encrypt']);
+                }
+                socket.emit('clientInfo', {
+                    gameType: 'rps',
+                    username: 'Unknown',
+                    password: RSA.encode('')
+                });
+                socket.once('clientInfoRecieved', resolve);
+            });
+        });
         socket.once('error', reject);
-    })
+    });
 };
 function APIdisconnect() {
     apiconnected = false;
     socket.disconnect();
+};
+
+// encryption
+const RSA = {
+    key: null,
+    encode: async (text) => {
+        if (RSA.key !== null) return await window.crypto.subtle.encrypt({name: 'RSA-OAEP'}, RSA.key, new TextEncoder().encode(text));
+        else return text;
+    }
 };
 
 function APIcreateGame() {

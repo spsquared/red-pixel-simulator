@@ -2324,6 +2324,7 @@ window.addEventListener('load', (e) => {
     addMusicPixelSound(84);
     addMusicPixelSound(85);
     addMusicPixelSound(86);
+    addMusicPixelSound(87);
     toggleMusic();
     toggleMusic();
 });
