@@ -1,5 +1,5 @@
-// const apiURI = 'https://pixsim-api.radioactivestuf.repl.co';
-const apiURI = 'http://localhost:503';
+const apiURI = 'https://pixsim-api.radioactivestuf.repl.co';
+// const apiURI = 'http://localhost:503';
 const socket = io(apiURI, {
     path: '/pixsim-api',
     autoConnect: false,
