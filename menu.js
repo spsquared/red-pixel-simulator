@@ -276,7 +276,7 @@ multiplayerButton.onclick = (e) => {
     pixsimMenuConnecting.style.pointerEvents = '';
     pixsimMenuContents.style.transform = '';
     pixsimMenu.style.transform = 'translateY(100vh)';
-    APIconnect().then(() => {
+    PixSimAPI.connect().then(() => {
         pixsimMenuConnecting.style.opacity = 0;
         pixsimMenuConnecting.style.pointerEvents = 'none';
     }, (err) => {
@@ -289,7 +289,7 @@ levelSelectClose.onclick = (e) => {
 };
 pixsimMenuClose.onclick = (e) => {
     pixsimMenu._open = false;
-    APIdisconnect();
+    PixSimAPI.disconnect();
     pixsimMenu.style.transform = '';
 };
 function selectPuzzle() {
@@ -314,80 +314,68 @@ function selectPuzzle() {
     transitionToGame();
 };
 
+const pixsimjoinTitle = document.getElementById('joinTitle');
+const pixsimJoinGameCodeCode = document.getElementById('joinGameCodeCode');
+const pixsimJoinGameCodeJoin = document.getElementById('joinGameCodeJoin');
+const pixsimJoinList = document.getElementById('joinListContent');
+const pixsimTeamList = document.getElementById('pxTeamsContent');
+const pixsimHostTeamListWrapper = document.getElementById('hostTeamsWrapper');
+const pixsimGameWaitTeamListWrapper = document.getElementById('waitTeamsWrapper');
+const pixsimSpectatorsList = document.getElementById('pxSpectatorsContent');
+const pixsimHostSpectatorsListWrapper = document.getElementById('hostSpectatorsWrapper');
+const pixsimGameWaitSpectatorListWrapper = document.getElementById('waitSpectatorsWrapper');
+const pixsimTeamsTAPlayers = document.getElementById('pxTeamsTAPlayers');
+const pixsimTeamsTBPlayers = document.getElementById('pxTeamsTBPlayers');
+const pixsimHostCancelGame = document.getElementById('hostCancelGame');
+const pixsimHostStartGame = document.getElementById('hostStartGame');
+const pixsimWaitLeaveGame = document.getElementById('waitLeaveGame');
+const pixsimDragCard = document.getElementById('pixsimDragCardWrapper');
+const pixsimDragging = {
+    dragging: false,
+    draggingName: '',
+    startX: 0,
+    startY: 0,
+    hoveringTeam: -1
+};
 pixsimSelectHostButton.onclick = (e) => {
     pixsimMenuContents.style.transform = 'translateY(100%)';
     const joinCodeDisp = document.getElementById('hostJoinCode');
+    const allowSpectatorsToggle = document.getElementById('hostAllowSpectators');
+    const publicGameToggle = document.getElementById('hostPublicGame');
+    allowSpectatorsToggle.checked = true;
+    publicGameToggle.checked = true;
     joinCodeDisp.innerText = '- - -';
-    APIcreateGame().then((gameHost) => {
-        joinCodeDisp.innerText = gameHost.code();
+    pixsimHostTeamListWrapper.appendChild(pixsimTeamList);
+    pixsimHostSpectatorsListWrapper.appendChild(pixsimSpectatorsList);
+    PixSimAPI.createGame().then((code) => {
+        joinCodeDisp.innerText = code;
+        joinCodeDisp.onclick = (e) => {
+            window.navigator.clipboard.writeText(code);
+        };
         function cancelHostGame() {
-            gameHost.end();
+            pixsimMenuContents.style.transform = '';
+            PixSimAPI.leaveGame();
             pixsimMenuClose.removeEventListener('click', cancelHostGame);
-            document.querySelector('#pixsimHostBody .pixsimBackButton').removeEventListener('click', cancelHostGame);
         };
         pixsimMenuClose.addEventListener('click', cancelHostGame);
-        document.querySelector('#pixsimHostBody .pixsimBackButton').addEventListener('click', cancelHostGame);
+        pixsimHostCancelGame.onclick = cancelHostGame;
+        allowSpectatorsToggle.onclick = (e) => {
+            PixSimAPI.allowSpectators = allowSpectatorsToggle.checked;
+        };
+        publicGameToggle.onclick = (e) => {
+            PixSimAPI.isPublic = publicGameToggle.checked;
+        };
     });
 };
 pixsimSelectJoinButton.onclick = (e) => {
+    pixsimJoinList.innerText = 'Join Game';
     pixsimMenuContents.style.transform = 'translateY(-100%)';
-    const joinGameCodeCode = document.getElementById('joinGameCodeCode');
-    const joinGameCodeJoin = document.getElementById('joinGameCodeJoin');
-    joinGameCodeCode.value = '';
-    joinGameCodeJoin.onclick = (e) => {
-        modal('Unable to do that!', 'This feature hasn\'t been implemented yet.', false);
-    };
-    function refresh(data) {
-        const joinList = document.getElementById('joinListContent');
-        joinList.innerHTML = '';
-        function type(t) {
-            switch (t) {
-                case 'vaultwars':
-                    return 'Vault Wars';
-                case 'resourcerace':
-                    return 'Resource Race';
-                default:
-                    return 'Unknown';
-            }
-        };
-        for (let game of data) {
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('joinTile');
-            const img = new Image();
-            img.classList.add('joinTileImg');
-            const codeText = document.createElement('div');
-            codeText.classList.add('joinTileCode');
-            codeText.innerText = game.code;
-            wrapper.appendChild(codeText);
-            const sub1 = document.createElement('div');
-            sub1.classList.add('joinTileSub1');
-            sub1.innerText = `${type(game.type)} ❖ ${game.hostName}`;
-            wrapper.appendChild(sub1);
-            const sub2 = document.createElement('div');
-            sub2.classList.add('joinTileSub2');
-            sub2.innerText = game.allowsSpectators ? 'Spectators allowed' : 'Spectators not allowed';
-            wrapper.appendChild(sub2);
-            wrapper.appendChild(img);
-            wrapper.onclick = (e) => {
-                modal('Unable to do that!', 'This feature hasn\'t been implmented yet.', false);
-            };
-            joinList.appendChild(wrapper);
-        }
-    }
-    let refreshLoop = setInterval(() => {
-        APIgetPublicGames('all').then(refresh);
-    }, 20000);
-    function stopRefreshLoop() {
-        clearInterval(refreshLoop);
-        pixsimMenuClose.removeEventListener('click', stopRefreshLoop);
-        document.querySelector('#pixsimHostBody .pixsimBackButton').removeEventListener('click', stopRefreshLoop);
-    };
-    pixsimMenuClose.addEventListener('click', stopRefreshLoop);
-    document.querySelector('#pixsimJoinBody .pixsimBackButton').addEventListener('click', stopRefreshLoop);
-    APIgetPublicGames('all').then(refresh);
+    loadPublicGameList(false);
 };
 pixsimSelectSpectateButton.onclick = (e) => {
+    pixsimJoinList.innerText = 'Spectate Game';
     pixsimMenuContents.style.transform = 'translateY(-100%)';
+    loadPublicGameList(true);
 };
 pixsimSelectScrimmageButton.onclick = (e) => {
     pixsimMenuContents.style.transform = 'translateX(-100%)';
@@ -395,6 +383,225 @@ pixsimSelectScrimmageButton.onclick = (e) => {
 document.querySelectorAll('.pixsimBackButton').forEach(e => e.onclick = (e) => {
     pixsimMenuContents.style.transform = '';
 });
+pixsimJoinGameCodeCode.onkeyup = (e) => {
+    if (pixsimJoinGameCodeCode.value.length == 8) {
+        pixsimJoinGameCodeJoin.style.backgroundColor = '';
+        pixsimJoinGameCodeJoin.style.cursor = '';
+    } else {
+        pixsimJoinGameCodeJoin.style.backgroundColor = 'gray';
+        pixsimJoinGameCodeJoin.style.cursor = 'not-allowed';
+    }
+};
+pixsimJoinGameCodeJoin.onclick = (e) => {
+    if (pixsimJoinGameCodeCode.value.length == 8) {
+        PixSimAPI.joinGame(pixsimJoinGameCodeCode.value).then(handleJoinGame);
+    }
+};
+function refreshGameList(games) {
+    let scrollPos = pixsimJoinList.scrollTop;
+    pixsimJoinList.innerHTML = '';
+    function type(t) {
+        switch (t) {
+            case 'vaultwars':
+                return 'Vault Wars';
+            case 'resourcerace':
+                return 'Resource Race';
+            default:
+                return 'Unknown';
+        }
+    };
+    for (let game of games) {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('joinTile');
+        const codeText = document.createElement('div');
+        codeText.classList.add('joinTileCode');
+        codeText.innerText = game.code;
+        wrapper.appendChild(codeText);
+        const sub1 = document.createElement('div');
+        sub1.classList.add('joinTileSub1');
+        sub1.innerText = `${game.open ? 'Running' : 'Open'} ❖ ${type(game.type)} ❖ ${game.hostName}`;
+        wrapper.appendChild(sub1);
+        const sub2 = document.createElement('div');
+        sub2.classList.add('joinTileSub2');
+        sub2.innerText = `${game.teamSize}v${game.teamSize} ❖ ${game.allowsSpectators ? 'Spectators allowed' : 'Spectators not allowed'}`;
+        wrapper.appendChild(sub2);
+        wrapper.onclick = (e) => {
+            PixSimAPI.joinGame(game.code).then(handleJoinGame);
+        };
+        pixsimJoinList.appendChild(wrapper);
+    }
+    if (games.length == 0) {
+        pixsimJoinList.innerHTML = '<span style="font-size: 18px; margin-top: 8px;">No open games!</span><span style="margin-bottom: 8px;">Check back later, or host a game yourself.</span>';
+    }
+    pixsimJoinList.scrollTop = scrollPos;
+};
+function handleJoinGame(status) {
+    if (status == 0) {
+        stopRefreshLoop();
+        pixsimMenuContents.style.transform = 'translate(100%, -100%)';
+        pixsimGameWaitTeamListWrapper.appendChild(pixsimTeamList);
+        pixsimGameWaitSpectatorListWrapper.appendChild(pixsimSpectatorsList);
+        pixsimWaitLeaveGame.onclick = (e) => {
+            pixsimMenuContents.style.transform = 'translateY(-100%)';
+            PixSimAPI.leaveGame();
+            loadPublicGameList(PixSimAPI.spectating);
+        };
+    } else {
+        modal('Could not join game', status == 1 ? 'Game does not exist or already running' : 'Banned by game host');
+    }
+};
+function loadPublicGameList(spectating) {
+    PixSimAPI.spectating = spectating;
+    pixsimJoinGameCodeCode.value = '';
+    let refreshLoop = setInterval(() => {
+        PixSimAPI.getPublicGames('all').then(refreshGameList, stopRefreshLoop);
+    }, 3000);
+    stopRefreshLoop = () => {
+        clearInterval(refreshLoop);
+        pixsimMenuClose.removeEventListener('click', stopRefreshLoop);
+    };
+    pixsimMenuClose.addEventListener('click', stopRefreshLoop);
+    PixSimAPI.getPublicGames('all').then(refreshGameList, stopRefreshLoop);
+};
+function stopRefreshLoop() { };
+async function generatePlayerCard(username) {
+    const userData = await PixSimAPI.getUserData(username);
+    const card = document.createElement('div');
+    card.classList.add('pxPlayerCard');
+    if (PixSimAPI.isHost) {
+        card.classList.add('pxHostPlayerCard');
+        card.onmousedown = (e) => {
+            if (!e.target.matches('.pxPlayerCardKick')) {
+                startDragPlayerCard(card, username, e.pageX, e.pageY);
+            }
+        }
+    }
+    const img = new Image();
+    img.classList.add('pxPlayerCardProfileImg');
+    img.src = userData.img;
+    card.appendChild(img);
+    const name = document.createElement('div');
+    name.classList.add('pxPlayerCardName');
+    name.innerText = userData.igname;
+    card.appendChild(name);
+    const ranking = document.createElement('div');
+    ranking.classList.add('pxPlayerCardRanking');
+    ranking.innerText = `Rank ${userData.rank} ❖ ${userData.elo} ELO`;
+    card.appendChild(ranking);
+    if (PixSimAPI.isHost && PixSimAPI.username != username) {
+        const kickButton = document.createElement('div');
+        kickButton.classList.add('pxPlayerCardKick');
+        kickButton.onclick = (e) => {
+            PixSimAPI.kickPlayer(username);
+        };
+        card.appendChild(kickButton);
+    }
+    return card;
+};
+async function startDragPlayerCard(card, username, pageX, pageY) {
+    pixsimDragging.dragging = true;
+    pixsimDragging.draggingName = username;
+    const cardRect = card.getBoundingClientRect();
+    pixsimDragging.startX = (pageX ?? pixsimDragging.startX) - cardRect.left;
+    pixsimDragging.startY = (pageY ?? pixsimDragging.startY) - cardRect.top;
+    card.style.visibility = 'hidden';
+    pixsimDragCard.innerHTML = '';
+    const dragCard = await generatePlayerCard(username);
+    dragCard.style.cursor = 'grabbing';
+    pixsimDragCard.appendChild(dragCard);
+    pixsimDragCard.style.visibility = 'visible';
+    pixsimDragCard.style.top = pageY - pixsimDragging.startY + 'px';
+    pixsimDragCard.style.left = pageX - pixsimDragging.startX + 'px';
+    document.addEventListener('mousemove', function move(e) {
+        pixsimDragCard.style.top = e.pageY - pixsimDragging.startY + 'px';
+        pixsimDragCard.style.left = e.pageX - pixsimDragging.startX + 'px';
+    });
+    document.addEventListener('mouseup', function release(e) {
+        pixsimDragCard.style.visibility = '';
+        pixsimDragging.dragging = false;
+        if (pixsimDragging.hoveringTeam != -1) PixSimAPI.movePlayer(pixsimDragging.draggingName, pixsimDragging.hoveringTeam);
+        card.style.visibility = '';
+        document.removeEventListener('mouseup', release);
+        document.removeEventListener('mousemove', move);
+    });
+    pixsimTeamsTAPlayers.onmouseover = (e) => {
+        pixsimTeamsTAPlayers.style.backgroundColor = '#FFFFFF22';
+        pixsimDragging.hoveringTeam = 1;
+    };
+    pixsimTeamsTBPlayers.onmouseover = (e) => {
+        pixsimTeamsTBPlayers.style.backgroundColor = '#FFFFFF22';
+        pixsimDragging.hoveringTeam = 2;
+    };
+    pixsimSpectatorsList.onmouseover = (e) => {
+        pixsimSpectatorsList.style.backgroundColor = '#FFFFFF22';
+        pixsimDragging.hoveringTeam = 0;
+    };
+    pixsimTeamsTAPlayers.onmouseout = (e) => {
+        pixsimTeamsTAPlayers.style.backgroundColor = '';
+        pixsimDragging.hoveringTeam = -1;
+    };
+    pixsimTeamsTBPlayers.onmouseout = (e) => {
+        pixsimTeamsTBPlayers.style.backgroundColor = '';
+        pixsimDragging.hoveringTeam = -1;
+    };
+    pixsimSpectatorsList.onmouseout = (e) => {
+        pixsimSpectatorsList.style.backgroundColor = '';
+        pixsimDragging.hoveringTeam = -1;
+    };
+};
+PixSimAPI.onUpdateTeamList = async (teams) => {
+    pixsimTeamList.style.setProperty('--pixsim-team-size', PixSimAPI.teamSize);
+    pixsimTeamsTAPlayers.innerHTML = '';
+    pixsimTeamsTBPlayers.innerHTML = '';
+    pixsimSpectatorsList.innerHTML = '';
+    let stillDragging = false;
+    for (let username of teams.teamA) {
+        const card = await generatePlayerCard(username);
+        pixsimTeamsTAPlayers.appendChild(card);
+        if (pixsimDragging.dragging && username == pixsimDragging.draggingName) {
+            startDragPlayerCard(card, username);
+            stillDragging = true;
+        }
+    }
+    for (let username of teams.teamB) {
+        const card = await generatePlayerCard(username);
+        pixsimTeamsTBPlayers.appendChild(card);
+        if (pixsimDragging.dragging && username == pixsimDragging.draggingName) {
+            startDragPlayerCard(card, username);
+            stillDragging = true;
+        }
+    }
+    for (let username of teams.spectators) {
+        const card = await generatePlayerCard(username);
+        pixsimSpectatorsList.appendChild(card);
+        if (pixsimDragging.dragging && username == pixsimDragging.draggingName) {
+            startDragPlayerCard(card, username);
+            stillDragging = true;
+        }
+    }
+    if (!stillDragging) {
+        pixsimDragCard.style.visibility = '';
+        pixsimDragging.dragging = false;
+    }
+    if (teams.teamA.length == PixSimAPI.teamSize && teams.teamB.length == PixSimAPI.teamSize) {
+        pixsimHostStartGame.style.filter = '';
+        pixsimHostStartGame.style.cursor = '';
+    } else {
+        pixsimHostStartGame.style.filter = 'saturate(0)';
+        pixsimHostStartGame.style.cursor = 'not-allowed';
+    }
+};
+PixSimAPI.onGameKicked = () => {
+    pixsimMenuContents.style.transform = 'translateY(-100%)';
+    modal('Kicked from game', 'You were removed from the game by the host');
+    loadPublicGameList(PixSimAPI.spectating);
+};
+PixSimAPI.onGameClose = () => {
+    pixsimMenuContents.style.transform = 'translateY(-100%)';
+    modal('Game closed', 'The game session was closed by the host');
+    loadPublicGameList(PixSimAPI.spectating);
+};
+pixsimJoinGameCodeCode.onkeyup();
 
 const copyrightNotice = document.getElementById('copyrightNotice');
 const creditsAnimation = document.getElementById('creditsAnimation');
@@ -406,7 +613,7 @@ copyrightNotice.onclick = (e) => {
     levelSelect.style.transform = '';
     pixsimMenu._open = false;
     pixsimMenu.style.transform = '';
-    APIdisconnect();
+    PixSimAPI.disconnect();
     copyrightNotice.style.display = 'none';
     creditsAnimation.style.animationName = 'scroll';
     creditsAnimation.onanimationend = (e) => {
@@ -441,10 +648,10 @@ if (Math.random() < 0.001) {
     cctx.fillStyle = '#FFFFFF';
     cctx.fillText('Red', 30, 180);
     cctx.fillText('Pixel', 30, 330);
-    coverCanvas.style.position = 'absolute';
-    coverCanvas.style.top = '0px';
-    coverCanvas.style.left = '0px';
-    coverCanvas.style.zIndex = 10000;
+    // coverCanvas.style.position = 'absolute';
+    // coverCanvas.style.top = '0px';
+    // coverCanvas.style.left = '0px';
+    // coverCanvas.style.zIndex = 10000;
     // document.body.appendChild(coverCanvas);
     document.getElementById('t_redpixel').style.backgroundImage = 'url(' + coverCanvas.toDataURL('image/png') + ')';
     document.getElementById('t_redpixel').style.backgroundSize = 'contain';

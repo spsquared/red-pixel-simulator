@@ -26,8 +26,8 @@
     <link rel="icon" href="./assets/favicon.png" type="image/x-icon">
     <script src="./p5.min.js"></script>
     <script src="./socket.io.min.js"></script>
-    <script src="./menu.js" defer></script>
     <script src="./pixsim-api.js" defer></script>
+    <script src="./menu.js" defer></script>
     <script src="./game.js" defer></script>
     <script src="./redprint.js" defer></script>
     <script src="./pixels.js" defer></script>
@@ -320,7 +320,6 @@
                         <button id="pixsimSelectScrimmage" class="bclick">SCRIMMAGE</button>
                     </div>
                     <div id="pixsimHostBody">
-                        <button class="pixsimBackButton bclick"></button>
                         <h1>Host Game</h1>
                         <div>
                             <span style="font-size: 20px;">Join Code: </span>
@@ -344,15 +343,31 @@
                                 <span class="toggleSlider"></span>
                             </label>
                         </div>
-                        <div id="hostOpponentCard">no opponent lol</div>
-                        <div id="hostSpectatorWrapper">
+                        <div id="hostTeamsWrapper">
+                            <div id="pxTeamsContent">
+                                <div id="pxTeamsTitle">Teams</div>
+                                <div id="pxTeamsTAWrapper">
+                                    <div id="pxTeamsTATitle">A</div>
+                                    <div id="pxTeamsTAPlayers"></div>
+                                </div>
+                                <div id="pxTeamsTBWrapper">
+                                    <div id="pxTeamsTBTitle">B</div>
+                                    <div id="pxTeamsTBPlayers"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="hostSpectatorsWrapper">
                             <div style="font-size: 20px;">Spectators</div>
-                            <div id="hostSpectatorContent"></div>
+                            <div id="pxSpectatorsContent"></div>
+                        </div>
+                        <div>
+                            <button id="hostCancelGame">CANCEL</button>
+                            <button id="hostStartGame">START</button>
                         </div>
                     </div>
                     <div id="pixsimJoinBody">
                         <button class="pixsimBackButton bclick"></button>
-                        <h1>Join Game</h1>
+                        <h1 id="pixsimJoinTitle">Join Game</h1>
                         <div id="joinGameCodeWrapper">
                             <input type="text" id="joinGameCodeCode" maxlength="8">
                             <button id="joinGameCodeJoin" class="bclick">Join</button>
@@ -361,13 +376,22 @@
                             <div style="font-size: 20px;">Public Games</div>
                             <div id="joinListContent"></div>
                         </div>
-                        <!-- spectate also comes here -->
-                        <!-- enter join code, game type filter, leave -->
                     </div>
                     <div id="pixsimScrimmageBody">
                         <button class="pixsimBackButton bclick"></button>
-                        <h1>Scrimmaging</h1>
+                        <h1>Scrimmage</h1>
                         <!-- puts in waiting list for scrimmages and puts against random player -->
+                    </div>
+                    <div id="pixsimGameWaitingBody">
+                        <h1>Game Lobby</h1>
+                        <div id="waitTeamsWrapper">
+                        </div>
+                        <div id="waitSpectatorsWrapper">
+                            <div style="font-size: 20px;">Spectators</div>
+                        </div>
+                        <div>
+                            <button id="waitLeaveGame">LEAVE</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -458,6 +482,7 @@
                 <td><div id="t_loadingText"><div>Red Pixel<br>Simulator</div></div></td>
             </tr></tbody></table></div>
         </div>
+        <div id="pixsimDragCardWrapper"></div>
     </div>
     <div id="highPing">
         <div style="color: yellow; font-weight: bold; font-size: 20px;">Unstable Network</div>
