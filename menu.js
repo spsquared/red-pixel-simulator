@@ -66,10 +66,18 @@ let startTitleBob = setTimeout(() => { });
 let acceptMenuInputs = true;
 const transitionTimeouts = [];
 const loadingTips = [
+    'The monsters aren\'t what you\'re told...',
     'Using a combination of rotators and sliders you can create a slow-flying flying machine that moves at half the pace of a regular one.',
     'Try Blue Pixel Simulator!',
-    ''
+    'This is a loading tip, and it\'s a tip. They can also be used to make loading screens less boring, although Red Pixel Simulator barely has loading screens, so loading tips are unneccesary.',
+    'Remember, puzzles are not in difficulty order. If you get stuck, try a different puzzle.',
+    'Level design is REALLY hard.',
+    'Explore what pixels do in sandbox mode - this makes many puzzles easier.',
+    'Don\'t place the corrupted pixels!',
+    'Reading the descriptions of pixels in the Pixel Picker can give some helpful information.',
+    'You can design and submit a level on the <a href="https://discord.pixelsimulator.repl.co" target="_blank">Pixel Simulator discord</a>!'
 ];
+const loadingTip = document.getElementById('loadingTip');
 function setTransitionTimeout(cb, ms) {
     let t = setTimeout(() => {
         cb();
@@ -88,22 +96,25 @@ function transitionWithinGame(cb) {
     menuScreen.style.visibility = '';
     menuScreen.style.pointerEvents = '';
     inMenuScreen = true;
+    loadingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+    loadingTip.style.opacity = '1';
     t_top.style.transform = 'translateY(60vh)';
     t_bottom.style.transform = 'translateY(-60vh)';
-    setTransitionTimeout(() => {
-        cb();
+    setTransitionTimeout(async () => {
+        await cb();
+        loadingTip.style.opacity = '0';
         t_top.style.transform = '';
         t_bottom.style.transform = '';
         document.getElementById('sidebar').scrollTo(0, 0);
         inMenuScreen = false;
+        setTransitionTimeout(() => {
+            menuScreen.style.visibility = 'hidden';
+            menuScreen.style.transitionDuration = '';
+            menuScreen.style.backgroundColor = '';
+            menuScreen.style.opacity = '0';
+            menuScreen.style.pointerEvents = 'none';
+        }, 300);
     }, 800);
-    setTransitionTimeout(() => {
-        menuScreen.style.visibility = 'hidden';
-        menuScreen.style.transitionDuration = '';
-        menuScreen.style.backgroundColor = '';
-        menuScreen.style.opacity = '0';
-        menuScreen.style.pointerEvents = 'none';
-    }, 1100);
 };
 function transitionToMenu() {
     acceptMenuInputs = true;
@@ -118,11 +129,14 @@ function transitionToMenu() {
     menuScreen.style.pointerEvents = '';
     titleContainer.style.transitionDuration = '';
     inMenuScreen = true;
+    loadingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+    loadingTip.style.opacity = '1';
     t_top.style.transform = 'translateY(60vh)';
     t_bottom.style.transform = 'translateY(-60vh)';
     setTransitionTimeout(() => {
         menuScreen.style.transitionDuration = '';
         menuScreen.style.backgroundColor = '';
+        loadingTip.style.opacity = '0';
         t_top.style.transform = '';
         t_bottom.style.transform = '';
         stopAllMusic();
@@ -232,6 +246,7 @@ const levelSelectBody = document.getElementById('levelSelectBody');
 const pixsimMenu = document.getElementById('pixsimMenu');
 const pixsimMenuClose = document.getElementById('pixsimMenuClose');
 const pixsimMenuConnecting = document.getElementById('pixsimMenuConnecting');
+const pixsimMenuConnectingTip = document.getElementById('pixsimMenuConnectingTip');
 const pixsimSelectHostButton = document.getElementById('pixsimSelectHost');
 const pixsimSelectJoinButton = document.getElementById('pixsimSelectJoin');
 const pixsimSelectSpectateButton = document.getElementById('pixsimSelectSpectate');
@@ -274,6 +289,7 @@ multiplayerButton.onclick = (e) => {
     pixsimMenu._open = true;
     pixsimMenuConnecting.style.opacity = 1;
     pixsimMenuConnecting.style.pointerEvents = '';
+    pixsimMenuConnectingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
     pixsimMenuContents.style.transform = '';
     pixsimMenu.style.transform = 'translateY(100vh)';
     PixSimAPI.connect().then(() => {
@@ -427,6 +443,7 @@ function refreshGameList(games) {
         wrapper.appendChild(sub2);
         wrapper.onclick = (e) => {
             PixSimAPI.joinGame(game.code).then(handleJoinGame);
+            clickSound();
         };
         pixsimJoinList.appendChild(wrapper);
     }
@@ -523,6 +540,7 @@ async function startDragPlayerCard(card, username, pageX, pageY) {
         card.style.visibility = '';
         document.removeEventListener('mouseup', release);
         document.removeEventListener('mousemove', move);
+        tickSound();
     });
     pixsimTeamsTAPlayers.onmouseover = (e) => {
         pixsimTeamsTAPlayers.style.backgroundColor = '#FFFFFF22';
@@ -548,6 +566,7 @@ async function startDragPlayerCard(card, username, pageX, pageY) {
         pixsimSpectatorsList.style.backgroundColor = '';
         pixsimDragging.hoveringTeam = -1;
     };
+    tickSound();
 };
 PixSimAPI.onUpdateTeamList = async (teams) => {
     pixsimTeamList.style.setProperty('--pixsim-team-size', PixSimAPI.teamSize);
@@ -590,6 +609,7 @@ PixSimAPI.onUpdateTeamList = async (teams) => {
         pixsimHostStartGame.style.filter = 'saturate(0)';
         pixsimHostStartGame.style.cursor = 'not-allowed';
     }
+    shortDingSound();
 };
 PixSimAPI.onGameKicked = () => {
     pixsimMenuContents.style.transform = 'translateY(-100%)';

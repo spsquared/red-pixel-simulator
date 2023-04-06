@@ -183,12 +183,19 @@
     box-shadow: 0px 0px 1vh rgba(255, 0, 0, 0.5);
     animation: 1s linear spin infinite;
 }
-#pixSimMenuConnectingText {
+#pixsimMenuConnectingText {
     display: inline-block;
     position: relative;
     top: 25vh;
     font-size: 4vh;
     margin: 0px 8px;
+}
+#pixsimMenuConnectingTip {
+    position: absolute;
+    bottom: 20vh;
+    left: 5vw;
+    width: 40vw;
+    font-size: 2.5vh;
 }
 
 #pixsimMenuBody {
@@ -266,7 +273,6 @@
 #hostJoinCode {
     margin: 8px 8px;
     font-size: 20px;
-    font-family: 'Source Code Pro', Courier, monospace;
     cursor: copy;
 }
 #hostGameTypeWrapper {
@@ -402,6 +408,7 @@
     border-right: 2px solid black;
 }
 .pxPlayerCardName, .pxPlayerCardRanking {
+    font-family: 'Lucida Console', Lucida, monospace;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -514,7 +521,6 @@
 .joinTileCode {
     padding-left: 4px;
     font-size: 18px;
-    font-family: 'Source Code Pro', Courier, monospace;
     text-align: left;
 }
 .joinTileSub1 {
@@ -647,7 +653,7 @@
 }
 
 #t_top, #t_bottom {
-    position: absolute;
+    position: fixed;
     left: 0px;
     width: 100vw;
     height: 50vh;
@@ -684,6 +690,18 @@
     color: white;
     text-shadow: 0px 0px 5vh rgba(255, 255, 255, 0.5), -0.5vh 0.5vh 0vh rgba(255, 255, 255, 0.2);
     vertical-align: middle;
+}
+#loadingTip {
+    position: fixed;
+    top: 80vh;
+    left: 10vw;
+    width: 80vw;
+    text-align: center;
+    color: white;
+    font-size: 2vh;
+    font-family: 'Lucida Console', Lucida, monospace;
+    opacity: 0;
+    transition: 500ms linear opacity;
 }
 
 @media (prefers-color-scheme: dark) {

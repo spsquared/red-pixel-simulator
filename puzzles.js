@@ -109,23 +109,6 @@ const puzzles = [
         ]
     },
     {
-        name: 'Square Caves',
-        levels: [
-            {
-                name: 'Down in the Mines',
-                description: `<i>[music]</i> Oh wait, we're lost. Oh wow, these things are everywhere. Better get rid of those before they destroy this place, too. That suspiciously conveniently C-4 and gunpowder will probably help.`,
-                saveCode: '50;0000;stone-9:air-5:stone-6:dirt-30:stone-9:air-5:stone-16:dirt-11:stone-3:dirt-6:stone-9:air-5:stone-32:dirt-4:stone-9:air-5:stone-45:air-5:stone-4:air-22:stone-19:air-5:stone-4:air:gunpowder-4:air-17:stone-19:air-5:stone-4:gunpowder-5:air-17:stone-19:air-5:stone-9:air-2:wood:dirt-5:wood:air-2:wood-2:stone-7:water-3:stone-13:air-5:stone-9:air-2:wood:dirt-5:wood:air-3:stone-6:water-7:stone-11:air-5:stone-9:air-2:wood:dirt-5:wood:air-3:stone-5:sand:water-2:sand-5:stone-11:air-5:stone-9:air-2:stone-7:air-3:stone-6:sand-3:stone-15:air-5:stone-9:air-2:stone-7:air-3:stone-5:wood-4:stone-15:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-26:wood:air-2:wood:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-3:air-2:stone-10:air-5:stone-26:air-4:stone:air-4:stone-6:air-45:stone-5:air-14:dirt-2:air-29:stone-5:air-12:dirt-5:air-28:stone-5:air-11:dirt-7:air-27:stone-5:air-11:wood-7:air-27:stone-8:wood-2:air-4:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-16:wood:air-3:wood:air-4:stone-25:air-16:wood:gunpowder-7:air-9:c4-3:concrete:air-3:stone-10:air-16:wood:gunpowder-6:wood-2:air-8:c4-3:concrete:stone:air-2:stone-10:air-3:wood-3:stone-19:air-2:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-18:air-10:stone-17:air-5:stone-18:air-10:stone-17:air-5:stone-19:lava-7:stone-10:;9c4:;8:1:4ba:2:d:6:2c:6:2c:6:2c:6:2c:6:1f0:6:2c:6:1fc:;338:1:248:1:21:1:2:1:1:1:1d0:1:31:1:9:1:16:1:1f7:;9c4:',
-                inventory: {
-                    sand: 1,
-                    wood: 5,
-                    water: 3,
-                    gunpowder: 5
-                },
-                id: '34708563-34be-4b6c-ab28-75931fa5e3cd'
-            }
-        ]
-    },
-    {
         name: 'Pixel Machines',
         levels: [
             {
@@ -296,7 +279,7 @@ const puzzles = [
                 id: '549382d2-999f-41dd-a945-1afb4f3047d6'
             }
         ]
-    }
+    },
 ];
 
 let currentPuzzleSection = 0;

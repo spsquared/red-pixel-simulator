@@ -4248,7 +4248,7 @@ const pixels = {
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
-        pickable: true,
+        pickable: false,
         id: 'rickastley',
         numId: 0
     },

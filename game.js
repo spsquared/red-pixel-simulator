@@ -2167,77 +2167,36 @@ function pauseMusicPixels() {
 function resumeMusicPixels() {
     musicPixelOscillators.forEach(n => n.resume());
 };
+function createSFXQueue(buf, funcName) {
+    const preloadQueue = [];
+    preloadQueue.push(audioContext.createBufferSource());
+    preloadQueue[0].buffer = buf;
+    preloadQueue[0].connect(globalVolume);
+    window[funcName] = () => {
+        preloadQueue.shift().start();
+        const nextSource = audioContext.createBufferSource();
+        nextSource.buffer = buf;
+        nextSource.connect(globalVolume);
+        preloadQueue.push(nextSource);
+    };
+};
 window.addEventListener('load', (e) => {
     setAudio('./assets/click.mp3', (buf) => {
-        const preloadQueue = [];
-        preloadQueue.push(audioContext.createBufferSource());
-        preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(globalVolume);
-        window.playClickSound = () => {
-            preloadQueue.shift().start();
-            const nextSource = audioContext.createBufferSource();
-            nextSource.buffer = buf;
-            nextSource.connect(globalVolume);
-            preloadQueue.push(nextSource);
-        };
+        createSFXQueue(buf, 'playClickSound');
         document.querySelectorAll('.bclick').forEach(e => e.addEventListener('click', window.playClickSound));
         document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('click', window.playClickSound));
         document.querySelectorAll('.levelButton').forEach(e => e.addEventListener('click', window.playClickSound));
     });
     setAudio('./assets/tick.mp3', (buf) => {
-        const preloadQueue = [];
-        preloadQueue.push(audioContext.createBufferSource());
-        preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(globalVolume);
-        window.playTickSound = () => {
-            preloadQueue.shift().start();
-            const nextSource = audioContext.createBufferSource();
-            nextSource.buffer = buf;
-            nextSource.connect(globalVolume);
-            preloadQueue.push(nextSource);
-        };
+        createSFXQueue(buf, 'playTickSound');
         document.querySelectorAll('.btick').forEach(e => e.addEventListener('click', window.playTickSound));
         document.querySelectorAll('.pickerPixel').forEach(e => e.firstChild.addEventListener('mouseover', window.playTickSound));
     });
-    setAudio('./assets/monsterDeath.mp3', (buf) => {
-        const preloadQueue = [];
-        preloadQueue.push(audioContext.createBufferSource());
-        preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(globalVolume);
-        window.playMonsterDeathSound = () => {
-            preloadQueue.shift().start();
-            const nextSource = audioContext.createBufferSource();
-            nextSource.buffer = buf;
-            nextSource.connect(globalVolume);
-            preloadQueue.push(nextSource);
-        };
-    });
-    setAudio('./assets/targetFilled.mp3', (buf) => {
-        const preloadQueue = [];
-        preloadQueue.push(audioContext.createBufferSource());
-        preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(globalVolume);
-        window.playTargetFillSound = () => {
-            preloadQueue.shift().start();
-            const nextSource = audioContext.createBufferSource();
-            nextSource.buffer = buf;
-            nextSource.connect(globalVolume);
-            preloadQueue.push(nextSource);
-        };
-    });
-    setAudio('./assets/win.mp3', (buf) => {
-        const preloadQueue = [];
-        preloadQueue.push(audioContext.createBufferSource());
-        preloadQueue[0].buffer = buf;
-        preloadQueue[0].connect(globalVolume);
-        window.playWinSound = () => {
-            preloadQueue.shift().start();
-            const nextSource = audioContext.createBufferSource();
-            nextSource.buffer = buf;
-            nextSource.connect(globalVolume);
-            preloadQueue.push(nextSource);
-        };
-    });
+    setAudio('./assets/ding.mp3', (buf) => createSFXQueue(buf, 'playDing1'));
+    setAudio('./assets/ding-short.mp3', (buf) => createSFXQueue(buf, 'playDing2'));
+    setAudio('./assets/monsterDeath.mp3', (buf) => createSFXQueue(buf, 'playMonsterDeathSound'));
+    setAudio('./assets/targetFilled.mp3', (buf) => createSFXQueue(buf, 'playTargetFillSound'));
+    setAudio('./assets/win.mp3', (buf) => createSFXQueue(buf, 'playWinSound'));
     setAudio('./assets/menu.mp3', (buf) => {
         musicBuffers.set('menu', buf);
     });
@@ -2333,6 +2292,12 @@ function tickSound() {
 };
 function clickSound() {
     if (window.playClickSound) window.playClickSound();
+};
+function dingSound() {
+    if (window.playDing1) window.playDing1();
+};
+function shortDingSound() {
+    if (window.playDing2) window.playDing2();
 };
 function musicPixel(id, state) {
     if (musicPixelSounds.has(id)) {

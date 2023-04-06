@@ -361,8 +361,8 @@
                             <div id="pxSpectatorsContent"></div>
                         </div>
                         <div>
-                            <button id="hostCancelGame">CANCEL</button>
-                            <button id="hostStartGame">START</button>
+                            <button id="hostCancelGame" class="bclick">CANCEL</button>
+                            <button id="hostStartGame" class="bclick">START</button>
                         </div>
                     </div>
                     <div id="pixsimJoinBody">
@@ -390,14 +390,15 @@
                             <div style="font-size: 20px;">Spectators</div>
                         </div>
                         <div>
-                            <button id="waitLeaveGame">LEAVE</button>
+                            <button id="waitLeaveGame" class="bclick">LEAVE</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div id="pixsimMenuConnecting">
                 <div id="pixsimMenuConnectingSpinner"></div><br>
-                <div id="pixSimMenuConnectingText">Connecting to PixSim API...</div>
+                <div id="pixsimMenuConnectingText">Connecting to PixSim API...</div>
+                <div id="pixsimMenuConnectingTip">This is a loading tip.</div>
             </div>
         </div>
         <div id="creditsAnimation">
@@ -482,6 +483,7 @@
                 <td><div id="t_loadingText"><div>Red Pixel<br>Simulator</div></div></td>
             </tr></tbody></table></div>
         </div>
+        <div id="loadingTip">This is a loading tip.</div>
         <div id="pixsimDragCardWrapper"></div>
     </div>
     <div id="highPing">
