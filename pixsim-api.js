@@ -27,13 +27,15 @@ let jitter = 0;
 const highPingWarning = document.getElementById('highPing');
 const highPingWarningPing = document.getElementById('highPingDisplay');
 setInterval(() => {
-    if (pingReceived && socket.connected) {
-        pingSend = performance.now();
-        socket.emit('ping');
-        pingReceived = false;
-    } else if (!socket.connected) {
-        highPingWarning.style.display = '';
-    }
+    window.requestIdleCallback(() => {
+        if (pingReceived && socket.connected) {
+            pingSend = performance.now();
+            socket.emit('ping');
+            pingReceived = false;
+        } else if (!socket.connected) {
+            highPingWarning.style.display = '';
+        }
+    }, { timeout: 500 });
 }, 1000);
 socket.on('pong', () => {
     let prevPing = ping;
@@ -61,7 +63,7 @@ class PixSimAPI {
         {
             name: 'Vault Wars',
             id: 'vaultwars',
-
+            description: 'Build vaults of Color and battle to destroy the other Pixelite crystal!'
         }
     ]
     static #spectating = false;
@@ -152,6 +154,9 @@ class PixSimAPI {
         if (!this.#isHost || !this.#inGame || this.#gameRunning) return;
         socket.emit('movePlayer', { username: username, team: team });
     }
+    static async startGame() {
+        // buh
+    }
 
     static set onUpdateTeamList(cb) {
         if (typeof cb != 'function') return;
@@ -220,7 +225,7 @@ class PixSimAPI {
         else {
             const userData = {
                 igname: 'Unknown',
-                img: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
+                img: '',
                 rank: 0,
                 elo: 0
             };

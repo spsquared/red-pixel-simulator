@@ -68,14 +68,20 @@ const transitionTimeouts = [];
 const loadingTips = [
     'The monsters aren\'t what you\'re told...',
     'Using a combination of rotators and sliders you can create a slow-flying flying machine that moves at half the pace of a regular one.',
-    'Try Blue Pixel Simulator!',
+    'Try <span style="color: #00AAFF;">Blue Pixel Simulator!</span>',
     'This is a loading tip, and it\'s a tip. They can also be used to make loading screens less boring, although Red Pixel Simulator barely has loading screens, so loading tips are unneccesary.',
     'Remember, puzzles are not in difficulty order. If you get stuck, try a different puzzle.',
     'Level design is REALLY hard.',
     'Explore what pixels do in sandbox mode - this makes many puzzles easier.',
     'Don\'t place the corrupted pixels!',
     'Reading the descriptions of pixels in the Pixel Picker can give some helpful information.',
-    'You can design and submit a level on the <a href="https://discord.pixelsimulator.repl.co" target="_blank">Pixel Simulator discord</a>!'
+    'You can design and submit a puzzle on the <a href="https://discord.pixelsimulator.repl.co" target="_blank">Pixel Simulator discord</a>!',
+    '<span style="font-style: bold italic;">Pixels: Story Mode</span>',
+    'All of Pixel Simulator (including music!) is developed in-house!',
+    'Use the RedPrint Editor to save contraptions you use a lot.',
+    '<span style="color: #FFCC00;">Rick Astley!</span>',
+    '<span style="color: #00FF00;">Green Pixel Simulator!</span> (not) coming soon!',
+    'Some levels are very RNG-based, messing around randomly usually works in those levels'
 ];
 const loadingTip = document.getElementById('loadingTip');
 function setTransitionTimeout(cb, ms) {
@@ -370,6 +376,7 @@ pixsimSelectHostButton.onclick = (e) => {
         };
         function cancelHostGame() {
             pixsimMenuContents.style.transform = '';
+            pixsimHostStartGame.onclick = null;
             PixSimAPI.leaveGame();
             pixsimMenuClose.removeEventListener('click', cancelHostGame);
         };
@@ -380,6 +387,9 @@ pixsimSelectHostButton.onclick = (e) => {
         };
         publicGameToggle.onclick = (e) => {
             PixSimAPI.isPublic = publicGameToggle.checked;
+        };
+        pixsimHostStartGame.onclick = (e) => {
+            PixSimAPI.startGame();
         };
     });
 };
@@ -471,7 +481,9 @@ function loadPublicGameList(spectating) {
     PixSimAPI.spectating = spectating;
     pixsimJoinGameCodeCode.value = '';
     let refreshLoop = setInterval(() => {
-        PixSimAPI.getPublicGames('all').then(refreshGameList, stopRefreshLoop);
+        window.requestIdleCallback(() => {
+            PixSimAPI.getPublicGames('all').then(refreshGameList, stopRefreshLoop);
+        }, { timeout: 100 });
     }, 3000);
     stopRefreshLoop = () => {
         clearInterval(refreshLoop);

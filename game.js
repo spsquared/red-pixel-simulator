@@ -494,9 +494,11 @@ function setup() {
     startRPDrawLoop();
 
     setInterval(() => {
-        if (sandboxMode) {
-            window.localStorage.setItem('saveCode', generateSaveCode());
-        }
+        window.requestIdleCallback(() => {
+            if (sandboxMode) {
+                window.localStorage.setItem('saveCode', generateSaveCode());
+            }
+        }, { timeout: 5000 });
     }, 30000);
 };
 
@@ -2050,8 +2052,12 @@ document.getElementById('backToMenu').onclick = (e) => {
 
 // audio
 const audioContext = new (window.AudioContext ?? window.webkitAudioContext ?? Error)();
+let volume = parseInt(window.localStorage.getItem('volume') ?? 100);
+const volumeDisp = document.getElementById('volumeAdjustDisp');
+const volumeSlider = document.getElementById('volumeAdjustSlider');
 const globalVolume = audioContext.createGain();
 globalVolume.connect(audioContext.destination);
+globalVolume.gain.setValueAtTime(volume / 100, audioContext.currentTime);
 function setAudio(file, cb) {
     const request = new XMLHttpRequest();
     request.open('GET', file, true);
@@ -2061,12 +2067,12 @@ function setAudio(file, cb) {
     };
     request.send();
 };
-const musicBuffers = new Map();
-const activeMusic = [];
-let musicMuted = (window.localStorage.getItem('musicMuted') ?? false) == 1;
-const menuMuteButton = document.getElementById('menuMuteButton');
+let musicMuted = (window.localStorage.getItem('musicMuted') ?? '0') == '1';
+const musicMuteButton = document.getElementById('musicMuteButton');
 const musicVolume = audioContext.createGain();
 musicVolume.connect(globalVolume);
+const musicBuffers = new Map();
+const activeMusic = [];
 function playMusic(id) {
     stopAllMusic();
     if (musicBuffers.has(id)) {
@@ -2097,14 +2103,23 @@ function toggleMusic() {
     musicMuted = !musicMuted;
     if (musicMuted) {
         musicVolume.gain.setValueAtTime(0, audioContext.currentTime);
-        menuMuteButton.style.backgroundImage = 'url(/assets/volumeMuted.svg';
+        musicMuteButton.style.backgroundImage = 'url(/assets/volumeMute.svg)';
     } else {
         musicVolume.gain.setValueAtTime(1, audioContext.currentTime);
-        menuMuteButton.style.backgroundImage = 'url(/assets/volumeUnmuted.svg';
+        musicMuteButton.style.backgroundImage = `url(/assets/volume${Math.ceil(volume / 50)}.svg)`;
     }
     window.localStorage.setItem('musicMuted', musicMuted ? 1 : 0);
 };
-menuMuteButton.onclick = toggleMusic;
+function setGlobalVolume(vol) {
+    volume = Math.max(0, Math.min(parseInt(vol), 100));
+    globalVolume.gain.setValueAtTime(volume / 100, audioContext.currentTime);
+    if (musicMuted) musicMuteButton.style.backgroundImage = 'url(/assets/volumeMute.svg)';
+    else musicMuteButton.style.backgroundImage = `url(/assets/volume${Math.ceil(volume / 50)}.svg)`;
+    volumeDisp.style.backgroundImage = `url(/assets/volume${Math.ceil(volume / 50)}.svg)`;
+    window.localStorage.setItem('volume', volume);
+};
+musicMuteButton.onclick = toggleMusic;
+volumeSlider.oninput = (e) => setGlobalVolume(volumeSlider.value);
 const musicPixelSounds = new Map();
 const musicPixelOscillators = new Map();
 async function addMusicPixelSound(id) {
@@ -2284,8 +2299,10 @@ window.addEventListener('load', (e) => {
     addMusicPixelSound(85);
     addMusicPixelSound(86);
     addMusicPixelSound(87);
-    toggleMusic();
-    toggleMusic();
+    if (musicMuted) musicMuteButton.style.backgroundImage = 'url(/assets/volumeMute.svg)';
+    else musicMuteButton.style.backgroundImage = `url(/assets/volume${Math.ceil(volume / 50)}.svg)`;
+    volumeDisp.style.backgroundImage = `url(/assets/volume${Math.ceil(volume / 50)}.svg)`;
+    volumeSlider.value = volume;
 });
 function tickSound() {
     if (window.playTickSound) window.playTickSound();

@@ -10,7 +10,7 @@
     --title-left-offset: 20vw;
     overflow-y: hidden;
     overflow-x: hidden;
-    z-index: 996;
+    z-index: 994;
 }
 
 #titleContainer {
@@ -81,17 +81,73 @@
     top: 138vh;
 }
 
-#menuMuteButton {
+#musicMuteButton {
     position: fixed;
     bottom: 8px;
     left: 8px;
     width: 40px;
     height: 40px;
     margin: 0px 0px;
-    background-image: url(/assets/volumeMuted.svg);
+    background-image: url(/assets/volumeMute.svg);
     background-position: center;
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: 80%;
+    z-index: 995;
+}
+#volumeAdjustWrapper {
+    position: fixed;
+    bottom: 8px;
+    left: 56px;
+    width: 140px;
+    /* max-width: 40px; */
+    height: 40px;
+    /* transform: 250ms ease max-width; */
+    overflow-x: hidden;
+}
+#volumeAdjustDisp {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 30px;
+    height: 30px;
+    border: 5px outset #AAAAAA;
+    background-color: lightgray;
+    background-image: url(/assets/volume0.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 80%;
+    z-index: 996;
+}
+#volumeAdjustSlider {
+    appearance: none;
+    position: absolute;
+    bottom: 9px;
+    left: 40px;
+    width: 100px;
+    height: 16px;
+    margin: 0px 0px;
+    border: 3px outset #AAAAAA;
+    background-color: lightgrey;
+    transition: 250ms ease transform;
+    transform: translateX(-100%);
+    z-index: 995;
+}
+#volumeAdjustSlider::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 30px;
+    border: 2px solid gray;
+    background-color: white;
+    cursor: grab;
+}
+#volumeAdjustSlider::-webkit-slider-thumb:active {
+    cursor: grabbing;
+}
+/* #volumeAdjustWrapper:hover {
+    max-width: 140px;
+} */
+#volumeAdjustWrapper:hover #volumeAdjustSlider {
+    transform: none;
 }
 
 #copyrightNotice {
@@ -389,11 +445,12 @@
     grid-template-columns: [c0] 40px [c1] 100fr [c2] 30px [c3];
     grid-template-rows: [r0] 20px [r1] 20px [r2];
     height: 40px;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid gray;
     text-align: left;
     transition: 100ms linear background-color;
 }
 .pxPlayerCard:last-child {
+    height: 41px;
     border-bottom: none;
 }
 .pxHostPlayerCard:hover {
@@ -405,9 +462,10 @@
 .pxPlayerCardProfileImg {
     grid-column: c0 / c1;
     grid-row: r0 / r2;
-    border-right: 2px solid black;
+    border-right: 2px solid gray;
 }
 .pxPlayerCardName, .pxPlayerCardRanking {
+    padding-left: 4px;
     font-family: 'Lucida Console', Lucida, monospace;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -416,6 +474,7 @@
 .pxPlayerCardName {
     grid-column: c1 / c2;
     grid-row: r0 / r1;
+    padding-top: 4px;
     font-size: 18px;
 }
 .pxPlayerCardRanking {
@@ -503,7 +562,7 @@
     grid-template-rows: [r0] 20px [r1] 20px [r2] 20px [r3];
     width: 100%;
     height: 60px;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid gray;
     transition: 100ms linear background-color;
     cursor: pointer;
 }
@@ -701,7 +760,7 @@
     font-size: 2vh;
     font-family: 'Lucida Console', Lucida, monospace;
     opacity: 0;
-    transition: 500ms linear opacity;
+    transition: 200ms linear opacity;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -712,7 +771,10 @@
     /* this is fine */
     #hostGameTypePrevious, #hostGameTypeName, #hostGameTypeNext, #hostGameTypeDescription, #hostTeamsWrapper, #waitTeamsWrapper,
     #pxTeamsTitle, #pxTeamsTAWrapper, #pxTeamsTBWrapper, #pxTeamsTATitle, #pxTeamsTBTitle, #hostSpectatorsWrapper, #waitSpectatorsWrapper,
-    #pxSpectatorsContent, .pxCard, .pxPlayerCardProfileImg, #joinGameCodeWrapper, #joinListWrapper, #joinListContent, .joinTile {
+    #pxSpectatorsContent, .pxPlayerCardProfileImg, #joinGameCodeWrapper, #joinListWrapper, #joinListContent {
         border-color: white;
+    }
+    .pxPlayerCard, .pxPlayerCardProfileImg, .joinTile {
+        border-color: lightgray;
     }
 }
