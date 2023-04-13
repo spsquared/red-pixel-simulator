@@ -573,8 +573,9 @@ table {
     left: 0px;
     width: 100vw;
     height: 100vh;
-    background-color: #FFF5;
+    background-color: rgba(255, 255, 255, 0.2);
     opacity: 0;
+    backdrop-filter: blur(2px);
     transition: 300ms linear opacity;
     pointer-events: none;
 }
@@ -607,9 +608,10 @@ table {
     left: 0px;
     width: 100vw;
     height: 100vh;
-    background-color: #0005;
+    background-color: rgba(0, 0, 0, 0.5);
     opacity: 0;
     transition: 300ms linear opacity;
+    backdrop-filter: blur(4px);
     pointer-events: none;
     z-index: 1000;
 }
@@ -654,7 +656,7 @@ table {
     border: 4px solid yellow;
     padding: 8px 8px;
     text-align: center;
-    z-index: 999;
+    z-index: 998;
     pointer-events: none;
 }
 

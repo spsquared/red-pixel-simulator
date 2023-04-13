@@ -10,7 +10,7 @@
     --title-left-offset: 20vw;
     overflow-y: hidden;
     overflow-x: hidden;
-    z-index: 994;
+    z-index: 993;
 }
 
 #titleContainer {
@@ -92,7 +92,7 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: 80%;
-    z-index: 995;
+    z-index: 994;
 }
 #volumeAdjustWrapper {
     position: fixed;
@@ -116,7 +116,7 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: 80%;
-    z-index: 996;
+    z-index: 995;
 }
 #volumeAdjustSlider {
     appearance: none;
@@ -130,7 +130,7 @@
     background-color: lightgrey;
     transition: 250ms ease transform;
     transform: translateX(-100%);
-    z-index: 995;
+    z-index: 994;
 }
 #volumeAdjustSlider::-webkit-slider-thumb {
     appearance: none;
@@ -172,7 +172,7 @@
     background-size: 100%;
     background-color: red;
     border-color: crimson;
-    z-index: 997;
+    z-index: 996;
 }
 #levelSelect {
     position: absolute;
@@ -603,7 +603,7 @@
     left: 0px;
     cursor: grabbing;
     pointer-events: none;
-    z-index: 998;
+    z-index: 997;
 }
 
 #creditsAnimation {
@@ -718,6 +718,7 @@
     height: 50vh;
     background-color: #282828;
     transition: 300ms ease-in transform;
+    z-index: 999;
 }
 #t_top {
     top: -60vh;
