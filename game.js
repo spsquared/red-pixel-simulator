@@ -2299,8 +2299,14 @@ window.addEventListener('load', (e) => {
     addMusicPixelSound(85);
     addMusicPixelSound(86);
     addMusicPixelSound(87);
-    if (musicMuted) musicMuteButton.style.backgroundImage = 'url(/assets/volumeMute.svg)';
-    else musicMuteButton.style.backgroundImage = `url(/assets/volume${Math.ceil(volume / 50)}.svg)`;
+    if (musicMuted) {
+        musicVolume.gain.setValueAtTime(0, audioContext.currentTime);
+        musicMuteButton.style.backgroundImage = 'url(/assets/volumeMute.svg)';
+    } else {
+        musicVolume.gain.setValueAtTime(1, audioContext.currentTime);
+        musicMuteButton.style.backgroundImage = `url(/assets/volume${Math.ceil(volume / 50)}.svg)`;
+    }
+    globalVolume.gain.setValueAtTime(volume / 100, audioContext.currentTime);
     volumeDisp.style.backgroundImage = `url(/assets/volume${Math.ceil(volume / 50)}.svg)`;
     volumeSlider.value = volume;
 });
