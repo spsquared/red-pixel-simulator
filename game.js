@@ -2120,6 +2120,7 @@ function setGlobalVolume(vol) {
 };
 musicMuteButton.onclick = toggleMusic;
 volumeSlider.oninput = (e) => setGlobalVolume(volumeSlider.value);
+volumeSlider.onmouseup = (e) => shortDingSound();
 const musicPixelSounds = new Map();
 const musicPixelOscillators = new Map();
 async function addMusicPixelSound(id) {

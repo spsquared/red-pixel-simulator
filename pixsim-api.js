@@ -61,8 +61,8 @@ class PixSimAPI {
     static #teamSize = 1;
     static #gameModes = [
         {
-            name: 'Vault Wars',
-            id: 'vaultwars',
+            name: 'Pixelite Crash',
+            id: 'pixelcrash',
             description: 'Build vaults of Color and battle to destroy the other Pixelite crystal!'
         }
     ]
