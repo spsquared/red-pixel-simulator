@@ -636,6 +636,83 @@ const pixels = {
         id: 'lava',
         numId: 0
     },
+    fire: {
+        name: 'Fire',
+        description: 'AAAAAA! It burns!',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            if (noNoise) {
+                ctx.globalAlpha = opacity / 2;
+                ctx.fillStyle = 'rgb(255, 180, 0)';
+                fillPixel(x, y, width, height, ctx);
+            } else {
+                ctx.globalAlpha = opacity / 3;
+                ctx.fillStyle = 'rgb(255, 100, 0)';
+                fillPixel(x, y, width, height, ctx);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = `rgb(255, 255, 0, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            let flammability = (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).flammability;
+            let isLava = grid[y][x] == pixNum.LAVA;
+            if (flammability == 0 && !isLava && (grid[y][x] != pixNum.AIR || random() < 0.3)) {
+                nextFireGrid[y][x] = false;
+                return;
+            }
+            updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
+                nextFireGrid[y][x] = false;
+            });
+            let aerated = updateTouchingPixel(x, y, pixNum.AIR);
+            if (random() < (20 - flammability) / (aerated ? 360 : 80)) {
+                nextFireGrid[y][x] = false;
+            }
+            if (random() < flammability / 1200 && nextGrid[y][x] == null && !isLava) {
+                if (grid[y][x] >= pixNum.LASER_UP && grid[y][x] <= pixNum.LASER_RIGHT) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    explode(x, y, 5);
+                } else if (grid[y][x] != pixNum.ASH && random() < 0.5) {
+                    nextGrid[y][x] = pixNum.ASH;
+                    monsterGrid[y][x] = false;
+                } else {
+                    nextGrid[y][x] = pixNum.AIR;
+                    monsterGrid[y][x] = false;
+                }
+            }
+            for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridSize - 1); i++) {
+                for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridSize - 1); j++) {
+                    if (nextFireGrid[j][i] || (i == x && j == y)) continue;
+                    let flammability = (numPixels[grid[j][i]] ?? numPixels[pixNum.MISSING]).flammability;
+                    if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0)) nextFireGrid[j][i] = true;
+                    if (grid[j][i] == pixNum.WATER && random() < 0.5) nextGrid[j][i] = pixNum.STEAM;
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 180, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 20,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 0,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'fire',
+        numId: 0
+    },
     steam: {
         name: 'Steam',
         description: 'Very hot steam that will give you second-degree burns if you\'re not careful',
@@ -951,161 +1028,6 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         id: 'sponge',
-        numId: 0
-    },
-    fire: {
-        name: 'Fire',
-        description: 'AAAAAA! It burns!',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            if (noNoise) {
-                ctx.globalAlpha = opacity / 2;
-                ctx.fillStyle = 'rgb(255, 180, 0)';
-                fillPixel(x, y, width, height, ctx);
-            } else {
-                ctx.globalAlpha = opacity / 3;
-                ctx.fillStyle = 'rgb(255, 100, 0)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(255, 255, 0, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
-            }
-        },
-        update: function (x, y) {
-            let flammability = (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).flammability;
-            let isLava = grid[y][x] == pixNum.LAVA;
-            if (flammability == 0 && !isLava && (grid[y][x] != pixNum.AIR || random() < 0.3)) {
-                nextFireGrid[y][x] = false;
-                return;
-            }
-            updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
-                nextFireGrid[y][x] = false;
-            });
-            let aerated = updateTouchingPixel(x, y, pixNum.AIR);
-            if (random() < (20 - flammability) / (aerated ? 360 : 80)) {
-                nextFireGrid[y][x] = false;
-            }
-            if (random() < flammability / 1200 && nextGrid[y][x] == null && !isLava) {
-                if (grid[y][x] >= pixNum.LASER_UP && grid[y][x] <= pixNum.LASER_RIGHT) {
-                    nextGrid[y][x] = pixNum.AIR;
-                    explode(x, y, 5);
-                } else if (grid[y][x] != pixNum.ASH && random() < 0.5) {
-                    nextGrid[y][x] = pixNum.ASH;
-                    monsterGrid[y][x] = false;
-                } else {
-                    nextGrid[y][x] = pixNum.AIR;
-                    monsterGrid[y][x] = false;
-                }
-            }
-            for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridSize - 1); i++) {
-                for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridSize - 1); j++) {
-                    if (nextFireGrid[j][i] || (i == x && j == y)) continue;
-                    let flammability = (numPixels[grid[j][i]] ?? numPixels[pixNum.MISSING]).flammability;
-                    if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0)) nextFireGrid[j][i] = true;
-                    if (grid[j][i] == pixNum.WATER && random() < 0.5) nextGrid[j][i] = pixNum.STEAM;
-                }
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 180, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 0,
-        flammability: 20,
-        pushable: false,
-        cloneable: false,
-        rotateable: false,
-        group: 0,
-        key: Infinity,
-        updateStage: -1,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        id: 'fire',
-        numId: 0
-    },
-    gunpowder: {
-        name: 'Gunpowder',
-        description: 'A low explosive that explodes when lit on fire',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            if (noNoise) {
-                ctx.fillStyle = 'rgb(50, 25, 25)';
-                fillPixel(x, y, width, height, ctx);
-            } else {
-                ctx.fillStyle = 'rgb(30, 20, 20)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(55, 40, 40, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
-            }
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            let explosion = updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x];
-            if (explosion) explode(x, y, 5, 1);
-            else fall(x, y, 1, 1, isPassableFluid);
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(50, 25, 25)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 0,
-        flammability: 20,
-        pushable: true,
-        cloneable: true,
-        rotateable: false,
-        group: 0,
-        key: Infinity,
-        updateStage: 9,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        id: 'gunpowder',
-        numId: 0
-    },
-    c4: {
-        name: 'C-4',
-        description: 'A high explosive that can only be triggered by other explosions',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(245, 245, 200)';
-            fillPixel(x, y, width, height, ctx);
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(245, 245, 200)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 0,
-        flammability: 4,
-        pushable: true,
-        cloneable: true,
-        rotateable: false,
-        group: 0,
-        key: Infinity,
-        updateStage: -1,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        id: 'c4',
         numId: 0
     },
     pump: {
@@ -3702,6 +3624,126 @@ const pixels = {
         color: 'rgb(150, 150, 150)',
         text: 'TZ'
     }),
+    detonator: {
+        name: 'Detonator',
+        description: 'Triggers Gunpowder and C-4 on contact by exploding',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(200, 50, 50)';
+            fillPixel(x, y, width, height, ctx);
+            let color = noAnimations ? [200, 0, 255] : colorAnimate(200, 0, 255, 255, 0, 255, 96);
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + 1 / 4 + i, y + 1 / 4 + j, 1 / 2, 1 / 2, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            let explosion = updateTouchingPixel(x, y, pixNum.GUNPOWDER) || updateTouchingPixel(x, y, pixNum.C4) || updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x];
+            if (explosion) explode(x, y, 5, 1);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
+        prerender: function () {
+
+        },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 5,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 4,
+        key: Infinity,
+        updateStage: 9,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'gunpowder',
+        numId: 0
+    },
+    gunpowder: {
+        name: 'Gunpowder',
+        description: 'A low explosive that explodes when lit on fire',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = 'rgb(50, 25, 25)';
+                fillPixel(x, y, width, height, ctx);
+            } else {
+                ctx.fillStyle = 'rgb(30, 20, 20)';
+                fillPixel(x, y, width, height, ctx);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = `rgb(55, 40, 40, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            let explosion = updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x];
+            if (explosion) explode(x, y, 5, 1);
+            else fall(x, y, 1, 1, isPassableFluid);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(50, 25, 25)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 20,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 4,
+        key: Infinity,
+        updateStage: 9,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'gunpowder',
+        numId: 0
+    },
+    c4: {
+        name: 'C-4',
+        description: 'A high explosive that can only be triggered by other explosions',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(245, 245, 200)';
+            fillPixel(x, y, width, height, ctx);
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(245, 245, 200)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 4,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 4,
+        key: Infinity,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'c4',
+        numId: 0
+    },
     nuke_diffuser: {
         name: 'Nuke Diffuser',
         description: 'Doesn\'t cause diffusion, but will defuse nukes touching it',

@@ -81,7 +81,9 @@ const loadingTips = [
     'Use the RedPrint Editor to save contraptions you use a lot.',
     '<span style="color: #FFCC00;">Rick Astley!</span>',
     '<span style="color: #00FF00;">Green Pixel Simulator!</span> (not) coming soon!',
-    'Some levels are very RNG-based, messing around randomly usually works in those levels'
+    'Some levels are very RNG-based, messing around randomly usually works in those levels',
+    '<span style="font-style: bold italic;">Pixels: Legends</span>'
+
 ];
 const loadingTip = document.getElementById('loadingTip');
 function setTransitionTimeout(cb, ms) {
@@ -552,33 +554,39 @@ async function startDragPlayerCard(card, username, pageX, pageY) {
         card.style.visibility = '';
         document.removeEventListener('mouseup', release);
         document.removeEventListener('mousemove', move);
+        pixsimTeamsTAPlayers.onmouseout();
+        pixsimTeamsTBPlayers.onmouseout();
+        pixsimSpectatorsList.onmouseout();
         tickSound();
     });
-    pixsimTeamsTAPlayers.onmouseover = (e) => {
-        pixsimTeamsTAPlayers.style.backgroundColor = '#FFFFFF22';
-        pixsimDragging.hoveringTeam = 1;
-    };
-    pixsimTeamsTBPlayers.onmouseover = (e) => {
-        pixsimTeamsTBPlayers.style.backgroundColor = '#FFFFFF22';
-        pixsimDragging.hoveringTeam = 2;
-    };
-    pixsimSpectatorsList.onmouseover = (e) => {
-        pixsimSpectatorsList.style.backgroundColor = '#FFFFFF22';
-        pixsimDragging.hoveringTeam = 0;
-    };
-    pixsimTeamsTAPlayers.onmouseout = (e) => {
-        pixsimTeamsTAPlayers.style.backgroundColor = '';
-        pixsimDragging.hoveringTeam = -1;
-    };
-    pixsimTeamsTBPlayers.onmouseout = (e) => {
-        pixsimTeamsTBPlayers.style.backgroundColor = '';
-        pixsimDragging.hoveringTeam = -1;
-    };
-    pixsimSpectatorsList.onmouseout = (e) => {
-        pixsimSpectatorsList.style.backgroundColor = '';
-        pixsimDragging.hoveringTeam = -1;
-    };
     tickSound();
+};
+pixsimTeamsTAPlayers.onmouseover = (e) => {
+    if (!pixsimDragging.dragging) return;
+    pixsimTeamsTAPlayers.style.backgroundColor = '#FFFFFF22';
+    pixsimDragging.hoveringTeam = 1;
+};
+pixsimTeamsTBPlayers.onmouseover = (e) => {
+    if (!pixsimDragging.dragging) return;
+    pixsimTeamsTBPlayers.style.backgroundColor = '#FFFFFF22';
+    pixsimDragging.hoveringTeam = 2;
+};
+pixsimSpectatorsList.onmouseover = (e) => {
+    if (!pixsimDragging.dragging) return;
+    pixsimSpectatorsList.style.backgroundColor = '#FFFFFF22';
+    pixsimDragging.hoveringTeam = 0;
+};
+pixsimTeamsTAPlayers.onmouseout = (e) => {
+    pixsimTeamsTAPlayers.style.backgroundColor = '';
+    pixsimDragging.hoveringTeam = -1;
+};
+pixsimTeamsTBPlayers.onmouseout = (e) => {
+    pixsimTeamsTBPlayers.style.backgroundColor = '';
+    pixsimDragging.hoveringTeam = -1;
+};
+pixsimSpectatorsList.onmouseout = (e) => {
+    pixsimSpectatorsList.style.backgroundColor = '';
+    pixsimDragging.hoveringTeam = -1;
 };
 PixSimAPI.onUpdateTeamList = async (teams) => {
     pixsimTeamList.style.setProperty('--pixsim-team-size', PixSimAPI.teamSize);

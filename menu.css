@@ -10,7 +10,7 @@
     --title-left-offset: 20vw;
     overflow-y: hidden;
     overflow-x: hidden;
-    z-index: 993;
+    z-index: 992;
 }
 
 #titleContainer {
@@ -92,7 +92,7 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: 80%;
-    z-index: 994;
+    z-index: 993;
 }
 #volumeAdjustWrapper {
     position: fixed;
@@ -116,7 +116,7 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: 80%;
-    z-index: 995;
+    z-index: 994;
 }
 #volumeAdjustSlider {
     appearance: none;
@@ -130,7 +130,7 @@
     background-color: lightgrey;
     transition: 250ms ease transform;
     transform: translateX(-100%);
-    z-index: 994;
+    z-index: 993;
 }
 #volumeAdjustSlider::-webkit-slider-thumb {
     appearance: none;
@@ -172,7 +172,7 @@
     background-size: 100%;
     background-color: red;
     border-color: crimson;
-    z-index: 996;
+    z-index: 995;
 }
 #levelSelect {
     position: absolute;
@@ -426,6 +426,8 @@
 #pxTeamsTAPlayers, #pxTeamsTBPlayers {
     display: grid;
     grid-template-rows: repeat(var(--pixsim-team-size), 41px);
+    row-gap: 1px;
+    background-color: #CCC;
 }
 #hostSpectatorsWrapper, #waitSpectatorsWrapper {
     position: relative;
@@ -446,6 +448,7 @@
     grid-template-rows: [r0] 20px [r1] 20px [r2];
     height: 40px;
     border-bottom: 1px solid gray;
+    background-color: #EFEFEF;
     text-align: left;
     transition: 100ms linear background-color;
 }
@@ -603,7 +606,7 @@
     left: 0px;
     cursor: grabbing;
     pointer-events: none;
-    z-index: 997;
+    z-index: 996;
 }
 
 #creditsAnimation {
@@ -718,7 +721,7 @@
     height: 50vh;
     background-color: #282828;
     transition: 300ms ease-in transform;
-    z-index: 999;
+    z-index: 998;
 }
 #t_top {
     top: -60vh;
@@ -762,6 +765,8 @@
     font-family: 'Lucida Console', Lucida, monospace;
     opacity: 0;
     transition: 200ms linear opacity;
+    pointer-events: none;
+    z-index: 999;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -775,7 +780,14 @@
     #pxSpectatorsContent, .pxPlayerCardProfileImg, #joinGameCodeWrapper, #joinListWrapper, #joinListContent {
         border-color: white;
     }
-    .pxPlayerCard, .pxPlayerCardProfileImg, .joinTile {
+    #pxTeamsTAPlayers, #pxTeamsTBPlayers {
+        background-color: #2A2A2A;
+    }
+    .pxPlayerCard {
+        background-color: #333;
+        border-color: lightgray;
+    }
+    .pxPlayerCardProfileImg, .joinTile {
         border-color: lightgray;
     }
 }

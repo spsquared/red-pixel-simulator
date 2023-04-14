@@ -21,7 +21,7 @@ socket.on('error', handlePixSimAPIDisconnect);
 
 // network metrics
 let pingSend = 0;
-let ping = 0;
+let ping = -1;
 let pingReceived = true;
 let jitter = 0;
 const highPingWarning = document.getElementById('highPing');
@@ -40,9 +40,10 @@ setInterval(() => {
 socket.on('pong', () => {
     let prevPing = ping;
     ping = performance.now() - pingSend;
+    if (prevPing == -1) prevPing = ping;
     jitter = Math.abs(ping - prevPing) * 0.5 + jitter * 0.5;
     pingReceived = true;
-    if (ping > 500 || jitter > 200) {
+    if (ping > 300 || jitter > 200) {
         highPingWarning.style.display = 'block';
         highPingWarningPing.innerHTML = `Ping: ${Math.round(ping)}ms<br>Jitter: ${Math.round(jitter)}ms`;
     } else {
