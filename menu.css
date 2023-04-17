@@ -520,7 +520,7 @@
 #joinGameCodeCode {
     float: left;
     width: calc(70% - 4px);
-    height: 40px;
+    height: 38px;
     font-size: 36px;
     font-family: 'Source Code Pro', Courier, monospace;
     background-color: #DDDDDD;
