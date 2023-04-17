@@ -447,7 +447,7 @@ function refreshGameList(games) {
         wrapper.appendChild(codeText);
         const sub1 = document.createElement('div');
         sub1.classList.add('joinTileSub1');
-        sub1.innerText = `${game.open ? 'Running' : 'Open'} ❖ ${type(game.type)} ❖ ${game.hostName}`;
+        sub1.innerText = `${game.open ? 'Running' : 'Open'} ❖ ${type(game.type)} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`;
         wrapper.appendChild(sub1);
         const sub2 = document.createElement('div');
         sub2.classList.add('joinTileSub2');
@@ -543,6 +543,7 @@ async function startDragPlayerCard(card, username, pageX, pageY) {
     pixsimDragCard.style.visibility = 'visible';
     pixsimDragCard.style.top = pageY - pixsimDragging.startY + 'px';
     pixsimDragCard.style.left = pageX - pixsimDragging.startX + 'px';
+    pixsimDragCard.style.width = cardRect.width + 'px';
     document.addEventListener('mousemove', function move(e) {
         pixsimDragCard.style.top = e.pageY - pixsimDragging.startY + 'px';
         pixsimDragCard.style.left = e.pageX - pixsimDragging.startX + 'px';

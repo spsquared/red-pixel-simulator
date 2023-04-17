@@ -604,9 +604,13 @@
     position: fixed;
     top: 0px;
     left: 0px;
+    border: 2px solid black;
     cursor: grabbing;
     pointer-events: none;
     z-index: 996;
+}
+#pixsimDragCardWrapper .pxPlayerCard {
+    height: 40px;
 }
 
 #creditsAnimation {
@@ -777,7 +781,7 @@
     /* this is fine */
     #hostGameTypePrevious, #hostGameTypeName, #hostGameTypeNext, #hostGameTypeDescription, #hostTeamsWrapper, #waitTeamsWrapper,
     #pxTeamsTitle, #pxTeamsTAWrapper, #pxTeamsTBWrapper, #pxTeamsTATitle, #pxTeamsTBTitle, #hostSpectatorsWrapper, #waitSpectatorsWrapper,
-    #pxSpectatorsContent, .pxPlayerCardProfileImg, #joinGameCodeWrapper, #joinListWrapper, #joinListContent {
+    #pxSpectatorsContent, .pxPlayerCardProfileImg, #pixsimDragCardWrapper, #joinGameCodeWrapper, #joinListWrapper, #joinListContent {
         border-color: white;
     }
     #pxTeamsTAPlayers, #pxTeamsTBPlayers {

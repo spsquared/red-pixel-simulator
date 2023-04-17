@@ -64,7 +64,7 @@ button:active {
     width: 36px;
     height: 16px;
     background-color: #EE0000;
-    border: 1px solid #FFFFFF;
+    border: 1px solid black;
     transition: 0.1s linear;
     cursor: pointer;
 }
@@ -670,6 +670,9 @@ table {
         color: white;
     }
 
+    .toggleSlider {
+        border-color: white;
+    }
     .toggleSlider::before {
         background-color: white;
     }
