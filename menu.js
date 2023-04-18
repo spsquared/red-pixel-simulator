@@ -262,7 +262,7 @@ const pixsimSelectScrimmageButton = document.getElementById('pixsimSelectScrimma
 const pixsimMenuContents = document.getElementById('pixsimMenuContents');
 
 sandboxButton.onclick = (e) => {
-    if (!acceptMenuInputs) return;
+    if (!acceptMenuInputs || levelSelect._open || pixsimMenu._open) return;
     levelSelect.style.transform = '';
     clearTimeout(startTitleBob);
     document.getElementById('levelDetails').style.display = 'none';
@@ -287,13 +287,13 @@ sandboxButton.onclick = (e) => {
     transitionToGame();
 };
 puzzleButton.onclick = (e) => {
-    if (levelSelect._open) return;
+    if (!acceptMenuInputs || levelSelect._open || pixsimMenu._open) return;
     levelSelect._open = true;
     levelSelect.style.transform = 'translateY(100vh)';
     saveCodeText.blur();
 };
 multiplayerButton.onclick = (e) => {
-    if (pixsimMenu._open) return;
+    if (!acceptMenuInputs || levelSelect._open || pixsimMenu._open) return;
     pixsimMenu._open = true;
     pixsimMenuConnecting.style.opacity = 1;
     pixsimMenuConnecting.style.pointerEvents = '';

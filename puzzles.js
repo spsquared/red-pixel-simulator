@@ -285,6 +285,7 @@ const puzzles = [
 let currentPuzzleSection = 0;
 let currentPuzzleLevel = 0;
 let currentPuzzleId = 0;
+let currentPuzzleCompleted = false;
 const winScreen = document.getElementById('winScreen');
 const winBox = document.getElementById('winBox');
 const winReset = document.getElementById('winReset');
@@ -298,7 +299,14 @@ function triggerWin() {
     fastSimulation = false;
     updateTimeControlButtons();
     stopAllMusicPixels();
+    currentPuzzleCompleted = true;
+    window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compress(JSON.stringify({
+        code: saveCode,
+        pixels: pixelAmounts,
+        completed: true
+    })));
     if (window.playWinSound) window.playWinSound();
+    document.getElementById(`puzzleButton-${currentPuzzleId}`).classList.add('levelButtonCompleted');
     winScreen.style.opacity = '1';
     winScreen.style.pointerEvents = 'all';
     winBox.style.transform = 'translateY(-50%)';
@@ -365,6 +373,7 @@ function loadPuzzle(section, level) {
                     updatePixelAmount(pixelType, false, true);
                 }
             }
+            currentPuzzleCompleted = savedData.completed ?? false;
         } else {
             let isFirst = true;
             for (let pixelType in puzzle.inventory) {
@@ -385,32 +394,38 @@ function loadPuzzle(section, level) {
         modal('Could not load puzzle:', `<span style="color: red;">${err.message}</span><br>Restart the puzzle if issues persist.`, false).then(transitionToMenu);
     }
 };
-for (let section in puzzles) {
-    const block = document.createElement('div');
-    block.classList.add('levelGroup');
-    const title = document.createElement('h1');
-    title.innerText = puzzles[section].name;
-    block.appendChild(title);
-    let col = 0;
-    for (let level in puzzles[section].levels) {
-        const button = document.createElement('button');
-        button.classList.add('levelButton');
-        button.innerText = parseInt(level) + 1;
-        button.onclick = (e) => {
-            sandboxMode = false;
-            loadPuzzle(section, level);
-            selectPuzzle();
-        };
-        block.appendChild(button);
-        col++;
-        if (col == 5) {
-            block.appendChild(document.createElement('br'));
-            col = 0;
-        }
-    }
-    levelSelectBody.appendChild(block);
-}
 
+window.addEventListener('DOMContentLoaded', (e) => {
+    for (let section in puzzles) {
+        const block = document.createElement('div');
+        block.classList.add('levelGroup');
+        const title = document.createElement('h1');
+        title.innerText = puzzles[section].name;
+        block.appendChild(title);
+        let col = 0;
+        for (let level in puzzles[section].levels) {
+            let savedData = window.localStorage.getItem(`challenge-${puzzles[section].levels[level].id}`);
+            if (savedData) try { savedData = JSON.parse(savedData); } catch { savedData = JSON.parse(LZString.decompress(savedData)); };
+            const button = document.createElement('button');
+            button.id = `puzzleButton-${puzzles[section].levels[level].id}`;
+            button.classList.add('levelButton');
+            if (savedData && savedData.completed) button.classList.add('levelButtonCompleted');
+            button.innerText = parseInt(level) + 1;
+            button.onclick = (e) => {
+                sandboxMode = false;
+                loadPuzzle(section, level);
+                selectPuzzle();
+            };
+            block.appendChild(button);
+            col++;
+            if (col == 5) {
+                block.appendChild(document.createElement('br'));
+                col = 0;
+            }
+        }
+        levelSelectBody.appendChild(block);
+    }
+});
 window.addEventListener('load', (e) => {
     let i = 0;
     let key = window.localStorage.key(i);

@@ -4258,7 +4258,7 @@ const pixels = {
     },
     rickastley: {
         name: 'Rick Astley',
-        description: 'Never gonna give you up<br>Never gonna let you down<br>Never gonna run around and desert you<br>Never gonna make you cry<br>Never gonna say goodby<br>Never gonna tell a lie and hurt you',
+        description: 'Never gonna give you up<br>Never gonna let you down<br>Never gonna run around and desert you<br>Never gonna make you cry<br>Never gonna say goodbye<br>Never gonna tell a lie and hurt you',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             let scale = gridScale * camera.scale;

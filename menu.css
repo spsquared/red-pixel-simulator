@@ -208,6 +208,9 @@
 .levelButton {
     width: 100px;
 }
+.levelButtonCompleted {
+    background-color: lime;
+}
 
 #pixsimMenu {
     position: absolute;

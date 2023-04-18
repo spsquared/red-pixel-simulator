@@ -1607,7 +1607,8 @@ function clickLine(x1, y1, x2, y2, remove) {
         saveCode = generateSaveCode();
         window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compress(JSON.stringify({
             code: saveCode,
-            pixels: pixelAmounts
+            pixels: pixelAmounts,
+            completed: currentPuzzleCompleted
         })));
         saveCodeText.value = saveCode;
     }
