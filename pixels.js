@@ -3629,15 +3629,7 @@ const pixels = {
         description: 'Triggers Gunpowder and C-4 on contact by exploding',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(200, 50, 50)';
-            fillPixel(x, y, width, height, ctx);
-            let color = noAnimations ? [200, 0, 255] : colorAnimate(200, 0, 255, 255, 0, 255, 96);
-            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + 1 / 4 + i, y + 1 / 4 + j, 1 / 2, 1 / 2, ctx);
-                }
-            }
+            imagePixel(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 30) % 2)], ctx);
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
@@ -3646,9 +3638,21 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(20, 20, 20)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(10, 10, 30, 30);
         },
         prerender: function () {
-
+            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            ctx.fillStyle = 'rgb(20, 20, 20)';
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(180, 0, 0)';
+            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
         blastResistance: 0,
@@ -3658,12 +3662,12 @@ const pixels = {
         rotateable: false,
         group: 4,
         key: Infinity,
-        updateStage: 9,
+        updateStage: 0,
         animatedNoise: false,
-        animated: false,
+        animated: true,
         alwaysRedraw: false,
-        pickable: false,
-        id: 'gunpowder',
+        pickable: true,
+        id: 'detonator',
         numId: 0
     },
     gunpowder: {

@@ -1291,7 +1291,7 @@ function updateTick() {
             /*
             update priority:
             -: fire
-            0: nukes, plants, sponges, gunpowder, and lasers
+            0: nukes, plants, sponges, gunpowder, detonators, and lasers
             1, 2, 3, 4: pistons
             5, 6, 7, 8: cloners
             9: gravity solids
