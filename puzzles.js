@@ -310,6 +310,10 @@ function triggerWin() {
     winScreen.style.opacity = '1';
     winScreen.style.pointerEvents = 'all';
     winBox.style.transform = 'translateY(-50%)';
+    function keyHandle(e) {
+        if (e.key == 'Enter' && winNext.onclick) winNext.onclick();
+        else if (e.key == 'Escape') winReset.onclick();
+    };
     const hide = () => {
         winScreen.style.opacity = '';
         winScreen.style.pointerEvents = '';
@@ -317,6 +321,7 @@ function triggerWin() {
         winReset.onclick = null;
         winNext.onclick = null;
         winMenu.onclick = null;
+        document.removeEventListener('keydown', keyHandle);
         inWinScreen = false;
     };
     if (puzzles[currentPuzzleSection].levels[currentPuzzleLevel + 1]) {
@@ -325,7 +330,7 @@ function triggerWin() {
             transitionWithinGame(() => {
                 loadPuzzle(currentPuzzleSection, currentPuzzleLevel + 1);
             });
-        }
+        };
         winNext.style.display = '';
     } else {
         winNext.style.display = 'none';
@@ -340,6 +345,7 @@ function triggerWin() {
         hide();
         transitionToMenu();
     };
+    document.addEventListener('keydown', keyHandle);
 };
 
 const levelName = document.getElementById('levelName');
