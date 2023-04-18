@@ -28,6 +28,10 @@ body::-webkit-scrollbar {
     width: 0px;
 }
 
+::selection {
+    background-color: #F55;
+}
+
 img {
     -webkit-user-drag: none;
     image-rendering: pixelated;

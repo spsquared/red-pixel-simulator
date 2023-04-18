@@ -10,7 +10,6 @@ async function handlePixSimAPIDisconnect() {
     if (apiconnected) {
         PixSimAPI.disconnect();
         await modal('PixSim API', '<span style="color: red;">PixSim API was disconnected.</span>', false);
-        // kick out of game
         pixsimMenuClose.onclick();
     }
 };
@@ -74,6 +73,9 @@ class PixSimAPI {
         await new Promise((resolve, reject) => {
             const wakeup = new XMLHttpRequest();
             wakeup.open('GET', apiURI);
+            wakeup.onload = (e) => {
+                if (!socket.connected) socket.connect();
+            };
             wakeup.onerror = (e) => {
                 reject(new Error(`wakeup call failed: ${wakeup.status} ${wakeup.statusText}`));
             };
