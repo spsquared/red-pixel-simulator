@@ -1,4 +1,4 @@
-const redPrints = JSON.parse(window.localStorage.getItem('redprints') ?? '[]');
+const redPrints = new Function(`try { return JSON.parse(window.localStorage.getItem('redprints') ?? '[]'); } catch { return JSON.parse(LZString.decompress(window.localStorage.getItem('redprints'))); }`)();
 
 let rpGridWidth = 0;
 let rpGridHeight = 0;
@@ -356,7 +356,7 @@ document.getElementById('exportRedprint').onclick = (e) => {
     for (let i = 0; i < rpGridHeight; i++) {
         selection.grid[i] = Array.from(rpGrid[i]);
     }
-    localStorage.setItem('clipboard', JSON.stringify(selection.grid));
+    window.localStorage.setItem('clipboard', LZString.compress(JSON.stringify(selection.grid)));
     brush.isSelection = true;
 };
 document.getElementById('rpSave').onclick = (e) => {
@@ -392,7 +392,7 @@ document.getElementById('rpSave').onclick = (e) => {
     refreshRedPrintList();
 };
 function refreshRedPrintList() {
-    window.localStorage.setItem('redprints', JSON.stringify(redPrints));
+    window.localStorage.setItem('redprints', LZString.compress(JSON.stringify(redPrints)));
     rpListContainer.innerHTML = '';
     for (const redprint of redPrints) {
         const block = document.createElement('div');
@@ -434,7 +434,7 @@ function refreshRedPrintList() {
             for (let i = 0; i < rpGridHeight; i++) {
                 selection.grid[i] = Array.from(rpGrid[i]);
             }
-            localStorage.setItem('clipboard', JSON.stringify(selection.grid));
+            window.localStorage.setItem('clipboard', LZString.compress(JSON.stringify(selection.grid)));
             brush.isSelection = true;
             loadRPCode(tempCode);
         };

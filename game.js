@@ -334,7 +334,7 @@ function loadSaveCode() {
         forceRedraw = true;
     }
     if (sandboxMode) {
-        window.localStorage.setItem('saveCode', saveCode);
+        window.localStorage.setItem('saveCode', LZString.compress(saveCode));
     }
 };
 function generateSaveCode() {
@@ -409,16 +409,16 @@ async function loadPremade(id) {
                 saveCode = e.innerHTML;
                 saveCodeText.value = saveCode;
                 loadSaveCode();
-                window.localStorage.setItem('saveCode', generateSaveCode());
-                window.localStorage.setItem('saveCodeText', saveCodeText.value);
+                window.localStorage.setItem('saveCode', LZString.compress(generateSaveCode()));
+                window.localStorage.setItem('saveCodeText', LZString.compress(saveCodeText.value));
             }
         });
     }
 };
 function loadStoredSave() {
-    saveCode = window.localStorage.getItem('saveCode') ?? saveCode;
+    if (window.localStorage.getItem('saveCode') != undefined) saveCode = LZString.decompress(window.localStorage.getItem('saveCode'));
     loadSaveCode();
-    saveCode = window.localStorage.getItem(('saveCodeText')) ?? saveCode;
+    if (window.localStorage.getItem('saveCodeText') !== undefined) saveCode = LZString.decompress(window.localStorage.getItem('saveCodeText'));
     saveCodeText.value = saveCode;
     simulationPaused = true;
     fastSimulation = false;
@@ -496,7 +496,7 @@ function setup() {
     setInterval(() => {
         window.requestIdleCallback(() => {
             if (sandboxMode) {
-                window.localStorage.setItem('saveCode', generateSaveCode());
+                window.localStorage.setItem('saveCode', LZString.compress(generateSaveCode()));
             }
         }, { timeout: 5000 });
     }, 30000);
@@ -1605,10 +1605,10 @@ function clickLine(x1, y1, x2, y2, remove) {
     }
     if (!sandboxMode) {
         saveCode = generateSaveCode();
-        window.localStorage.setItem(`challenge-${currentPuzzleId}`, JSON.stringify({
+        window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compress(JSON.stringify({
             code: saveCode,
             pixels: pixelAmounts
-        }));
+        })));
         saveCodeText.value = saveCode;
     }
 };
@@ -1655,7 +1655,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                     }
                 }
                 selection.show = false;
-                localStorage.setItem('clipboard', JSON.stringify(selection.grid));
+                window.localStorage.setItem('clipboard', LZString.compress(JSON.stringify(selection.grid)));
             }
         } else if (sandboxMode && key == 'backspace') {
             if (selection.show) {
@@ -1684,11 +1684,11 @@ window.addEventListener('DOMContentLoaded', (e) => {
                     }
                 }
                 selection.show = false;
-                localStorage.setItem('clipboard', JSON.stringify(selection.grid));
+                window.localStorage.setItem('clipboard', LZString.compress(JSON.stringify(selection.grid)));
             }
         } else if (sandboxMode && key == 'v' && e.ctrlKey) {
-            if (localStorage.getItem('clipboard') != undefined) {
-                selection.grid = JSON.parse(localStorage.getItem('clipboard'));
+            if (window.localStorage.getItem('clipboard') !== undefined) {
+                selection.grid = JSON.parse(LZString.decompress(window.localStorage.getItem('clipboard')));
                 brush.isSelection = true;
             }
         } else if (key == 'enter') {
@@ -1734,7 +1734,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 }
             }
             selection.grid = newGrid;
-            localStorage.setItem('clipboard', JSON.stringify(selection.grid));
+            window.localStorage.setItem('clipboard', LZString.compress(JSON.stringify(selection.grid)));
         } else if (sandboxMode && key == 'n') {
             for (let i = 0; i < gridSize; i += 5) {
                 for (let j = 0; j < gridSize; j += 5) {
@@ -1930,7 +1930,7 @@ saveCodeText.oninput = (e) => {
     clearTimeout(writeSaveTimeout);
     writeSaveTimeout = setTimeout(() => {
         if (sandboxMode) {
-            window.localStorage.setItem('saveCodeText', saveCode);
+            window.localStorage.setItem('saveCodeText', LZString.compress(saveCode));
         }
     }, 1000);
 };
@@ -1942,8 +1942,8 @@ document.getElementById('generateSave').onclick = (e) => {
     saveCode = generateSaveCode();
     saveCodeText.value = saveCode;
     if (sandboxMode) {
-        window.localStorage.setItem('saveCode', saveCode);
-        window.localStorage.setItem('saveCodeText', saveCode);
+        window.localStorage.setItem('saveCode', LZString.compress(generateSaveCode()));
+        window.localStorage.setItem('saveCodeText', LZString.compress(saveCode));
     }
 };
 document.getElementById('uploadSave').onclick = (e) => {
@@ -2044,8 +2044,8 @@ document.getElementById('backToMenu').onclick = (e) => {
     updateTimeControlButtons();
     stopAllMusicPixels();
     if (sandboxMode) {
-        window.localStorage.setItem('saveCode', generateSaveCode());
-        window.localStorage.setItem('saveCodeText', saveCodeText.value);
+        window.localStorage.setItem('saveCode', LZString.compress(generateSaveCode()));
+        window.localStorage.setItem('saveCodeText', LZString.compress(saveCodeText.value));
     }
     transitionToMenu();
 };

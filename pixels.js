@@ -3662,7 +3662,7 @@ const pixels = {
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
-        pickable: true,
+        pickable: false,
         id: 'gunpowder',
         numId: 0
     },
