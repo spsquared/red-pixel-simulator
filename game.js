@@ -416,9 +416,11 @@ async function loadPremade(id) {
     }
 };
 function loadStoredSave() {
-    if (window.localStorage.getItem('saveCode') != undefined) saveCode = LZString.decompress(window.localStorage.getItem('saveCode'));
+    let savedSaveCode = window.localStorage.getItem('saveCode');
+    if (savedSaveCode != undefined) try { saveCode = JSON.parse(savedSaveCode); } catch { saveCode = JSON.parse(LZString.decompress(savedSaveCode)); }
     loadSaveCode();
-    if (window.localStorage.getItem('saveCodeText') !== undefined) saveCode = LZString.decompress(window.localStorage.getItem('saveCodeText'));
+    let savedSaveText = window.localStorage.getItem('saveCodeText');
+    if (savedSaveText !== undefined) try { saveCode = JSON.parse(savedSaveText); } catch { saveCode = JSON.parse(LZString.decompress(savedSaveText)); }
     saveCodeText.value = saveCode;
     simulationPaused = true;
     fastSimulation = false;

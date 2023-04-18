@@ -361,7 +361,7 @@ function loadPuzzle(section, level) {
         puzzleSaveCode = puzzle.saveCode;
         saveCode = puzzleSaveCode;
         let savedData = window.localStorage.getItem(`challenge-${currentPuzzleId}`);
-        if (savedData) try { savedData = JSON.parse(savedData); } catch { savedData = JSON.parse(LZString.decompress(savedData)); };
+        if (savedData) try { savedData = JSON.parse(savedData); } catch { savedData = JSON.parse(LZString.decompress(savedData)); }
         if (savedData) saveCode = savedData.code;
         saveCodeText.value = saveCode;
         loadSaveCode();
