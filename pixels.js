@@ -2582,8 +2582,6 @@ const pixels = {
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 120, 210)';
-            ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(250, 180, 0)';
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(200, 100, 0)';

@@ -81,7 +81,7 @@ const loadingTips = [
     'Use the RedPrint Editor to save contraptions you use a lot.',
     '<span style="color: #FFCC00;">Rick Astley!</span>',
     '<span style="color: #00FF00;">Green Pixel Simulator!</span> (not) coming soon!',
-    'Some levels are very RNG-based, messing around randomly usually works in those levels',
+    'Some levels are very RNG-based; messing around randomly usually works in those levels',
     '<span style="font-style: bold italic;">Pixels: Legends</span>'
 
 ];
