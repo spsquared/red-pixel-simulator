@@ -925,56 +925,116 @@ function drawLaserPath(path) {
         }
     }
 };
-function explode(x, y, size) {
-    nextGrid[y][x] = pixNum.AIR;
-    grid[y][x] = pixNum.AIR;
+function explode(x1, y1, size) {
+    nextGrid[y1][x1] = pixNum.AIR;
+    grid[y1][x1] = pixNum.AIR;
     let chained = 0;
-    // raycasting???
-    
-    for (let cy = y - size; cy <= y + size; cy++) {
-        for (let cx = x - size; cx <= x + size; cx++) {
-            if (cy >= 0 && cy < gridSize && cx >= 0 && cx < gridSize) {
-                if (random() < (1 - (getDistance(x, y, cx, cy) / size)) * ((20 - (numPixels[grid[cy][cx]] ?? numPixels[pixNum.MISSING]).blastResistance) / (45 - size))) {
-                    nextGrid[cy][cx] = pixNum.AIR;
-                    monsterGrid[cy][cx] = false;
-                    if (chained < 5 && getDistance(x, y, cx, cy) > 5 && random() < 0.8 - (getDistance(x, y, cx, cy) / size)) {
-                        if (grid[cy][cx] == pixNum.NUKE) {
-                            pendingExplosions.push([cx, cy, 10]);
-                            grid[cy][cx] = pixNum.AIR;
-                            chained++;
-                        } else if (grid[cy][cx] == pixNum.HUGE_NUKE) {
-                            pendingExplosions.push([cx, cy, 20]);
-                            grid[cy][cx] = pixNum.AIR;
-                            chained++;
-                        } else if (grid[cy][cx] == pixNum.VERY_HUGE_NUKE) {
-                            pendingExplosions.push([cx, cy, 40]);
-                            grid[cy][cx] = pixNum.AIR;
-                            chained++;
-                        }
-                    }
-                    if (grid[cy][cx] == pixNum.GUNPOWDER) {
-                        pendingExplosions.push([cx, cy, 5, 1]);
-                        grid[cy][cx] = pixNum.WALL;
-                    } else if (grid[cy][cx] == pixNum.C4) {
-                        pendingExplosions.push([cx, cy, 15, 1]);
-                        grid[cy][cx] = pixNum.WALL;
-                    }
-                    if (random() < 0.5 - (getDistance(x, y, cx, cy) / size)) {
-                        fireGrid[cy][cx] = true;
-                    }
+    function destroy(x, y, power) {
+        if (random() < (size / power) * ((20 - (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).blastResistance) / (45 - power))) {
+            nextGrid[y][x] = pixNum.AIR;
+            monsterGrid[y][x] = false;
+            if (chained < 5) {
+                if (grid[y][x] == pixNum.NUKE) {
+                    pendingExplosions.push([x, y, 10]);
+                    grid[y][x] = pixNum.AIR;
+                    chained++;
+                } else if (grid[y][x] == pixNum.HUGE_NUKE) {
+                    pendingExplosions.push([x, y, 20]);
+                    grid[y][x] = pixNum.AIR;
+                    chained++;
+                } else if (grid[y][x] == pixNum.VERY_HUGE_NUKE) {
+                    pendingExplosions.push([x, y, 40]);
+                    grid[y][x] = pixNum.AIR;
+                    chained++;
+                }
+            }
+            if (grid[y][x] == pixNum.GUNPOWDER) {
+                pendingExplosions.push([x, y, 5, 1]);
+                grid[y][x] = pixNum.WALL;
+            } else if (grid[y][x] == pixNum.C4) {
+                pendingExplosions.push([x, y, 15, 1]);
+                grid[y][x] = pixNum.WALL;
+            }
+            if (random() < 0.5 * power / size) {
+                fireGrid[y][x] = true;
+            }
+            return (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 40;
+        }
+        return (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 5;
+    };
+    for (let angle = 0; angle < 2 * Math.PI; angle += Math.PI / (size * 4)) {
+        let power = size;
+        let x2 = Math.floor(Math.cos(angle) * size) + x1;
+        let y2 = Math.floor(Math.sin(angle) * size) + y1;
+        let slope = (y2 - y1) / (x2 - x1);
+        if (!isFinite(slope)) {
+            if (y2 < y1) {
+                let step = size / (y1 - y2);
+                for (let y = y1; y >= y2 && power > 1 && y >= 0 && y < gridSize; y--) {
+                    power -= destroy(x1, y, power);
+                    power -= step;
+                }
+            } else {
+                let step = size / (y2 - y1);
+                for (let y = y1; y <= y2 && power > 1 && y >= 0 && y < gridSize; y++) {
+                    power -= destroy(x1, y, power);
+                    power -= step;
+                }
+            }
+        } else if (slope == 0) {
+            if (x2 < x1) {
+                let step = size / (x1 - x2);
+                for (let x = x1; x >= x2 && power > 1 && x >= 0 && x < gridSize; x--) {
+                    power -= destroy(x, y1, power);
+                    power -= step;
+                }
+            } else {
+                let step = size / (x2 - x1);
+                for (let x = x1; x <= x2 && power > 1 && x >= 0 && x < gridSize; x++) {
+                    power -= destroy(x, y1, power);
+                    power -= step;
+                }
+            }
+        } else if (Math.abs(slope) > 1) {
+            slope = 1 / slope;
+            if (y2 < y1) {
+                let step = size / (y1 - y2);
+                for (let y = y1; y >= y2 && power > 1 && y >= 0 && y < gridSize; y--) {
+                    let x = Math.round(slope * (y - y1)) + x1;
+                    if (x < 0 || x >= gridSize) break;
+                    power -= destroy(x, y, power);
+                    power -= step;
+                }
+            } else {
+                let step = size / (y2 - y1);
+                for (let y = y1; y <= y2 && power > 1 && y >= 0 && y < gridSize; y++) {
+                    let x = Math.round(slope * (y - y1)) + x1;
+                    if (x < 0 || x >= gridSize) break;
+                    power -= destroy(x, y, power);
+                    power -= step;
+                }
+            }
+        } else {
+            if (x2 < x1) {
+                let step = size / (x1 - x2);
+                for (let x = x1; x >= x2 && power > 1 && x >= 0 && x < gridSize; x--) {
+                    let y = Math.round(slope * (x - x1)) + y1;
+                    if (y < 0 || y >= gridSize) break;
+                    power -= destroy(x, y, power);
+                    power -= step;
+                }
+            } else {
+                let step = size / (x2 - x1);
+                for (let x = x1; x <= x2 && power > 1 && x >= 0 && x < gridSize; x++) {
+                    let y = Math.round(slope * (x - x1)) + y1;
+                    if (y < 0 || y >= gridSize) break;
+                    power -= destroy(x, y, power);
+                    power -= step;
                 }
             }
         }
     }
 };
-function explosionLine(x1, y1, x2, y2, power) {
-    let slope = (y2 - y1) / (x2 - x1);
-    if (!isFinite(slope)) {
-    } else if (slope == 0) {
-    } else if (Math.abs(slope) > 1) {
-    } else {
-    }
-}
 
 // draw loop
 function draw() {
@@ -1492,19 +1552,19 @@ function brushActionLine(x1, y1, x2, y2, cb) {
         });
     } else if (Math.abs(slope) > 1) {
         slope = 1 / slope;
-        let min = y2 < y1 ? x2 : x1;
+        let xmin = y2 < y1 ? x2 : x1;
         let start = Math.min(y2, y1);
         let end = Math.max(y2, y1);
         for (let y = start; y <= end; y++) {
-            let x = Math.round(slope * (y - start)) + min;
+            let x = Math.round(slope * (y - start)) + xmin;
             cb(calcBrushRectCoordinates(x, y));
         }
     } else {
-        let min = x2 < x1 ? y2 : y1;
+        let ymin = x2 < x1 ? y2 : y1;
         let start = Math.min(x2, x1);
         let end = Math.max(x2, x1);
         for (let x = start; x <= end; x++) {
-            let y = Math.round(slope * (x - start)) + min;
+            let y = Math.round(slope * (x - start)) + ymin;
             cb(calcBrushRectCoordinates(x, y));
         }
     }
