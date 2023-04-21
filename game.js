@@ -334,7 +334,7 @@ function loadSaveCode() {
         forceRedraw = true;
     }
     if (sandboxMode) {
-        window.localStorage.setItem('saveCode', LZString.compress(saveCode));
+        window.localStorage.setItem('saveCode', LZString.compressToBase64(saveCode));
     }
 };
 function generateSaveCode() {
@@ -409,22 +409,22 @@ async function loadPremade(id) {
                 saveCode = e.innerHTML;
                 saveCodeText.value = saveCode;
                 loadSaveCode();
-                window.localStorage.setItem('saveCode', LZString.compress(generateSaveCode()));
-                window.localStorage.setItem('saveCodeText', LZString.compress(saveCodeText.value));
+                window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
+                window.localStorage.setItem('saveCodeText', LZString.compressToBase64(saveCodeText.value));
             }
         });
     }
 };
 function loadStoredSave() {
     let savedSaveCode = window.localStorage.getItem('saveCode');
-    if (savedSaveCode != undefined) {
-        saveCode = LZString.decompress(savedSaveCode);
+    if (savedSaveCode !== null) {
+        saveCode = LZString.decompressFromBase64(savedSaveCode);
         if (saveCode === '') saveCode = savedSaveCode;
     }
     loadSaveCode();
     let savedSaveText = window.localStorage.getItem('saveCodeText');
-    if (savedSaveText != undefined) {
-        saveCode = LZString.decompress(savedSaveText);
+    if (savedSaveText !== null) {
+        saveCode = LZString.decompressFromBase64(savedSaveText);
         if (saveCode === '') saveCode = savedSaveText;
     }
     saveCodeText.value = saveCode;
@@ -504,7 +504,7 @@ function setup() {
     setInterval(() => {
         window.requestIdleCallback(() => {
             if (sandboxMode) {
-                window.localStorage.setItem('saveCode', LZString.compress(generateSaveCode()));
+                window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
             }
         }, { timeout: 5000 });
     }, 30000);
@@ -929,13 +929,8 @@ function explode(x, y, size) {
     nextGrid[y][x] = pixNum.AIR;
     grid[y][x] = pixNum.AIR;
     let chained = 0;
-    // let rays = size * 2;
-    // for (let i = 0; i < rays; i++) {
-    //     let angle = 2 * Math.PI / rays;
-    //     let cos = Math.cos(angle);
-    //     let sin = Math.sin(angle);
-    //     // sector???
-    // }
+    // raycasting???
+    
     for (let cy = y - size; cy <= y + size; cy++) {
         for (let cx = x - size; cx <= x + size; cx++) {
             if (cy >= 0 && cy < gridSize && cx >= 0 && cx < gridSize) {
@@ -972,6 +967,14 @@ function explode(x, y, size) {
         }
     }
 };
+function explosionLine(x1, y1, x2, y2, power) {
+    let slope = (y2 - y1) / (x2 - x1);
+    if (!isFinite(slope)) {
+    } else if (slope == 0) {
+    } else if (Math.abs(slope) > 1) {
+    } else {
+    }
+}
 
 // draw loop
 function draw() {
@@ -1618,9 +1621,9 @@ function clickLine(x1, y1, x2, y2, remove) {
     }
     if (!sandboxMode) {
         saveCode = generateSaveCode();
-        window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compress(JSON.stringify({
+        window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compressToBase64(JSON.stringify({
             code: saveCode,
-            pixels: pixelAmounts,
+            pixels: getPixelAmounts(),
             completed: currentPuzzleCompleted
         })));
         saveCodeText.value = saveCode;
@@ -1669,7 +1672,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                     }
                 }
                 selection.show = false;
-                window.localStorage.setItem('clipboard', LZString.compress(JSON.stringify(selection.grid)));
+                window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
             }
         } else if (sandboxMode && key == 'backspace') {
             if (selection.show) {
@@ -1698,11 +1701,11 @@ window.addEventListener('DOMContentLoaded', (e) => {
                     }
                 }
                 selection.show = false;
-                window.localStorage.setItem('clipboard', LZString.compress(JSON.stringify(selection.grid)));
+                window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
             }
         } else if (sandboxMode && key == 'v' && e.ctrlKey) {
             if (window.localStorage.getItem('clipboard') !== undefined) {
-                selection.grid = JSON.parse(LZString.decompress(window.localStorage.getItem('clipboard')));
+                selection.grid = JSON.parse(LZString.decompressFromBase64(window.localStorage.getItem('clipboard')));
                 brush.isSelection = true;
             }
         } else if (key == 'enter') {
@@ -1748,7 +1751,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 }
             }
             selection.grid = newGrid;
-            window.localStorage.setItem('clipboard', LZString.compress(JSON.stringify(selection.grid)));
+            window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
         } else if (sandboxMode && key == 'n') {
             for (let i = 0; i < gridSize; i += 5) {
                 for (let j = 0; j < gridSize; j += 5) {
@@ -1944,7 +1947,7 @@ saveCodeText.oninput = (e) => {
     clearTimeout(writeSaveTimeout);
     writeSaveTimeout = setTimeout(() => {
         if (sandboxMode) {
-            window.localStorage.setItem('saveCodeText', LZString.compress(saveCode));
+            window.localStorage.setItem('saveCodeText', LZString.compressToBase64(saveCode));
         }
     }, 1000);
 };
@@ -1956,8 +1959,8 @@ document.getElementById('generateSave').onclick = (e) => {
     saveCode = generateSaveCode();
     saveCodeText.value = saveCode;
     if (sandboxMode) {
-        window.localStorage.setItem('saveCode', LZString.compress(generateSaveCode()));
-        window.localStorage.setItem('saveCodeText', LZString.compress(saveCode));
+        window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
+        window.localStorage.setItem('saveCodeText', LZString.compressToBase64(saveCode));
     }
 };
 document.getElementById('uploadSave').onclick = (e) => {
@@ -2058,8 +2061,8 @@ document.getElementById('backToMenu').onclick = (e) => {
     updateTimeControlButtons();
     stopAllMusicPixels();
     if (sandboxMode) {
-        window.localStorage.setItem('saveCode', LZString.compress(generateSaveCode()));
-        window.localStorage.setItem('saveCodeText', LZString.compress(saveCodeText.value));
+        window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
+        window.localStorage.setItem('saveCodeText', LZString.compressToBase64(saveCodeText.value));
     }
     transitionToMenu();
 };

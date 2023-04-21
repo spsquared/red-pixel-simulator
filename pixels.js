@@ -4753,7 +4753,7 @@ function resetPixelAmounts() {
         group.style.display = 'none';
     }
     for (const id in pixels) {
-        pixelAmounts[id] = 0;
+        pixelAmounts[id] = -1;
         updatePixelAmount(id, true);
     }
     pixelAmounts['air'] = Infinity;
@@ -4769,7 +4769,7 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
             pixelSelectors[id].parentGroup.children[0]._refresh();
         } else {
             pixelSelectors[id].count.innerText = pixelAmounts[id] == Infinity ? '∞' : pixelAmounts[id];
-            if (pixelAmounts[id] == 0 || pixelAmounts[id] == Infinity) {
+            if (pixelAmounts[id] <= 0 || pixelAmounts[id] == Infinity) {
                 pixelSelectors[id].box.classList.add('pickerNoPixels');
                 if (forceShow) {
                     pixelSelectors[id].box.style.display = '';
@@ -4786,6 +4786,13 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
             }
         }
     }
+};
+function getPixelAmounts() {
+    let ret = {};
+    for (let i in pixelAmounts) {
+        if (pixelAmounts[i] >= 0) ret[i] = pixelAmounts[i];
+    }
+    return ret;
 };
 
 function generateMusicPixel(id, data) {

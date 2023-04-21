@@ -300,9 +300,9 @@ function triggerWin() {
     updateTimeControlButtons();
     stopAllMusicPixels();
     currentPuzzleCompleted = true;
-    window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compress(JSON.stringify({
+    window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compressToBase64(JSON.stringify({
         code: saveCode,
-        pixels: pixelAmounts,
+        pixels: getPixelAmounts(),
         completed: true
     })));
     if (window.playWinSound) window.playWinSound();
@@ -361,13 +361,13 @@ function loadPuzzle(section, level) {
         puzzleSaveCode = puzzle.saveCode;
         saveCode = puzzleSaveCode;
         let savedData = window.localStorage.getItem(`challenge-${currentPuzzleId}`);
-        if (savedData) try { savedData = JSON.parse(savedData); } catch { savedData = JSON.parse(LZString.decompress(savedData)); }
-        if (savedData) saveCode = savedData.code;
+        if (savedData !== null) try { savedData = JSON.parse(savedData); } catch { savedData = JSON.parse(LZString.decompressFromBase64(savedData)); }
+        if (savedData !== null) saveCode = savedData.code;
         saveCodeText.value = saveCode;
         loadSaveCode();
         inResetState = true;
         resetPixelAmounts();
-        if (savedData) {
+        if (savedData !== null) {
             let isFirst = true;
             for (let pixelType in savedData.pixels) {
                 if (isFirst) {
@@ -411,7 +411,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         let col = 0;
         for (let level in puzzles[section].levels) {
             let savedData = window.localStorage.getItem(`challenge-${puzzles[section].levels[level].id}`);
-            if (savedData) try { savedData = JSON.parse(savedData); } catch { savedData = JSON.parse(LZString.decompress(savedData)); };
+            if (savedData) try { savedData = JSON.parse(savedData); } catch { savedData = JSON.parse(LZString.decompressFromBase64(savedData)); };
             const button = document.createElement('button');
             button.id = `puzzleButton-${puzzles[section].levels[level].id}`;
             button.classList.add('levelButton');

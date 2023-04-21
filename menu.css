@@ -278,6 +278,9 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
+#pixsimSelectMenu::-webkit-scrollbar, #pixsimHostBody::-webkit-scrollbar, #pixsimJoinBody::-webkit-scrollbar, #pixsimScrimmageBody::-webkit-scrollbar, #pixsimGameWaitingBody::-webkit-scrollbar {
+    width: 0px;
+}
 #pixsimSelectMenu {
     top: 0%;
     left: 0%;
@@ -286,9 +289,6 @@
 #pixsimHostBody {
     bottom: 100%;
     left: 0%;
-}
-#pixsimHostBody::-webkit-scrollbar {
-    width: 0px;
 }
 #pixsimJoinBody {
     top: 100%;
