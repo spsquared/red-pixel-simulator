@@ -299,5 +299,5 @@ if (navigator.userActivation) {
 }
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) globalVolume.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
-    else globalVolume.gain.linearRampToValueAtTime(1, audioContext.currentTime + 0.5);
+    else globalVolume.gain.linearRampToValueAtTime(volume / 100, audioContext.currentTime + 0.5);
 });

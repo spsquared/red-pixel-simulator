@@ -1552,16 +1552,21 @@ function clickLine(x1, y1, x2, y2, remove) {
                 });
             }
         } else if (brush.pixel == 'fire') {
-            if (sandboxMode) act(function (x, y) {
-                fireGrid[y][x] = true;
-            });
-            else act(function (x, y) {
-                if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
+            if (sandboxMode) {
+                act(function (x, y) {
                     fireGrid[y][x] = true;
-                    pixelAmounts[brush.pixel]--;
-                }
-                return pixelAmounts[brush.pixel] <= 0;
-            });
+                });
+            } else {
+                modifiedPixelCounts[clickPixelNum] = true;
+                if (pixelAmounts[brush.pixel] <= 0) skipToEnd = true;
+                else if (act(function (x, y) {
+                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && !fireGrid[y][x]) {
+                        fireGrid[y][x] = true;
+                        pixelAmounts[brush.pixel]--;
+                    }
+                    return pixelAmounts[brush.pixel] <= 0;
+                })) skipToEnd = true;
+            }
         } else if (brush.pixel == 'placementRestriction') {
             if (sandboxMode) act(function (x, y) {
                 placeableGrid[y][x] = false;
@@ -1592,7 +1597,7 @@ function clickLine(x1, y1, x2, y2, remove) {
                 modifiedPixelCounts[clickPixelNum] = true;
                 if (pixelAmounts[brush.pixel] <= 0) skipToEnd = true;
                 else if (act(function (x, y) {
-                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
+                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum) {
                         modifiedPixelCounts[grid[y][x]] = true;
                         pixelAmounts[numPixels[grid[y][x]].id]++;
                         grid[y][x] = clickPixelNum;

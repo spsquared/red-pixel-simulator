@@ -112,7 +112,7 @@ const puzzles = [
         name: 'Pixel Machines',
         levels: [
             {
-                name: 'Pushy Pistons',
+                name: 'Pushy Pushers',
                 description: `These pixels can <h>move on their own</h>, I wonder if you can make a computer with them. Oh, by the way, watch out for the gunpowder.`,
                 saveCode: '32;0000;wall-33:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:concrete:lava-2:air-3:concrete:air-23:wall-2:concrete-7:air-23:wall-2:wood:air-5:wood:air-23:wall-2:wood:air-5:wood:air-23:wall-2:wood:air-5:wood:air-23:wall-2:wood:gunpowder-5:wood:air-21:wall:air:wall-2:wood:gunpowder-5:wood:air-21:wall:air:wall-2:wood-7:air-21:wall:air:wall-10:air-19:wall-2:water:wall-2:air-3:wall:air-24:wall:air:wall-2:air-2:wall:air-25:wall:air:wall-2:air:wall:air-26:wall:air:wall-3:air-15:sand-3:air-9:wall:air:wall-2:air-15:sand-5:air-8:wall:air:wall-2:air-13:wall-19:air-17:wall:air-12:wall-2:air-17:wall:air-12:wall-7:air-12:wall:air-12:wall-3:air-16:wall:air-9:wall-6:air-16:wall:air-12:wall-3:air-16:wall:air-12:wall-3:air-16:wall:air-12:wall-3:air-16:wall:air-12:wall-33:;400:;21:7:19:7:19:7:19:7:19:7:19:7:19:7:1c:3:127:f:1:1:f:f:1:1:f:f:1:1:f:3:3:9:1:1:f:2:5:8:1:1:34:3:1d:3:1d:3:1d:3:1d:3:1d:3:1d:3:1d:3:2a:;1e8:1:13:1:140:1:6e:1:1f:2:c:1:25:',
                 inventory: {

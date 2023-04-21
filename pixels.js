@@ -242,6 +242,51 @@ const pixels = {
         id: 'sand',
         numId: 0
     },
+    gravel: {
+        name: 'Gravel',
+        description: 'Weird grey rocky stuff that falls',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = 'rgb(100, 100, 80)';
+                fillPixel(x, y, width, height, ctx);
+            } else {
+                ctx.fillStyle = 'rgb(90, 90, 75)';
+                fillPixel(x, y, width, height, ctx);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = `rgb(120, 120, 100, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            fall(x, y, 1, 1, isPassableFluid);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 80)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 0,
+        key: Infinity,
+        updateStage: 9,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'sand',
+        numId: 0
+    },
     wood: {
         name: 'Wood',
         description: 'Just some logs',
@@ -938,6 +983,57 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         id: 'concrete',
+        numId: 0
+    },
+    crate: {
+        name: 'Wooden Crate',
+        description: 'A crate made of wood that floats on water.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (isAir(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
+            else if (y > 0 && grid[y - 1][x] == pixNum.WATER && canMoveTo(x, y - 1)) move(x, y, x, y - 1);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(150, 100, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(175, 125, 75)';
+            ctx.fillRect(50 / 6, 50 / 6, 100 / 3, 100 / 3);
+            ctx.fillStyle = 'rgb(150, 100, 75)';
+            ctx.rotate(Math.PI / 4);
+            ctx.fillRect(50 / Math.sqrt(2) - 5, -50 / Math.sqrt(2), 10, Math.sqrt(2) * 50);
+            ctx.resetTransform();
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer(40);
+            ctx.fillStyle = 'rgb(150, 100, 75)';
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(175, 125, 75)';
+            fillPixel(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            ctx.fillStyle = 'rgb(150, 100, 75)';
+            ctx.rotate(Math.PI / 4);
+            fillPixel(1 / Math.sqrt(2) - 0.1, -1 / Math.sqrt(2), 0.2, Math.sqrt(2));
+            ctx.resetTransform();
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 4,
+        flammability: 16,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 0,
+        key: Infinity,
+        updateStage: 9,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'crate',
         numId: 0
     },
     plant: {
@@ -2592,7 +2688,7 @@ const pixels = {
             ctx.resetTransform();
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixel, toImage } = new PreRenderer(40);
             ctx.fillStyle = 'rgb(250, 180, 0)';
             fillPixel(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(200, 100, 0)';

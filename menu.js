@@ -77,7 +77,7 @@ const loadingTips = [
     'Reading the descriptions of pixels in the Pixel Picker can give some helpful information.',
     'You can design and submit a puzzle on the <a href="https://discord.pixelsimulator.repl.co" target="_blank">Pixel Simulator discord</a>!',
     '<span style="font-style: bold italic;">Pixels: Story Mode</span>',
-    'All of Pixel Simulator (including music!) is developed in-house!',
+    'All of <span style="color: #FF0000;">Red Pixel Simulator</span> (including music!) is developed by us!',
     'Use the RedPrint Editor to save contraptions you use a lot.',
     '<span style="color: #FFCC00;">Rick Astley!</span>',
     '<span style="color: #00FF00;">Green Pixel Simulator!</span> (not) coming soon!',
@@ -338,7 +338,7 @@ function selectPuzzle() {
     transitionToGame();
 };
 
-const pixsimjoinTitle = document.getElementById('joinTitle');
+const pixsimjoinTitle = document.getElementById('pixsimJoinTitle');
 const pixsimJoinGameCodeCode = document.getElementById('joinGameCodeCode');
 const pixsimJoinGameCodeJoin = document.getElementById('joinGameCodeJoin');
 const pixsimJoinList = document.getElementById('joinListContent');
@@ -396,12 +396,12 @@ pixsimSelectHostButton.onclick = (e) => {
     });
 };
 pixsimSelectJoinButton.onclick = (e) => {
-    pixsimJoinList.innerText = 'Join Game';
+    pixsimJoinTitle.innerText = 'Join Game';
     pixsimMenuContents.style.transform = 'translateY(-100%)';
     loadPublicGameList(false);
 };
 pixsimSelectSpectateButton.onclick = (e) => {
-    pixsimJoinList.innerText = 'Spectate Game';
+    pixsimJoinTitle.innerText = 'Spectate Game';
     pixsimMenuContents.style.transform = 'translateY(-100%)';
     loadPublicGameList(true);
 };
@@ -482,6 +482,8 @@ function handleJoinGame(status) {
 function loadPublicGameList(spectating) {
     PixSimAPI.spectating = spectating;
     pixsimJoinGameCodeCode.value = '';
+    pixsimJoinGameCodeJoin.style.backgroundColor = 'gray';
+    pixsimJoinGameCodeJoin.style.cursor = 'not-allowed';
     let refreshLoop = setInterval(() => {
         window.requestIdleCallback(() => {
             PixSimAPI.getPublicGames('all').then(refreshGameList, stopRefreshLoop);
