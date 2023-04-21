@@ -284,7 +284,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        id: 'sand',
+        id: 'gravel',
         numId: 0
     },
     wood: {
@@ -994,7 +994,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            if (isAir(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
+            if (y < gridSize - 1 && isAir(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
             else if (y > 0 && grid[y - 1][x] == pixNum.WATER && canMoveTo(x, y - 1)) move(x, y, x, y - 1);
         },
         drawPreview: function (ctx) {
@@ -3885,7 +3885,7 @@ const pixels = {
     },
     nuke: {
         name: 'Nuke',
-        description: 'TBH, kinda weak',
+        description: 'Not really a nuke lol',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(0, 255, 125)';
