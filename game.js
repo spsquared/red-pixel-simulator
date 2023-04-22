@@ -520,7 +520,7 @@ const random = function random() {
     return ((randSeed = randSeed * 16807 % 2147483647) - 1) / 2147483646;
 };
 const randomSeed = function randomSeed(t, x, y) {
-    randSeed = Math.abs((((t % 65536) * 459160133) * ((((((y * gridSize * 393) + (x * 211)) << ((t % 65536) * ((x + 7) * 86183) % ((y + 13) * 83299) )) ^ 935192669) * 117) / 1972627)) % 2147483647);
+    randSeed = Math.abs(((((t % 65536) + 71) * 459160133) * ((((((y * gridSize * 393) + (x * 211)) << (((t % 65536) + 47) * ((x + 7) * 86183) % ((y + 13) * 83299) )) ^ 935192669) * 117) / 1972627)) % 2147483647);
 };
 
 // pixel utilities
