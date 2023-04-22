@@ -712,10 +712,10 @@ const pixels = {
                 nextFireGrid[y][x] = false;
             });
             let aerated = updateTouchingPixel(x, y, pixNum.AIR);
-            if (random() < (20 - flammability) / (aerated ? 360 : 80)) {
+            if (random() < (20 - flammability) / (aerated ? 240 : 5)) {
                 nextFireGrid[y][x] = false;
             }
-            if (random() < flammability / 1200 && nextGrid[y][x] == null && !isLava) {
+            if (random() < flammability / 1600 && nextGrid[y][x] == null && !isLava) {
                 if (grid[y][x] >= pixNum.LASER_UP && grid[y][x] <= pixNum.LASER_RIGHT) {
                     nextGrid[y][x] = pixNum.AIR;
                     explode(x, y, 5);
@@ -731,8 +731,8 @@ const pixels = {
                 for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridSize - 1); j++) {
                     if (nextFireGrid[j][i] || (i == x && j == y)) continue;
                     let flammability = (numPixels[grid[j][i]] ?? numPixels[pixNum.MISSING]).flammability;
-                    if (random() < flammability / 20 + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0)) nextFireGrid[j][i] = true;
-                    if (grid[j][i] == pixNum.WATER && random() < 0.5) nextGrid[j][i] = pixNum.STEAM;
+                    if (random() < flammability / (aerated ? 20 : 60) + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0) - (aerated ? 0 : 0.1)) nextFireGrid[j][i] = true;
+                    if (grid[j][i] == pixNum.WATER && random() < 0.1) nextGrid[j][i] = pixNum.STEAM;
                 }
             }
         },
