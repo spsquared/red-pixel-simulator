@@ -329,7 +329,6 @@ function loadSaveCode() {
         if (sections[4]) parseBooleanCode(placeableGrid, sections[4]);
         if (sections[5]) parseBooleanCode(monsterGrid, sections[5]);
         if (sections[6]) parseBooleanCode(targetGrid, sections[6]);
-        randomSeed(ticks);
         updateTimeControlButtons();
         forceRedraw = true;
     }
@@ -513,6 +512,15 @@ function setup() {
 // utilities
 function getDistance(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+};
+
+// random
+let randSeed = 1;
+const random = function random() {
+    return ((randSeed = randSeed * 16807 % 2147483647) - 1) / 2147483646;
+};
+const randomSeed = function randomSeed(t, x, y) {
+    randSeed = Math.abs((((t % 65536) * 459160133) * ((((((y * gridSize * 393) + (x * 211)) << ((t % 65536) * ((x + 7) * 86183) % ((y + 13) * 83299) )) ^ 935192669) * 117) / 1972627)) % 2147483647);
 };
 
 // pixel utilities
@@ -1373,7 +1381,6 @@ function updateTick() {
             14: rotators
             -: monster
             */
-            randomSeed((ticks % 65536) * 239);
             let monsterCount = 0;
             let fulfilledTargetCount = 0;
             for (let y = 0; y < gridSize; y++) {
@@ -1388,7 +1395,10 @@ function updateTick() {
             let firePixelType = numPixels[pixNum.FIRE];
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
-                    if (fireGrid[y][x]) firePixelType.update(x, y);
+                    if (fireGrid[y][x]) {
+                        randomSeed(ticks, x, y);
+                        firePixelType.update(x, y);
+                    }
                 }
             }
             for (let y = 0; y < gridSize; y++) {
@@ -1411,12 +1421,14 @@ function updateTick() {
                 if (ticks % 2 == 0) {
                     for (let y = 0; y < gridSize; y++) {
                         for (let x = gridSize - 1; x >= 0; x--) {
+                            randomSeed(ticks, x, y);
                             updatePixel(x, y, updateStage);
                         }
                     }
                 } else {
                     for (let y = 0; y < gridSize; y++) {
                         for (let x = 0; x < gridSize; x++) {
+                            randomSeed(ticks, x, y);
                             updatePixel(x, y, updateStage);
                         }
                     }
@@ -1812,12 +1824,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
             }
             selection.grid = newGrid;
             window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
-        } else if (sandboxMode && key == 'n') {
-            for (let i = 0; i < gridSize; i += 5) {
-                for (let j = 0; j < gridSize; j += 5) {
-                    grid[j][i] = pixNum.VERY_HUGE_NUKE;
-                }
-            }
         } else if (key == 'shift') {
             removing = true;
         } else if (key == 'control') {
