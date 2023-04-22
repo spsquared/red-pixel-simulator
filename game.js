@@ -1505,19 +1505,33 @@ function updateMouseControls() {
             }
         } else if (mouseIsPressed) {
             brush.lineMode = false;
-            if (brush.isSelection && selection.grid[0] != undefined && sandboxMode) {
+            if (brush.isSelection && selection.grid[0] != undefined) {
                 let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
                 let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
+                let modifiedPixelCounts = [];
                 for (let y = 0; y < selection.grid.length; y++) {
                     if (y + offsetY >= 0 && y + offsetY < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
                         if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
-                            grid[y + offsetY][x + offsetX] = selection.grid[y][x];
-                            if (musicGrid[y + offsetY][x + offsetX]) {
-                                musicPixel(musicGrid[y + offsetY][x + offsetX], false);
-                                musicGrid[y + offsetY][x + offsetX] = 0;
+                            if (sandboxMode || (placeableGrid[y + offsetY][x + offsetX] && grid[y + offsetY][x + offsetX] != pixNum.DELETER)) {
+                                if (!sandboxMode) {
+                                    let pid = numPixels[selection.grid[y][x]].id;
+                                    if (pixelAmounts[pid] <= 0) continue;
+                                    modifiedPixelCounts[grid[y + offsetY][x + offsetX]] = true;
+                                    pixelAmounts[numPixels[grid[y + offsetY][x + offsetX]].id]++;
+                                    modifiedPixelCounts[selection.grid[y][x]] = true;
+                                    pixelAmounts[pid]--;
+                                }
+                                grid[y + offsetY][x + offsetX] = selection.grid[y][x];
+                                if (musicGrid[y + offsetY][x + offsetX]) {
+                                    musicPixel(musicGrid[y + offsetY][x + offsetX], false);
+                                    musicGrid[y + offsetY][x + offsetX] = 0;
+                                }
                             }
                         }
                     }
+                }
+                for (let pixelType in modifiedPixelCounts) {
+                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
                 }
             } else if (mouseButton == CENTER) {
                 if (holdingControl) {
@@ -1527,7 +1541,7 @@ function updateMouseControls() {
                 } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
                     pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
                 }
-            } else if (mouseButton == LEFT && holdingControl && sandboxMode) {
+            } else if (mouseButton == LEFT && holdingControl) {
                 if (!selecting) {
                     selecting = true;
                     selection.x1 = mXGrid;
@@ -1666,7 +1680,7 @@ function clickLine(x1, y1, x2, y2, remove) {
                         musicPixel(musicGrid[y][x], false);
                         musicGrid[y][x] = 0;
                     }
-                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
+                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = 0;
                 });
             } else {
                 modifiedPixelCounts[clickPixelNum] = true;
@@ -1681,7 +1695,7 @@ function clickLine(x1, y1, x2, y2, remove) {
                             musicGrid[y][x] = 0;
                         }
                         pixelAmounts[brush.pixel]--;
-                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
+                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = 0;
                     }
                     return pixelAmounts[brush.pixel] <= 0;
                 })) skipToEnd = true;
@@ -1729,7 +1743,74 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 brush.size = Math.max(1, brush.size - 1);
                 if (brush.size != bsize) tickSound();
             }
-        } else if (sandboxMode && key == 'x' && e.ctrlKey) {
+        } else if (key == 'x' && e.ctrlKey) {
+            if (selection.show) {
+                selection.grid = [];
+                let xmin = Math.min(selection.x1, selection.x2);
+                let xmax = Math.max(selection.x1, selection.x2);
+                let ymin = Math.min(selection.y1, selection.y2);
+                let ymax = Math.max(selection.y1, selection.y2);
+                let modifiedPixelCounts = [];
+                for (let y = ymin; y <= ymax; y++) {
+                    selection.grid[y - ymin] = [];
+                    for (let x = xmin; x <= xmax; x++) {
+                        if (sandboxMode) {
+                            selection.grid[y - ymin][x - xmin] = grid[y][x];
+                            grid[y][x] = pixNum.AIR;
+                            if (musicGrid[y][x]) {
+                                musicPixel(musicGrid[y][x], false);
+                                musicGrid[y][x] = 0;
+                            }
+                        } else if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
+                            selection.grid[y - ymin][x - xmin] = grid[y][x];
+                            pixelAmounts[numPixels[grid[y][x]].id]++;
+                            modifiedPixelCounts[grid[y][x]] = true;
+                            grid[y][x] = pixNum.AIR;
+                            if (musicGrid[y][x]) {
+                                musicPixel(musicGrid[y][x], false);
+                                musicGrid[y][x] = 0;
+                            }
+                        }
+                    }
+                }
+                selection.show = false;
+                for (let pixelType in modifiedPixelCounts) {
+                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
+                }
+                window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
+            }
+        } else if (key == 'backspace') {
+            if (selection.show) {
+                let xmin = Math.min(selection.x1, selection.x2);
+                let xmax = Math.max(selection.x1, selection.x2);
+                let ymin = Math.min(selection.y1, selection.y2);
+                let ymax = Math.max(selection.y1, selection.y2);
+                let modifiedPixelCounts = [];
+                for (let y = ymin; y <= ymax; y++) {
+                    for (let x = xmin; x <= xmax; x++) {
+                        if (sandboxMode) {
+                            grid[y][x] = pixNum.AIR;
+                            if (musicGrid[y][x]) {
+                                musicPixel(musicGrid[y][x], false);
+                                musicGrid[y][x] = 0;
+                            }
+                        } else if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
+                            pixelAmounts[numPixels[grid[y][x]].id]++;
+                            modifiedPixelCounts[grid[y][x]] = true;
+                            grid[y][x] = pixNum.AIR;
+                            if (musicGrid[y][x]) {
+                                musicPixel(musicGrid[y][x], false);
+                                musicGrid[y][x] = 0;
+                            }
+                        }
+                    }
+                }
+                selection.show = false;
+                for (let pixelType in modifiedPixelCounts) {
+                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
+                }
+            }
+        } else if (key == 'c' && e.ctrlKey) {
             if (selection.show) {
                 selection.grid = [];
                 let xmin = Math.min(selection.x1, selection.x2);
@@ -1739,43 +1820,19 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 for (let y = ymin; y <= ymax; y++) {
                     selection.grid[y - ymin] = [];
                     for (let x = xmin; x <= xmax; x++) {
-                        selection.grid[y - ymin][x - xmin] = grid[y][x];
-                        grid[y][x] = pixNum.AIR;
+                        if (sandboxMode || placeableGrid[y][x]) {
+                            selection.grid[y - ymin][x - xmin] = grid[y][x];
+                            if (musicGrid[y][x]) {
+                                musicPixel(musicGrid[y][x], false);
+                                musicGrid[y][x] = 0;
+                            }
+                        }
                     }
                 }
                 selection.show = false;
                 window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
             }
-        } else if (sandboxMode && key == 'backspace') {
-            if (selection.show) {
-                let xmin = Math.min(selection.x1, selection.x2);
-                let xmax = Math.max(selection.x1, selection.x2);
-                let ymin = Math.min(selection.y1, selection.y2);
-                let ymax = Math.max(selection.y1, selection.y2);
-                for (let y = ymin; y <= ymax; y++) {
-                    for (let x = xmin; x <= xmax; x++) {
-                        grid[y][x] = pixNum.AIR;
-                    }
-                }
-                selection.show = false;
-            }
-        } else if (sandboxMode && key == 'c' && e.ctrlKey) {
-            if (selection.show) {
-                selection.grid = [];
-                let xmin = Math.min(selection.x1, selection.x2);
-                let xmax = Math.max(selection.x1, selection.x2);
-                let ymin = Math.min(selection.y1, selection.y2);
-                let ymax = Math.max(selection.y1, selection.y2);
-                for (let y = ymin; y <= ymax; y++) {
-                    selection.grid[y - ymin] = [];
-                    for (let x = xmin; x <= xmax; x++) {
-                        selection.grid[y - ymin][x - xmin] = grid[y][x];
-                    }
-                }
-                selection.show = false;
-                window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
-            }
-        } else if (sandboxMode && key == 'v' && e.ctrlKey) {
+        } else if (key == 'v' && e.ctrlKey) {
             if (window.localStorage.getItem('clipboard') !== undefined) {
                 selection.grid = JSON.parse(LZString.decompressFromBase64(window.localStorage.getItem('clipboard')));
                 brush.isSelection = true;
