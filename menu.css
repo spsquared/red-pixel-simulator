@@ -129,7 +129,7 @@
     border: 3px outset #AAAAAA;
     background-color: lightgrey;
     transition: 250ms ease transform;
-    transform: translateX(-100%);
+    transform: translateX(-105%);
     z-index: 993;
 }
 #volumeAdjustSlider::-webkit-slider-thumb {

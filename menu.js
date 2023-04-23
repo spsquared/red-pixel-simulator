@@ -605,6 +605,9 @@ PixSimAPI.onUpdateTeamList = async (teams) => {
             stillDragging = true;
         }
     }
+    for (let i = 0; i < PixSimAPI.teamSize - teams.teamA.length; i++) {
+        pixsimTeamsTAPlayers.appendChild(document.createElement('div'));
+    }
     for (let username of teams.teamB) {
         const card = await generatePlayerCard(username);
         pixsimTeamsTBPlayers.appendChild(card);
@@ -612,6 +615,9 @@ PixSimAPI.onUpdateTeamList = async (teams) => {
             startDragPlayerCard(card, username);
             stillDragging = true;
         }
+    }
+    for (let i = 0; i < PixSimAPI.teamSize - teams.teamB.length; i++) {
+        pixsimTeamsTBPlayers.appendChild(document.createElement('div'));
     }
     for (let username of teams.spectators) {
         const card = await generatePlayerCard(username);

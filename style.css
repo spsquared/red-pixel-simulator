@@ -192,11 +192,16 @@ table {
 #pixelPicker::-webkit-scrollbar {
     width: 0px;
 }
+#pixelPicker::after {
+    content: '';
+    position: sticky;
+    bottom: 0px;
+    height: 2px;
+    margin-top: -2px;
+    background-color: white;
+}
 .pixelGroup {
     border-bottom: 2px solid black;
-}
-.pixelGroup:last-child {
-    border-bottom: none;
 }
 .pixelGroupHeader {
     display: grid;
@@ -269,6 +274,7 @@ table {
 }
 #pixelPickerDescription {
     border: 2px solid black;
+    border-top: none;
     padding: 8px 8px;
     margin-right: 8px;
     text-align: justify;
