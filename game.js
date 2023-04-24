@@ -431,6 +431,17 @@ function loadStoredSave() {
     fastSimulation = false;
     updateTimeControlButtons();
 };
+window.addEventListener('load', (e) => {
+    loadStoredSave();
+
+    setInterval(() => {
+        window.requestIdleCallback(() => {
+            if (sandboxMode) {
+                window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
+            }
+        }, { timeout: 5000 });
+    }, 30000);
+});
 
 // modal
 const modalContainer = document.getElementById('modalContainer');
@@ -492,21 +503,9 @@ function modal(title, subtitle, confirmation) {
 // p5 thing
 function setup() {
     noiseDetail(3, 0.6);
-    window.onresize();
+    frameRate(0)
 
     document.querySelectorAll('.p5Canvas').forEach(e => e.remove());
-
-    loadStoredSave();
-
-    startRPDrawLoop();
-
-    setInterval(() => {
-        window.requestIdleCallback(() => {
-            if (sandboxMode) {
-                window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
-            }
-        }, { timeout: 5000 });
-    }, 30000);
 };
 
 // utilities
@@ -520,7 +519,8 @@ const random = (min = 0, max = 1) => {
     return (((randSeed = randSeed * 16807 % 2147483647) - 1) / 2147483646) * (max - min) + min;
 };
 const randomSeed = (t, x, y) => {
-    randSeed = Math.abs(((((t % 65536) + 71) * 459160133) * ((((((y * gridSize * 393) + (x * 211)) << (((t % 65536) + 47) * ((x + 7) * 86183) % ((y + 13) * 83299) )) ^ 935192669) * 117) / 1972627)) % 2147483647);
+    randSeed = ~~Math.abs(((((t % 65536) + 71) * 459160133) * ((((((y / gridSize * 393) + (x / gridSize * 211)) << (((t % 65536) + 47) * ((x / gridSize + 7) * 86183) % ((y / gridSize + 13) * 83299) )) ^ 935192669) * 117) / 1972627)) % 2147483647);
+    // randSeed = ~~(noise(x / gridSize, y / gridSize, t % 65536) * 2147483646);
 };
 
 // pixel utilities
@@ -1479,6 +1479,21 @@ function updateTick() {
         if (!hasMonsters && !hasUnfulfilledTargets && !sandboxMode) triggerWin();
     }
 };
+async function startDrawLoop() {
+    let start, remaining;
+    while (true) {
+        start = performance.now();
+        await new Promise((resolve, reject) => {
+            window.requestAnimationFrame(() => {
+                draw();
+                resolve();
+            });
+        });
+        remaining = ~~(1000 / 60 - (performance.now() - start) - 1);
+        await new Promise((resolve, reject) => setTimeout(resolve, remaining));
+    }
+};
+window.addEventListener('load', startDrawLoop);
 
 // brush
 function calcBrushRectCoordinates(x, y) {
@@ -2201,3 +2216,4 @@ window.onresize = (e) => {
     pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
     forceRedraw = true;
 };
+window.addEventListener('load', window.onresize);

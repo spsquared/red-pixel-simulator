@@ -369,6 +369,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 });
 window.addEventListener('load', (e) => {
     createRPGrid(10, 10);
+    startRPDrawLoop();
     refreshRedPrintList();
 });
 
