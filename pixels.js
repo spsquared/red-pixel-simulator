@@ -3906,7 +3906,7 @@ const pixels = {
                 explosion = true;
             }
             if (explosion && !diffused) {
-                explode(x, y, 10);
+                explode(x, y, 20);
             }
         },
         drawPreview: function (ctx) {
@@ -3954,7 +3954,7 @@ const pixels = {
                 explosion = true;
             }
             if (explosion && !diffused) {
-                explode(x, y, 20);
+                explode(x, y, 40);
             }
         },
         drawPreview: function (ctx) {
@@ -4002,7 +4002,7 @@ const pixels = {
                 explosion = true;
             }
             if (explosion && !diffused) {
-                explode(x, y, 40);
+                explode(x, y, 80);
             }
         },
         drawPreview: function (ctx) {

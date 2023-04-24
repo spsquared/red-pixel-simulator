@@ -937,20 +937,20 @@ function explode(x1, y1, size) {
     grid[y1][x1] = pixNum.AIR;
     let chained = 0;
     function destroy(x, y, power) {
-        if (random() < (power / size) * ((20 - (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).blastResistance) / (45 - power))) {
+        if (random() < (power / size) * ((20 - (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).blastResistance) / (85 - power))) {
             nextGrid[y][x] = pixNum.AIR;
             monsterGrid[y][x] = false;
             if (chained < 5) {
                 if (grid[y][x] == pixNum.NUKE) {
-                    pendingExplosions.push([x, y, 10]);
-                    grid[y][x] = pixNum.AIR;
-                    chained++;
-                } else if (grid[y][x] == pixNum.HUGE_NUKE) {
                     pendingExplosions.push([x, y, 20]);
                     grid[y][x] = pixNum.AIR;
                     chained++;
-                } else if (grid[y][x] == pixNum.VERY_HUGE_NUKE) {
+                } else if (grid[y][x] == pixNum.HUGE_NUKE) {
                     pendingExplosions.push([x, y, 40]);
+                    grid[y][x] = pixNum.AIR;
+                    chained++;
+                } else if (grid[y][x] == pixNum.VERY_HUGE_NUKE) {
+                    pendingExplosions.push([x, y, 80]);
                     grid[y][x] = pixNum.AIR;
                     chained++;
                 }
