@@ -28,7 +28,7 @@ const pixels = {
     },
     wall: {
         name: 'Wall',
-        description: 'An immovable wall (good luck finding an unstoppable force-OH NO)',
+        description: 'An immovable wall. (good luck finding an unstoppable force-OH NO)',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(0, 0, 0)';
@@ -59,7 +59,7 @@ const pixels = {
     },
     dirt: {
         name: 'Dirt',
-        description: 'Wash your hands after handling it, it\'s pretty dirty',
+        description: 'Wash your hands after handling it, it\'s pretty dirty.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(125, 75, 0)';
@@ -99,7 +99,7 @@ const pixels = {
     },
     grass: {
         name: 'Grass',
-        description: 'Go touch some',
+        description: 'Go touch some.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(25, 175, 25)';
@@ -157,7 +157,7 @@ const pixels = {
     },
     mud: {
         name: 'Mud',
-        description: 'Basically wet dirt',
+        description: 'Basically wet dirt.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
@@ -210,7 +210,7 @@ const pixels = {
     },
     sand: {
         name: 'Sand',
-        description: 'Weird yellow powdery stuff that falls',
+        description: 'Weird yellow powdery stuff that falls.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 225, 125)';
@@ -244,7 +244,7 @@ const pixels = {
     },
     gravel: {
         name: 'Gravel',
-        description: 'Weird grey rocky stuff that falls',
+        description: 'Weird grey rocky stuff that falls.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
@@ -289,7 +289,7 @@ const pixels = {
     },
     wood: {
         name: 'Wood',
-        description: 'Just some logs',
+        description: 'Just some logs.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(175, 125, 75)';
@@ -375,7 +375,7 @@ const pixels = {
     },
     ash: {
         name: 'Ash',
-        description: 'Burnt stuff, doesn\'t burn easily',
+        description: 'Burnt stuff, doesn\'t burn easily.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
@@ -430,7 +430,7 @@ const pixels = {
     },
     wet_ash: {
         name: 'Wet Ash',
-        description: 'Definitely not silt',
+        description: 'Definitely not silt.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
@@ -482,7 +482,7 @@ const pixels = {
     },
     stone: {
         name: 'Stone',
-        description: 'Very stony and hard',
+        description: 'Very stony and hard.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(110, 110, 110)';
@@ -523,7 +523,7 @@ const pixels = {
     },
     water: {
         name: 'Water',
-        description: 'Unrealistically flows and may or may not be wet',
+        description: 'Unrealistically flows and may or may not be wet.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
@@ -580,7 +580,7 @@ const pixels = {
     },
     lava: {
         name: 'Lava',
-        description: 'Try not to get burned, it also melts stuff and sets things on fire (and flows unrealistically)',
+        description: 'Try not to get burned, it also melts stuff and sets things on fire. (and flows unrealistically)',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
@@ -683,7 +683,7 @@ const pixels = {
     },
     fire: {
         name: 'Fire',
-        description: 'AAAAAA! It burns!',
+        description: 'AAAAAA!!! It burns!',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             if (noNoise) {
                 ctx.globalAlpha = opacity / 2;
@@ -760,7 +760,7 @@ const pixels = {
     },
     steam: {
         name: 'Steam',
-        description: 'Very hot steam that will give you second-degree burns if you\'re not careful',
+        description: 'Very hot steam that will give you second-degree burns if you\'re not careful.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
@@ -908,7 +908,7 @@ const pixels = {
     },
     concrete_powder: {
         name: 'Concrete Powder',
-        description: 'Like sand, but hardens into concrete when in contact with water',
+        description: 'Like sand, but hardens into concrete when in contact with water.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(150, 150, 150)';
@@ -946,7 +946,7 @@ const pixels = {
     },
     concrete: {
         name: 'Concrete',
-        description: 'Hard stuff that doesn\'t move easily, behaves similarly to stone but does not melt',
+        description: 'Hard stuff that doesn\'t move easily, behaves similarly to stone but does not melt.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 75, 75)';
@@ -987,7 +987,7 @@ const pixels = {
     },
     crate: {
         name: 'Wooden Crate',
-        description: 'A crate made of wood that floats on water',
+        description: 'A crate made of wood that floats on water.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1038,7 +1038,7 @@ const pixels = {
     },
     plant: {
         name: 'P.L.A.N.T.',
-        description: '<span style="font-style: italic;">Persistent Loud Aesthetic Nail Tables.</span><br>No, it doesn\'t actually stand for anything. But it does consume concrete alarmingly fast',
+        description: '<span style="font-style: italic;">Persistent Loud Aesthetic Nail Tables.</span><br>No, it doesn\'t actually stand for anything. But it does consume concrete alarmingly fast.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(125, 255, 75)';
@@ -1128,7 +1128,7 @@ const pixels = {
     },
     pump: {
         name: 'Water Pump',
-        description: 'Violates the Laws of Thermodynamics to create water',
+        description: 'Violates the Laws of Thermodynamics to create water.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1178,7 +1178,7 @@ const pixels = {
     },
     lava_generator: {
         name: 'Lava Heater',
-        description: 'Violates the Laws of Thermodynamics to create lava',
+        description: 'Violates the Laws of Thermodynamics to create lava.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1234,9 +1234,197 @@ const pixels = {
         id: 'lava_generator',
         numId: 0
     },
+    piston_left: {
+        name: 'Pusher (Left)',
+        description: 'Pushes pixels in its path.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                return;
+            }
+            push(x, y, 0);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(0, 50 / 3, 25, 50 / 3);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 0,
+        group: 1,
+        key: Infinity,
+        updateStage: 3,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'piston_left',
+        numId: 0
+    },
+    piston_up: {
+        name: 'Pusher (Up)',
+        description: 'Pushes pixels in its path.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                return;
+            }
+            push(x, y, 1);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 25);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 1,
+        group: 1,
+        key: Infinity,
+        updateStage: 1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'piston_up',
+        numId: 0
+    },
+    piston_right: {
+        name: 'Pusher (Right)',
+        description: 'Pushes pixels in its path.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                return;
+            }
+            push(x, y, 2);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(25, 50 / 3, 25, 50 / 3);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 2,
+        group: 1,
+        key: Infinity,
+        updateStage: 4,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'piston_right',
+        numId: 0
+    },
+    piston_down: {
+        name: 'Pusher (Down)',
+        description: 'Pushes pixels in its path.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                return;
+            }
+            push(x, y, 3)
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(50 / 3, 25, 50 / 3, 25);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 3,
+        group: 1,
+        key: Infinity,
+        updateStage: 2,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'piston_down',
+        numId: 0
+    },
     cloner_left: {
         name: 'Copier (Left)',
-        description: 'Copies pixels from its right to its left',
+        description: 'Copies pixels from its right to its left.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1286,7 +1474,7 @@ const pixels = {
     },
     cloner_up: {
         name: 'Copier (Up)',
-        description: 'Copies pixels from below it to above it',
+        description: 'Copies pixels from below it to above it.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1336,7 +1524,7 @@ const pixels = {
     },
     cloner_right: {
         name: 'Copier (Right)',
-        description: 'Copies pixels from its left to its right',
+        description: 'Copies pixels from its left to its right.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1386,7 +1574,7 @@ const pixels = {
     },
     cloner_down: {
         name: 'Copier (Down)',
-        description: 'Copies pixels from above it to below it',
+        description: 'Copies pixels from above it to below it.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1436,41 +1624,14 @@ const pixels = {
     },
     push_cloner_left: {
         name: 'Cloner (Left)',
-        description: 'Clones pixels from its right to its left, pushing pixels in the way',
+        description: 'Clones pixels from its right to its left, pushing pixels in the way.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x - 1, y)) {
-                let moveX = null;
-                let lastCollapsible = null;
-                for (let i = x - 1; i >= 0; i--) {
-                    if (isAir(i, y)) {
-                        moveX = i;
-                        if (grid[y][i] == pixNum.DELETER) {
-                            moveX++;
-                        }
-                        break;
-                    }
-                    if (grid[y][i] == pixNum.COLLAPSIBLE) {
-                        lastCollapsible = i;
-                    }
-                    if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL) {
-                        break;
-                    }
-                }
-                if (moveX == null && lastCollapsible != null) {
-                    moveX = lastCollapsible;
-                }
-                if (moveX != null && moveX != x) {
-                    for (let i = moveX; i < x; i++) {
-                        if (!canMoveTo(i + 1, y)) return;
-                    }
-                    for (let i = moveX; i < x - 1; i++) {
-                        nextGrid[y][i] = grid[y][i + 1];
-                        fireGrid[y][i] = fireGrid[y][i + 1];
-                    }
+                if (push(x - 1, y, 0)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
                 }
             }
@@ -1519,41 +1680,14 @@ const pixels = {
     },
     push_cloner_up: {
         name: 'Cloner (Up)',
-        description: 'Clones pixels from below it to above it, pushing pixels in the way',
+        description: 'Clones pixels from below it to above it, pushing pixels in the way.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x, y - 1)) {
-                let moveY = null;
-                let lastCollapsible = null;
-                for (let i = y - 1; i >= 0; i--) {
-                    if (isAir(x, i)) {
-                        moveY = i;
-                        if (grid[i][x] == pixNum.DELETER) {
-                            moveY++;
-                        }
-                        break;
-                    }
-                    if (grid[i][x] == pixNum.COLLAPSIBLE) {
-                        lastCollapsible = i;
-                    }
-                    if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
-                        break;
-                    }
-                }
-                if (moveY == null && lastCollapsible != null) {
-                    moveY = lastCollapsible;
-                }
-                if (moveY != null && moveY != y) {
-                    for (let i = moveY; i < y; i++) {
-                        if (!canMoveTo(x, i + 1)) return;
-                    }
-                    for (let i = moveY; i < y - 1; i++) {
-                        nextGrid[i][x] = grid[i + 1][x];
-                        fireGrid[i][x] = fireGrid[i + 1][x];
-                    }
+                if (push(x, y - 1, 1)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
                 }
             }
@@ -1602,41 +1736,14 @@ const pixels = {
     },
     push_cloner_right: {
         name: 'Cloner (Right)',
-        description: 'Clones pixels from its left to its right, pushing pixels in the way',
+        description: 'Clones pixels from its left to its right, pushing pixels in the way.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x + 1, y)) {
-                let moveX = null;
-                let lastCollapsible = null;
-                for (let i = x + 1; i <= gridSize - 1; i++) {
-                    if (isAir(i, y)) {
-                        moveX = i;
-                        if (grid[y][i] == pixNum.DELETER) {
-                            moveX--;
-                        }
-                        break;
-                    }
-                    if (grid[y][i] == pixNum.COLLAPSIBLE) {
-                        lastCollapsible = i;
-                    }
-                    if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL) {
-                        break;
-                    }
-                }
-                if (moveX == null && lastCollapsible != null) {
-                    moveX = lastCollapsible;
-                }
-                if (moveX != null && moveX != x) {
-                    for (let i = moveX; i > x; i--) {
-                        if (!canMoveTo(i - 1, y)) return;
-                    }
-                    for (let i = moveX; i > x + 1; i--) {
-                        nextGrid[y][i] = grid[y][i - 1];
-                        fireGrid[y][i] = fireGrid[y][i - 1];
-                    }
+                if (push(x + 1, y, 2)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
                 }
             }
@@ -1685,41 +1792,14 @@ const pixels = {
     },
     push_cloner_down: {
         name: 'Cloner (Down)',
-        description: 'Clones pixels from above it to below it, pushing pixels in the way',
+        description: 'Clones pixels from above it to below it, pushing pixels in the way.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
             if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x, y + 1)) {
-                let moveY = null;
-                let lastCollapsible = null;
-                for (let i = y + 1; i <= gridSize - 1; i++) {
-                    if (isAir(x, i)) {
-                        moveY = i;
-                        if (grid[i][x] == pixNum.DELETER) {
-                            moveY--;
-                        }
-                        break;
-                    }
-                    if (grid[i][x] == pixNum.COLLAPSIBLE) {
-                        lastCollapsible = i;
-                    }
-                    if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL) {
-                        break;
-                    }
-                }
-                if (moveY == null && lastCollapsible != null) {
-                    moveY = lastCollapsible;
-                }
-                if (moveY != null && moveY != y) {
-                    for (let i = moveY; i > y; i--) {
-                        if (!canMoveTo(x, i - 1)) return;
-                    }
-                    for (let i = moveY; i > y + 1; i--) {
-                        nextGrid[i][x] = grid[i - 1][x];
-                        fireGrid[i][x] = fireGrid[i - 1][x];
-                    }
+                if (push(x, y + 1, 3)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
                 }
             }
@@ -1768,7 +1848,7 @@ const pixels = {
     },
     super_cloner_left: {
         name: 'Super Copier (Left)',
-        description: 'Copies pixels from its right to its left, removing whatever was previously there',
+        description: 'Copies pixels from its right to its left, removing whatever was previously there.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1817,7 +1897,7 @@ const pixels = {
     },
     super_cloner_up: {
         name: 'Super Copier (Up)',
-        description: 'Copies pixels from below it to above it, removing whatever was previously there',
+        description: 'Copies pixels from below it to above it, removing whatever was previously there.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1868,7 +1948,7 @@ const pixels = {
     },
     super_cloner_right: {
         name: 'Super Copier (Right)',
-        description: 'Copies pixels from its left to its right, removing whatever was previously there',
+        description: 'Copies pixels from its left to its right, removing whatever was previously there.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1917,7 +1997,7 @@ const pixels = {
     },
     super_cloner_down: {
         name: 'Super Copier (Down)',
-        description: 'Copies pixels from above it to below it, removing whatever was previously there',
+        description: 'Copies pixels from above it to below it, removing whatever was previously there.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -1964,317 +2044,9 @@ const pixels = {
         id: 'super_cloner_down',
         numId: 0
     },
-    piston_left: {
-        name: 'Pusher (Left)',
-        description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(x, y, width, height, ctx);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
-                nextGrid[y][x] = pixNum.ASH;
-                return;
-            }
-            let moveX = null;
-            let lastCollapsible = null;
-            for (let i = x - 1; i >= 0; i--) {
-                if (isAir(i, y)) {
-                    moveX = i;
-                    if (grid[y][i] == pixNum.DELETER) {
-                        moveX++;
-                    }
-                    break;
-                }
-                if (grid[y][i] == pixNum.COLLAPSIBLE) {
-                    lastCollapsible = i;
-                }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_RIGHT) {
-                    break;
-                }
-            }
-            if (moveX == null && lastCollapsible != null) {
-                moveX = lastCollapsible;
-            }
-            if (moveX != null) {
-                for (let i = moveX; i < x; i++) {
-                    if (!canMoveTo(i + 1, y)) return;
-                }
-                for (let i = moveX; i < x; i++) {
-                    nextGrid[y][i] = grid[y][i + 1];
-                    fireGrid[y][i] = fireGrid[y][i + 1];
-                }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            ctx.fillRect(0, 50 / 3, 25, 50 / 3);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 10,
-        flammability: 6,
-        pushable: true,
-        cloneable: true,
-        rotateable: true,
-        rotation: 0,
-        group: 1,
-        key: Infinity,
-        updateStage: 3,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        id: 'piston_left',
-        numId: 0
-    },
-    piston_up: {
-        name: 'Pusher (Up)',
-        description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(x, y, width, height, ctx);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
-                nextGrid[y][x] = pixNum.ASH;
-                return;
-            }
-            let moveY = null;
-            let lastCollapsible = null;
-            for (let i = y - 1; i >= 0; i--) {
-                if (isAir(x, i)) {
-                    moveY = i;
-                    if (grid[i][x] == pixNum.DELETER) {
-                        moveY++;
-                    }
-                    break;
-                }
-                if (grid[i][x] == pixNum.COLLAPSIBLE) {
-                    lastCollapsible = i;
-                }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_DOWN) {
-                    break;
-                }
-            }
-            if (moveY == null && lastCollapsible != null) {
-                moveY = lastCollapsible;
-            }
-            if (moveY != null) {
-                for (let i = moveY; i < y; i++) {
-                    if (!canMoveTo(x, i + 1)) return;
-                }
-                for (let i = moveY; i < y; i++) {
-                    nextGrid[i][x] = grid[i + 1][x];
-                    fireGrid[i][x] = fireGrid[i + 1][x];
-                }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            ctx.fillRect(50 / 3, 0, 50 / 3, 25);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 10,
-        flammability: 6,
-        pushable: true,
-        cloneable: true,
-        rotateable: true,
-        rotation: 1,
-        group: 1,
-        key: Infinity,
-        updateStage: 1,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        id: 'piston_up',
-        numId: 0
-    },
-    piston_right: {
-        name: 'Pusher (Right)',
-        description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(x, y, width, height, ctx);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
-                nextGrid[y][x] = pixNum.ASH;
-                return;
-            }
-            let moveX = null;
-            let lastCollapsible = null;
-            for (let i = x + 1; i <= gridSize - 1; i++) {
-                if (isAir(i, y)) {
-                    moveX = i;
-                    if (grid[y][i] == pixNum.DELETER) {
-                        moveX--;
-                    }
-                    break;
-                }
-                if (grid[y][i] == pixNum.COLLAPSIBLE) {
-                    lastCollapsible = i;
-                }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_LEFT) {
-                    break;
-                }
-            }
-            if (moveX == null && lastCollapsible != null) {
-                moveX = lastCollapsible;
-            }
-            if (moveX != null) {
-                for (let i = moveX; i > x; i--) {
-                    if (!canMoveTo(i - 1, y)) return;
-                }
-                for (let i = moveX; i > x; i--) {
-                    nextGrid[y][i] = grid[y][i - 1];
-                    fireGrid[y][i] = fireGrid[y][i - 1];
-                }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            ctx.fillRect(25, 50 / 3, 25, 50 / 3);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 10,
-        flammability: 6,
-        pushable: true,
-        cloneable: true,
-        rotateable: true,
-        rotation: 2,
-        group: 1,
-        key: Infinity,
-        updateStage: 4,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        id: 'piston_right',
-        numId: 0
-    },
-    piston_down: {
-        name: 'Pusher (Down)',
-        description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(x, y, width, height, ctx);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
-                }
-            }
-        },
-        update: function (x, y) {
-            if (!validMovingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
-                nextGrid[y][x] = pixNum.ASH;
-                return;
-            }
-            let moveY = null;
-            let lastCollapsible = null;
-            for (let i = y + 1; i <= gridSize - 1; i++) {
-                if (isAir(x, i)) {
-                    moveY = i;
-                    if (grid[i][x] == pixNum.DELETER) {
-                        moveY--;
-                    }
-                    break;
-                }
-                if (grid[i][x] == pixNum.COLLAPSIBLE) {
-                    lastCollapsible = i;
-                }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_UP) {
-                    break;
-                }
-            }
-            if (moveY == null && lastCollapsible != null) {
-                moveY = lastCollapsible;
-            }
-            if (moveY != null) {
-                for (let i = moveY; i > y; i--) {
-                    if (!canMoveTo(x, i - 1)) return;
-                }
-                for (let i = moveY; i > y; i--) {
-                    nextGrid[i][x] = grid[i - 1][x];
-                    fireGrid[i][x] = fireGrid[i - 1][x];
-                }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
-            }
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 125, 255)';
-            ctx.fillRect(50 / 3, 25, 50 / 3, 25);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 10,
-        flammability: 6,
-        pushable: true,
-        cloneable: true,
-        rotateable: true,
-        rotation: 3,
-        group: 1,
-        key: Infinity,
-        updateStage: 2,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        id: 'piston_down',
-        numId: 0
-    },
     rotator_left: {
         name: 'Rotator (Left)',
-        description: 'Rotates directional pixels to face left',
+        description: 'Rotates directional pixels to face left.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
@@ -2318,7 +2090,7 @@ const pixels = {
     },
     rotator_up: {
         name: 'Rotator (Up)',
-        description: 'Rotates directional pixels to face up',
+        description: 'Rotates directional pixels to face up.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
@@ -2362,7 +2134,7 @@ const pixels = {
     },
     rotator_right: {
         name: 'Rotator (Right)',
-        description: 'Rotates directional pixels to face right',
+        description: 'Rotates directional pixels to face right.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
@@ -2406,7 +2178,7 @@ const pixels = {
     },
     rotator_down: {
         name: 'Rotator (Down)',
-        description: 'Rotates directional pixels to face down',
+        description: 'Rotates directional pixels to face down.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
@@ -2450,7 +2222,7 @@ const pixels = {
     },
     rotator_clockwise: {
         name: 'Rotator (Clockwise)',
-        description: 'Rotates directional pixels clockwise',
+        description: 'Rotates directional pixels clockwise.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
@@ -2522,7 +2294,7 @@ const pixels = {
     },
     rotator_counterclockwise: {
         name: 'Rotator (Counterclockwise)',
-        description: 'Rotates directional pixels counterclockwise',
+        description: 'Rotates directional pixels counterclockwise.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
@@ -2594,7 +2366,7 @@ const pixels = {
     },
     slider_horizontal: {
         name: 'Horizontal Slider',
-        description: 'Can only be pushed left and right',
+        description: 'Can only be pushed left and right.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 180, 0)';
@@ -2632,7 +2404,7 @@ const pixels = {
     },
     slider_vertical: {
         name: 'Vertical Slider',
-        description: 'Can only be pushed up and down',
+        description: 'Can only be pushed up and down.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(250, 180, 0)';
@@ -2670,7 +2442,7 @@ const pixels = {
     },
     collapsible: {
         name: 'Collapsible Box',
-        description: 'A box that will disintegrate when squished',
+        description: 'A box that will disintegrate when squished.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -2717,7 +2489,7 @@ const pixels = {
     },
     laser_left: {
         name: 'L.A.S.E.R. (Left)',
-        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic boating super entities.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
@@ -2776,7 +2548,7 @@ const pixels = {
     },
     laser_up: {
         name: 'L.A.S.E.R. (Up)',
-        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic boating super entities.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
@@ -2835,7 +2607,7 @@ const pixels = {
     },
     laser_right: {
         name: 'L.A.S.E.R. (Right)',
-        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic boating super entities.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
@@ -2894,7 +2666,7 @@ const pixels = {
     },
     laser_down: {
         name: 'L.A.S.E.R. (Down)',
-        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic boating super entities.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
@@ -2953,7 +2725,7 @@ const pixels = {
     },
     glass: {
         name: 'Glass',
-        description: 'For some reason you can see it',
+        description: 'For some reason you can see it.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -2998,7 +2770,7 @@ const pixels = {
     },
     reinforced_glass: {
         name: 'Reinforced Glass',
-        description: 'Really heavy glass',
+        description: 'Really heavy glass.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -3053,7 +2825,7 @@ const pixels = {
     },
     laser_scatterer: {
         name: 'Laser Scatterer',
-        description: 'Scatters lasers that pass through it and makes them useless',
+        description: 'Scatters lasers that pass through it and makes them useless.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(220, 220, 255)';
@@ -3092,7 +2864,7 @@ const pixels = {
     },
     mirror_1: {
         name: 'Mirror',
-        description: 'Be careful around lasers, as it will redirect those to who knows where',
+        description: 'Be careful around lasers, as it will redirect those to who knows where.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             clearPixels(x, y, width, height, ctx);
@@ -3157,7 +2929,7 @@ const pixels = {
     },
     mirror_2: {
         name: 'Mirror',
-        description: 'Be careful around lasers, as it will redirect those to who knows where',
+        description: 'Be careful around lasers, as it will redirect those to who knows where.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             clearPixels(x, y, width, height, ctx);
@@ -3222,505 +2994,505 @@ const pixels = {
     },
     music_1: generateMusicPixel(1, {
         name: 'Square Wave C7 Major Triad Hit',
-        description: 'Makes funny C7 Major triad square wave sound that hurts your ears',
+        description: 'Makes funny C7 Major triad square wave sound that hurts your ears.',
         color: 'rgb(100, 255, 0)',
         text: ''
     }),
     music_2: generateMusicPixel(2, {
         name: 'Chip Noise',
-        description: 'Makes funny chip noise sound that hurts your ears',
+        description: 'Makes funny chip noise sound that hurts your ears.',
         color: 'rgb(200, 200, 200)',
         text: ''
     }),
     music_3: generateMusicPixel(3, {
         name: 'Click Noise',
-        description: 'Makes funny button click sound that hurts your ears',
+        description: 'Makes funny button click sound that hurts your ears.',
         color: 'rgb(250, 0, 0)',
         text: ''
     }),
     music_4: generateMusicPixel(4, {
         name: 'Square Wave C₄',
-        description: 'Makes funny C₄ square wave sound that hurts your ears',
+        description: 'Makes funny C₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'C4'
     }),
     music_5: generateMusicPixel(5, {
         name: 'Square Wave C♯₄/D♭₄',
-        description: 'Makes funny C♯₄/D♭₄ square wave sound that hurts your ears',
+        description: 'Makes funny C♯₄/D♭₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'C♯4'
     }),
     music_6: generateMusicPixel(6, {
         name: 'Square Wave D₄',
-        description: 'Makes funny D₄ square wave sound that hurts your ears',
+        description: 'Makes funny D₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'D4'
     }),
     music_7: generateMusicPixel(7, {
         name: 'Square Wave D♯₄/E♭₄',
-        description: 'Makes funny D♯₄/E♭₄ square wave sound that hurts your ears',
+        description: 'Makes funny D♯₄/E♭₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'E♭4'
     }),
     music_8: generateMusicPixel(8, {
         name: 'Square Wave E₄',
-        description: 'Makes funny E₄ square wave sound that hurts your ears',
+        description: 'Makes funny E₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'E4'
     }),
     music_9: generateMusicPixel(9, {
         name: 'Square Wave F₄',
-        description: 'Makes funny F₄ square wave sound that hurts your ears',
+        description: 'Makes funny F₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'F4'
     }),
     music_10: generateMusicPixel(10, {
         name: 'Square Wave F♯₄/G♭₄',
-        description: 'Makes funny F♯₄/G♭₄ square wave sound that hurts your ears',
+        description: 'Makes funny F♯₄/G♭₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'F♯4'
     }),
     music_11: generateMusicPixel(11, {
         name: 'Square Wave G₄',
-        description: 'Makes funny G₄ square wave sound that hurts your ears',
+        description: 'Makes funny G₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'G4'
     }),
     music_12: generateMusicPixel(12, {
         name: 'Square Wave G♯₄/A♭₄',
-        description: 'Makes funny G♯₄/A♭₄ square wave sound that hurts your ears',
+        description: 'Makes funny G♯₄/A♭₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'A♭4'
     }),
     music_13: generateMusicPixel(13, {
         name: 'Square Wave A₄',
-        description: 'Makes funny A₄ square wave sound that hurts your ears',
+        description: 'Makes funny A₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'A4'
     }),
     music_14: generateMusicPixel(14, {
         name: 'Square Wave A♯₄/B♭₄',
-        description: 'Makes funny A♯₄/B♭₄ square wave sound that hurts your ears',
+        description: 'Makes funny A♯₄/B♭₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'B♭4'
     }),
     music_15: generateMusicPixel(15, {
         name: 'Square Wave B₄',
-        description: 'Makes funny B₄ square wave sound that hurts your ears',
+        description: 'Makes funny B₄ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'B4'
     }),
     music_16: generateMusicPixel(16, {
         name: 'Square Wave C₅',
-        description: 'Makes funny C₅ square wave sound that hurts your ears',
+        description: 'Makes funny C₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'C5'
     }),
     music_17: generateMusicPixel(17, {
         name: 'Square Wave C♯₅/D♭₅',
-        description: 'Makes funny C♯₅/D♭₅ square wave sound that hurts your ears',
+        description: 'Makes funny C♯₅/D♭₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'C♯5'
     }),
     music_18: generateMusicPixel(18, {
         name: 'Square Wave D₅',
-        description: 'Makes funny D₅ square wave sound that hurts your ears',
+        description: 'Makes funny D₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'D5'
     }),
     music_19: generateMusicPixel(19, {
         name: 'Square Wave D♯₅/E♭₅',
-        description: 'Makes funny D♯₅/E♭₅ square wave sound that hurts your ears',
+        description: 'Makes funny D♯₅/E♭₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'E♭5'
     }),
     music_20: generateMusicPixel(20, {
         name: 'Square Wave E₅',
-        description: 'Makes funny E₅ square wave sound that hurts your ears',
+        description: 'Makes funny E₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'E5'
     }),
     music_21: generateMusicPixel(21, {
         name: 'Square Wave F₅',
-        description: 'Makes funny F₅ square wave sound that hurts your ears',
+        description: 'Makes funny F₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'F5'
     }),
     music_22: generateMusicPixel(22, {
         name: 'Square Wave F♯₅/G♭₅',
-        description: 'Makes funny F♯₅/G♭₅ square wave sound that hurts your ears',
+        description: 'Makes funny F♯₅/G♭₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'F♯5'
     }),
     music_23: generateMusicPixel(23, {
         name: 'Square Wave G₅',
-        description: 'Makes funny G₅ square wave sound that hurts your ears',
+        description: 'Makes funny G₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'G5'
     }),
     music_24: generateMusicPixel(24, {
         name: 'Square Wave G♯₅/A♭₅',
-        description: 'Makes funny G♯₅/A♭₅ square wave sound that hurts your ears',
+        description: 'Makes funny G♯₅/A♭₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'A♭5'
     }),
     music_25: generateMusicPixel(25, {
         name: 'Square Wave A₅',
-        description: 'Makes funny A₅ square wave sound that hurts your ears',
+        description: 'Makes funny A₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'A5'
     }),
     music_26: generateMusicPixel(26, {
         name: 'Square Wave A♯₅/B♭₅',
-        description: 'Makes funny A♯₅/B♭₅ square wave sound that hurts your ears',
+        description: 'Makes funny A♯₅/B♭₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'B♭5'
     }),
     music_27: generateMusicPixel(27, {
         name: 'Square Wave B₅',
-        description: 'Makes funny B₅ square wave sound that hurts your ears',
+        description: 'Makes funny B₅ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'B5'
     }),
     music_28: generateMusicPixel(28, {
         name: 'Square Wave C₆',
-        description: 'Makes funny C₆ square wave sound that hurts your ears',
+        description: 'Makes funny C₆ square wave sound that hurts your ears.',
         color: 'rgb(0, 180, 255)',
         text: 'C6'
     }),
     music_29: generateMusicPixel(29, {
         name: 'Sawtooth Wave C₄',
-        description: 'Makes funny C₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny C₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'C4'
     }),
     music_30: generateMusicPixel(30, {
         name: 'Sawtooth Wave C♯₄/D♭₄',
-        description: 'Makes funny C♯₄/D♭₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny C♯₄/D♭₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'C♯4'
     }),
     music_31: generateMusicPixel(31, {
         name: 'Sawtooth Wave D₄',
-        description: 'Makes funny D₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny D₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'D4'
     }),
     music_32: generateMusicPixel(32, {
         name: 'Sawtooth Wave D♯₄/E♭₄',
-        description: 'Makes funny D♯₄/E♭₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny D♯₄/E♭₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'E♭4'
     }),
     music_33: generateMusicPixel(33, {
         name: 'Sawtooth Wave E₄',
-        description: 'Makes funny E₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny E₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'E4'
     }),
     music_34: generateMusicPixel(34, {
         name: 'Sawtooth Wave F₄',
-        description: 'Makes funny F₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny F₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'F4'
     }),
     music_35: generateMusicPixel(35, {
         name: 'Sawtooth Wave F♯₄/G♭₄',
-        description: 'Makes funny F♯₄/G♭₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny F♯₄/G♭₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'F♯4'
     }),
     music_36: generateMusicPixel(36, {
         name: 'Sawtooth Wave G₄',
-        description: 'Makes funny G₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny G₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'G4'
     }),
     music_37: generateMusicPixel(37, {
         name: 'Sawtooth Wave G♯₄/A♭₄',
-        description: 'Makes funny G♯₄/A♭₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny G♯₄/A♭₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'A♭4'
     }),
     music_38: generateMusicPixel(38, {
         name: 'Sawtooth Wave A₄',
-        description: 'Makes funny A₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny A₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'A4'
     }),
     music_39: generateMusicPixel(39, {
         name: 'Sawtooth Wave A♯₄/B♭₄',
-        description: 'Makes funny A♯₄/B♭₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny A♯₄/B♭₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'B♭4'
     }),
     music_40: generateMusicPixel(40, {
         name: 'Sawtooth Wave B₄',
-        description: 'Makes funny B₄ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny B₄ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'B4'
     }),
     music_41: generateMusicPixel(41, {
         name: 'Sawtooth Wave C₅',
-        description: 'Makes funny C₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny C₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'C5'
     }),
     music_42: generateMusicPixel(42, {
         name: 'Sawtooth Wave C♯₅/D♭₅',
-        description: 'Makes funny C♯₅/D♭₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny C♯₅/D♭₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'C♯5'
     }),
     music_43: generateMusicPixel(43, {
         name: 'Sawtooth Wave D₅',
-        description: 'Makes funny D₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny D₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'D5'
     }),
     music_44: generateMusicPixel(44, {
         name: 'Sawtooth Wave D♯₅/E♭₅',
-        description: 'Makes funny D♯₅/E♭₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny D♯₅/E♭₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'E♭5'
     }),
     music_45: generateMusicPixel(45, {
         name: 'Sawtooth Wave E₅',
-        description: 'Makes funny E₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny E₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'E5'
     }),
     music_46: generateMusicPixel(46, {
         name: 'Sawtooth Wave F₅',
-        description: 'Makes funny F₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny F₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'F5'
     }),
     music_47: generateMusicPixel(47, {
         name: 'Sawtooth Wave F♯₅/G♭₅',
-        description: 'Makes funny F♯₅/G♭₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny F♯₅/G♭₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'F♯5'
     }),
     music_48: generateMusicPixel(48, {
         name: 'Sawtooth Wave G₅',
-        description: 'Makes funny G₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny G₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'G5'
     }),
     music_49: generateMusicPixel(49, {
         name: 'Sawtooth Wave G♯₅/A♭₅',
-        description: 'Makes funny G♯₅/A♭₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny G♯₅/A♭₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'A♭5'
     }),
     music_50: generateMusicPixel(50, {
         name: 'Sawtooth Wave A₅',
-        description: 'Makes funny A₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny A₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'A5'
     }),
     music_51: generateMusicPixel(51, {
         name: 'Sawtooth Wave A♯₅/B♭₅',
-        description: 'Makes funny A♯₅/B♭₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny A♯₅/B♭₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'B♭5'
     }),
     music_52: generateMusicPixel(52, {
         name: 'Sawtooth Wave B₅',
-        description: 'Makes funny B₅ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny B₅ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'B5'
     }),
     music_53: generateMusicPixel(53, {
         name: 'Sawtooth Wave C₆',
-        description: 'Makes funny C₆ sawtooth wave sound that hurts your ears',
+        description: 'Makes funny C₆ sawtooth wave sound that hurts your ears.',
         color: 'rgb(255, 200, 0)',
         text: 'C6'
     }),
     music_54: generateMusicPixel(54, {
         name: 'Triangle Wave C₄',
-        description: 'Makes funny C₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny C₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'C4'
     }),
     music_55: generateMusicPixel(55, {
         name: 'Triangle Wave C♯₄/D♭₄',
-        description: 'Makes funny C♯₄/D♭₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny C♯₄/D♭₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'C♯4'
     }),
     music_56: generateMusicPixel(56, {
         name: 'Triangle Wave D₄',
-        description: 'Makes funny D₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny D₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'D4'
     }),
     music_57: generateMusicPixel(57, {
         name: 'Triangle Wave D♯₄/E♭₄',
-        description: 'Makes funny D♯₄/E♭₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny D♯₄/E♭₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'E♭4'
     }),
     music_58: generateMusicPixel(58, {
         name: 'Triangle Wave E₄',
-        description: 'Makes funny E₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny E₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'E4'
     }),
     music_59: generateMusicPixel(59, {
         name: 'Triangle Wave F₄',
-        description: 'Makes funny F₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny F₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'F4'
     }),
     music_60: generateMusicPixel(60, {
         name: 'Triangle Wave F♯₄/G♭₄',
-        description: 'Makes funny F♯₄/G♭₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny F♯₄/G♭₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'F♯4'
     }),
     music_61: generateMusicPixel(61, {
         name: 'Triangle Wave G₄',
-        description: 'Makes funny G₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny G₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'G4'
     }),
     music_62: generateMusicPixel(62, {
         name: 'Triangle Wave G♯₄/A♭₄',
-        description: 'Makes funny G♯₄/A♭₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny G♯₄/A♭₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'A♭4'
     }),
     music_63: generateMusicPixel(63, {
         name: 'Triangle Wave A₄',
-        description: 'Makes funny A₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny A₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'A4'
     }),
     music_64: generateMusicPixel(64, {
         name: 'Triangle Wave A♯₄/B♭₄',
-        description: 'Makes funny A♯₄/B♭₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny A♯₄/B♭₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'B♭4'
     }),
     music_65: generateMusicPixel(65, {
         name: 'Triangle Wave B₄',
-        description: 'Makes funny B₄ triangle wave sound that hurts your ears',
+        description: 'Makes funny B₄ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'B4'
     }),
     music_66: generateMusicPixel(66, {
         name: 'Triangle Wave C₅',
-        description: 'Makes funny C₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny C₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'C5'
     }),
     music_67: generateMusicPixel(67, {
         name: 'Triangle Wave C♯₅/D♭₅',
-        description: 'Makes funny C♯₅/D♭₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny C♯₅/D♭₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'C♯5'
     }),
     music_68: generateMusicPixel(68, {
         name: 'Triangle Wave D₅',
-        description: 'Makes funny D₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny D₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'D5'
     }),
     music_69: generateMusicPixel(69, {
         name: 'Triangle Wave D♯₅/E♭₅',
-        description: 'Makes funny D♯₅/E♭₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny D♯₅/E♭₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'E♭5'
     }),
     music_70: generateMusicPixel(70, {
         name: 'Triangle Wave E₅',
-        description: 'Makes funny E₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny E₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'E5'
     }),
     music_71: generateMusicPixel(71, {
         name: 'Triangle Wave F₅',
-        description: 'Makes funny F₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny F₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'F5'
     }),
     music_72: generateMusicPixel(72, {
         name: 'Triangle Wave F♯₅/G♭₅',
-        description: 'Makes funny F♯₅/G♭₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny F♯₅/G♭₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'F♯5'
     }),
     music_73: generateMusicPixel(73, {
         name: 'Triangle Wave G₅',
-        description: 'Makes funny G₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny G₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'G5'
     }),
     music_74: generateMusicPixel(74, {
         name: 'Triangle Wave G♯₅/A♭₅',
-        description: 'Makes funny G♯₅/A♭₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny G♯₅/A♭₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'A♭5'
     }),
     music_75: generateMusicPixel(75, {
         name: 'Triangle Wave A₅',
-        description: 'Makes funny A₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny A₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'A5'
     }),
     music_76: generateMusicPixel(76, {
         name: 'Triangle Wave A♯₅/B♭₅',
-        description: 'Makes funny A♯₅/B♭₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny A♯₅/B♭₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'B♭5'
     }),
     music_77: generateMusicPixel(77, {
         name: 'Triangle Wave B₅',
-        description: 'Makes funny B₅ triangle wave sound that hurts your ears',
+        description: 'Makes funny B₅ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'B5'
     }),
     music_78: generateMusicPixel(78, {
         name: 'Triangle Wave C₆',
-        description: 'Makes funny C₆ triangle wave sound that hurts your ears',
+        description: 'Makes funny C₆ triangle wave sound that hurts your ears.',
         color: 'rgb(0, 230, 50)',
         text: 'C6'
     }),
     music_82: generateMusicPixel(82, {
         name: 'Clap',
-        description: 'Makes funny weird clap sound that hurts your ears',
+        description: 'Makes funny weird clap sound that hurts your ears.',
         color: 'rgb(150, 150, 150)',
         text: 'Cp'
     }),
     music_83: generateMusicPixel(83, {
         name: 'Hi-hat Cymbal 1',
-        description: 'Makes funny hi-hat cymbal sound that hurts your ears',
+        description: 'Makes funny hi-hat cymbal sound that hurts your ears.',
         color: 'rgb(150, 150, 150)',
         text: 'Cy1'
     }),
     music_84: generateMusicPixel(84, {
         name: 'Hi-hat Cymbal 2',
-        description: 'Makes funny hi-hat cymbal sound that hurts your ears',
+        description: 'Makes funny hi-hat cymbal sound that hurts your ears.',
         color: 'rgb(150, 150, 150)',
         text: 'Cy2'
     }),
     music_85: generateMusicPixel(85, {
         name: 'Maraca Shake',
-        description: 'Makes funny maraca sound that hurts your ears',
+        description: 'Makes funny maraca sound that hurts your ears.',
         color: 'rgb(150, 150, 150)',
         text: 'MS'
     }),
     music_86: generateMusicPixel(86, {
         name: 'Tambourine Zill',
-        description: 'Makes funny tambourine sound that hurts your ears',
+        description: 'Makes funny tambourine sound that hurts your ears.',
         color: 'rgb(150, 150, 150)',
         text: 'TZ'
     }),
     detonator: {
         name: 'Detonator',
-        description: 'Triggers Gunpowder and C-4 on contact by exploding',
+        description: 'Triggers Gunpowder and C-4 on contact by exploding.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 30) % 2)], ctx);
@@ -3766,7 +3538,7 @@ const pixels = {
     },
     gunpowder: {
         name: 'Gunpowder',
-        description: 'A low explosive that explodes when lit on fire',
+        description: 'A low explosive that explodes when lit on fire.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
@@ -3813,7 +3585,7 @@ const pixels = {
     },
     c4: {
         name: 'C-4',
-        description: 'A high explosive that can only be triggered by other explosions',
+        description: 'A high explosive that can only be triggered by other explosions.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(245, 245, 200)';
@@ -3844,7 +3616,7 @@ const pixels = {
     },
     nuke_diffuser: {
         name: 'Nuke Diffuser',
-        description: 'Doesn\'t cause diffusion, but will defuse nukes touching it',
+        description: 'Doesn\'t cause diffusion, but will defuse nukes touching it.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(175, 50, 0)';
@@ -3933,7 +3705,7 @@ const pixels = {
     },
     huge_nuke: {
         name: 'Huge Nuke',
-        description: 'KABOOM!',
+        description: 'KABOOM!!!',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 60, 255)';
@@ -4069,7 +3841,7 @@ const pixels = {
     },
     lag_spike_generator: {
         name: 'lag_spike_generator',
-        description: 'Not that laggy',
+        description: 'Not that laggy.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
@@ -4315,7 +4087,7 @@ const pixels = {
     },
     spin: {
         name: 'Spin',
-        description: 'SPINNY CARRIER GO WEEEEEEEEEEEEEEEEEEEEEEEEE!!',
+        description: 'SPINNY CARRIER GO WEEEEEEEEEEEEEEEEEEEEEEEEE!!!!',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
@@ -4394,7 +4166,7 @@ const pixels = {
     },
     placementUnRestriction: {
         name: 'Allow Placement',
-        description: 'Remove placement restrictions in sandbox levels',
+        description: 'Remove placement restrictions in sandbox levels.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
         },
@@ -4425,7 +4197,7 @@ const pixels = {
     },
     placementRestriction: {
         name: 'Prevent Placement',
-        description: 'Prevents players from placing pixels in sandbox levels',
+        description: 'Prevents players from placing pixels in sandbox levels.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity * 0.2;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -4478,7 +4250,7 @@ const pixels = {
     },
     monster: {
         name: 'Monster',
-        description: 'The bad pixels in challenge puzzles',
+        description: 'The bad pixels in challenge puzzles.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -4545,7 +4317,7 @@ const pixels = {
     },
     goal: {
         name: 'Goal',
-        description: 'Must be pushed into targets in puzzles',
+        description: 'Must be pushed into targets in puzzles.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 200, 0)';
@@ -4588,7 +4360,7 @@ const pixels = {
     },
     target: {
         name: 'Target',
-        description: 'Goal pixels must be pushed into it in puzzles',
+        description: 'Goal pixels must be pushed into it in puzzles.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -4636,7 +4408,7 @@ const pixels = {
     },
     remove: {
         name: 'Remove (brush only)',
-        description: 'Unfortunately it\'s not THE red pixel',
+        description: 'Unfortunately it\'s not THE red pixel...',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 0, 0)';
@@ -4667,7 +4439,7 @@ const pixels = {
     },
     missing: {
         name: 'Missing Pixel',
-        description: 'Check your save code, it probably has pixels that don\'t exist in it',
+        description: 'Check your save code, it probably has pixels that don\'t exist in it.',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);

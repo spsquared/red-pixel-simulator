@@ -810,6 +810,145 @@ function flow(x, y) {
         }
     }
 };
+let push2 = push
+window.addEventListener('load', () => push = push2)
+function push(x, y, dir) {
+    let moveX = null;
+    let moveY = null;
+    let lastCollapsible = null;
+    switch (dir) {
+        case 0:
+            for (let i = x - 1; i >= 0; i--) {
+                if (isAir(i, y)) {
+                    moveX = i;
+                    if (grid[y][i] == pixNum.DELETER) {
+                        moveX++;
+                    }
+                    break;
+                }
+                if (grid[y][i] == pixNum.COLLAPSIBLE) {
+                    lastCollapsible = i;
+                }
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_RIGHT) {
+                    return false;
+                }
+            }
+            if (moveX == null && lastCollapsible != null) {
+                moveX = lastCollapsible;
+            }
+            if (moveX != null) {
+                for (let i = moveX; i < x; i++) {
+                    if (!canMoveTo(i + 1, y)) return;
+                }
+                for (let i = moveX; i < x; i++) {
+                    nextGrid[y][i] = grid[y][i + 1];
+                    fireGrid[y][i] = fireGrid[y][i + 1];
+                }
+                nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
+                return true;
+            }
+            return false;
+        case 1:
+            for (let i = y - 1; i >= 0; i--) {
+                if (isAir(x, i)) {
+                    moveY = i;
+                    if (grid[i][x] == pixNum.DELETER) {
+                        moveY++;
+                    }
+                    break;
+                }
+                if (grid[i][x] == pixNum.COLLAPSIBLE) {
+                    lastCollapsible = i;
+                }
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_DOWN) {
+                    return false;
+                }
+            }
+            if (moveY == null && lastCollapsible != null) {
+                moveY = lastCollapsible;
+            }
+            if (moveY != null) {
+                for (let i = moveY; i < y; i++) {
+                    if (!canMoveTo(x, i + 1)) return;
+                }
+                for (let i = moveY; i < y; i++) {
+                    nextGrid[i][x] = grid[i + 1][x];
+                    fireGrid[i][x] = fireGrid[i + 1][x];
+                }
+                nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
+                return true;
+            }
+            return false;
+        case 2:
+            for (let i = x + 1; i <= gridSize - 1; i++) {
+                if (isAir(i, y)) {
+                    moveX = i;
+                    if (grid[y][i] == pixNum.DELETER) {
+                        moveX--;
+                    }
+                    break;
+                }
+                if (grid[y][i] == pixNum.COLLAPSIBLE) {
+                    lastCollapsible = i;
+                }
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_LEFT) {
+                    return false;
+                }
+            }
+            if (moveX == null && lastCollapsible != null) {
+                moveX = lastCollapsible;
+            }
+            if (moveX != null) {
+                for (let i = moveX; i > x; i--) {
+                    if (!canMoveTo(i - 1, y)) return;
+                }
+                for (let i = moveX; i > x; i--) {
+                    nextGrid[y][i] = grid[y][i - 1];
+                    fireGrid[y][i] = fireGrid[y][i - 1];
+                }
+                nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
+                return true;
+            }
+            return false;
+        case 3:
+            for (let i = y + 1; i <= gridSize - 1; i++) {
+                if (isAir(x, i)) {
+                    moveY = i;
+                    if (grid[i][x] == pixNum.DELETER) {
+                        moveY--;
+                    }
+                    break;
+                }
+                if (grid[i][x] == pixNum.COLLAPSIBLE) {
+                    lastCollapsible = i;
+                }
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_UP) {
+                    return false;
+                }
+            }
+            if (moveY == null && lastCollapsible != null) {
+                moveY = lastCollapsible;
+            }
+            if (moveY != null) {
+                for (let i = moveY; i > y; i--) {
+                    if (!canMoveTo(x, i - 1)) return;
+                }
+                for (let i = moveY; i > y; i--) {
+                    nextGrid[i][x] = grid[i - 1][x];
+                    fireGrid[i][x] = fireGrid[i - 1][x];
+                }
+                nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
+                return true;
+            }
+            return false;
+        default:
+            return false;
+    }
+};
 function possibleRotations(id) {
     return (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2) ? 2 : 4;
 };
