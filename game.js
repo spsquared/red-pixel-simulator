@@ -1511,7 +1511,7 @@ function updateMouseControls() {
                 let modifiedPixelCounts = [];
                 for (let y = 0; y < selection.grid.length; y++) {
                     if (y + offsetY >= 0 && y + offsetY < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
-                        if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
+                        // if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
                             if (sandboxMode || (placeableGrid[y + offsetY][x + offsetX] && grid[y + offsetY][x + offsetX] != pixNum.DELETER)) {
                                 if (!sandboxMode) {
                                     let pid = numPixels[selection.grid[y][x]].id;
@@ -1528,7 +1528,7 @@ function updateMouseControls() {
                                 }
                                 if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_86) musicGrid[y + offsetY][x + offsetX] = -1;
                             }
-                        }
+                        // }
                     }
                 }
                 for (let pixelType in modifiedPixelCounts) {
