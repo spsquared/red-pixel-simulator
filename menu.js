@@ -66,9 +66,18 @@ let startTitleBob = setTimeout(() => { });
 let acceptMenuInputs = true;
 const transitionTimeouts = [];
 const loadingTips = [
+    '<span style="color: #FF0000;">Red Pixel Simulator!</span>',
+    '<span style="color: #00FF00;">Green Pixel Simulator!</span>',
+    '<span style="color: #00AAFF;">Blue Pixel Simulator!</span>',
+    '<span style="color: #FFFF00;">Pixel Simulator Platformer!</span>',
+    '<span style="font-style: bold italic;">Pixels: Story Mode!</span>',
+    '<span style="font-style: bold italic;">Pixels: Legends!</span>',
+    '<span style="font-style: bold italic;">Pixels: JaveScript Edition!</span>',
+    '<span style="font-style: bold italic;">Pixels: Bugrock Edition!</span>',
+    '<span style="font-style: bold italic;">Pixels: 3D!</span>',
+    '<span style="color: #FFCC00;">Rick Astley!</span>',
     'The monsters aren\'t what you\'re told...',
     'Using a combination of rotators and sliders you can create a slow-flying flying machine that moves at half the pace of a regular one.',
-    'Try <span style="color: #00AAFF;">Blue Pixel Simulator!</span>',
     'This is a loading tip, and it\'s a tip. They can also be used to make loading screens less boring, although Red Pixel Simulator barely has loading screens, so loading tips are unneccesary.',
     'Remember, puzzles are not in difficulty order. If you get stuck, try a different puzzle.',
     'Level design is REALLY hard.',
@@ -76,14 +85,10 @@ const loadingTips = [
     'Don\'t place the corrupted pixels!',
     'Reading the descriptions of pixels in the Pixel Picker can give some helpful information.',
     'You can design and submit a puzzle on the <a href="https://discord.pixelsimulator.repl.co" target="_blank">Pixel Simulator discord</a>!',
-    '<span style="font-style: bold italic;">Pixels: Story Mode</span>',
     'All of <span style="color: #FF0000;">Red Pixel Simulator</span> (including music!) is developed by us!',
     'Use the RedPrint Editor to save contraptions you use a lot.',
-    '<span style="color: #FFCC00;">Rick Astley!</span>',
-    '<span style="color: #00FF00;">Green Pixel Simulator!</span> (not) coming soon!',
     'Some levels are very RNG-based; messing around randomly usually works in those levels',
-    '<span style="font-style: bold italic;">Pixels: Legends</span>'
-
+    'There exists a few pixels that are not in the Pixel Picker...'
 ];
 const loadingTip = document.getElementById('loadingTip');
 function setTransitionTimeout(cb, ms) {

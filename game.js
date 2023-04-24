@@ -516,8 +516,8 @@ function getDistance(x1, y1, x2, y2) {
 
 // random
 let randSeed = 1;
-const random = () => {
-    return ((randSeed = randSeed * 16807 % 2147483647) - 1) / 2147483646;
+const random = (min = 0, max = 1) => {
+    return (((randSeed = randSeed * 16807 % 2147483647) - 1) / 2147483646) * (max - min) + min;
 };
 const randomSeed = (t, x, y) => {
     randSeed = Math.abs(((((t % 65536) + 71) * 459160133) * ((((((y * gridSize * 393) + (x * 211)) << (((t % 65536) + 47) * ((x + 7) * 86183) % ((y + 13) * 83299) )) ^ 935192669) * 117) / 1972627)) % 2147483647);
