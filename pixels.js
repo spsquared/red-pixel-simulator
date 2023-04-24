@@ -987,7 +987,7 @@ const pixels = {
     },
     crate: {
         name: 'Wooden Crate',
-        description: 'A crate made of wood that floats on water.',
+        description: 'A crate made of wood that floats on water',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -2717,7 +2717,7 @@ const pixels = {
     },
     laser_left: {
         name: 'L.A.S.E.R. (Left)',
-        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
@@ -2776,7 +2776,7 @@ const pixels = {
     },
     laser_up: {
         name: 'L.A.S.E.R. (Up)',
-        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
@@ -2835,7 +2835,7 @@ const pixels = {
     },
     laser_right: {
         name: 'L.A.S.E.R. (Right)',
-        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';
@@ -2894,7 +2894,7 @@ const pixels = {
     },
     laser_down: {
         name: 'L.A.S.E.R. (Down)',
-        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic super boat entities',
+        description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(90, 0, 120)';

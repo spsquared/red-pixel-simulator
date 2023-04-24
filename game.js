@@ -1489,7 +1489,7 @@ async function startDrawLoop() {
                 resolve();
             });
         });
-        remaining = ~~(1000 / 60 - (performance.now() - start) - 1);
+        remaining = ~~(1000 / 60 - (performance.now() - start) - 0.5);
         await new Promise((resolve, reject) => setTimeout(resolve, remaining));
     }
 };
