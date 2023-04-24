@@ -1524,8 +1524,9 @@ function updateMouseControls() {
                                 grid[y + offsetY][x + offsetX] = selection.grid[y][x];
                                 if (musicGrid[y + offsetY][x + offsetX]) {
                                     musicPixel(musicGrid[y + offsetY][x + offsetX], false);
-                                    musicGrid[y + offsetY][x + offsetX] = 0;
+                                    musicGrid[y + offsetY][x + offsetX] = -1;
                                 }
+                                if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_86) musicGrid[y + offsetY][x + offsetX] = -1;
                             }
                         }
                     }
@@ -1678,9 +1679,9 @@ function clickLine(x1, y1, x2, y2, remove) {
                     grid[y][x] = clickPixelNum;
                     if (musicGrid[y][x]) {
                         musicPixel(musicGrid[y][x], false);
-                        musicGrid[y][x] = 0;
+                        musicGrid[y][x] = -1;
                     }
-                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = 0;
+                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
                 });
             } else {
                 modifiedPixelCounts[clickPixelNum] = true;
@@ -1692,10 +1693,10 @@ function clickLine(x1, y1, x2, y2, remove) {
                         grid[y][x] = clickPixelNum;
                         if (musicGrid[y][x]) {
                             musicPixel(musicGrid[y][x], false);
-                            musicGrid[y][x] = 0;
+                            musicGrid[y][x] = -1;
                         }
                         pixelAmounts[brush.pixel]--;
-                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = 0;
+                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
                     }
                     return pixelAmounts[brush.pixel] <= 0;
                 })) skipToEnd = true;
@@ -1822,10 +1823,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
                     for (let x = xmin; x <= xmax; x++) {
                         if (sandboxMode || placeableGrid[y][x]) {
                             selection.grid[y - ymin][x - xmin] = grid[y][x];
-                            if (musicGrid[y][x]) {
-                                musicPixel(musicGrid[y][x], false);
-                                musicGrid[y][x] = 0;
-                            }
                         }
                     }
                 }
