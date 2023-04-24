@@ -937,7 +937,7 @@ function explode(x1, y1, size) {
     grid[y1][x1] = pixNum.AIR;
     let chained = 0;
     function destroy(x, y, power) {
-        if (random() < (size / power) * ((20 - (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).blastResistance) / (45 - power))) {
+        if (random() < (power / size) * ((20 - (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).blastResistance) / (45 - power))) {
             nextGrid[y][x] = pixNum.AIR;
             monsterGrid[y][x] = false;
             if (chained < 5) {
