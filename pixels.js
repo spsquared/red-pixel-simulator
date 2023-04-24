@@ -4128,7 +4128,7 @@ const pixels = {
             ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
-                    for (let k = 0; k < random(1, 5); k++) {
+                    for (let k = 0; k < random(0, 1); k++) {
                         let rotationAmount = Math.floor(random(0, 360));
                         ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
                         let translateX = random(-10 * gridScale, 10 * gridScale);

@@ -653,7 +653,7 @@ PixSimAPI.onGameKicked = () => {
     modal('Kicked from game', 'You were removed from the game by the host');
     loadPublicGameList(PixSimAPI.spectating);
 };
-PixSimAPI.onGameClose = () => {
+PixSimAPI.onGameClosed = () => {
     pixsimMenuContents.style.transform = 'translateY(-100%)';
     modal('Game closed', 'The game session was closed by the host');
     loadPublicGameList(PixSimAPI.spectating);

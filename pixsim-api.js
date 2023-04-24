@@ -1,5 +1,5 @@
-// const apiURI = 'https://api.pixelsimulator.repl.co';
-const apiURI = 'http://localhost:503';
+const apiURI = 'https://api.pixelsimulator.repl.co';
+// const apiURI = 'http://localhost:503';
 const socket = io(apiURI, {
     path: '/pixsim-api',
     autoConnect: false,
@@ -177,7 +177,7 @@ class PixSimAPI {
             cb();
         });
     }
-    static set onGameClose(cb) {
+    static set onGameClosed(cb) {
         if (typeof cb != 'function') return;
         socket.off('gameEnd');
         socket.on('gameEnd', () => {

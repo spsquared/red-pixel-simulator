@@ -1893,10 +1893,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
     document.onkeyup = (e) => {
         if (e.target.matches('#saveCode') || !acceptInputs || inWinScreen || inMenuScreen) return;
         const key = e.key.toLowerCase();
-        if (key == 'z' && e.altKey) {
-            debugInfo = !debugInfo;
-            clickSound();
-        } else if (key == 'w') {
+        if (key == 'w') {
             camera.mUp = false;
         } else if (key == 's') {
             camera.mDown = false;
@@ -1904,46 +1901,51 @@ window.addEventListener('DOMContentLoaded', (e) => {
             camera.mLeft = false;
         } else if (key == 'd') {
             camera.mRight = false;
-        } else if (key == 'p') {
-            simulationPaused = !simulationPaused;
-            fastSimulation = false;
-            updateTimeControlButtons();
-            clickSound();
-        } else if (key == '[' && mouseOver) {
-            let cScale = camera.scale;
-            let percentX = (mX + camera.x) / (canvasSize * camera.scale);
-            let percentY = (mY + camera.y) / (canvasSize * camera.scale);
-            camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 0.5), 8));
-            camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
-            camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
-            forceRedraw = true;
-            if (camera.scale != cScale) tickSound();
-            let scale = gridSize / canvasSize / camera.scale / canvasScale;
-            mXGrid = Math.floor((mX + camera.x) * scale);
-            mYGrid = Math.floor((mY + camera.y) * scale);
-            mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
-        } else if (key == ']' && mouseOver) {
-            let cScale = camera.scale;
-            let percentX = (mX + camera.x) / (canvasSize * camera.scale);
-            let percentY = (mY + camera.y) / (canvasSize * camera.scale);
-            camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 2), 8));
-            camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
-            camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
-            forceRedraw = true;
-            if (camera.scale != cScale) tickSound();
-            let scale = gridSize / canvasSize / camera.scale / canvasScale;
-            mXGrid = Math.floor((mX + camera.x) * scale);
-            mYGrid = Math.floor((mY + camera.y) * scale);
-            mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
         } else if (key == 'shift') {
             removing = false;
         } else if (key == 'control') {
             holdingControl = false;
         } else if (key == 'alt') {
             holdingAlt = false;
-        } else if (key == 'escape') {
-            brush.isSelection = false;
-            selection.show = false;
+        } else if (!e.target.matches('input') && !e.target.matches('textarea') && acceptInputs && !inWinScreen && !inMenuScreen) {
+            if (key == 'z' && e.altKey) {
+                debugInfo = !debugInfo;
+                clickSound();
+            } else if (key == 'p') {
+                simulationPaused = !simulationPaused;
+                fastSimulation = false;
+                updateTimeControlButtons();
+                clickSound();
+            } else if (key == '[' && mouseOver) {
+                let cScale = camera.scale;
+                let percentX = (mX + camera.x) / (canvasSize * camera.scale);
+                let percentY = (mY + camera.y) / (canvasSize * camera.scale);
+                camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 0.5), 8));
+                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
+                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+                forceRedraw = true;
+                if (camera.scale != cScale) tickSound();
+                let scale = gridSize / canvasSize / camera.scale / canvasScale;
+                mXGrid = Math.floor((mX + camera.x) * scale);
+                mYGrid = Math.floor((mY + camera.y) * scale);
+                mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
+            } else if (key == ']' && mouseOver) {
+                let cScale = camera.scale;
+                let percentX = (mX + camera.x) / (canvasSize * camera.scale);
+                let percentY = (mY + camera.y) / (canvasSize * camera.scale);
+                camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 2), 8));
+                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
+                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+                forceRedraw = true;
+                if (camera.scale != cScale) tickSound();
+                let scale = gridSize / canvasSize / camera.scale / canvasScale;
+                mXGrid = Math.floor((mX + camera.x) * scale);
+                mYGrid = Math.floor((mY + camera.y) * scale);
+                mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
+            } else if (key == 'escape') {
+                brush.isSelection = false;
+                selection.show = false;
+            }
         }
         e.preventDefault();
     };
