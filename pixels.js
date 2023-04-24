@@ -4959,7 +4959,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
     for (const group of pixelGroups) {
         pixelPicker.appendChild(group)
     }
-    console.log(pixelSelectors[brush.pixel].box)
     pixelSelectors[brush.pixel].box.onclick();
     resetPixelAmounts();
     window.addEventListener('load', (e) => {

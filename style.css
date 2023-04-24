@@ -662,6 +662,7 @@ table {
     top: 0vh;
     left: calc(40vw - 12px);
     width: 20vw;
+    color: white;
     background-color: rgba(100, 100, 100, 0.8);
     border: 4px solid yellow;
     padding: 8px 8px;

@@ -1,5 +1,5 @@
-const apiURI = 'https://api.pixelsimulator.repl.co';
-// const apiURI = 'http://localhost:503';
+// const apiURI = 'https://api.pixelsimulator.repl.co';
+const apiURI = 'http://localhost:503';
 const socket = io(apiURI, {
     path: '/pixsim-api',
     autoConnect: false,
@@ -137,7 +137,6 @@ class PixSimAPI {
             socket.once('joinFail', (reason) => {
                 socket.off('joinSuccess');
                 socket.off('forcedSpectator');
-                // modal
                 resolve(reason + 1);
             });
             socket.emit('joinGame', { code: code, spectating: this.#spectating });
@@ -158,7 +157,7 @@ class PixSimAPI {
         socket.emit('movePlayer', { username: username, team: team });
     }
     static async startGame() {
-        // buh
+        socket.emit('startGame');
     }
 
     static set onUpdateTeamList(cb) {
@@ -188,6 +187,9 @@ class PixSimAPI {
         });
     }
 
+    static set teamSize(size) {
+        if (typeof size == 'number') socket.emit('teamSize', parseInt(size));
+    }
     static set allowSpectators(state) {
         socket.emit('allowSpectators', state);
     }

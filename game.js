@@ -418,13 +418,13 @@ function loadStoredSave() {
     let savedSaveCode = window.localStorage.getItem('saveCode');
     if (savedSaveCode !== null) {
         saveCode = LZString.decompressFromBase64(savedSaveCode);
-        if (saveCode === '') saveCode = savedSaveCode;
+        if (saveCode == null || saveCode == '') saveCode = savedSaveCode;
     }
     loadSaveCode();
     let savedSaveText = window.localStorage.getItem('saveCodeText');
     if (savedSaveText !== null) {
         saveCode = LZString.decompressFromBase64(savedSaveText);
-        if (saveCode === '') saveCode = savedSaveText;
+        if (saveCode == null || saveCode == '') saveCode = savedSaveText;
     }
     saveCodeText.value = saveCode;
     simulationPaused = true;
@@ -516,16 +516,15 @@ function getDistance(x1, y1, x2, y2) {
 
 // random
 let randSeed = 1;
-const random = function random() {
+const random = () => {
     return ((randSeed = randSeed * 16807 % 2147483647) - 1) / 2147483646;
 };
-const randomSeed = function randomSeed(t, x, y) {
+const randomSeed = (t, x, y) => {
     randSeed = Math.abs(((((t % 65536) + 71) * 459160133) * ((((((y * gridSize * 393) + (x * 211)) << (((t % 65536) + 47) * ((x + 7) * 86183) % ((y + 13) * 83299) )) ^ 935192669) * 117) / 1972627)) % 2147483647);
 };
 
 // pixel utilities
-function PreRenderer(size) {
-    size = size ?? 60;
+function PreRenderer(size = 60) {
     const rendCanvas = document.createElement('canvas');
     rendCanvas.width = size;
     rendCanvas.height = size;
@@ -1230,7 +1229,7 @@ function drawBrush() {
             ctx.beginPath();
             ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
             ctx.stroke();
-        } else if (brush.lineMode) {
+        } else if (brush.lineMode && !brush.startsInRPE) {
             const clickPixelNum = ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
             abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
             brushActionLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, (rect) => {
@@ -1492,12 +1491,13 @@ function calcBrushRectCoordinates(x, y) {
 };
 function updateMouseControls() {
     if ((mouseIsPressed && mouseButton == RIGHT) || removing) brush.isSelection = false;
-    if (!fastSimulation && acceptInputs && !inWinScreen && mouseOver) {
-        if (((mouseIsPressed && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
+    if (!fastSimulation && acceptInputs && !inWinScreen && mouseOver && (!brush.lineMode || !brush.startsInRPE)) {
+        if (((mouseIsPressed && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined)) {
             if (!brush.lineMode) {
                 brush.lineMode = true;
                 brush.lineStartX = mXGrid;
                 brush.lineStartY = mYGrid;
+                brush.startsInRPE = false;
             }
             if (!mouseIsPressed) {
                 brush.lineMode = false;
@@ -1554,7 +1554,7 @@ function updateMouseControls() {
                 clickLine(prevMXGrid, prevMYGrid, mXGrid, mYGrid, mouseButton == RIGHT || removing);
             }
         }
-    } else if (!mouseIsPressed && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined && sandboxMode)) {
+    } else if (!mouseIsPressed && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined) && !brush.startsInRPE) {
         brush.lineMode = false;
         clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, mouseButton == RIGHT || removing);
     }
@@ -1603,9 +1603,9 @@ function clickLine(x1, y1, x2, y2, remove) {
     brushActionLine(x1, y1, x2, y2, (rect) => {
         if (skipToEnd) return;
         function act(cb) {
-            for (let k = rect.ymin; k <= rect.ymax; k++) {
+            for (let i = rect.ymin; i <= rect.ymax; i++) {
                 for (let j = rect.xmin; j <= rect.xmax; j++) {
-                    if (cb(j, k)) return true;
+                    if (cb(j, i)) return true;
                 }
             }
             return false;
@@ -2101,7 +2101,8 @@ document.getElementById('uploadSave').onclick = (e) => {
         const reader = new FileReader();
         reader.onload = async (e) => {
             if (await modal('Load save?', 'Your current red simulation will be overwritten!', true)) {
-                saveCode = e.target.result;
+                saveCode = LZString.decompressFromBase64(e.target.result);
+                if (saveCode == null || saveCode == '') saveCode = e.target.result;
                 saveCodeText.value = saveCode;
                 loadSaveCode();
             }
@@ -2115,7 +2116,7 @@ document.getElementById('downloadSave').onclick = (e) => {
     fastSimulation = false;
     updateTimeControlButtons();
     saveCode = saveCodeText.value;
-    const encoded = `data:text/redpixel;base64,${window.btoa(saveCode)}`;
+    const encoded = `data:text/redpixel;base64,${window.btoa(LZString.compressToBase64(saveCode))}`;
     const a = document.createElement('a');
     a.href = encoded;
     a.download = `red-pixel-simulator_${Math.ceil(Math.random() * 1000)}.redpixel`;

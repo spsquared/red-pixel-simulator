@@ -420,6 +420,9 @@ pixsimJoinGameCodeCode.onkeyup = (e) => {
         pixsimJoinGameCodeJoin.style.cursor = 'not-allowed';
     }
 };
+pixsimJoinGameCodeCode.onkeydown = (e) => {
+    if (e.key == 'Enter') pixsimJoinGameCodeJoin.click();
+};
 pixsimJoinGameCodeJoin.onclick = (e) => {
     if (pixsimJoinGameCodeCode.value.length == 8) {
         PixSimAPI.joinGame(pixsimJoinGameCodeCode.value).then(handleJoinGame);
@@ -476,7 +479,7 @@ function handleJoinGame(status) {
             loadPublicGameList(PixSimAPI.spectating);
         };
     } else {
-        modal('Could not join game', status == 1 ? 'Game does not exist or already running' : 'Banned by game host');
+        modal('Could not join game', status == 1 ? 'Game does not exist or already started' : 'Banned by game host');
     }
 };
 function loadPublicGameList(spectating) {

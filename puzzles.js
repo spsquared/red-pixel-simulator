@@ -109,6 +109,65 @@ const puzzles = [
         ]
     },
     {
+        name: 'Square Caves',
+        levels: [
+            {
+                name: 'Down in the Mines',
+                description: `<i>[music]</i> Oh wait, we're lost. Oh wow, these things are everywhere. Better get rid of those before they destroy this place, too. That suspiciously conveniently C-4 and gunpowder will probably help.`,
+                saveCode: '50;0000;stone-9:air-5:stone-6:dirt-30:stone-9:air-5:stone-16:dirt-11:stone-3:dirt-6:stone-9:air-5:stone-32:dirt-4:stone-9:air-5:stone-45:air-5:stone-4:air-22:stone-19:air-5:stone-4:air:gunpowder-4:air-17:stone-19:air-5:stone-4:gunpowder-5:air-17:stone-19:air-5:stone-9:air-2:wood:dirt-5:wood:air-2:wood-2:stone-7:water-3:stone-13:air-5:stone-9:air-2:wood:dirt-5:wood:air-3:stone-6:water-7:stone-11:air-5:stone-9:air-2:wood:dirt-5:wood:air-3:stone-5:sand:water-2:sand-5:stone-11:air-5:stone-9:air-2:stone-7:air-3:stone-6:sand-3:stone-15:air-5:stone-9:air-2:stone-7:air-3:stone-5:wood-4:stone-15:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-26:wood:air-2:wood:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-3:air-2:stone-10:air-5:stone-26:air-4:stone:air-4:stone-6:air-45:stone-5:air-14:dirt-2:air-29:stone-5:air-12:dirt-5:air-28:stone-5:air-11:dirt-7:air-27:stone-5:air-11:wood-7:air-27:stone-8:wood-2:air-4:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-16:wood:air-3:wood:air-5:stone-24:air-16:wood:gunpowder-7:air-9:c4-3:concrete:air-3:stone-10:air-16:wood:gunpowder-6:wood-2:air-8:c4-3:concrete:stone:air-2:stone-10:air-3:wood-3:stone-19:air-2:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-18:air-10:stone-17:air-5:stone-18:air-10:stone-17:air-5:stone-19:lava-7:stone-10:;9c4:;8:1:4ba:2:d:6:2c:6:2c:6:2c:6:2c:6:1f0:6:2c:6:1fc:;338:1:248:1:21:1:2:1:1:1:1d0:1:31:1:9:1:16:1:1f7:;9c4:',
+                inventory: {
+                    sand: 1,
+                    wood: 5,
+                    water: 3,
+                    gunpowder: 5
+                },
+                id: '34738563-34be-4b6c-ab28-75931fa5e3cd'
+            },
+            {
+                name: 'Maitian, is the Moon Big?',
+                description: `Well, we'll never know down here. It's not like <span style="color: red;">Red Pixel Simulator</span> has a moon anyways...<br>What we do know is that this cave is big, and there's definitely more monsters down here. Try not to die! Toodledoo... or... something.`,
+                saveCode: '',
+                inventory: {
+
+                },
+                id: 'buh'
+            },
+            {
+                name: 'Lake Cavein??',
+                description: `Whatever floats your fboat! 0.1 + 0.2 = 0.30000000000000004<br>Anyways, you better watch out for caveins, there's a lot of gravel and loose stones around here.`,
+                saveCode: '100;0000;stone-596:air-4:stone-43:air-24:stone-23:air-10:stone-37:air-36:stone-13:air-14:stone-29:air-71:stone-29:air-68:stone-32:air-59:stone-41:air-58:stone-42:air-57:stone-43:air-60:stone-11:air-9:stone-20:air-60:stone-11:air-14:stone-6:air-69:stone-11:air-89:stone-11:air-89:stone-11:air-91:stone-9:air-3:stone-2:air-87:stone-18:air-14:stone-5:air-63:stone-37:air-64:stone-36:air-71:stone-29:air-71:stone-29:air-71:stone-29:gravel:air-70:stone-2:air-4:stone-23:gravel-4:air-73:stone-23:gravel-5:air-63:stone-3:air-6:stone-23:gravel-7:air-53:stone-11:air-7:stone-3:gravel-5:stone-16:gravel-6:air-52:stone-11:gravel-4:air-4:gravel-9:stone-18:gravel-3:air-50:stone-12:gravel-24:stone-13:gravel-3:air-26:crate-5:air-17:stone-12:gravel-25:stone-13:gravel-2:stone:water-40:gravel:stone-18:gravel-25:stone-16:water-39:stone-9:gravel-5:stone-6:gravel-25:stone-17:water-38:stone-8:gravel-12:stone:gravel-24:stone-17:water-37:gravel:stone-4:gravel-16:stone-3:gravel-22:stone-16:gravel:water-36:gravel-2:stone-4:gravel-16:stone-7:gravel-18:stone-17:gravel-2:water-31:gravel-4:stone-5:gravel-16:stone-9:gravel-15:stone-20:gravel-29:stone:gravel:stone-9:gravel-16:stone-8:gravel-14:stone-27:gravel-4:stone-4:gravel-12:stone-15:gravel-15:stone-9:gravel-14:stone-62:gravel-15:stone-5:gravel-17:stone-63:gravel-15:stone-4:gravel-15:stone-34:air-6:stone-29:gravel-12:stone-4:gravel-15:stone-34:air-6:stone-29:gravel-7:stone-9:wood-15:stone-34:air-6:stone-42:air-400:gravel-4:air-87:gravel:air-8:gravel-5:air-85:gravel-3:air-7:gravel-8:air-81:gravel-5:air-6:stone:gravel-8:stone-12:air-5:stone:gravel-5:stone-44:air-8:stone-16:gravel-9:stone-12:air-5:stone-50:air-8:stone-16:gravel-9:stone-12:air-5:stone-50:air-8:stone-16:gravel-11:stone-10:air-5:stone-50:air-8:stone-16:gravel-11:stone-10:air-5:stone-50:air-8:stone-16:gravel-5:stone-16:air-5:stone-50:air-8:stone-16:gravel-3:stone-18:air-5:stone-50:air-8:stone-37:air-5:stone-50:air-8:stone-37:air-5:stone-36:air-38:stone-21:air-6:stone-35:air-38:stone-21:air-6:stone-35:air-38:stone-21:air-6:stone-35:air-38:stone-9:air-21:stone-32:air-38:stone-9:air-21:stone-32:air-38:stone-9:air-21:stone-32:air-38:stone-9:air-21:stone-3:gravel-5:stone-24:air-5:gravel-2:stone-4:air-3:stone-20:air-4:stone-9:air-21:gravel-9:stone-22:gravel:air-3:gravel-2:stone-6:air-3:stone-20:air-4:stone-9:air-20:gravel-10:stone-23:gravel-4:stone-7:air-3:stone-20:air-4:stone-9:air-19:gravel-11:stone-34:air-3:stone-45:gravel-19:stone-33:air-3:stone-44:gravel-20:stone-33:air-3:stone-42:gravel-26:stone-29:air-3:stone-42:gravel-29:stone-26:air-3:stone-42:gravel-29:stone-26:air-3:stone-43:gravel-28:stone-26:air-3:stone-44:gravel-27:stone-26:air-3:stone-49:gravel-11:stone-3:gravel-8:stone-26:air-3:stone-63:gravel-5:stone-29:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-73:gravel-7:stone-2:gravel-4:stone-11:air-3:stone-72:gravel-14:stone-11:air-3:stone-71:gravel-15:stone-11:air-3:stone-68:gravel-16:stone-13:air-3:stone-67:gravel-15:stone-15:air-3:stone-67:gravel-12:stone-18:air-3:stone-68:gravel-7:stone-22:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-94:air-12:stone-88:air-12:stone-88:air-12:stone-18:;2710:;254:4:5a:a:59:b:59:b:59:8:20f:5:5f:5:5f:5:5f:5:5f:2:1:2:329:33:31:33:31:33:31:32:34:30:428:6:5e:6:5e:6:2a:15:1f:6:1a:25:1f:6:1a:25:1f:6:1a:25:1f:6:1a:10:4:11:1f:6:1a:7:1:8:5:10:1f:6:1a:6:3:7:8:d:1f:6:1a:5:5:6:4c:8:5c:8:5c:8:5c:8:5c:8:10dc:;786:1:411:1:63:2:e6f:1:83:1:12:1:6:1:49:1:1:1:10:1:1:1:1:1:2:2:b9f:;2710:',
+                inventory: {
+                    wood: 8,
+                    concrete: 8,
+                    fire: 4,
+                    crate: 5,
+                    detonator: 1,
+                    gunpowder: 4,
+                    c4: 4,
+                },
+                id: '3f7d186d-d245-47f3-8cec-489de1159498'
+            },
+            {
+                name: 'Hidden Diamonds',
+                description: `I've been foolin' you the whole time, because... I've been hiding my diamonds... OVER... HERE!!! Wait, there are no diamonds in this game. Aw, darn it.`,
+                saveCode: '',
+                inventory: {
+
+                },
+                id: 'buh3'
+            },
+            {
+                name: 'Creeper!',
+                description: `No, I'm not finishing the joke. Why don't you just finish the level instead? I've given you some pushers to help you.`,
+                saveCode: '',
+                inventory: {
+
+                },
+                id: 'buh4'
+            }
+        ]
+    },
+    {
         name: 'Pixel Machines',
         levels: [
             {
@@ -280,6 +339,13 @@ const puzzles = [
             }
         ]
     },
+    // {
+    //     name: 'Monster Chase',
+    //     levels: []
+    //     // story mode where you chase monsters accross the world, only for them to reveal [redacted]
+    //     // war
+    //     // scorched earth policy lol
+    // }
 ];
 
 let currentPuzzleSection = 0;
