@@ -520,6 +520,7 @@ const random = (min = 0, max = 1) => {
 };
 const randomSeed = (t, x, y) => {
     randSeed = ~~Math.abs(((((t % 65536) + 71) * 459160133) * ((((((y / gridSize * 393) + (x / gridSize * 211)) << (((t % 65536) + 47) * ((x / gridSize + 7) * 86183) % ((y / gridSize + 13) * 83299) )) ^ 935192669) * 117) / 1972627)) % 2147483647);
+    random();
     // randSeed = ~~(noise(x / gridSize, y / gridSize, t % 65536) * 2147483646);
 };
 
@@ -545,7 +546,7 @@ function PreRenderer(size = 60) {
         }
     }
 };
-function drawPixels(x, y, width, height, type, opacity, ctx, avoidGrid) {
+function drawPixels(x, y, width, height, type, opacity, ctx, avoidGrid = false) {
     if (numPixels[type]) {
         numPixels[type].draw(x, y, width, height, opacity, ctx, avoidGrid);
     } else {
@@ -653,7 +654,7 @@ function move(x1, y1, x2, y2) {
         fireGrid[y2][x2] = fire;
     }
 };
-function fall(x, y, xTravel, yTravel, isPassable) {
+function fall(x, y, xTravel, yTravel, isPassable = isPassableFluid) {
     if (y < gridSize - 1) {
         if (isPassable(x, y + 1) && canMoveTo(x, y + 1)) {
             move(x, y, x, y + 1);
@@ -720,12 +721,12 @@ function fall(x, y, xTravel, yTravel, isPassable) {
         }
     }
 };
-function flow(x, y) {
+function flow(x, y, isPassable = isAir) {
     if (y == gridSize) {
         // still have to flow left and right to fill air gaps
         return;
     }
-    if (isAir(x, y + 1)) {
+    if (isPassable(x, y + 1)) {
         if (canMoveTo(x, y + 1)) move(x, y, x, y + 1);
     } else {
         let left = x;
@@ -734,15 +735,15 @@ function flow(x, y) {
         let slideRight = 0;
         let foundLeftDrop = false;
         let foundRightDrop = false;
-        let incrementLeft = canMoveTo(x - 1, y) && isAir(x - 1, y);
-        let incrementRight = canMoveTo(x + 1, y) && isAir(x + 1, y);
+        let incrementLeft = canMoveTo(x - 1, y) && isPassable(x - 1, y);
+        let incrementRight = canMoveTo(x + 1, y) && isPassable(x + 1, y);
         // move directly to destination?
         while (incrementLeft) {
             left--;
-            if (!isAir(left, y) && grid[y + 1][left] != grid[y][x]) {
+            if (!isPassable(left, y) && grid[y + 1][left] != grid[y][x]) {
                 if (grid[y][left] != grid[y][x]) slideLeft = x - left;
                 incrementLeft = false;
-            } else if (isAir(left, y + 1)) {
+            } else if (isPassable(left, y + 1)) {
                 slideLeft = x - left;
                 foundLeftDrop = true;
                 incrementLeft = false;
@@ -754,10 +755,10 @@ function flow(x, y) {
         }
         while (incrementRight) {
             right++;
-            if (!isAir(right, y) && grid[y + 1][right] != grid[y][x]) {
+            if (!isPassable(right, y) && grid[y + 1][right] != grid[y][x]) {
                 if (grid[y][right] != grid[y][x]) slideRight = right - x;
                 incrementRight = false;
-            } else if (isAir(right, y + 1)) {
+            } else if (isPassable(right, y + 1)) {
                 slideRight = right - x;
                 foundRightDrop = true;
                 incrementRight = false;
@@ -796,13 +797,13 @@ function flow(x, y) {
             }
         }
         if (toSlide > 0) {
-            if (foundRightDrop && isAir(x + 1, y + 1) && canMoveTo(x + 1, y + 1)) {
+            if (foundRightDrop && isPassable(x + 1, y + 1) && canMoveTo(x + 1, y + 1)) {
                 move(x, y, x + 1, y + 1);
             } else if (canMoveTo(x + 1, y)) {
                 move(x, y, x + 1, y);
             }
         } else if (toSlide < 0) {
-            if (foundLeftDrop && isAir(x - 1, y + 1) && canMoveTo(x - 1, y + 1)) {
+            if (foundLeftDrop && isPassable(x - 1, y + 1) && canMoveTo(x - 1, y + 1)) {
                 move(x, y, x - 1, y + 1);
             } else if (canMoveTo(x - 1, y)) {
                 move(x, y, x - 1, y);
@@ -812,7 +813,7 @@ function flow(x, y) {
 };
 let push2 = push // just ignore this
 window.addEventListener('load', () => push = push2)
-function push(x, y, dir) {
+function push(x, y, dir, movePusher = true, ignorePistons = false) {
     let moveX = null;
     let moveY = null;
     let lastCollapsible = null;
@@ -829,8 +830,8 @@ function push(x, y, dir) {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_RIGHT || grid[i][x] == pixNum.STICKY_PISTON_RIGHT) {
-                    return false;
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_RIGHT || grid[i][x] == pixNum.STICKY_PISTON_RIGHT))) {
+                    break;
                 }
             }
             if (moveX == null && lastCollapsible != null) {
@@ -838,14 +839,16 @@ function push(x, y, dir) {
             }
             if (moveX != null) {
                 for (let i = moveX; i < x; i++) {
-                    if (!canMoveTo(i + 1, y)) return;
+                    if (!canMoveTo(i + 1, y)) return false;
                 }
                 for (let i = moveX; i < x; i++) {
                     nextGrid[y][i] = grid[y][i + 1];
                     fireGrid[y][i] = fireGrid[y][i + 1];
                 }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
+                if (movePusher) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                }
                 return true;
             }
             return false;
@@ -861,8 +864,8 @@ function push(x, y, dir) {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_DOWN || grid[i][x] == pixNum.STICKY_PISTON_DOWN) {
-                    return false;
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_DOWN || grid[i][x] == pixNum.STICKY_PISTON_DOWN))) {
+                    break;
                 }
             }
             if (moveY == null && lastCollapsible != null) {
@@ -870,14 +873,16 @@ function push(x, y, dir) {
             }
             if (moveY != null) {
                 for (let i = moveY; i < y; i++) {
-                    if (!canMoveTo(x, i + 1)) return;
+                    if (!canMoveTo(x, i + 1)) return false;
                 }
                 for (let i = moveY; i < y; i++) {
                     nextGrid[i][x] = grid[i + 1][x];
                     fireGrid[i][x] = fireGrid[i + 1][x];
                 }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
+                if (movePusher) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                }
                 return true;
             }
             return false;
@@ -893,8 +898,8 @@ function push(x, y, dir) {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_LEFT || grid[i][x] == pixNum.STICKY_PISTON_LEFT) {
-                    return false;
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_LEFT || grid[i][x] == pixNum.STICKY_PISTON_LEFT))) {
+                    break;
                 }
             }
             if (moveX == null && lastCollapsible != null) {
@@ -902,14 +907,16 @@ function push(x, y, dir) {
             }
             if (moveX != null) {
                 for (let i = moveX; i > x; i--) {
-                    if (!canMoveTo(i - 1, y)) return;
+                    if (!canMoveTo(i - 1, y)) return false;
                 }
                 for (let i = moveX; i > x; i--) {
                     nextGrid[y][i] = grid[y][i - 1];
                     fireGrid[y][i] = fireGrid[y][i - 1];
                 }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
+                if (movePusher) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                }
                 return true;
             }
             return false;
@@ -925,8 +932,8 @@ function push(x, y, dir) {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_UP || grid[i][x] == pixNum.STICKY_PISTON_UP) {
-                    return false;
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_UP || grid[i][x] == pixNum.STICKY_PISTON_UP))) {
+                    break;
                 }
             }
             if (moveY == null && lastCollapsible != null) {
@@ -934,14 +941,16 @@ function push(x, y, dir) {
             }
             if (moveY != null) {
                 for (let i = moveY; i > y; i--) {
-                    if (!canMoveTo(x, i - 1)) return;
+                    if (!canMoveTo(x, i - 1)) return false;
                 }
                 for (let i = moveY; i > y; i--) {
                     nextGrid[i][x] = grid[i - 1][x];
                     fireGrid[i][x] = fireGrid[i - 1][x];
                 }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
+                if (movePusher) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                }
                 return true;
             }
             return false;
@@ -1306,7 +1315,7 @@ function drawFrame() {
         frameList.push(millis());
     }
 };
-function drawBooleanGrid(grid, lastGrid, type, ctx, invert) {
+function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
     if (grid === lastGrid) {
         ctx.clearRect(0, 0, canvasResolution, canvasResolution);
         for (let i = 0; i < gridSize; i++) {
