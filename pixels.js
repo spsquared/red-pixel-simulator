@@ -1395,7 +1395,7 @@ const pixels = {
                 nextGrid[y][x] = pixNum.ASH;
                 return;
             }
-            push(x, y, 3)
+            push(x, y, 3);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -1420,6 +1420,206 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         id: 'piston_down',
+        numId: 0
+    },
+    sticky_piston_left: {
+        name: 'Sticky Pusher (Left)',
+        description: 'Sticks to and pushes pixels in its path. Also pushes pixels in the way of the pixels it sticks to.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 75)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(0, 125, 0)';
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                return;
+            }
+            if(push(x < gridSize - 1 ? x + 1 : x, y, 0)) {
+                if (y > 0 && !isAir(x, y - 1)) push(x, y - 1, 0);
+                if (y < gridSize - 1 && !isAir(x, y + 1)) push(x, y + 1, 0);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 0)';
+            ctx.fillRect(0, 50 / 3, 25, 50 / 3);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 0,
+        group: 1,
+        key: Infinity,
+        updateStage: 3,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'sticky_piston_left',
+        numId: 0
+    },
+    sticky_piston_up: {
+        name: 'Sticky Pusher (Up)',
+        description: 'Sticks to and pushes pixels in its path. Also pushes pixels in the way of the pixels it sticks to.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 75)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(0, 125, 0)';
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                return;
+            }
+            if (push(x, y < gridSize - 1 ? y + 1 : y, 1)) {
+                if (x > 0 && !isAir(x - 1, y)) push(x - 1, y, 1);
+                if (x < gridSize - 1 && !isAir(x + 1, y)) push(x + 1, y, 1);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 0)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 25);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 1,
+        group: 1,
+        key: Infinity,
+        updateStage: 1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'sticky_piston_up',
+        numId: 0
+    },
+    sticky_piston_right: {
+        name: 'Sticky Pusher (Right)',
+        description: 'Sticks to and pushes pixels in its path. Also pushes pixels in the way of the pixels it sticks to.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 75)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(0, 125, 0)';
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                return;
+            }
+            if (push(x > 0 ? x - 1 : x, y, 2)) {
+                if (y > 0 && !isAir(x, y - 1)) push(x, y - 1, 2);
+                if (y < gridSize - 1 && !isAir(x, y + 1)) push (x, y + 1, 2);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 0)';
+            ctx.fillRect(25, 50 / 3, 25, 50 / 3);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 2,
+        group: 1,
+        key: Infinity,
+        updateStage: 4,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'sticky_piston_right',
+        numId: 0
+    },
+    sticky_piston_down: {
+        name: 'Sticky Pusher (Down)',
+        description: 'Sticks to and pushes pixels in its path. Also pushes pixels in the way of the pixels it sticks to.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 75)';
+            fillPixel(x, y, width, height, ctx);
+            ctx.fillStyle = 'rgb(0, 125, 0)';
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    fillPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                return;
+            }
+            if (push(x, y > 0 ? y - 1 : y, 3)) {
+                if (x > 0 && !isAir(x - 1, y)) push(x - 1, y, 3);
+                if (x < gridSize - 1 && !isAir(x + 1, y)) push(x + 1, y, 3);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 75)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 0)';
+            ctx.fillRect(50 / 3, 25, 50 / 3, 25);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 3,
+        group: 1,
+        key: Infinity,
+        updateStage: 2,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'sticky_piston_down',
         numId: 0
     },
     cloner_left: {

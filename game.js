@@ -810,7 +810,7 @@ function flow(x, y) {
         }
     }
 };
-let push2 = push
+let push2 = push // just ignore this
 window.addEventListener('load', () => push = push2)
 function push(x, y, dir) {
     let moveX = null;
@@ -829,7 +829,7 @@ function push(x, y, dir) {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_RIGHT) {
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_RIGHT || grid[i][x] == pixNum.STICKY_PISTON_RIGHT) {
                     return false;
                 }
             }
@@ -861,7 +861,7 @@ function push(x, y, dir) {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_DOWN) {
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_DOWN || grid[i][x] == pixNum.STICKY_PISTON_DOWN) {
                     return false;
                 }
             }
@@ -893,7 +893,7 @@ function push(x, y, dir) {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_LEFT) {
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || grid[y][i] == pixNum.PISTON_LEFT || grid[i][x] == pixNum.STICKY_PISTON_LEFT) {
                     return false;
                 }
             }
@@ -925,7 +925,7 @@ function push(x, y, dir) {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_UP) {
+                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || grid[i][x] == pixNum.PISTON_UP || grid[i][x] == pixNum.STICKY_PISTON_UP) {
                     return false;
                 }
             }
@@ -945,9 +945,8 @@ function push(x, y, dir) {
                 return true;
             }
             return false;
-        default:
-            return false;
     }
+    return false;
 };
 function possibleRotations(id) {
     return (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2) ? 2 : 4;
@@ -1509,8 +1508,8 @@ function updateTick() {
             update priority:
             -: fire
             0: nukes, plants, sponges, gunpowder, detonators, and lasers
-            1, 2, 3, 4: pistons
-            5, 6, 7, 8: cloners
+            1, 2, 3, 4: pushers, sticky pushers
+            5, 6, 7, 8: copiers, cloners, super copiers
             9: gravity solids
             10: steam
             11: fluids, concrete, and leaves
