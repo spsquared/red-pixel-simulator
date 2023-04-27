@@ -71,7 +71,7 @@ const pixels = {
                 nextGrid[y][x] = pixNum.MUD;
                 return;
             }
-            if (y < gridSize - 1 && (grid[y + 1][x] == pixNum.DIRT || grid[y + 1][x] == pixNum.GRASS || isPassableFluid(x, y + 1))) {
+            if (y < gridHeight - 1 && (grid[y + 1][x] == pixNum.DIRT || grid[y + 1][x] == pixNum.GRASS || isPassableFluid(x, y + 1))) {
                 fall(x, y, 1, 2);
             }
         },
@@ -116,8 +116,8 @@ const pixels = {
                 nextGrid[y][x] = pixNum.DIRT;
                 return;
             }
-            for (let i = Math.max(y - 1, 0); i <= Math.min(y + 1, gridSize - 1); i++) {
-                for (let j = Math.max(x - 1, 0); j <= Math.min(x + 1, gridSize - 1); j++) {
+            for (let i = Math.max(y - 1, 0); i <= Math.min(y + 1, ghq - 1); i++) {
+                for (let j = Math.max(x - 1, 0); j <= Math.min(x + 1, gridWidth - 1); j++) {
                     if (grid[i][j] == pixNum.DIRT && (i != y || j != x) && random() < 0.2) {
                         let canGrow = false;
                         updateTouchingPixel(j, i, pixNum.AIR, function (actionX2, actionY2) {
@@ -129,7 +129,7 @@ const pixels = {
                     }
                 }
             }
-            if (y < gridSize - 1 && (grid[y + 1][x] == pixNum.DIRT || grid[y + 1][x] == pixNum.GRASS || isPassableFluid(x, y + 1))) {
+            if (y < ghq - 1 && (grid[y + 1][x] == pixNum.DIRT || grid[y + 1][x] == pixNum.GRASS || isPassableFluid(x, y + 1))) {
                 fall(x, y, 1, 2);
             }
         },
@@ -336,10 +336,10 @@ const pixels = {
             if (!validMovingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, pixNum.WOOD)) return;
             let touchingLeaves = 0;
-            let xmin = Math.max(0, Math.min(x - 1, gridSize - 1));
-            let xmax = Math.max(0, Math.min(x + 1, gridSize - 1));
-            let ymin = Math.max(0, Math.min(y - 1, gridSize - 1));
-            let ymax = Math.max(0, Math.min(y + 1, gridSize - 1));
+            let xmin = Math.max(0, Math.min(x - 1, gridWidth - 1));
+            let xmax = Math.max(0, Math.min(x + 1, gridWidth - 1));
+            let ymin = Math.max(0, Math.min(y - 1, gridHeight - 1));
+            let ymax = Math.max(0, Math.min(y + 1, gridHeight - 1));
             for (let i = xmin; i <= xmax; i++) {
                 for (let j = ymin; j <= ymax; j++) {
                     if (grid[j][i] == pixNum.LEAVES) touchingLeaves++;
@@ -552,7 +552,7 @@ const pixels = {
                 }
                 return false;
             })) return;
-            if (y < gridSize - 1) {
+            if (y < gridHeight - 1) {
                 flow(x, y);
             }
         },
@@ -621,7 +621,7 @@ const pixels = {
                 return;
             }
             nextFireGrid[y][x] = true;
-            if (y < gridSize - 1 && random() < 0.5) {
+            if (y < gridHeight - 1 && random() < 0.5) {
                 flow(x, y);
             }
             if (y > 0) {
@@ -632,7 +632,7 @@ const pixels = {
                             validSlidingPositions.push(-1);
                         }
                     }
-                    if (x < gridSize - 1) {
+                    if (x < gridWidth - 1) {
                         if (grid[y][x + 1] == pixNum.STONE && grid[y - 1][x + 1] == pixNum.STONE) {
                             validSlidingPositions.push(1);
                         }
@@ -648,7 +648,7 @@ const pixels = {
             }
             if (y > 0) {
                 if (random() < 0.5) {
-                    if (y == gridSize - 1 || grid[y + 1][x] == pixNum.LAVA) {
+                    if (y == gridHeight - 1 || grid[y + 1][x] == pixNum.LAVA) {
                         if (grid[y - 1][x] == pixNum.STONE) {
                             if (nextGrid[y][x] == null && nextGrid[y - 1][x] == null) {
                                 nextGrid[y][x] = grid[y - 1][x];
@@ -727,8 +727,8 @@ const pixels = {
                     monsterGrid[y][x] = false;
                 }
             }
-            for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridSize - 1); i++) {
-                for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridSize - 1); j++) {
+            for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridHeight - 1); i++) {
+                for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridWidth - 1); j++) {
                     if (nextFireGrid[j][i] || (i == x && j == y)) continue;
                     let flammability = (numPixels[grid[j][i]] ?? numPixels[pixNum.MISSING]).flammability;
                     if (random() < flammability / (aerated ? 20 : 60) + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0) - (aerated ? 0 : 0.2)) nextFireGrid[j][i] = true;
@@ -836,7 +836,7 @@ const pixels = {
                         foundRightDrop = true;
                         incrementRight = false;
                     }
-                    if (right >= gridSize) {
+                    if (right >= gridWidth) {
                         slideRight = right - x;
                         incrementRight = false;
                     }
@@ -994,7 +994,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validMovingPixel(x, y)) return;
-            if (y < gridSize - 1 && isAir(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
+            if (y < gridHeight - 1 && isAir(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
             else if (y > 0 && grid[y - 1][x] == pixNum.WATER && canMoveTo(x, y - 1)) move(x, y, x, y - 1);
         },
         drawPreview: function (ctx) {
@@ -1054,7 +1054,7 @@ const pixels = {
                 nextGrid[y][x] = pixNum.WATER;
                 nextGrid[actionY][actionX] = pixNum.PLANT;
             });
-            if (y < gridSize - 1) {
+            if (y < gridHeight - 1) {
                 if (isPassableFluid(x, y + 1)) {
                     if (canMoveTo(x, y + 1) && (grid[y + 1][x] == pixNum.WATER) ? random() < 0.5 : true) {
                         move(x, y, x, y + 1);
@@ -1098,7 +1098,7 @@ const pixels = {
                 nextGrid[y][x] = pixNum.AIR;
                 nextGrid[actionY][actionX] = pixNum.SPONGE;
             });
-            if (y < gridSize - 1) {
+            if (y < gridHeight - 1) {
                 if (isPassableFluid(x, y + 1) && (grid[y + 1][x] != pixNum.LAVA || random() < 0.25) && canMoveTo(x, y + 1)) {
                     move(x, y, x, y + 1);
                 }
@@ -1234,6 +1234,11 @@ const pixels = {
         id: 'lava_generator',
         numId: 0
     },
+// ██          ████████    ██████  ██████  ██████  ██████  ██████  ██  ██    ████████          ██
+// ██          ████████    ██  ██    ██    ██        ██    ██  ██  ██  ██    ████████          ██
+// ████████████████████    ██████    ██    ██████    ██    ██  ██  ██  ██    ████████████████████
+// ██          ████████    ██        ██        ██    ██    ██  ██  ██████    ████████          ██
+// ██          ████████    ██      ██████  ██████    ██    ██████  ██  ██    ████████          ██
     piston_left: {
         name: 'Pusher (Left)',
         description: 'Pushes pixels in its path.',
@@ -1442,9 +1447,9 @@ const pixels = {
                 nextGrid[y][x] = pixNum.ASH;
                 return;
             }
-            if(push(x < gridSize - 1 ? x + 1 : x, y, 0)) {
+            if(push(x < gridWidth - 1 ? x + 1 : x, y, 0)) {
                 if (y > 0 && !isAir(x, y - 1)) push(x, y - 1, 0);
-                if (y < gridSize - 1 && !isAir(x, y + 1)) push(x, y + 1, 0);
+                if (y < gridHeight - 1 && !isAir(x, y + 1)) push(x, y + 1, 0);
             }
         },
         drawPreview: function (ctx) {
@@ -1492,9 +1497,9 @@ const pixels = {
                 nextGrid[y][x] = pixNum.ASH;
                 return;
             }
-            if (push(x, y < gridSize - 1 ? y + 1 : y, 1)) {
+            if (push(x, y < gridHeight - 1 ? y + 1 : y, 1)) {
                 if (x > 0 && !isAir(x - 1, y)) push(x - 1, y, 1);
-                if (x < gridSize - 1 && !isAir(x + 1, y)) push(x + 1, y, 1);
+                if (x < gridWidth - 1 && !isAir(x + 1, y)) push(x + 1, y, 1);
             }
         },
         drawPreview: function (ctx) {
@@ -1544,7 +1549,7 @@ const pixels = {
             }
             if (push(x > 0 ? x - 1 : x, y, 2)) {
                 if (y > 0 && !isAir(x, y - 1)) push(x, y - 1, 2);
-                if (y < gridSize - 1 && !isAir(x, y + 1)) push (x, y + 1, 2);
+                if (y < gridHeight - 1 && !isAir(x, y + 1)) push (x, y + 1, 2);
             }
         },
         drawPreview: function (ctx) {
@@ -1594,7 +1599,7 @@ const pixels = {
             }
             if (push(x, y > 0 ? y - 1 : y, 3)) {
                 if (x > 0 && !isAir(x - 1, y)) push(x - 1, y, 3);
-                if (x < gridSize - 1 && !isAir(x + 1, y)) push(x + 1, y, 3);
+                if (x < gridWidth - 1 && !isAir(x + 1, y)) push(x + 1, y, 3);
             }
         },
         drawPreview: function (ctx) {
@@ -1630,7 +1635,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
             }
         },
@@ -1680,7 +1685,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
             }
         },
@@ -1730,7 +1735,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
             }
         },
@@ -1780,7 +1785,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
             }
         },
@@ -1830,7 +1835,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x - 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x + 1]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x - 1, y)) {
                 if (push(x, y, 0, false, true)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
                 }
@@ -1886,7 +1891,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x, y - 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y + 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x, y - 1)) {
                 if (push(x, y, 1, false, true)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
                 }
@@ -1942,7 +1947,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x + 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y][x - 1]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x + 1, y)) {
                 if (push(x, y, 2, false, true)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
                 }
@@ -1998,7 +2003,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x, y + 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).pushable && (numPixels[grid[y - 1][x]] ?? numPixels[pixNum.MISSING]).cloneable && canMoveTo(x, y + 1)) {
                 if (push(x, y, 3, false, true)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
                 }
@@ -2054,7 +2059,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1) {
+            if (x > 0 && x < gridWidth - 1) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
             }
         },
@@ -2103,7 +2108,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1) {
+            if (y > 0 && y < gridHeight - 1) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
             }
         },
@@ -2154,7 +2159,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (x > 0 && x < gridSize - 1) {
+            if (x > 0 && x < gridWidth - 1) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
             }
         },
@@ -2203,7 +2208,7 @@ const pixels = {
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
         },
         update: function (x, y) {
-            if (y > 0 && y < gridSize - 1) {
+            if (y > 0 && y < gridHeight - 1) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
             }
         },
@@ -2711,7 +2716,7 @@ const pixels = {
         update: function (x, y) {
             let path = getLaserPath(x, y, 0);
             let last = path[path.length - 1];
-            if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
+            if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
             if (monsterGrid[last[3]][last[2]]) {
                 if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
                     monsterGrid[last[3]][last[2]] = false;
@@ -2773,7 +2778,7 @@ const pixels = {
         update: function (x, y) {
             let path = getLaserPath(x, y, 1);
             let last = path[path.length - 1];
-            if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
+            if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
             if (monsterGrid[last[3]][last[2]]) {
                 if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
                     monsterGrid[last[3]][last[2]] = false;
@@ -2835,7 +2840,7 @@ const pixels = {
         update: function (x, y) {
             let path = getLaserPath(x, y, 2);
             let last = path[path.length - 1];
-            if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
+            if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
             if (monsterGrid[last[3]][last[2]]) {
                 if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
                     monsterGrid[last[3]][last[2]] = false;
@@ -2897,7 +2902,7 @@ const pixels = {
         update: function (x, y) {
             let path = getLaserPath(x, y, 3);
             let last = path[path.length - 1];
-            if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
+            if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
             if (monsterGrid[last[3]][last[2]]) {
                 if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
                     monsterGrid[last[3]][last[2]] = false;
@@ -3879,10 +3884,10 @@ const pixels = {
             if (!validMovingPixel(x, y)) return;
             let explosion = updateTouchingAnything(x, y);
             let diffused = updateTouchingPixel(x, y, pixNum.NUKE_DIFFUSER);
-            if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
-            if (y < gridSize - 1) {
+            if (y < gridHeight - 1) {
                 if (isPassableFluid(x, y + 1) || grid[y + 1][x] == pixNum.NUKE) {
                     explosion = false;
                 }
@@ -3927,10 +3932,10 @@ const pixels = {
             if (!validMovingPixel(x, y)) return;
             let explosion = updateTouchingAnything(x, y);
             let diffused = updateTouchingPixel(x, y, pixNum.NUKE_DIFFUSER);
-            if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
-            if (y < gridSize - 1) {
+            if (y < gridHeight - 1) {
                 if (isPassableFluid(x, y + 1) || grid[y + 1][x] == pixNum.HUGE_NUKE) {
                     explosion = false;
                 }
@@ -3975,10 +3980,10 @@ const pixels = {
             if (!validMovingPixel(x, y)) return;
             let explosion = updateTouchingAnything(x, y);
             let diffused = updateTouchingPixel(x, y, pixNum.NUKE_DIFFUSER);
-            if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
-            if (y < gridSize - 1) {
+            if (y < gridHeight - 1) {
                 if (isPassableFluid(x, y + 1) || grid[y + 1][x] == pixNum.VERY_HUGE_NUKE) {
                     explosion = false;
                 }
@@ -4147,8 +4152,8 @@ const pixels = {
                         }
                         let rotationAmount = Math.floor(random(0, 360));
                         ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
-                        let translateX = random(-gridSize * gridScale, gridSize * gridScale);
-                        let translateY = random(-gridSize * gridScale, gridSize * gridScale);
+                        let translateX = random(-gridWidth * gridScale, gridHeight * gridScale);
+                        let translateY = random(-gridWidth * gridScale, gridHeight * gridScale);
                         let skewX = random(-PI / 6, PI / 6);
                         let skewY = random(-PI / 6, PI / 6);
                         ctx.translate(translateX, translateY);
@@ -4257,13 +4262,13 @@ const pixels = {
                 if (random() < 0.1) {
                     fireGrid[actionY][actionX] = true;
                 }
-                move(Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridSize - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridSize - 1), Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridSize - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridSize - 1));
+                move(Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridWidth - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridHeight - 1), Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridWidth - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridHeight - 1));
             };
             updateTouchingPixel(x, y, pixNum.AIR, chaos);
             updateTouchingAnything(x, y, chaos);
             let path = getLaserPath(x, y, Math.floor(random() * 4));
             let last = path[path.length - 1];
-            if (last[2] < 0 || last[2] >= gridSize || last[3] < 0 || last[3] >= gridSize) return;
+            if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
             if (random() < 0.5 - ((numPixels[grid[last[3]][last[2]]] ?? numPixels[pixNum.MISSING]).blastResistance / 100)) {
                 if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
                 if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
@@ -4472,7 +4477,7 @@ const pixels = {
                 grid[y][x] = pixNum.AIR;
                 monsterGrid[y][x] = false;
                 fireGrid[y][x] = false;
-            } else if (y < gridSize - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1) && !monsterGrid[y + 1][x]) {
+            } else if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1) && !monsterGrid[y + 1][x]) {
                 if (grid[y + 1][x] == pixNum.DELETER) {
                     nextGrid[y][x] = pixNum.AIR;
                     monsterGrid[y][x] = false;
@@ -4788,8 +4793,8 @@ function generateMusicPixel(id, data) {
             if (avoidGrid) {
                 imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
             } else {
-                for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridSize); y1++) {
-                    for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridSize); x1++) {
+                for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridHeight); y1++) {
+                    for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridWidth); x1++) {
                         if (lastMusicGrid[y1][x1] != musicGrid[y1][x1] || forceRedraw || lastGrid[y1][x1] != grid[y1][x1]) {
                             if (musicGrid[y1][x1] == -1) musicGrid[y1][x1] = 0;
                             if (musicGrid[y1][x1]) imagePixel(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);

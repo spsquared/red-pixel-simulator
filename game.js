@@ -3,6 +3,8 @@ window.addEventListener('error', (e) => {
 });
 
 let gridSize = 100;
+let gridWidth = 100;
+let gridHeight = 100;
 let saveCode = '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
 let puzzleSaveCode;
 let sandboxMode = true;
@@ -90,11 +92,12 @@ const sidebar = document.getElementById('sidebar');
 const pixelPicker = document.getElementById('pixelPicker');
 const pixelPickerDescription = document.getElementById('pixelPickerDescription');
 const saveCodeText = document.getElementById('saveCode');
-const gridSizeText = document.getElementById('gridSize');
+const gridWidthText = document.getElementById('gridWidth');
+const gridHeightText = document.getElementById('gridHeight');
 canvasContainer.addEventListener('contextmenu', e => e.preventDefault());
 pixelPicker.addEventListener('contextmenu', e => e.preventDefault());
 
-let gridScale = canvasResolution / gridSize;
+let gridScale = canvasResolution / Math.min(gridWidth, gridHeight);
 let canvasSize = Math.min(window.innerWidth, window.innerHeight) - 21;
 let canvasScale = canvasResolution / canvasSize;
 const grid = [];
@@ -164,10 +167,11 @@ let inResetState = true;
 let forceRedraw = true;
 
 // save codes
-function createGrid(size) {
-    if (size < 1) return;
-    gridSize = size;
-    gridScale = canvasResolution / gridSize;
+function createGrid(width = 100, height = 100) {
+    if (width < 1 || height < 1) return;
+    gridWidth = width;
+    gridHeight = height;
+    gridScale = canvasResolution / Math.min(gridWidth, gridHeight);
     pendingExplosions = [];
     selection.show = false;
     grid.length = 0;
@@ -183,7 +187,7 @@ function createGrid(size) {
     placeableGrid.length = 0;
     lastPlaceableGrid.length = 0;
     noiseGrid.length = 0;
-    for (let i = 0; i < gridSize; i++) {
+    for (let i = 0; i < gridHeight; i++) {
         grid[i] = [];
         lastGrid[i] = [];
         nextGrid[i] = [];
@@ -197,7 +201,7 @@ function createGrid(size) {
         placeableGrid[i] = [];
         lastPlaceableGrid[i] = [];
         noiseGrid[i] = [];
-        for (let j = 0; j < gridSize; j++) {
+        for (let j = 0; j < gridWidth; j++) {
             grid[i][j] = pixNum.AIR;
             lastGrid[i][j] = null;
             nextGrid[i][j] = null;
@@ -213,7 +217,8 @@ function createGrid(size) {
             noiseGrid[i][j] = noise(j / 2, i / 2);
         }
     }
-    gridSizeText.value = gridSize;
+    gridWidthText.value = gridWidth;
+    gridHeightText.value = gridHeight;
 };
 function loadSaveCode() {
     if (saveCode.length != 0) {
@@ -223,6 +228,9 @@ function loadSaveCode() {
         runTicks = 0;
         ticks = 0;
         stopAllMusicPixels();
+        camera.x = 0;
+        camera.y = 0;
+        camera.scale = 1;
         let sections = saveCode.split(';');
         if (isNaN(parseInt(sections[0]))) return;
         function parseSaveCode(code) {
@@ -234,10 +242,10 @@ function loadSaveCode() {
                 let pixelTypeNum = pixNum[pixel.toUpperCase()];
                 while (amount > 0) {
                     grid[y][x++] = pixelTypeNum;
-                    if (x == gridSize) {
+                    if (x == gridWidth) {
                         y++;
                         x = 0;
-                        if (y == gridSize) return true;
+                        if (y == gridHeight) return true;
                     }
                     amount--;
                 }
@@ -303,10 +311,10 @@ function loadSaveCode() {
             function addPixels(pixel, amount) {
                 while (amount > 0) {
                     grid[y][x++] = pixel;
-                    if (x == gridSize) {
+                    if (x == gridWidth) {
                         y++;
                         x = 0;
-                        if (y == gridSize) return true;
+                        if (y == gridHeight) return true;
                     }
                     amount--;
                 }
@@ -322,7 +330,7 @@ function loadSaveCode() {
                 i = next + 1;
             }
         };
-        if (sections[0]) createGrid(parseInt(sections[0]));
+        if (sections[0]) createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
         if (sections[1]) ticks = parseInt(sections[1], 16);
         if (sections[2]) parseSaveCode(sections[2]);
         if (sections[3]) parseBooleanCode(fireGrid, sections[3]);
@@ -337,11 +345,11 @@ function loadSaveCode() {
     }
 };
 function generateSaveCode() {
-    let saveCode = `${gridSize};${'0000'.substring(0, 4 - (ticks % 65536).toString(16).length)}${(ticks % 65536).toString(16)};`;
+    let saveCode = `${gridWidth}-${gridHeight};${'0000'.substring(0, 4 - (ticks % 65536).toString(16).length)}${(ticks % 65536).toString(16)};`;
     let pixel = null;
     let amount = 0;
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
+    for (let i = 0; i < gridHeight; i++) {
+        for (let j = 0; j < gridWidth; j++) {
             amount++;
             if (grid[i][j] != pixel) {
                 if (pixel != null && amount != 0) {
@@ -369,8 +377,8 @@ function generateSaveCode() {
         let pixel = grid[0][0];
         amount = -1;
         if (pixel) saveCode += '0:';
-        for (let i = 0; i < gridSize; i++) {
-            for (let j = 0; j < gridSize; j++) {
+        for (let i = 0; i < gridHeight; i++) {
+            for (let j = 0; j < gridWidth; j++) {
                 amount++;
                 if (grid[i][j] != pixel) {
                     if (amount != 0) {
@@ -427,6 +435,7 @@ function loadStoredSave() {
         if (saveCode == null || saveCode == '') saveCode = savedSaveText;
     }
     saveCodeText.value = saveCode;
+    saveCodeText.oninput();
     simulationPaused = true;
     fastSimulation = false;
     updateTimeControlButtons();
@@ -503,7 +512,7 @@ function modal(title, subtitle, confirmation) {
 // p5 thing
 function setup() {
     noiseDetail(3, 0.6);
-    frameRate(0)
+    frameRate(0);
 
     document.querySelectorAll('.p5Canvas').forEach(e => e.remove());
 };
@@ -519,9 +528,9 @@ const random = (min = 0, max = 1) => {
     return (((randSeed = randSeed * 16807 % 2147483647) - 1) / 2147483646) * (max - min) + min;
 };
 const randomSeed = (t, x, y) => {
-    randSeed = ~~Math.abs(((((t % 65536) + 71) * 459160133) * ((((((y / gridSize * 393) + (x / gridSize * 211)) << (((t % 65536) + 47) * ((x / gridSize + 7) * 86183) % ((y / gridSize + 13) * 83299) )) ^ 935192669) * 117) / 1972627)) % 2147483647);
+    randSeed = ~~Math.abs(((((t % 65536) + 71) * 459160133) * ((((((y / gridHeight * 393) + (x / gridWidth * 211)) << (((t % 65536) + 47) * ((x / gridWidth + 7) * 86183) % ((y / gridHeight + 13) * 83299) )) ^ 935192669) * 117) / 1972627)) % 2147483647);
     random();
-    // randSeed = ~~(noise(x / gridSize, y / gridSize, t % 65536) * 2147483646);
+    // randSeed = ~~(noise(x / gridWidth, y / gridHeight, t % 65536) * 2147483646);
 };
 
 // pixel utilities
@@ -590,7 +599,7 @@ function updateTouchingPixel(x, y, type, action) {
         if (typeof action == 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (x < gridSize - 1 && grid[y][x + 1] == type) {
+    if (x < gridWidth - 1 && grid[y][x + 1] == type) {
         if (typeof action == 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
@@ -598,7 +607,7 @@ function updateTouchingPixel(x, y, type, action) {
         if (typeof action == 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (y < gridSize - 1 && grid[y + 1][x] == type) {
+    if (y < gridHeight - 1 && grid[y + 1][x] == type) {
         if (typeof action == 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
@@ -610,7 +619,7 @@ function updateTouchingAnything(x, y, action) {
         if (typeof action == 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (x < gridSize - 1 && grid[y][x + 1] != pixNum.AIR) {
+    if (x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR) {
         if (typeof action == 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
@@ -618,7 +627,7 @@ function updateTouchingAnything(x, y, action) {
         if (typeof action == 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (y < gridSize - 1 && grid[y + 1][x] != pixNum.AIR) {
+    if (y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR) {
         if (typeof action == 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
@@ -655,12 +664,12 @@ function move(x1, y1, x2, y2) {
     }
 };
 function fall(x, y, xTravel, yTravel, isPassable = isPassableFluid) {
-    if (y < gridSize - 1) {
+    if (y < gridHeight - 1) {
         if (isPassable(x, y + 1) && canMoveTo(x, y + 1)) {
             move(x, y, x, y + 1);
-        } else if (y < gridSize - yTravel) {
+        } else if (y < gridHeight - yTravel) {
             let slideLeft = x >= xTravel && canMoveTo(x - 1, y);
-            let slideRight = x < gridSize - xTravel && canMoveTo(x + 1, y);
+            let slideRight = x < gridWidth - xTravel && canMoveTo(x + 1, y);
             let canMoveLeftDiagonal = false;
             let canMoveRightDiagonal = false;
             if (slideLeft) {
@@ -722,7 +731,7 @@ function fall(x, y, xTravel, yTravel, isPassable = isPassableFluid) {
     }
 };
 function flow(x, y, isPassable = isAir) {
-    if (y == gridSize) {
+    if (y == gridHeight - 1) {
         // still have to flow left and right to fill air gaps
         return;
     }
@@ -763,7 +772,7 @@ function flow(x, y, isPassable = isAir) {
                 foundRightDrop = true;
                 incrementRight = false;
             }
-            if (right >= gridSize) {
+            if (right >= gridWidth) {
                 slideRight = right - x;
                 incrementRight = false;
             }
@@ -887,7 +896,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             return false;
         case 2:
-            for (let i = x + 1; i <= gridSize - 1; i++) {
+            for (let i = x + 1; i <= gridWidth - 1; i++) {
                 if (isAir(i, y)) {
                     moveX = i;
                     if (grid[y][i] == pixNum.DELETER) {
@@ -921,7 +930,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             return false;
         case 3:
-            for (let i = y + 1; i <= gridSize - 1; i++) {
+            for (let i = y + 1; i <= gridHeight - 1; i++) {
                 if (isAir(x, i)) {
                     moveY = i;
                     if (grid[i][x] == pixNum.DELETER) {
@@ -982,13 +991,13 @@ function rotatePixel(x, y) {
     }
 };
 function getLaserPath(x, y, dir) {
-    if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) return [[0, 0, 0, 0]];
+    if (x < 0 || x >= gridWidth || y < 0 || y >= gridHeight) return [[0, 0, 0, 0]];
     let path = [];
     let cdir = dir;
     let startX = x;
     let startY = y;
     let iterations = 0;
-    while (iterations < maxLaserDepth && startX >= 0 && startX < gridSize && startY >= 0 && startY < gridSize) {
+    while (iterations < maxLaserDepth && startX >= 0 && startX < gridWidth && startY >= 0 && startY < gridHeight) {
         let endX = startX;
         let endY = startY;
         switch (cdir) {
@@ -1016,24 +1025,24 @@ function getLaserPath(x, y, dir) {
                 break;
             case 2:
                 endX = startX + 1;
-                while (endX < gridSize) {
+                while (endX < gridWidth) {
                     if (!isTransparent(endX, endY)) break;
                     endX++;
                 }
                 path.push([startX, startY, endX, endY]);
-                if (endX < gridSize && grid[endY][endX] == pixNum.MIRROR_1) cdir = 1;
-                else if (endX < gridSize && grid[endY][endX] == pixNum.MIRROR_2) cdir = 3;
+                if (endX < gridWidth && grid[endY][endX] == pixNum.MIRROR_1) cdir = 1;
+                else if (endX < gridWidth && grid[endY][endX] == pixNum.MIRROR_2) cdir = 3;
                 else return path;
                 break;
             case 3:
                 endY = startY + 1;
-                while (endY < gridSize) {
+                while (endY < gridHeight) {
                     if (!isTransparent(endX, endY)) break;
                     endY++;
                 }
                 path.push([startX, startY, endX, endY]);
-                if (endY < gridSize && grid[endY][endX] == pixNum.MIRROR_1) cdir = 0;
-                else if (endY < gridSize && grid[endY][endX] == pixNum.MIRROR_2) cdir = 2;
+                if (endY < gridHeight && grid[endY][endX] == pixNum.MIRROR_1) cdir = 0;
+                else if (endY < gridHeight && grid[endY][endX] == pixNum.MIRROR_2) cdir = 2;
                 else return path;
                 break;
             default:
@@ -1124,13 +1133,13 @@ function explode(x1, y1, size) {
         if (!isFinite(slope)) {
             if (y2 < y1) {
                 let step = size / (y1 - y2);
-                for (let y = y1; y >= y2 && power > 1 && y >= 0 && y < gridSize; y--) {
+                for (let y = y1; y >= y2 && power > 1 && y >= 0 && y < gridHeight; y--) {
                     power -= destroy(x1, y, power);
                     power -= step;
                 }
             } else {
                 let step = size / (y2 - y1);
-                for (let y = y1; y <= y2 && power > 1 && y >= 0 && y < gridSize; y++) {
+                for (let y = y1; y <= y2 && power > 1 && y >= 0 && y < gridHeight; y++) {
                     power -= destroy(x1, y, power);
                     power -= step;
                 }
@@ -1138,13 +1147,13 @@ function explode(x1, y1, size) {
         } else if (slope == 0) {
             if (x2 < x1) {
                 let step = size / (x1 - x2);
-                for (let x = x1; x >= x2 && power > 1 && x >= 0 && x < gridSize; x--) {
+                for (let x = x1; x >= x2 && power > 1 && x >= 0 && x < gridWidth; x--) {
                     power -= destroy(x, y1, power);
                     power -= step;
                 }
             } else {
                 let step = size / (x2 - x1);
-                for (let x = x1; x <= x2 && power > 1 && x >= 0 && x < gridSize; x++) {
+                for (let x = x1; x <= x2 && power > 1 && x >= 0 && x < gridWidth; x++) {
                     power -= destroy(x, y1, power);
                     power -= step;
                 }
@@ -1153,17 +1162,17 @@ function explode(x1, y1, size) {
             slope = 1 / slope;
             if (y2 < y1) {
                 let step = size / (y1 - y2);
-                for (let y = y1; y >= y2 && power > 1 && y >= 0 && y < gridSize; y--) {
+                for (let y = y1; y >= y2 && power > 1 && y >= 0 && y < gridHeight; y--) {
                     let x = Math.round(slope * (y - y1)) + x1;
-                    if (x < 0 || x >= gridSize) break;
+                    if (x < 0 || x >= gridWidth) break;
                     power -= destroy(x, y, power);
                     power -= step;
                 }
             } else {
                 let step = size / (y2 - y1);
-                for (let y = y1; y <= y2 && power > 1 && y >= 0 && y < gridSize; y++) {
+                for (let y = y1; y <= y2 && power > 1 && y >= 0 && y < gridHeight; y++) {
                     let x = Math.round(slope * (y - y1)) + x1;
-                    if (x < 0 || x >= gridSize) break;
+                    if (x < 0 || x >= gridWidth) break;
                     power -= destroy(x, y, power);
                     power -= step;
                 }
@@ -1171,17 +1180,17 @@ function explode(x1, y1, size) {
         } else {
             if (x2 < x1) {
                 let step = size / (x1 - x2);
-                for (let x = x1; x >= x2 && power > 1 && x >= 0 && x < gridSize; x--) {
+                for (let x = x1; x >= x2 && power > 1 && x >= 0 && x < gridWidth; x--) {
                     let y = Math.round(slope * (x - x1)) + y1;
-                    if (y < 0 || y >= gridSize) break;
+                    if (y < 0 || y >= gridHeight) break;
                     power -= destroy(x, y, power);
                     power -= step;
                 }
             } else {
                 let step = size / (x2 - x1);
-                for (let x = x1; x <= x2 && power > 1 && x >= 0 && x < gridSize; x++) {
+                for (let x = x1; x <= x2 && power > 1 && x >= 0 && x < gridWidth; x++) {
                     let y = Math.round(slope * (x - x1)) + y1;
-                    if (y < 0 || y >= gridSize) break;
+                    if (y < 0 || y >= gridHeight) break;
                     power -= destroy(x, y, power);
                     power -= step;
                 }
@@ -1236,8 +1245,8 @@ function draw() {
     // totally nothing
     if (horribleLagMode) {
         let iterations = 0;
-        for (let ny = 0; ny < gridSize * 2; ny++) {
-            for (let nx = 0; nx < gridSize * 2; nx++) {
+        for (let ny = 0; ny < gridHeight * 2; ny++) {
+            for (let nx = 0; nx < gridWidth * 2; nx++) {
                 ctx.fillStyle = `rgba(${Math.random() * 64}, ${Math.random() * 64}, ${Math.random() * 64}, ${Math.random() * 0.2})`;
                 ctx.fillRect(nx * gridScale / 2, ny * gridScale / 2, gridScale / 2, gridScale / 2);
             }
@@ -1275,11 +1284,11 @@ function drawFrame() {
             placeablectx.clearRect(0, 0, canvasResolution, canvasResolution);
         }
         abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
-        for (let i = 0; i < gridSize; i++) {
+        for (let i = 0; i < gridHeight; i++) {
             let curr = pixNum.AIR;
             let redrawing = grid[i][0] != lastGrid[i][0];
             let amount = 0;
-            for (let j = 0; j < gridSize; j++) {
+            for (let j = 0; j < gridWidth; j++) {
                 amount++;
                 if (grid[i][j] != curr || (grid[i][j] != lastGrid[i][j]) != redrawing) {
                     let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
@@ -1292,8 +1301,8 @@ function drawFrame() {
                 lastGrid[i][j] = grid[i][j];
             }
             let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
-            if (curr != pixNum.AIR && (redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations) || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, curr, 1, gridctx);
-            else if (curr == pixNum.AIR && (redrawing || forceRedraw)) clearPixels(gridSize - amount - 1, i, amount + 1, 1, gridctx);
+            if (curr != pixNum.AIR && (redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations) || forceRedraw)) drawPixels(gridWidth - amount - 1, i, amount + 1, 1, curr, 1, gridctx);
+            else if (curr == pixNum.AIR && (redrawing || forceRedraw)) clearPixels(gridWidth - amount - 1, i, amount + 1, 1, gridctx);
         }
         drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
         drawBooleanGrid(monsterGrid, monsterGrid, pixNum.MONSTER, monsterctx);
@@ -1318,10 +1327,10 @@ function drawFrame() {
 function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
     if (grid === lastGrid) {
         ctx.clearRect(0, 0, canvasResolution, canvasResolution);
-        for (let i = 0; i < gridSize; i++) {
+        for (let i = 0; i < gridHeight; i++) {
             let pixel = false;
             let amount = 0;
-            for (let j = 0; j < gridSize; j++) {
+            for (let j = 0; j < gridWidth; j++) {
                 amount++;
                 if (grid[i][j] != pixel) {
                     if (pixel ^ invert) drawPixels(j - amount, i, amount, 1, type, 1, ctx);
@@ -1329,14 +1338,14 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
                     amount = 0;
                 }
             }
-            if (pixel) drawPixels(gridSize - amount - 1, i, amount + 1, 1, type, 1, ctx);
+            if (pixel) drawPixels(gridWidth - amount - 1, i, amount + 1, 1, type, 1, ctx);
         }
     } else {
-        for (let i = 0; i < gridSize; i++) {
+        for (let i = 0; i < gridHeight; i++) {
             let pixel = false;
             let redrawing = grid[i][0] != lastGrid[i][0];
             let amount = 0;
-            for (let j = 0; j < gridSize; j++) {
+            for (let j = 0; j < gridWidth; j++) {
                 amount++;
                 if (grid[i][j] != pixel || (grid[i][j] != lastGrid[i][j]) != redrawing) {
                     if (pixel ^ invert && (redrawing || forceRedraw)) drawPixels(j - amount, i, amount, 1, type, 1, ctx);
@@ -1347,23 +1356,23 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
                 }
                 lastGrid[i][j] = grid[i][j];
             }
-            if (pixel ^ invert && (redrawing || forceRedraw)) drawPixels(gridSize - amount - 1, i, amount + 1, 1, type, 1, ctx);
-            else if (!pixel ^ invert && (redrawing || forceRedraw)) clearPixels(gridSize - amount - 1, i, amount + 1, 1, ctx);
+            if (pixel ^ invert && (redrawing || forceRedraw)) drawPixels(gridWidth - amount - 1, i, amount + 1, 1, type, 1, ctx);
+            else if (!pixel ^ invert && (redrawing || forceRedraw)) clearPixels(gridWidth - amount - 1, i, amount + 1, 1, ctx);
         }
     }
 };
 function drawBrush() {
     if (!fastSimulation && !selecting) {
         if (brush.isSelection && selection.grid[0] != undefined) {
-            let x1 = Math.min(gridSize, Math.max(0, Math.floor(mXGrid - selection.grid[0].length / 2)));
-            let x2 = Math.min(gridSize - 1, Math.max(-1, Math.floor(mXGrid + selection.grid[0].length / 2) - 1));
-            let y1 = Math.min(gridSize, Math.max(0, Math.floor(mYGrid - selection.grid.length / 2)));
-            let y2 = Math.min(gridSize - 1, Math.max(-1, Math.floor(mYGrid + selection.grid.length / 2) - 1));
+            let x1 = Math.min(gridWidth, Math.max(0, Math.floor(mXGrid - selection.grid[0].length / 2)));
+            let x2 = Math.min(gridWidth - 1, Math.max(-1, Math.floor(mXGrid + selection.grid[0].length / 2) - 1));
+            let y1 = Math.min(gridHeight, Math.max(0, Math.floor(mYGrid - selection.grid.length / 2)));
+            let y2 = Math.min(gridHeight - 1, Math.max(-1, Math.floor(mYGrid + selection.grid.length / 2) - 1));
             let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
             let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
             for (let y = 0; y < selection.grid.length; y++) {
                 for (let x = 0; x < selection.grid[y].length; x++) {
-                    if (x + offsetX >= 0 && x + offsetX < gridSize && y + offsetY >= 0 && y + offsetY < gridSize) {
+                    if (x + offsetX >= 0 && x + offsetX < gridWidth && y + offsetY >= 0 && y + offsetY < gridHeight) {
                         drawPixels(x + offsetX, y + offsetY, 1, 1, selection.grid[y][x], 0.5, ctx, true);
                     }
                 }
@@ -1431,21 +1440,21 @@ function drawBrush() {
 function updateCamera() {
     if ((!simulationPaused || !fastSimulation) && acceptInputs && !inWinScreen) {
         if (camera.mUp && !camera.mDown) {
-            camera.y = Math.max(0, Math.min(camera.y - 20, (canvasResolution * camera.scale) - canvasResolution));
+            camera.y = Math.max(0, Math.min(camera.y - 20, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
             forceRedraw = true;
         } else if (camera.mDown && !camera.mUp) {
-            camera.y = Math.max(0, Math.min(camera.y + 20, (canvasResolution * camera.scale) - canvasResolution));
+            camera.y = Math.max(0, Math.min(camera.y + 20, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
             forceRedraw = true;
         }
         if (camera.mLeft && !camera.mRight) {
-            camera.x = Math.max(0, Math.min(camera.x - 20, (canvasResolution * camera.scale) - canvasResolution));
+            camera.x = Math.max(0, Math.min(camera.x - 20, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
             forceRedraw = true;
         } else if (camera.mRight && !camera.mLeft) {
-            camera.x = Math.max(0, Math.min(camera.x + 20, (canvasResolution * camera.scale) - canvasResolution));
+            camera.x = Math.max(0, Math.min(camera.x + 20, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
             forceRedraw = true;
         }
         if (forceRedraw) {
-            let scale = gridSize / canvasSize / camera.scale / canvasScale;
+            let scale = Math.min(gridWidth, gridHeight) / canvasSize / camera.scale / canvasScale;
             mXGrid = Math.floor((mX + camera.x) * scale);
             mYGrid = Math.floor((mY + camera.y) * scale);
         }
@@ -1529,8 +1538,8 @@ function updateTick() {
             */
             let monsterCount = 0;
             let fulfilledTargetCount = 0;
-            for (let y = 0; y < gridSize; y++) {
-                for (let x = 0; x < gridSize; x++) {
+            for (let y = 0; y < gridHeight; y++) {
+                for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) {
                         grid[y][x] = pixNum.MONSTER;
                         monsterCount++;
@@ -1539,16 +1548,16 @@ function updateTick() {
                 }
             }
             let firePixelType = numPixels[pixNum.FIRE];
-            for (let y = 0; y < gridSize; y++) {
-                for (let x = 0; x < gridSize; x++) {
+            for (let y = 0; y < gridHeight; y++) {
+                for (let x = 0; x < gridWidth; x++) {
                     if (fireGrid[y][x]) {
                         randomSeed(ticks, x, y);
                         firePixelType.update(x, y);
                     }
                 }
             }
-            for (let y = 0; y < gridSize; y++) {
-                for (let x = 0; x < gridSize; x++) {
+            for (let y = 0; y < gridHeight; y++) {
+                for (let x = 0; x < gridWidth; x++) {
                     if (grid[y][x] == pixNum.MONSTER) grid[y][x] = pixNum.AIR;
                     if (nextFireGrid[y][x] != null) {
                         fireGrid[y][x] = nextFireGrid[y][x];
@@ -1565,22 +1574,22 @@ function updateTick() {
             }
             for (let updateStage = 0; updateStage <= 14; updateStage++) {
                 if (ticks % 2 == 0) {
-                    for (let y = 0; y < gridSize; y++) {
-                        for (let x = gridSize - 1; x >= 0; x--) {
+                    for (let y = 0; y < gridHeight; y++) {
+                        for (let x = gridWidth - 1; x >= 0; x--) {
                             randomSeed(ticks, x, y);
                             updatePixel(x, y, updateStage);
                         }
                     }
                 } else {
-                    for (let y = 0; y < gridSize; y++) {
-                        for (let x = 0; x < gridSize; x++) {
+                    for (let y = 0; y < gridHeight; y++) {
+                        for (let x = 0; x < gridWidth; x++) {
                             randomSeed(ticks, x, y);
                             updatePixel(x, y, updateStage);
                         }
                     }
                 }
-                for (let y = 0; y < gridSize; y++) {
-                    for (let x = 0; x < gridSize; x++) {
+                for (let y = 0; y < gridHeight; y++) {
+                    for (let x = 0; x < gridWidth; x++) {
                         if (nextGrid[y][x] != null) {
                             grid[y][x] = nextGrid[y][x];
                             nextGrid[y][x] = null;
@@ -1589,15 +1598,15 @@ function updateTick() {
                 }
             }
             let monsterPixelType = numPixels[pixNum.MONSTER];
-            for (let y = gridSize - 1; y >= 0; y--) {
-                for (let x = 0; x < gridSize; x++) {
+            for (let y = gridHeight - 1; y >= 0; y--) {
+                for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) monsterPixelType.update(x, y);
                 }
             }
             let newMonsterCount = 0;
             let newFulfilledTargetCount = 0;
-            for (let y = 0; y < gridSize; y++) {
-                for (let x = 0; x < gridSize; x++) {
+            for (let y = 0; y < gridHeight; y++) {
+                for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) newMonsterCount++;
                     if (targetGrid[y][x] && grid[y][x] == pixNum.GOAL) newFulfilledTargetCount++;
                     if (musicGrid[y][x] != lastMusicGrid[y][x]) {
@@ -1616,8 +1625,8 @@ function updateTick() {
         // check win
         let hasMonsters = false;
         let hasUnfulfilledTargets = false;
-        search: for (let y = 0; y < gridSize; y++) {
-            for (let x = 0; x < gridSize; x++) {
+        search: for (let y = 0; y < gridHeight; y++) {
+            for (let x = 0; x < gridWidth; x++) {
                 if (monsterGrid[y][x]) hasMonsters = true;
                 if (targetGrid[y][x] && grid[y][x] != pixNum.GOAL) hasUnfulfilledTargets = true;
                 if (hasMonsters && hasUnfulfilledTargets) break search;
@@ -1645,10 +1654,10 @@ window.addEventListener('load', startDrawLoop);
 // brush
 function calcBrushRectCoordinates(x, y) {
     return {
-        xmin: Math.max(0, Math.min(x - brush.size + 1, gridSize)),
-        xmax: Math.max(-1, Math.min(x + brush.size - 1, gridSize - 1)),
-        ymin: Math.max(0, Math.min(y - brush.size + 1, gridSize)),
-        ymax: Math.max(-1, Math.min(y + brush.size - 1, gridSize - 1))
+        xmin: Math.max(0, Math.min(x - brush.size + 1, gridWidth)),
+        xmax: Math.max(-1, Math.min(x + brush.size - 1, gridWidth - 1)),
+        ymin: Math.max(0, Math.min(y - brush.size + 1, gridHeight)),
+        ymax: Math.max(-1, Math.min(y + brush.size - 1, gridHeight - 1))
     };
 };
 function updateMouseControls() {
@@ -1672,8 +1681,8 @@ function updateMouseControls() {
                 let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
                 let modifiedPixelCounts = [];
                 for (let y = 0; y < selection.grid.length; y++) {
-                    if (y + offsetY >= 0 && y + offsetY < gridSize) for (let x = 0; x < selection.grid[y].length; x++) {
-                        // if (x + offsetX >= 0 && x + offsetX < gridSize && selection.grid[y][x] != pixNum.AIR) {
+                    if (y + offsetY >= 0 && y + offsetY < gridHeight) for (let x = 0; x < selection.grid[y].length; x++) {
+                        if (x + offsetX >= 0 && x + offsetX < gridWidth) {
                             if (sandboxMode || (placeableGrid[y + offsetY][x + offsetX] && grid[y + offsetY][x + offsetX] != pixNum.DELETER)) {
                                 if (!sandboxMode) {
                                     let pid = numPixels[selection.grid[y][x]].id;
@@ -1690,7 +1699,7 @@ function updateMouseControls() {
                                 }
                                 if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_86) musicGrid[y + offsetY][x + offsetX] = -1;
                             }
-                        // }
+                        }
                     }
                 }
                 for (let pixelType in modifiedPixelCounts) {
@@ -1698,8 +1707,8 @@ function updateMouseControls() {
                 }
             } else if (mouseButton == CENTER) {
                 if (holdingControl) {
-                    camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * camera.scale) - canvasResolution));
-                    camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * camera.scale) - canvasResolution));
+                    camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+                    camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
                     forceRedraw = true;
                 } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
                     pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
@@ -1727,17 +1736,17 @@ function brushActionLine(x1, y1, x2, y2, cb) {
     let slope = (y2 - y1) / (x2 - x1);
     if (!isFinite(slope)) {
         cb({
-            xmin: Math.max(0, Math.min(x1 - brush.size + 1, gridSize - 1)),
-            xmax: Math.max(0, Math.min(x1 + brush.size - 1, gridSize - 1)),
-            ymin: Math.max(0, Math.min(Math.min(y2, y1) - brush.size + 1, gridSize - 1)),
-            ymax: Math.max(0, Math.min(Math.max(y2, y1) + brush.size - 1, gridSize - 1))
+            xmin: Math.max(0, Math.min(x1 - brush.size + 1, gridWidth - 1)),
+            xmax: Math.max(0, Math.min(x1 + brush.size - 1, gridWidth - 1)),
+            ymin: Math.max(0, Math.min(Math.min(y2, y1) - brush.size + 1, gridHeight - 1)),
+            ymax: Math.max(0, Math.min(Math.max(y2, y1) + brush.size - 1, gridHeight - 1))
         });
     } else if (slope == 0) {
         cb({
-            xmin: Math.max(0, Math.min(Math.min(x2, x1) - brush.size + 1, gridSize - 1)),
-            xmax: Math.max(0, Math.min(Math.max(x2, x1) + brush.size - 1, gridSize - 1)),
-            ymin: Math.max(0, Math.min(y1 - brush.size + 1, gridSize - 1)),
-            ymax: Math.max(0, Math.min(y1 + brush.size - 1, gridSize - 1))
+            xmin: Math.max(0, Math.min(Math.min(x2, x1) - brush.size + 1, gridWidth - 1)),
+            xmax: Math.max(0, Math.min(Math.max(x2, x1) + brush.size - 1, gridWidth - 1)),
+            ymin: Math.max(0, Math.min(y1 - brush.size + 1, gridHeight - 1)),
+            ymax: Math.max(0, Math.min(y1 + brush.size - 1, gridHeight - 1))
         });
     } else if (Math.abs(slope) > 1) {
         slope = 1 / slope;
@@ -1897,7 +1906,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         if (key == 'arrowup') {
             if (!brush.isSelection) {
                 let bsize = brush.size;
-                brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
+                brush.size = Math.min(Math.ceil(Math.max(gridWidth, gridHeight) / 2 + 1), brush.size + 1);
                 if (brush.size != bsize) tickSound();
             }
         } else if (key == 'arrowdown') {
@@ -2080,11 +2089,11 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 let percentX = (mX + camera.x) / (canvasSize * camera.scale);
                 let percentY = (mY + camera.y) / (canvasSize * camera.scale);
                 camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 0.5), 8));
-                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
-                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
                 forceRedraw = true;
                 if (camera.scale != cScale) tickSound();
-                let scale = gridSize / canvasSize / camera.scale / canvasScale;
+                let scale = Math.min(gridWidth, gridHeight) / canvasSize / camera.scale / canvasScale;
                 mXGrid = Math.floor((mX + camera.x) * scale);
                 mYGrid = Math.floor((mY + camera.y) * scale);
                 mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
@@ -2093,11 +2102,11 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 let percentX = (mX + camera.x) / (canvasSize * camera.scale);
                 let percentY = (mY + camera.y) / (canvasSize * camera.scale);
                 camera.scale = Math.max(1, Math.min(Math.round(camera.scale * 2), 8));
-                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
-                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
                 forceRedraw = true;
                 if (camera.scale != cScale) tickSound();
-                let scale = gridSize / canvasSize / camera.scale / canvasScale;
+                let scale = Math.min(gridWidth, gridHeight) / canvasSize / camera.scale / canvasScale;
                 mXGrid = Math.floor((mX + camera.x) * scale);
                 mYGrid = Math.floor((mY + camera.y) * scale);
                 mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
@@ -2111,7 +2120,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
     document.onmousemove = (e) => {
         mX = Math.round((e.pageX - 10) * canvasScale);
         mY = Math.round((e.pageY - 10) * canvasScale);
-        let scale = gridSize / canvasSize / camera.scale / canvasScale;
+        let scale = Math.min(gridWidth, gridHeight) / canvasSize / camera.scale / canvasScale;
         mXGrid = Math.floor((mX + camera.x) * scale);
         mYGrid = Math.floor((mY + camera.y) * scale);
         mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
@@ -2123,8 +2132,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 let percentX = (mX + camera.x) / (canvasSize * camera.scale);
                 let percentY = (mY + camera.y) / (canvasSize * camera.scale);
                 camera.scale = Math.max(1, Math.min(Math.round(camera.scale * ((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1)), 8));
-                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * camera.scale) - canvasResolution));
-                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * camera.scale) - canvasResolution));
+                camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+                camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
                 forceRedraw = true;
                 document.onmousemove(e);
                 if (camera.scale != cScale) tickSound();
@@ -2133,7 +2142,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 if (e.deltaY > 0) {
                     brush.size = Math.max(1, brush.size - 1);
                 } else {
-                    brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
+                    brush.size = Math.min(Math.ceil(Math.max(gridWidth, gridHeight) / 2 + 1), brush.size + 1);
                 }
                 if (brush.size != bsize) tickSound();
             }
@@ -2194,7 +2203,7 @@ function updateTimeControlButtons() {
 };
 document.getElementById('sizeUp').onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    if (!brush.isSelection) brush.size = Math.min(Math.ceil(gridSize / 2 + 1), brush.size + 1);
+    brush.size = Math.min(Math.ceil(Math.max(gridWidth, gridHeight) / 2 + 1), brush.size + 1);
 };
 document.getElementById('sizeDown').onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
@@ -2223,9 +2232,15 @@ advanceTickButton.onclick = (e) => {
 let writeSaveTimeout = setTimeout(() => { });
 saveCodeText.oninput = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
-    let index = saveCodeText.value.indexOf(';');
-    if (index > 0) {
-        gridSizeText.value = saveCodeText.value.substring(0, index);
+    let i1 = saveCodeText.value.indexOf(';');
+    let i2 = saveCodeText.value.indexOf('-');
+    if (i1 > 0) {
+        if (i2 < i1) {
+            gridWidthText.value = saveCodeText.value.substring(0, i2);
+            gridHeightText.value = saveCodeText.value.substring(i2 + 1, i1);
+        } else {
+            gridWidthText.value = saveCodeText.value.substring(0, index);
+        }
     }
     saveCode = saveCodeText.value.replace('\n', '');
     clearTimeout(writeSaveTimeout);
@@ -2266,6 +2281,7 @@ document.getElementById('uploadSave').onclick = (e) => {
                 if (saveCode == null || saveCode == '') saveCode = e.target.result;
                 saveCodeText.value = saveCode;
                 loadSaveCode();
+                window.localStorage.setItem('saveCodeText', LZString.compressToBase64(saveCode));
             }
         };
         reader.readAsText(files[0]);
@@ -2304,10 +2320,16 @@ document.getElementById('restart').onclick = async (e) => {
         loadPuzzle(currentPuzzleSection, currentPuzzleLevel);
     }
 };
-gridSizeText.oninput = (e) => {
+gridWidthText.oninput = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
-    gridSizeText.value = Math.max(1, Math.min(parseInt(gridSizeText.value.replace('e', '')), 500));
-    if (gridSizeText.value != '') saveCode = gridSizeText.value + saveCode.substring(saveCode.indexOf(';'));
+    gridWidthText.value = Math.max(1, Math.min(parseInt(gridWidthText.value.replace('e', '')), 500));
+    if (gridWidthText.value != '') saveCode = gridWidthText.value + saveCode.substring(saveCode.indexOf('-'));
+    saveCodeText.value = saveCode;
+};
+gridHeightText.oninput = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+    gridHeightText.value = Math.max(1, Math.min(parseInt(gridHeightText.value.replace('e', '')), 500));
+    if (gridHeightText.value != '') saveCode = saveCode.substring(0, saveCode.indexOf('-') + 1) + gridHeightText.value + saveCode.substring(saveCode.indexOf(';'));
     saveCodeText.value = saveCode;
 };
 // settings

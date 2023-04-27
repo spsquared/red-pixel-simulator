@@ -63,7 +63,7 @@ class PixSimAPI {
         {
             name: 'Pixelite Crash',
             id: 'pixelcrash',
-            description: 'Build vaults of Color and battle to destroy the other Pixelite crystal!'
+            description: 'Build vaults of Color and battle to destroy the other Pixelite crystal!<br>Teams must collect colors to create pixels in a battle-royale competition to break through and destroy their opponent.'
         }
     ]
     static #spectating = false;
@@ -117,6 +117,7 @@ class PixSimAPI {
                 this.#gameCode = code;
                 this.#inGame = true;
                 this.#isHost = true;
+                this.#gameMode = 0;
                 resolve(code);
             });
             socket.emit('createGame');
@@ -168,6 +169,16 @@ class PixSimAPI {
             cb(teams);
         });
     }
+    static set onGameModeChange(cb) {
+        if (typeof cb != 'function') return;
+        socket.off('gameType');
+        socket.on('gameType', (mode) => {
+            let i = this.#gameModes.findIndex((gm) => gm.id == mode);
+            if (i == -1) return;
+            this.#gameMode = i;
+            cb(i);
+        });
+    }
     static set onGameKicked(cb) {
         if (typeof cb != 'function') return;
         socket.off('gameKicked');
@@ -189,6 +200,12 @@ class PixSimAPI {
 
     static set teamSize(size) {
         if (typeof size == 'number') socket.emit('teamSize', parseInt(size));
+    }
+    static set gameMode(mode) {
+        if (typeof mode == 'number' && mode >= 0 && mode < this.#gameModes.length) {
+            this.#gameMode = mode;
+            socket.emit('gameType', this.#gameModes[this.#gameMode].id);
+        }
     }
     static set allowSpectators(state) {
         socket.emit('allowSpectators', state);
@@ -215,11 +232,17 @@ class PixSimAPI {
     static get teamSize() {
         return this.#teamSize;
     }
-    static get gameRunning() {
-        return this.#gameRunning;
-    }
     static get gameMode() {
         return this.#gameMode;
+    }
+    static get gameModeCount() {
+        return this.#gameModes.length;
+    }
+    static get gameModeData() {
+        return this.#gameModes[this.#gameMode] ?? this.#gameModes[0];
+    }
+    static get gameRunning() {
+        return this.#gameRunning;
     }
     static get spectating() {
         return this.#spectating;

@@ -280,8 +280,10 @@ sandboxButton.onclick = (e) => {
     document.getElementById('generateSave').style.cursor = '';
     document.getElementById('uploadSave').style.cursor = '';
     document.getElementById('downloadSave').style.cursor = '';
-    document.getElementById('gridSize').disabled = false;
-    document.getElementById('gridSize').style.cursor = '';
+    document.getElementById('gridWidth').disabled = false;
+    document.getElementById('gridHeight').disabled = false;
+    document.getElementById('gridWidth').style.cursor = '';
+    document.getElementById('gridHeight').style.cursor = '';
     document.getElementById('premadeSaves').style.display = '';
     sandboxMode = true;
     camera.scale = 1;
@@ -334,8 +336,10 @@ function selectPuzzle() {
     document.getElementById('generateSave').style.cursor = 'not-allowed';
     document.getElementById('uploadSave').style.cursor = 'not-allowed';
     document.getElementById('downloadSave').style.cursor = 'not-allowed';
-    document.getElementById('gridSize').disabled = true;
-    document.getElementById('gridSize').style.cursor = 'not-allowed';
+    document.getElementById('gridWidth').disabled = true;
+    document.getElementById('gridHeight').disabled = true;
+    document.getElementById('gridWidth').style.cursor = 'not-allowed';
+    document.getElementById('gridHeight').style.cursor = 'not-allowed';
     document.getElementById('premadeSaves').style.display = 'none';
     sandboxMode = false;
     levelSelect.style.transform = '';
@@ -355,8 +359,17 @@ const pixsimHostSpectatorsListWrapper = document.getElementById('hostSpectatorsW
 const pixsimGameWaitSpectatorListWrapper = document.getElementById('waitSpectatorsWrapper');
 const pixsimTeamsTAPlayers = document.getElementById('pxTeamsTAPlayers');
 const pixsimTeamsTBPlayers = document.getElementById('pxTeamsTBPlayers');
+const pixsimHostGTPrevious = document.getElementById('hostGameTypePrevious');
+const pixsimHostGTNext = document.getElementById('hostGameTypeNext');
+const pixsimHostGTName = document.getElementById('hostGameTypeName');
+const pixsimHostGTDescription = document.getElementById('hostGameTypeDescription');
+const pixsimJoinCodeDisp = document.getElementById('hostJoinCode');
+const pixsimSpectatorsToggle = document.getElementById('hostAllowSpectators');
+const pixsimPublicGameToggle = document.getElementById('hostPublicGame');
 const pixsimHostCancelGame = document.getElementById('hostCancelGame');
 const pixsimHostStartGame = document.getElementById('hostStartGame');
+const pixsimWaitGTName = document.getElementById('waitGameTypeName');
+const pixsimWaitGTDescription = document.getElementById('waitGameTypeDescription');
 const pixsimWaitLeaveGame = document.getElementById('waitLeaveGame');
 const pixsimDragCard = document.getElementById('pixsimDragCardWrapper');
 const pixsimDragging = {
@@ -368,33 +381,22 @@ const pixsimDragging = {
 };
 pixsimSelectHostButton.onclick = (e) => {
     pixsimMenuContents.style.transform = 'translateY(100%)';
-    const joinCodeDisp = document.getElementById('hostJoinCode');
-    const allowSpectatorsToggle = document.getElementById('hostAllowSpectators');
-    const publicGameToggle = document.getElementById('hostPublicGame');
-    allowSpectatorsToggle.checked = true;
-    publicGameToggle.checked = true;
-    joinCodeDisp.innerText = '- - -';
+    pixsimSpectatorsToggle.checked = true;
+    pixsimPublicGameToggle.checked = true;
+    pixsimJoinCodeDisp.innerText = '- - -';
     pixsimHostTeamListWrapper.appendChild(pixsimTeamList);
     pixsimHostSpectatorsListWrapper.appendChild(pixsimSpectatorsList);
     PixSimAPI.createGame().then((code) => {
-        joinCodeDisp.innerText = code;
-        joinCodeDisp.onclick = (e) => {
-            window.navigator.clipboard.writeText(code);
-        };
+        pixsimJoinCodeDisp.innerText = code;
         function cancelHostGame() {
             pixsimMenuContents.style.transform = '';
-            pixsimHostStartGame.onclick = null;
             PixSimAPI.leaveGame();
+            pixsimHostCancelGame.onclick = null;
+            pixsimHostStartGame.onclick = null;
             pixsimMenuClose.removeEventListener('click', cancelHostGame);
         };
         pixsimMenuClose.addEventListener('click', cancelHostGame);
         pixsimHostCancelGame.onclick = cancelHostGame;
-        allowSpectatorsToggle.onclick = (e) => {
-            PixSimAPI.allowSpectators = allowSpectatorsToggle.checked;
-        };
-        publicGameToggle.onclick = (e) => {
-            PixSimAPI.isPublic = publicGameToggle.checked;
-        };
         pixsimHostStartGame.onclick = (e) => {
             PixSimAPI.startGame();
         };
@@ -416,6 +418,38 @@ pixsimSelectScrimmageButton.onclick = (e) => {
 document.querySelectorAll('.pixsimBackButton').forEach(e => e.onclick = (e) => {
     pixsimMenuContents.style.transform = '';
 });
+pixsimHostGTPrevious.onclick = (e) => {
+    PixSimAPI.gameMode = (PixSimAPI.gameMode + PixSimAPI.gameModeCount - 1) % PixSimAPI.gameModeCount;
+    let gameMode = PixSimAPI.gameModeData;
+    pixsimHostGTName.innerHTML = gameMode.name;
+    pixsimWaitGTName.innerHTML = gameMode.name;
+    pixsimHostGTDescription.innerHTML = gameMode.description;
+    pixsimWaitGTDescription.innerHTML = gameMode.description;
+};
+pixsimHostGTNext.onclick = (e) => {
+    PixSimAPI.gameMode = (PixSimAPI.gameMode + 1) % PixSimAPI.gameModeCount;
+    let gameMode = PixSimAPI.gameModeData;
+    pixsimHostGTName.innerHTML = gameMode.name;
+    pixsimWaitGTName.innerHTML = gameMode.name;
+    pixsimHostGTDescription.innerHTML = gameMode.description;
+    pixsimWaitGTDescription.innerHTML = gameMode.description;
+};
+PixSimAPI.onGameModeChange = (mode) => {
+    let gameMode = PixSimAPI.gameModeData;
+    pixsimHostGTName.innerHTML = gameMode.name;
+    pixsimWaitGTName.innerHTML = gameMode.name;
+    pixsimHostGTDescription.innerHTML = gameMode.description;
+    pixsimWaitGTDescription.innerHTML = gameMode.description;
+};
+pixsimJoinCodeDisp.onclick = (e) => {
+    window.navigator.clipboard.writeText(code);
+};
+pixsimSpectatorsToggle.onclick = (e) => {
+    PixSimAPI.allowSpectators = pixsimSpectatorsToggle.checked;
+};
+pixsimPublicGameToggle.onclick = (e) => {
+    PixSimAPI.isPublic = pixsimPublicGameToggle.checked;
+};
 pixsimJoinGameCodeCode.onkeyup = (e) => {
     if (pixsimJoinGameCodeCode.value.length == 8) {
         pixsimJoinGameCodeJoin.style.backgroundColor = '';

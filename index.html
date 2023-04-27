@@ -114,8 +114,10 @@
                             </tr>
                             <tr>
                                 <td colspan="3">
-                                    <label id="gridSizeLabel" for="gridSize">Grid Size: </label>
-                                    <input id="gridSize" type="number" min="1" max="500" step="1">
+                                    <label id="gridWidthLabel" for="gridWidth">W: </label>
+                                    <input id="gridWidth" type="number" min="1" max="500" step="1">
+                                    <label id="gridHeightLabel" for="gridHeight">H: </label>
+                                    <input id="gridHeight" type="number" min="1" max="500" step="1">
                                 </td>
                             </tr>
                             <tr>
@@ -386,6 +388,10 @@
                     </div>
                     <div id="pixsimGameWaitingBody">
                         <h1>Game Lobby</h1>
+                        <div id="waitGameTypeWrapper">
+                            <div id="waitGameTypeName">???</div>
+                            <div id="waitGameTypeDescription">Unknown game type</div>
+                        </div>
                         <div id="waitTeamsWrapper">
                         </div>
                         <div id="waitSpectatorsWrapper">
