@@ -337,13 +337,13 @@
 #hostGameTypeWrapper {
     display: grid;
     position: relative;
-    left: 10%;
-    width: 80%;
+    left: calc(10% - 2px);
+    width: calc(80% + 4px);
     margin-top: 12px;
     grid-template-columns: [c0] 20% [c1] 60% [c2] 20% [c3];
-    grid-template-rows: [r0] 40px [r1] 60px [r2];
+    grid-template-rows: [r0] 40px [r1] min-content [r2];
 }
-#hostGameTypePrevious, #hostGameTypeName, #hostGameTypeNext, #hostGameTypeDescription {
+#hostGameTypePrevious, #hostGameTypeName, #hostGameTypeNext, #hostGameTypeDescription, #waitGameTypeName, #waitGameTypeDescription {
     border: 2px solid black;
     margin: 0px 0px;
 }
@@ -376,9 +376,7 @@
     grid-column: c0 / c3;
     grid-row-start: r1;
     border-top: none;
-}
-#hostGameTypeDescription::-webkit-scrollbar {
-    width: 0px;
+    padding: 4px 8px;
 }
 #hostOptionsWrapper {
     display: grid;
@@ -387,6 +385,23 @@
     justify-items: end;
     align-items: center;
     margin: 8px 0px;
+}
+#waitGameTypeWrapper {
+    display: grid;
+    position: relative;
+    left: calc(10% - 2px);
+    width: calc(80% + 4px);
+    margin-top: 12px;
+    margin-bottom: 8px;
+    grid-template-rows: [r0] 40px [r1] min-content [r2];
+}
+#waitGameTypeName {
+    vertical-align: middle;
+    font-size: 18px;
+}
+#waitGameTypeDescription {
+    border-top: none;
+    padding: 4px 8px;
 }
 
 #hostTeamsWrapper, #waitTeamsWrapper {
@@ -782,9 +797,10 @@
         border-color: white;
     }
     /* this is fine */
-    #hostGameTypePrevious, #hostGameTypeName, #hostGameTypeNext, #hostGameTypeDescription, #hostTeamsWrapper, #waitTeamsWrapper,
-    #pxTeamsTitle, #pxTeamsTAWrapper, #pxTeamsTBWrapper, #pxTeamsTATitle, #pxTeamsTBTitle, #hostSpectatorsWrapper, #waitSpectatorsWrapper,
-    #pxSpectatorsContent, .pxPlayerCardProfileImg, #pixsimDragCardWrapper, #joinGameCodeWrapper, #joinListWrapper, #joinListContent {
+    #hostGameTypePrevious, #hostGameTypeName, #hostGameTypeNext, #hostGameTypeDescription, #waitGameTypeName, #waitGameTypeDescription,
+    #hostTeamsWrapper, #waitTeamsWrapper, #pxTeamsTitle, #pxTeamsTAWrapper, #pxTeamsTBWrapper, #pxTeamsTATitle, #pxTeamsTBTitle,
+    #hostSpectatorsWrapper, #waitSpectatorsWrapper, #pxSpectatorsContent, .pxPlayerCardProfileImg, #pixsimDragCardWrapper,
+    #joinGameCodeWrapper, #joinListWrapper, #joinListContent {
         border-color: white;
     }
     #pxTeamsTAPlayers, #pxTeamsTBPlayers {

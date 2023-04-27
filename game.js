@@ -839,7 +839,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_RIGHT || grid[i][x] == pixNum.STICKY_PISTON_RIGHT))) {
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_RIGHT || grid[y][i] == pixNum.STICKY_PISTON_RIGHT))) {
                     break;
                 }
             }
@@ -907,7 +907,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_LEFT || grid[i][x] == pixNum.STICKY_PISTON_LEFT))) {
+                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_LEFT || grid[y][i] == pixNum.STICKY_PISTON_LEFT))) {
                     break;
                 }
             }
