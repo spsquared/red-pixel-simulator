@@ -727,8 +727,8 @@ const pixels = {
                     monsterGrid[y][x] = false;
                 }
             }
-            for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridHeight - 1); i++) {
-                for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridWidth - 1); j++) {
+            for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridHeight - 1); j++) {
+                for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridWidth - 1); i++) {
                     if (nextFireGrid[j][i] || (i == x && j == y)) continue;
                     let flammability = (numPixels[grid[j][i]] ?? numPixels[pixNum.MISSING]).flammability;
                     if (random() < flammability / (aerated ? 20 : 60) + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0) - (aerated ? 0 : 0.2)) nextFireGrid[j][i] = true;
