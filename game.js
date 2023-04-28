@@ -812,8 +812,6 @@ function flow(x, y, isPassable = isAir) {
         }
     }
 };
-let push2 = push // just ignore this
-window.addEventListener('load', () => push = push2)
 function push(x, y, dir, movePusher = true, ignorePistons = false) {
     let moveX = null;
     let moveY = null;
