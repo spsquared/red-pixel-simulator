@@ -116,7 +116,7 @@ const pixels = {
                 nextGrid[y][x] = pixNum.DIRT;
                 return;
             }
-            for (let i = Math.max(y - 1, 0); i <= Math.min(y + 1, ghq - 1); i++) {
+            for (let i = Math.max(y - 1, 0); i <= Math.min(y + 1, gridHeight - 1); i++) {
                 for (let j = Math.max(x - 1, 0); j <= Math.min(x + 1, gridWidth - 1); j++) {
                     if (grid[i][j] == pixNum.DIRT && (i != y || j != x) && random() < 0.2) {
                         let canGrow = false;
@@ -129,7 +129,7 @@ const pixels = {
                     }
                 }
             }
-            if (y < ghq - 1 && (grid[y + 1][x] == pixNum.DIRT || grid[y + 1][x] == pixNum.GRASS || isPassableFluid(x, y + 1))) {
+            if (y < gridHeight - 1 && (grid[y + 1][x] == pixNum.DIRT || grid[y + 1][x] == pixNum.GRASS || isPassableFluid(x, y + 1))) {
                 fall(x, y, 1, 2);
             }
         },
