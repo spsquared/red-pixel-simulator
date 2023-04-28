@@ -222,14 +222,14 @@ function rpDraw() {
 const rpUnplaceablePixels = ['fire', 'placementUnRestriction', 'placementRestriction', 'monster', 'target', 'remove'];
 function rpUpdateMouseControls() {
     if (rpUnplaceablePixels.indexOf(brush.pixel) == -1 && acceptInputs && rpMX >= 0 && rpMX < rpCanvasRes && rpMY >= 0 && rpMY < rpCanvasRes) {
-        if (((mouseIsPressed && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined)) {
+        if (((brush.mouseButton != -1 && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined)) {
             if (!brush.lineMode) {
                 brush.lineMode = true;
                 brush.lineStartX = rpMXGrid;
                 brush.lineStartY = rpMYGrid;
                 brush.startsInRPE = true;
             }
-            if (!mouseIsPressed) {
+            if (brush.mouseButton == -1) {
                 brush.lineMode = false;
                 let clickPixelNum = pixels[brush.pixel].numId;
                 brushActionLine(brush.lineStartX, brush.lineStartY, rpMXGrid, rpMYGrid, (rect) => {
@@ -240,10 +240,10 @@ function rpUpdateMouseControls() {
                     }
                 });
             }
-        } else if (mouseIsPressed) {
+        } else if (brush.mouseButton != -1) {
             brush.lineMode = false;
-            if (mouseButton == CENTER) brush.pixel = numPixels[rpGrid[rpMYGrid][rpMXGrid]].id;
-            else if ((mouseButton == RIGHT || removing)) {
+            if (brush.mouseButton == 1) brush.pixel = numPixels[rpGrid[rpMYGrid][rpMXGrid]].id;
+            else if ((brush.mouseButton == 2 || removing)) {
                 let xmin = Math.max(0, rpMXGrid - brush.size + 1);
                 let xmax = Math.min(rpGridWidth - 1, rpMXGrid + brush.size - 1);
                 let ymin = Math.max(0, rpMYGrid - brush.size + 1);
@@ -265,7 +265,7 @@ function rpUpdateMouseControls() {
                 }
             }
         }
-    } else if (!mouseIsPressed && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined) && brush.startsInRPE) {
+    } else if (brush.mouseButton == -1 && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined) && brush.startsInRPE) {
         brush.lineMode = false;
         let clickPixelNum = pixels[brush.pixel].numId;
         brushActionLine(brush.lineStartX, brush.lineStartY, rpMXGrid, rpMYGrid, (rect) => {
@@ -279,7 +279,7 @@ function rpUpdateMouseControls() {
 };
 function rpDrawBrush() {
     if (brush.lineMode && brush.startsInRPE) {
-        const clickPixelNum = ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
+        const clickPixelNum = (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
         let offsetX = rpCanvasRes / 2 - rpGridScale * rpGridWidth / 2;
         let offsetY = rpCanvasRes / 2 - rpGridScale * rpGridHeight / 2;
         rpDCtx.clearRect(0, 0, canvasResolution, canvasResolution);
@@ -300,7 +300,7 @@ function rpDrawBrush() {
         let offsetX = rpCanvasRes / 2 - rpGridScale * rpGridWidth / 2;
         let offsetY = rpCanvasRes / 2 - rpGridScale * rpGridHeight / 2;
         rpDCtx.clearRect(0, 0, canvasResolution, canvasResolution);
-        drawPixels(rpMXGrid - brush.size + 1, rpMYGrid - brush.size + 1, brush.size * 2 - 1, brush.size * 2 - 1, ((mouseIsPressed && mouseButton == RIGHT) || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, rpDCtx, true);
+        drawPixels(rpMXGrid - brush.size + 1, rpMYGrid - brush.size + 1, brush.size * 2 - 1, brush.size * 2 - 1, (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, rpDCtx, true);
         rpCtx.drawImage(rpDCanvas, 0, 0, rpGridWidth * gridScale, rpGridHeight * gridScale, offsetX, offsetY, rpGridWidth * rpGridScale, rpGridHeight * rpGridScale);
         rpCtx.fillStyle = 'rgb(255, 255, 255)';
         rpCtx.strokeStyle = 'rgb(255, 255, 255)';
