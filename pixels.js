@@ -706,15 +706,15 @@ const pixels = {
             let flammability = pixelAt(x, y).flammability;
             let isLava = grid[y][x] == pixNum.LAVA;
             if (flammability == 0 && !isLava && (grid[y][x] != pixNum.AIR || random() < 0.3)) {
-                nextFireGrid[y][x] = false || nextFireGrid[y][x];
+                nextFireGrid[y][x] = nextFireGrid[y][x] ?? false;
                 return;
             }
             updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
-                nextFireGrid[y][x] = false || nextFireGrid[y][x];
+                nextFireGrid[y][x] = nextFireGrid[y][x] ?? false;
             });
             let aerated = updateTouchingPixel(x, y, pixNum.AIR);
             if (random() < (20 - flammability) / (aerated ? 240 : 20)) {
-                nextFireGrid[y][x] = false || nextFireGrid[y][x];
+                nextFireGrid[y][x] = nextFireGrid[y][x] ?? false;
             }
             if (random() < flammability / 1200 && nextGrid[y][x] == null && !isLava) {
                 if (grid[y][x] >= pixNum.LASER_UP && grid[y][x] <= pixNum.LASER_RIGHT) {
