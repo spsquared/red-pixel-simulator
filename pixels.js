@@ -4863,7 +4863,7 @@ function generateMusicPixel(id, data) {
     }
 };
 
-window.addEventListener('DOMContentLoaded', (e) => {
+window.addEventListener('load', async (e) => {
     function generateDescription(id) {
         return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Blast Resistance: ${pixels[id].blastResistance}/20<br>Flammability: ${pixels[id].flammability}/20<br>Pushable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`;
     };

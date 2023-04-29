@@ -344,7 +344,18 @@ function startRPDrawLoop() {
     }, 1000 / 40);
     startRPDrawLoop = undefined;
 };
+window.addEventListener('load', (e) => {
+    createRPGrid(10, 10);
+    startRPDrawLoop();
+    refreshRedPrintList();
+});
 
+// inputs
+const rpGWInput = document.getElementById('rpGW');
+const rpGHInput = document.getElementById('rpGH');
+const rpNameInput = document.getElementById('rpName');
+const rpDescriptionInput = document.getElementById('rpDescription');
+const rpListContainer = document.getElementById('rpListContainer');
 window.addEventListener('DOMContentLoaded', (e) => {
     document.addEventListener('keydown', (e) => {
         if (e.target.matches('input') || e.target.matches('textarea') || !acceptInputs || inWinScreen || inMenuScreen) return;
@@ -367,18 +378,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
     document.addEventListener('mousemove', mouseMove);
     document.addEventListener('wheel', mouseMove);
 });
-window.addEventListener('load', (e) => {
-    createRPGrid(10, 10);
-    startRPDrawLoop();
-    refreshRedPrintList();
-});
-
-// inputs
-const rpGWInput = document.getElementById('rpGW');
-const rpGHInput = document.getElementById('rpGH');
-const rpNameInput = document.getElementById('rpName');
-const rpDescriptionInput = document.getElementById('rpDescription');
-const rpListContainer = document.getElementById('rpListContainer');
 rpGWInput.onkeydown = (e) => {
     if (e.key == 'Enter') {
         resizeRPGrid(parseInt(rpGWInput.value), rpGridHeight);
@@ -544,7 +543,7 @@ window.addEventListener('resize', (e) => {
     rpCanvasSize = rpCanvas.getBoundingClientRect().width;
     rpCanvasScale = rpCanvasRes / rpCanvasSize;
 });
-window.addEventListener('load', (e) => {
+window.addEventListener('load', async (e) => {
     rpCanvasSize = rpCanvas.getBoundingClientRect().width;
     rpCanvasScale = rpCanvasRes / rpCanvasSize;
 });

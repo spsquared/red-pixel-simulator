@@ -39,7 +39,34 @@
     <link rel="stylesheet" href="./menu.css">
 </head>
 <body>
-    <div id="tempCover" style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; background-color: black; z-index: 1001;"></div>
+    <div id="tempCover" style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; background-color: black; z-index: 1001;">
+        <div id="tempCoverLoading"></div>
+        <style>
+            #tempCoverLoading {
+                position: fixed;
+                top: calc(50vh - 0.5vw);
+                left: 40vw;
+                width: 30vw;
+                height: 1vw;
+                background: linear-gradient(#FF0000 0 0), linear-gradient(#FF0000 0 0), white;
+                background-size: 60% 100%;
+                background-repeat: no-repeat;
+                box-shadow: 0px 0px 0.5vw rgba(255, 255, 255, 0.5);
+                animation: tempCoverProgress 2s infinite;
+            }
+            @keyframes tempCoverProgress {
+                0% {
+                    background-position: -150% 0,-150% 0;
+                }
+                66% {
+                    background-position: 250% 0,-150% 0;
+                }
+                100% {
+                    background-position: 250% 0, 250% 0;
+                }
+            }
+        </style>
+    </div>
     <div id="canvasContainer">
         <canvas id="canvas"></canvas>
     </div>

@@ -14,7 +14,7 @@ function setAudio(file, cb) {
     };
     request.send();
 };
-let musicMuted = (window.localStorage.getItem('musicMuted') ?? '0') == '1';
+let musicMuted = window.localStorage.getItem('musicMuted') == '1';
 const musicMuteButton = document.getElementById('musicMuteButton');
 const musicVolume = audioContext.createGain();
 musicVolume.connect(globalVolume);

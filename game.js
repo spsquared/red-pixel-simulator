@@ -9,10 +9,10 @@ let saveCode = '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_
 let puzzleSaveCode;
 let sandboxMode = true;
 let backgroundColor = '#ffffff';
-let noNoise = false;
-let noAnimations = false;
+let noNoise = window.localStorage.getItem('noNoise') == '1';
+let noAnimations = window.localStorage.getItem('noAnimations') == '1';
 let maxLaserDepth = 512;
-let fadeEffect = 127;
+let fadeEffect = parseInt(window.localStorage.getItem('noNoise') ?? 127);
 let debugInfo = false;
 let horribleLagMode = false;
 
@@ -443,7 +443,7 @@ function loadStoredSave() {
     fastSimulation = false;
     updateTimeControlButtons();
 };
-window.addEventListener('load', (e) => {
+window.addEventListener('load', async (e) => {
     loadStoredSave();
 
     setInterval(() => {
@@ -510,14 +510,6 @@ function modal(title, subtitle, confirmation) {
             }
         });
     });
-};
-
-// p5 thing
-function setup() {
-    noiseDetail(3, 0.6);
-    frameRate(0);
-
-    document.querySelectorAll('.p5Canvas').forEach(e => e.remove());
 };
 
 // utilities
@@ -1889,7 +1881,7 @@ function clickLine(x1, y1, x2, y2, remove) {
 };
 
 // inputs
-window.addEventListener('DOMContentLoaded', (e) => {
+window.addEventListener('DOMContentLoaded', async (e) => {
     document.onkeydown = (e) => {
         if (e.target.matches('button') || e.key == 'Tab') {
             e.preventDefault();
@@ -2354,18 +2346,29 @@ noNoiseButton.onclick = (e) => {
     if (noNoise) noNoiseButton.style.backgroundColor = 'lime';
     else noNoiseButton.style.backgroundColor = 'red';
     forceRedraw = true;
+    window.localStorage.setItem('noNoise', noNoise ? 1 : 0);
 };
 noAnimationsButton.onclick = (e) => {
     noAnimations = !noAnimations;
     if (!noAnimations) noAnimationsButton.style.backgroundColor = 'lime';
     else noAnimationsButton.style.backgroundColor = 'red';
     forceRedraw = true;
+    window.localStorage.setItem('noAnimations', noAnimations ? 1 : 0);
 };
 fadeEffectButton.onclick = (e) => {
     fadeEffect = fadeEffect ? 0 : 127;
     if (fadeEffect) fadeEffectButton.style.backgroundColor = 'lime';
     else fadeEffectButton.style.backgroundColor = 'red';
+    window.localStorage.setItem('fadeEffect', fadeEffect);
 };
+window.addEventListener('load', async () => {
+    if (noNoise) noNoiseButton.style.backgroundColor = 'lime';
+    else noNoiseButton.style.backgroundColor = 'red';
+    if (!noAnimations) noAnimationsButton.style.backgroundColor = 'lime';
+    else noAnimationsButton.style.backgroundColor = 'red';
+    if (fadeEffect) fadeEffectButton.style.backgroundColor = 'lime';
+    else fadeEffectButton.style.backgroundColor = 'red';
+});
 document.getElementById('changeResolution').onclick = (e) => {
     let newRes = window.prompt('Enter new resolution: ', canvasResolution);
     if (parseInt(newRes).toString() == newRes && parseInt(newRes) > 0) {

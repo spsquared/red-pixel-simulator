@@ -12,4 +12,4 @@ function randomSeed(t, x, y) {
 const perlinNoiseGenerator = new perlinNoise3d();
 function noise(x, y, t) {
     return perlinNoiseGenerator.get(x, y, t);
-}
+};
