@@ -3718,7 +3718,7 @@ const pixels = {
         update: function (x, y) {
             let flamey = y;
             for (let flamex = x - 1; flamex >= 0; flamex--) {
-                if (!isAir(flamex, flamey) && pixelAt(flamex, flamey).flammability == 0) break;
+                if (!isAir(flamex, flamey)) break;
                 if (random() < 0.1) {
                     flamey--;
                     if (flamey < 0) flamey = 0;
@@ -3781,7 +3781,7 @@ const pixels = {
         update: function (x, y) {
             let flamex = x;
             for (let flamey = y - 1; flamey >= 0; flamey--) {
-                if (!isAir(flamex, flamey) && pixelAt(flamex, flamey).flammability == 0) break;
+                if (!isAir(flamex, flamey)) break;
                 if (random() < 0.1) {
                     flamex--;
                     if (flamex < 0) flamex = 0;
@@ -3844,7 +3844,7 @@ const pixels = {
         update: function (x, y) {
             let flamey = y;
             for (let flamex = x + 1; flamex < gridWidth; flamex++) {
-                if (!isAir(flamex, flamey) && pixelAt(flamex, flamey).flammability == 0) break;
+                if (!isAir(flamex, flamey)) break;
                 if (random() < 0.1) {
                     flamey--;
                     if (flamey < 0) flamey = 0;
@@ -3907,7 +3907,7 @@ const pixels = {
         update: function (x, y) {
             let flamex = x;
             for (let flamey = y + 1; flamey < gridHeight; flamey++) {
-                if (!isAir(flamex, flamey) && pixelAt(flamex, flamey).flammability == 0) break;
+                if (!isAir(flamex, flamey)) break;
                 if (random() < 0.1) {
                     flamex--;
                     if (flamex < 0) flamex = 0;
