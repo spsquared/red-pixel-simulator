@@ -3708,6 +3708,258 @@ const pixels = {
         color: 'rgb(150, 150, 150)',
         text: 'TZ'
     }),
+    flamethrower_left: {
+        name: 'Flamethrower (Left)',
+        description: 'Throws flames.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+        },
+        update: function (x, y) {
+            let flamey = y;
+            for (let flamex = x - 1; flamex >= 0; flamex--) {
+                if (!isAir(flamex, flamey) && pixelAt(flamex, flamey).flammability == 0) break;
+                if (random() < 0.1) {
+                    flamey--;
+                    if (flamey < 0) flamey = 0;
+                }
+                if (random() < 0.1) {
+                    flamey++;
+                    if (flamey >= gridHeight) flamey = gridHeight - 1;
+                }
+                if (!fireGrid[flamey][flamex]) {
+                    nextFireGrid[flamey][flamex] = true;
+                    break;
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = 'rgb(180, 0, 0)';
+            ctx.fillRect(0, 50 / 3, 10, 50 / 3);
+            ctx.fillRect(10, 10, 10, 30);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = 'rgb(180, 0, 0)';
+            fillPixel(0, 1 / 3, 1 / 5, 1 / 3);
+            fillPixel(1 / 5, 1 / 5, 1 / 5, 3 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 0,
+        group: 4,
+        key: Infinity,
+        updateStage: 0,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'flamethrower_left',
+        numId: 0
+    },
+    flamethrower_up: {
+        name: 'Flamethrower (Up)',
+        description: 'Throws flames.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+        },
+        update: function (x, y) {
+            let flamex = x;
+            for (let flamey = y - 1; flamey >= 0; flamey--) {
+                if (!isAir(flamex, flamey) && pixelAt(flamex, flamey).flammability == 0) break;
+                if (random() < 0.1) {
+                    flamex--;
+                    if (flamex < 0) flamex = 0;
+                }
+                if (random() < 0.1) {
+                    flamex++;
+                    if (flamex >= gridWidth) flamex = gridWidth - 1;
+                }
+                if (!fireGrid[flamey][flamex]) {
+                    nextFireGrid[flamey][flamex] = true;
+                    break;
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = 'rgb(180, 0, 0)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 10);
+            ctx.fillRect(10, 10, 30, 10);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = 'rgb(180, 0, 0)';
+            fillPixel(1 / 3, 0, 1 / 3, 1 / 5);
+            fillPixel(1 / 5, 1 / 5, 3 / 5, 1 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 1,
+        group: 4,
+        key: Infinity,
+        updateStage: 0,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'flamethrower_up',
+        numId: 0
+    },
+    flamethrower_right: {
+        name: 'Flamethrower (Right)',
+        description: 'Throws flames.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+        },
+        update: function (x, y) {
+            let flamey = y;
+            for (let flamex = x + 1; flamex < gridWidth; flamex++) {
+                if (!isAir(flamex, flamey) && pixelAt(flamex, flamey).flammability == 0) break;
+                if (random() < 0.1) {
+                    flamey--;
+                    if (flamey < 0) flamey = 0;
+                }
+                if (random() < 0.1) {
+                    flamey++;
+                    if (flamey >= gridHeight) flamey = gridHeight - 1;
+                }
+                if (!fireGrid[flamey][flamex]) {
+                    nextFireGrid[flamey][flamex] = true;
+                    break;
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = 'rgb(180, 0, 0)';
+            ctx.fillRect(40, 50 / 3, 10, 50 / 3);
+            ctx.fillRect(30, 10, 10, 30);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = 'rgb(180, 0, 0)';
+            fillPixel(4 / 5, 1 / 3, 1 / 5, 1 / 3);
+            fillPixel(3 / 5, 1 / 5, 1 / 5, 3 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 2,
+        group: 4,
+        key: Infinity,
+        updateStage: 0,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'flamethrower_right',
+        numId: 0
+    },
+    flamethrower_down: {
+        name: 'Flamethrower (Down)',
+        description: 'Throws flames.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+        },
+        update: function (x, y) {
+            let flamex = x;
+            for (let flamey = y + 1; flamey < gridHeight; flamey++) {
+                if (!isAir(flamex, flamey) && pixelAt(flamex, flamey).flammability == 0) break;
+                if (random() < 0.1) {
+                    flamex--;
+                    if (flamex < 0) flamex = 0;
+                }
+                if (random() < 0.1) {
+                    flamex++;
+                    if (flamex >= gridWidth) flamex = gridWidth - 1;
+                }
+                if (!fireGrid[flamey][flamex]) {
+                    nextFireGrid[flamey][flamex] = true;
+                    break;
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = 'rgb(180, 0, 0)';
+            ctx.fillRect(50 / 3, 40, 50 / 3, 10);
+            ctx.fillRect(10, 30, 30, 10);
+        },
+        prerender: function () {
+            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixel(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = 'rgb(180, 0, 0)';
+            fillPixel(1 / 3, 4 / 5, 1 / 3, 1 / 5);
+            fillPixel(1 / 5, 3 / 5, 3 / 5, 1 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 3,
+        group: 4,
+        key: Infinity,
+        updateStage: 0,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'flamethrower_down',
+        numId: 0
+    },
     detonator: {
         name: 'Detonator',
         description: 'Triggers Gunpowder and C-4 on contact by exploding.',
@@ -4862,22 +5114,26 @@ function generateMusicPixel(id, data) {
     }
 };
 
+window.addEventListener('DOMContentLoaded', (e) => {
+    let pixIndex = 0;
+    for (const id in pixels) {
+        pixels[id].id = id;
+        pixels[id].numId = pixIndex;
+        pixNum[id.toUpperCase()] = pixIndex;
+        numPixels[pixIndex++] = pixels[id];
+    }
+});
 window.addEventListener('load', (e) => {
     function generateDescription(id) {
         return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Blast Resistance: ${pixels[id].blastResistance}/20<br>Flammability: ${pixels[id].flammability}/20<br>Pushable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`;
     };
     const canvas2 = document.createElement('canvas');
     const ctx2 = canvas2.getContext('2d');
-    let pixIndex = 0;
     canvas2.width = 50;
     canvas2.height = 50;
     const groupNames = ['General', 'Mechanical', 'Lasers', 'Music', 'Destruction', 'Level Building'];
     for (const id in pixels) {
         const pixel = pixels[id];
-        pixel.id = id;
-        pixel.numId = pixIndex;
-        pixNum[id.toUpperCase()] = pixIndex;
-        numPixels[pixIndex++] = pixel;
         pixel.prerender();
         if (pixel.pickable) {
             const box = document.createElement('div');
