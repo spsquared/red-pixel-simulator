@@ -1,8 +1,6 @@
 const redPrints = new Function(`try { return JSON.parse(window.localStorage.getItem('redprints') ?? '[]'); } catch { return JSON.parse(LZString.decompressFromBase64(window.localStorage.getItem('redprints'))); }`)();
 
-let rpGridWidth = 0;
-let rpGridHeight = 0;
-
+// canvas
 const rpCanvasRes = 600;
 const rpCanvas = document.getElementById('rpCanvas');
 const rpDCanvas = createCanvas2();
@@ -22,12 +20,16 @@ function rpResetCanvases() {
 };
 rpCanvas.addEventListener('contextmenu', e => e.preventDefault());
 
+// grid
+let rpGridWidth = 0;
+let rpGridHeight = 0;
 let rpGridScale = rpCanvasRes / Math.max(rpGridWidth, rpGridHeight);
 let rpCanvasSize = 0;
 let rpCanvasScale = rpCanvasRes / rpCanvasSize;
 const rpGrid = [];
 const rpGridHistory = [];
 
+// camera and brush
 let rpMX = 0;
 let rpMY = 0;
 let rpMXGrid = 0;

@@ -2,20 +2,64 @@ window.addEventListener('error', (e) => {
     modal('An error occured:', `<span style="color: red;">${e.message}<br>${e.filename} ${e.lineno}:${e.colno}</span>`, false);
 });
 
-let gridSize = 100;
-let gridWidth = 100;
-let gridHeight = 100;
-let saveCode = '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
-let puzzleSaveCode;
-let sandboxMode = true;
-let backgroundColor = '#ffffff';
-let noNoise = window.localStorage.getItem('noNoise') == '1';
-let noAnimations = window.localStorage.getItem('noAnimations') == '1';
-let maxLaserDepth = 512;
-let fadeEffect = parseInt(window.localStorage.getItem('noNoise') ?? 127);
-let debugInfo = false;
-let horribleLagMode = false;
+// modal
+const modalContainer = document.getElementById('modalContainer');
+const modalBody = document.getElementById('modal');
+const modalTitle = document.getElementById('modalTitle');
+const modalSubtitle = document.getElementById('modalSubtitle');
+const modalYes = document.getElementById('modalYes');
+const modalNo = document.getElementById('modalNo');
+const modalOk = document.getElementById('modalOk');
+function modal(title, subtitle, confirmation) {
+    if (!acceptInputs) return new Promise((resolve, reject) => reject('Modal already open'));
+    acceptInputs = false;
+    modalTitle.innerHTML = title;
+    modalSubtitle.innerHTML = subtitle;
+    if (confirmation) {
+        modalYes.style.display = '';
+        modalNo.style.display = '';
+        modalOk.style.display = 'none';
+    } else {
+        modalYes.style.display = 'none';
+        modalNo.style.display = 'none';
+        modalOk.style.display = '';
+    }
+    modalContainer.style.opacity = '1';
+    modalContainer.style.pointerEvents = 'all';
+    modalBody.style.transform = 'translateY(calc(50vh + 50%))';
+    const hide = () => {
+        modalContainer.style.opacity = '';
+        modalContainer.style.pointerEvents = '';
+        modalBody.style.transform = '';
+        modalYes.onclick = null;
+        modalNo.onclick = null;
+        modalOk.onclick = null;
+        acceptInputs = true;
+    };
+    return new Promise((resolve, reject) => {
+        modalYes.onclick = (e) => {
+            hide();
+            resolve(true);
+        };
+        modalNo.onclick = (e) => {
+            hide();
+            resolve(false);
+        };
+        modalOk.onclick = (e) => {
+            hide();
+            resolve(true);
+        };
+        document.addEventListener('keydown', function cancel(e) {
+            if (e.key == 'Escape') {
+                hide();
+                resolve(false);
+                document.removeEventListener('keydown', cancel);
+            }
+        });
+    });
+};
 
+// canvas
 const canvasResolution = parseInt(window.localStorage.getItem('resolution') ?? 800);
 const NO_OFFSCREENCANVAS = typeof OffscreenCanvas == 'undefined';
 function createCanvas2() {
@@ -97,6 +141,11 @@ const gridHeightText = document.getElementById('gridHeight');
 canvasContainer.addEventListener('contextmenu', e => e.preventDefault());
 pixelPicker.addEventListener('contextmenu', e => e.preventDefault());
 
+// grid
+let sandboxMode = true;
+let gridWidth = 100;
+let gridHeight = 100;
+let saveCode = '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
 let gridScale = canvasResolution / Math.min(gridWidth, gridHeight);
 let canvasSize = Math.min(window.innerWidth, window.innerHeight) - 21;
 let canvasScale = canvasResolution / canvasSize;
@@ -125,6 +174,7 @@ const fpsList = [];
 let lastFpsList = -1;
 let lastTick = -1;
 
+// camera and brush
 const brush = {
     pixel: 'wall',
     size: 1,
@@ -455,63 +505,6 @@ window.addEventListener('load', (e) => {
         }, { timeout: 5000 });
     }, 30000);
 });
-
-// modal
-const modalContainer = document.getElementById('modalContainer');
-const modalBody = document.getElementById('modal');
-const modalTitle = document.getElementById('modalTitle');
-const modalSubtitle = document.getElementById('modalSubtitle');
-const modalYes = document.getElementById('modalYes');
-const modalNo = document.getElementById('modalNo');
-const modalOk = document.getElementById('modalOk');
-function modal(title, subtitle, confirmation) {
-    if (!acceptInputs) return new Promise((resolve, reject) => reject('Modal already open'));
-    acceptInputs = false;
-    modalTitle.innerHTML = title;
-    modalSubtitle.innerHTML = subtitle;
-    if (confirmation) {
-        modalYes.style.display = '';
-        modalNo.style.display = '';
-        modalOk.style.display = 'none';
-    } else {
-        modalYes.style.display = 'none';
-        modalNo.style.display = 'none';
-        modalOk.style.display = '';
-    }
-    modalContainer.style.opacity = '1';
-    modalContainer.style.pointerEvents = 'all';
-    modalBody.style.transform = 'translateY(calc(50vh + 50%))';
-    const hide = () => {
-        modalContainer.style.opacity = '';
-        modalContainer.style.pointerEvents = '';
-        modalBody.style.transform = '';
-        modalYes.onclick = null;
-        modalNo.onclick = null;
-        modalOk.onclick = null;
-        acceptInputs = true;
-    };
-    return new Promise((resolve, reject) => {
-        modalYes.onclick = (e) => {
-            hide();
-            resolve(true);
-        };
-        modalNo.onclick = (e) => {
-            hide();
-            resolve(false);
-        };
-        modalOk.onclick = (e) => {
-            hide();
-            resolve(true);
-        };
-        document.addEventListener('keydown', function cancel(e) {
-            if (e.key == 'Escape') {
-                hide();
-                resolve(false);
-                document.removeEventListener('keydown', cancel);
-            }
-        });
-    });
-};
 
 // utilities
 function getDistance(x1, y1, x2, y2) {
@@ -1657,6 +1650,11 @@ async function startDrawLoop() {
 };
 window.addEventListener('load', startDrawLoop);
 
+// PixSim API
+PixSimAPI.onGameTick = (compressedGrid, tickData) => {
+    console.log(compressedGrid)
+};
+
 // brush
 function calcBrushRectCoordinates(x, y) {
     return {
@@ -2247,6 +2245,7 @@ advanceTickButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
     if (simulationPaused) runTicks = 1;
 };
+
 // save code inputs
 let writeSaveTimeout = setTimeout(() => { });
 saveCodeText.oninput = (e) => {
@@ -2351,7 +2350,15 @@ gridHeightText.oninput = (e) => {
     if (gridHeightText.value != '') saveCode = saveCode.substring(0, saveCode.indexOf('-') + 1) + gridHeightText.value + saveCode.substring(saveCode.indexOf(';'));
     saveCodeText.value = saveCode;
 };
+
 // settings
+let backgroundColor = '#ffffff';
+let noNoise = window.localStorage.getItem('noNoise') == '1';
+let noAnimations = window.localStorage.getItem('noAnimations') == '1';
+let maxLaserDepth = 512;
+let fadeEffect = parseInt(window.localStorage.getItem('noNoise') ?? 127);
+let debugInfo = false;
+let horribleLagMode = false;
 const noNoiseButton = document.getElementById('noNoise');
 const noAnimationsButton = document.getElementById('noAnimation');
 const fadeEffectButton = document.getElementById('fadeEffect');

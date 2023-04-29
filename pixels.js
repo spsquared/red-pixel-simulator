@@ -4626,7 +4626,6 @@ const pixels = {
         key: Infinity,
         updateStage: 0,
         animatedNoise: false,
-        animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
         pickable: false,

@@ -49,8 +49,19 @@ socket.on('pong', () => {
         highPingWarning.style.display = '';
     }
 });
+socket.on('ping', () => {
+    socket.emit('pong');
+});
 
 class PixSimAPI {
+    static #initialized = false;
+    static #RSA = {
+        key: null,
+        encode: async (text) => {
+            if (this.#RSA.key !== null) return await window.crypto.subtle.encrypt({ name: 'RSA-OAEP' }, this.#RSA.key, new TextEncoder().encode(text));
+            else return text;
+        }
+    };
     static #username = Math.random().toString();
     static #userCache = new Map();
     static #gameCode;
@@ -67,6 +78,18 @@ class PixSimAPI {
         }
     ]
     static #spectating = false;
+    static #gridWidth = 0;
+    static #gridHeight = 0;
+
+    static init() {
+        this.#initialized = true;
+        this.onUpdateTeamList = () => { };
+        this.onGameModeChange = () => { };
+        this.onGameKicked = () => { };
+        this.onGameClosed = () => { };
+        this.onNewGridSize = () => { };
+        this.onGameTick = () => { };
+    }
 
     static async connect() {
         apiconnected = true;
@@ -84,12 +107,12 @@ class PixSimAPI {
             socket.once('connect', () => {
                 socket.once('requestClientInfo', async (key) => {
                     if (window.crypto.subtle !== undefined) {
-                        RSA.key = await window.crypto.subtle.importKey('jwk', key, { name: "RSA-OAEP", hash: "SHA-256" }, false, ['encrypt']);
+                        this.#RSA.key = await window.crypto.subtle.importKey('jwk', key, { name: "RSA-OAEP", hash: "SHA-256" }, false, ['encrypt']);
                     }
                     socket.emit('clientInfo', {
                         gameType: 'rps',
                         username: this.#username,
-                        password: await RSA.encode('')
+                        password: await this.#RSA.encode('')
                     });
                     socket.once('clientInfoRecieved', resolve);
                 });
@@ -198,6 +221,48 @@ class PixSimAPI {
         });
     }
 
+    static set gridSize(size) {
+        this.#gridWidth = size.width;
+        this.#gridHeight = size.height;
+        socket.emit('gridSize', { width: this.#gridWidth, height: this.#gridHeight });
+    }
+    static set onNewGridSize(cb) {
+        if (typeof cb != 'function') return;
+        socket.off('gridSize');
+        socket.on('gridSize', (size) => {
+            this.#gridWidth = size.width;
+            this.#gridHeight = size.height;
+            cb(this.#gridWidth, this.#gridHeight);
+        });
+    }
+    static sendTick(grid, data) {
+        if (grid.length == 0 || grid[0].length == 0) return;
+        // simple compression algorithm that compresses well with large horizontal spans of the same pixel
+        // not as good as png compression but png is very complex
+        let compressed = [];
+        let curr = grid[0][0];
+        let len = 0;
+        for (let i = 0; i < grid.length; i++) {
+            for (let j = 0; j < grid[i].length; j++) {
+                len++;
+                if (grid[i][j] != curr || len == 255) {
+                    compressed.push(curr, len);
+                    curr = grid[i][j];
+                    len = 0;
+                }
+            }
+        }
+        socket.emit('tick', { grid: new Uint8ClampedArray(compressed), data: data, origin: 'rps' });
+    }
+    static set onGameTick(cb) {
+        if (typeof cb != 'function') return;
+        socket.off('tick');
+        socket.on('tick', (data) => {
+            let compressed = [];
+            cb(data.grid, data.data);
+        });
+    }
+
     static set teamSize(size) {
         if (typeof size == 'number') socket.emit('teamSize', parseInt(size));
     }
@@ -260,14 +325,5 @@ class PixSimAPI {
             this.#userCache.set(username, userData);
             return userData;
         }
-    }
-};
-
-// encryption
-const RSA = {
-    key: null,
-    encode: async (text) => {
-        if (RSA.key !== null) return await window.crypto.subtle.encrypt({ name: 'RSA-OAEP' }, RSA.key, new TextEncoder().encode(text));
-        else return text;
     }
 };

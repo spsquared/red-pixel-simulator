@@ -42,7 +42,7 @@ function playMusic(id) {
 };
 function stopAllMusic() {
     for (const music of activeMusic) {
-        music.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
+        music.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
         setTimeout(() => music.source.stop(), 1000);
     }
 };
@@ -298,6 +298,6 @@ if (navigator.userActivation) {
     });
 }
 document.addEventListener('visibilitychange', () => {
-    if (document.hidden) globalVolume.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
-    else globalVolume.gain.linearRampToValueAtTime(volume / 100, audioContext.currentTime + 0.5);
+    if (document.hidden) globalVolume.gain.linearRampToValueAtTime(volume / 1000, audioContext.currentTime + 1);
+    else globalVolume.gain.linearRampToValueAtTime(volume / 100, audioContext.currentTime + 1);
 });
