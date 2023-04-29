@@ -4374,8 +4374,8 @@ const pixels = {
                         ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
                         let translateX = random(-10 * gridScale, 10 * gridScale);
                         let translateY = random(-10 * gridScale, 10 * gridScale);
-                        let skewX = random(-PI / 6, PI / 6);
-                        let skewY = random(-PI / 6, PI / 6);
+                        let skewX = random(-Math.PI / 6, Math.PI / 6);
+                        let skewY = random(-Math.PI / 6, Math.PI / 6);
                         ctx.translate(translateX, translateY);
                         ctx.rotate(rotationAmount);
                         ctx.save();
@@ -4406,8 +4406,8 @@ const pixels = {
                         ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
                         let translateX = random(-gridWidth * gridScale, gridHeight * gridScale);
                         let translateY = random(-gridWidth * gridScale, gridHeight * gridScale);
-                        let skewX = random(-PI / 6, PI / 6);
-                        let skewY = random(-PI / 6, PI / 6);
+                        let skewX = random(-Math.PI / 6, Math.PI / 6);
+                        let skewY = random(-Math.PI / 6, Math.PI / 6);
                         ctx.translate(translateX, translateY);
                         ctx.rotate(rotationAmount);
                         ctx.save();

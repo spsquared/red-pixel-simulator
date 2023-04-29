@@ -2256,7 +2256,7 @@ saveCodeText.oninput = (e) => {
             gridWidthText.value = saveCodeText.value.substring(0, i2);
             gridHeightText.value = saveCodeText.value.substring(i2 + 1, i1);
         } else {
-            gridWidthText.value = saveCodeText.value.substring(0, index);
+            gridWidthText.value = saveCodeText.value.substring(0, i1);
         }
     }
     saveCode = saveCodeText.value.replace('\n', '');
