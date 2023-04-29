@@ -617,6 +617,9 @@ function updateTouchingAnything(x, y, action) {
     }
     return touchingPixel;
 };
+function pixelAt(x, y) {
+    return numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING];
+};
 function validMovingPixel(x, y) {
     return nextGrid[y][x] == null;
 };
@@ -821,7 +824,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_RIGHT || grid[y][i] == pixNum.STICKY_PISTON_RIGHT))) {
+                if (!pixelAt(i, y).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_RIGHT || grid[y][i] == pixNum.STICKY_PISTON_RIGHT))) {
                     break;
                 }
             }
@@ -855,7 +858,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_DOWN || grid[i][x] == pixNum.STICKY_PISTON_DOWN))) {
+                if (!pixelAt(x, i).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_DOWN || grid[i][x] == pixNum.STICKY_PISTON_DOWN))) {
                     break;
                 }
             }
@@ -889,7 +892,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[y][i]] ?? numPixels[pixNum.MISSING]).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_LEFT || grid[y][i] == pixNum.STICKY_PISTON_LEFT))) {
+                if (!pixelAt(i, y).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_LEFT || grid[y][i] == pixNum.STICKY_PISTON_LEFT))) {
                     break;
                 }
             }
@@ -923,7 +926,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) {
                     lastCollapsible = i;
                 }
-                if (!(numPixels[grid[i][x]] ?? numPixels[pixNum.MISSING]).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_UP || grid[i][x] == pixNum.STICKY_PISTON_UP))) {
+                if (!pixelAt(x, i).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_UP || grid[i][x] == pixNum.STICKY_PISTON_UP))) {
                     break;
                 }
             }
@@ -954,10 +957,12 @@ function possibleRotations(id) {
 function rotatePixel(x, y) {
     if (nextGrid[y][x] != null) return;
     let thisPixel = numPixels[grid[y][x]];
+    if (thisPixel == undefined) return;
     let rotate = 0;
     let touchedRotators = [];
     updateTouchingAnything(x, y, function (actionX, actionY) {
         let pixel = grid[actionY][actionX];
+        if (pixel == undefined) return;
         if (pixel == pixNum.ROTATOR_CLOCKWISE) {
             rotate++;
         } else if (pixel == pixNum.ROTATOR_COUNTERCLOCKWISE) {
@@ -1051,7 +1056,7 @@ function drawLaserPath(path) {
                     if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixel(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
                     else fillPixel(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
                 }
-                imagePixel(line[0], line[1], 1, 1, numPixels[grid[line[1]][line[0]]].prerenderedFrames[0], abovectx);
+                imagePixel(line[0], line[1], 1, 1, pixelAt(line[0], line[1]).prerenderedFrames[0], abovectx);
             }
         } else {
             fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
@@ -1065,7 +1070,7 @@ function drawLaserPath(path) {
                     if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixel(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
                     else fillPixel(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
                 }
-                imagePixel(line[0], line[1], 1, 1, numPixels[grid[line[1]][line[0]]].prerenderedFrames[0], abovectx);
+                imagePixel(line[0], line[1], 1, 1, pixelAt(line[0], line[1]).prerenderedFrames[0], abovectx);
             }
         }
     }
@@ -1075,7 +1080,7 @@ function explode(x1, y1, size) {
     grid[y1][x1] = pixNum.AIR;
     let chained = 0;
     function destroy(x, y, power) {
-        if (random() < (power / size) * ((20 - (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).blastResistance) / (85 - power))) {
+        if (random() < (power / size) * ((20 - pixelAt(x, y).blastResistance) / (85 - power))) {
             nextGrid[y][x] = pixNum.AIR;
             monsterGrid[y][x] = false;
             if (chained < 5) {
@@ -1094,18 +1099,21 @@ function explode(x1, y1, size) {
                 }
             }
             if (grid[y][x] == pixNum.GUNPOWDER) {
-                pendingExplosions.push([x, y, 5, 1]);
+                pendingExplosions.push([x, y, 5]);
                 grid[y][x] = pixNum.WALL;
             } else if (grid[y][x] == pixNum.C4) {
-                pendingExplosions.push([x, y, 15, 1]);
+                pendingExplosions.push([x, y, 15]);
+                grid[y][x] = pixNum.WALL;
+            } else if (grid[y][x] >= pixNum.FLAMETHROWER_LEFT && grid[y][x] <= pixNum.FLAMETHROWER_LEFT) {
+                pendingExplosions.push([x, y, 15]);
                 grid[y][x] = pixNum.WALL;
             }
             if (random() < 0.5 * power / size) {
                 fireGrid[y][x] = true;
             }
-            return (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 40;
+            return pixelAt(x, y).blastResistance / 40;
         }
-        return (numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING]).blastResistance / 5;
+        return pixelAt(x, y).blastResistance / 5;
     };
     for (let angle = 0; angle < 2 * Math.PI; angle += Math.PI / (size * 4)) {
         let power = size;
@@ -1593,6 +1601,10 @@ function updateTick() {
             for (let y = gridHeight - 1; y >= 0; y--) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) monsterPixelType.update(x, y);
+                    if (nextFireGrid[y][x] != null) {
+                        fireGrid[y][x] = nextFireGrid[y][x];
+                        nextFireGrid[y][x] = null;
+                    }
                 }
             }
             let newMonsterCount = 0;
@@ -1677,10 +1689,10 @@ function updateMouseControls() {
                         if (x + offsetX >= 0 && x + offsetX < gridWidth) {
                             if (sandboxMode || (placeableGrid[y + offsetY][x + offsetX] && grid[y + offsetY][x + offsetX] != pixNum.DELETER)) {
                                 if (!sandboxMode) {
-                                    let pid = numPixels[selection.grid[y][x]].id;
+                                    let pid = (numPixels[selection.grid[y][x]] ?? numPixels[pixNum.MISSING]).id;
                                     if (pixelAmounts[pid] <= 0) continue;
                                     modifiedPixelCounts[grid[y + offsetY][x + offsetX]] = true;
-                                    pixelAmounts[numPixels[grid[y + offsetY][x + offsetX]].id]++;
+                                    pixelAmounts[pixelAt(x + offsetX, y + offsetY).id]++;
                                     modifiedPixelCounts[selection.grid[y][x]] = true;
                                     pixelAmounts[pid]--;
                                 }
@@ -1702,8 +1714,8 @@ function updateMouseControls() {
                     camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
                     camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
                     forceRedraw = true;
-                } else if (numPixels[grid[mYGrid][mXGrid]].pickable && pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.style.display != 'none') {
-                    pixelSelectors[numPixels[grid[mYGrid][mXGrid]].id].box.onclick();
+                } else if (pixelAt(mXGrid, mYGrid).pickable && pixelSelectors[pixelAt(mXGrid, mYGrid).id].box.style.display != 'none') {
+                    pixelSelectors[pixelAt(mXGrid, mYGrid).id].box.onclick();
                 }
             } else if (brush.mouseButton == 0 && holdingControl) {
                 if (!brush.selecting) {
@@ -1789,7 +1801,7 @@ function clickLine(x1, y1, x2, y2, remove) {
             } else {
                 act(function (x, y) {
                     if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
-                        pixelAmounts[numPixels[grid[y][x]].id]++;
+                        pixelAmounts[pixelAt(x, y).id]++;
                         modifiedPixelCounts[grid[y][x]] = true;
                         grid[y][x] = pixNum.AIR;
                         if (fireGrid[y][x]) {
@@ -1852,7 +1864,7 @@ function clickLine(x1, y1, x2, y2, remove) {
                 else if (act(function (x, y) {
                     if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum) {
                         modifiedPixelCounts[grid[y][x]] = true;
-                        pixelAmounts[numPixels[grid[y][x]].id]++;
+                        pixelAmounts[pixelAt(x, y).id]++;
                         grid[y][x] = clickPixelNum;
                         if (musicGrid[y][x]) {
                             musicPixel(musicGrid[y][x], false);
@@ -1927,7 +1939,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                             }
                         } else if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
                             selection.grid[y - ymin][x - xmin] = grid[y][x];
-                            pixelAmounts[numPixels[grid[y][x]].id]++;
+                            pixelAmounts[pixelAt(x, y).id]++;
                             modifiedPixelCounts[grid[y][x]] = true;
                             grid[y][x] = pixNum.AIR;
                             if (musicGrid[y][x]) {
@@ -1959,7 +1971,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                                 musicGrid[y][x] = 0;
                             }
                         } else if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
-                            pixelAmounts[numPixels[grid[y][x]].id]++;
+                            pixelAmounts[pixelAt(x, y).id]++;
                             modifiedPixelCounts[grid[y][x]] = true;
                             grid[y][x] = pixNum.AIR;
                             if (musicGrid[y][x]) {
