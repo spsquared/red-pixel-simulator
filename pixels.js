@@ -373,6 +373,60 @@ const pixels = {
         id: 'leaves',
         numId: 0
     },
+    moss: {
+        name: 'Moss',
+        description: 'Very mossy moss that grows on mossy stone.',
+        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = 'rgb(50, 150, 25)';
+                fillPixel(x, y, width, height, ctx);
+            } else {
+                ctx.fillStyle = 'rgb(0, 125, 0)';
+                fillPixel(x, y, width, height, ctx);
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = `rgb(75, 200, 50, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
+                        fillPixel(x + i, y + j, 1, 1, ctx);
+                    }
+                }
+            }
+        },
+        update: function (x, y) {
+            if (!validMovingPixel(x, y)) return;
+            if (!updateTouchingPixel(x, y, pixNum.STONE)) {
+                fall(x, y, 1, 1);
+            }
+            for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridHeight - 1); j++) {
+                for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridWidth - 1); i++) {
+                    if (grid[j][i] == pixNum.STONE && canMoveTo(i, j) && random() < 0.1 && updateTouchingPixel(i, j, pixNum.AIR)) {
+                        nextGrid[j][i] = pixNum.MOSS;
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(50, 150, 25)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 4,
+        flammability: 15,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 0,
+        key: Infinity,
+        updateStage: 0,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        id: 'moss',
+        numId: 0
+    },
     ash: {
         name: 'Ash',
         description: 'Burnt stuff, doesn\'t burn easily.',

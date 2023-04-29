@@ -1519,7 +1519,7 @@ function updateTick() {
             /*
             update priority:
             -: fire
-            0: nukes, plants, sponges, gunpowder, detonators, and lasers
+            0: nukes, plants, moss, sponges, gunpowder, detonators, and lasers
             1, 2, 3, 4: pushers, sticky pushers
             5, 6, 7, 8: copiers, cloners, super copiers
             9: gravity solids
