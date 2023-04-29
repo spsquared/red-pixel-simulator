@@ -123,6 +123,7 @@ let runTicks = 0;
 const frameList = [];
 const fpsList = [];
 let lastFpsList = -1;
+let lastTick = -1;
 
 const brush = {
     pixel: 'wall',
@@ -1518,7 +1519,7 @@ function drawUI() {
     }
 };
 function updateTick() {
-    if ((!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 == 0)) {
+    if ((!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && performance.now() - lastTick >= 100)) {
         runTicks = 0; // lol
         let max = fastSimulation ? 10 : 1;
         for (let i = 0; i < max; i++) {
@@ -1637,6 +1638,7 @@ function updateTick() {
             }
         }
         if (!hasMonsters && !hasUnfulfilledTargets && !sandboxMode) triggerWin();
+        lastTick = performance.now();
     }
 };
 async function startDrawLoop() {
