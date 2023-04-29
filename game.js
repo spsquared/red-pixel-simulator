@@ -443,7 +443,7 @@ function loadStoredSave() {
     fastSimulation = false;
     updateTimeControlButtons();
 };
-window.addEventListener('load', async (e) => {
+window.addEventListener('load', (e) => {
     loadStoredSave();
 
     setInterval(() => {
@@ -1881,7 +1881,7 @@ function clickLine(x1, y1, x2, y2, remove) {
 };
 
 // inputs
-window.addEventListener('DOMContentLoaded', async (e) => {
+window.addEventListener('DOMContentLoaded', (e) => {
     document.onkeydown = (e) => {
         if (e.target.matches('button') || e.key == 'Tab') {
             e.preventDefault();
@@ -2361,7 +2361,7 @@ fadeEffectButton.onclick = (e) => {
     else fadeEffectButton.style.backgroundColor = 'red';
     window.localStorage.setItem('fadeEffect', fadeEffect);
 };
-window.addEventListener('load', async () => {
+window.addEventListener('load', () => {
     if (noNoise) noNoiseButton.style.backgroundColor = 'lime';
     else noNoiseButton.style.backgroundColor = 'red';
     if (!noAnimations) noAnimationsButton.style.backgroundColor = 'lime';

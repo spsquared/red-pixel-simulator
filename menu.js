@@ -17,38 +17,38 @@ window.addEventListener('resize', (e) => {
 });
 menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
 
-window.onload = (e) => {
+window.addEventListener('load', () => {
     document.getElementById('tempCover').remove();
     setTimeout(() => {
         t_redpixel.style.transition = '200ms ease-in transform';
-        t_textRed.style.transition = '200ms ease-in transform';
-        t_textPixel.style.transition = '200ms ease-in transform';
-        t_textSimulator.style.transition = '200ms ease-in transform';
         t_redpixel.style.transform = 'none';
-    }, 200);
+    }, 500);
     setTimeout(() => {
+        t_textRed.style.transition = '200ms ease-in transform';
         t_textRed.style.transform = 'none';
-    }, 800);
+    }, 1100);
     setTimeout(() => {
+        t_textPixel.style.transition = '200ms ease-in transform';
         t_textPixel.style.transform = 'none';
-    }, 900);
+    }, 1200);
     setTimeout(() => {
+        t_textSimulator.style.transition = '200ms ease-in transform';
         t_textSimulator.style.transform = 'none';
-    }, 1000);
+    }, 1300);
     setTransitionTimeout(() => {
         titleContainer.style.transform = 'translateY(-20vh)';
-    }, 1500);
+    }, 1800);
     setTransitionTimeout(() => {
         sandboxButton.style.transform = 'translateY(-55vh)';
-    }, 2200);
+    }, 2500);
     setTransitionTimeout(() => {
         puzzleButton.style.transform = 'translateY(-55vh)';
-    }, 2400);
+    }, 2700);
     setTransitionTimeout(() => {
         multiplayerButton.style.transform = 'translateY(-55vh)';
-    }, 2600);
+    }, 2900);
     startTitleBob = setTransitionTimeout(titleBob, 3000);
-};
+});
 
 let titleBobController = setInterval(() => { });
 function titleBob() {
