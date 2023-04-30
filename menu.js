@@ -18,8 +18,10 @@ window.addEventListener('resize', (e) => {
 menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
 
 window.addEventListener('load', () => {
-    document.getElementById('tempCover').remove();
+    document.getElementById('pageLoadCover').style.opacity = 0;
+    document.getElementById('pageLoadCover').style.pointerEvents = 'none';
     setTimeout(() => {
+        document.getElementById('pageLoadCover').remove();
         t_redpixel.style.transition = '200ms ease-in transform';
         t_redpixel.style.transform = 'none';
     }, 500);
@@ -253,6 +255,7 @@ function restoreMenuScreen() {
     }, 1500);
 };
 
+// menu submenus
 const levelSelect = document.getElementById('levelSelect');
 const levelSelectClose = document.getElementById('levelSelectClose');
 const levelSelectBody = document.getElementById('levelSelectBody');
@@ -260,12 +263,7 @@ const pixsimMenu = document.getElementById('pixsimMenu');
 const pixsimMenuClose = document.getElementById('pixsimMenuClose');
 const pixsimMenuConnecting = document.getElementById('pixsimMenuConnecting');
 const pixsimMenuConnectingTip = document.getElementById('pixsimMenuConnectingTip');
-const pixsimSelectHostButton = document.getElementById('pixsimSelectHost');
-const pixsimSelectJoinButton = document.getElementById('pixsimSelectJoin');
-const pixsimSelectSpectateButton = document.getElementById('pixsimSelectSpectate');
-const pixsimSelectScrimmageButton = document.getElementById('pixsimSelectScrimmage');
 const pixsimMenuContents = document.getElementById('pixsimMenuContents');
-
 sandboxButton.onclick = (e) => {
     if (!acceptMenuInputs || levelSelect._open || pixsimMenu._open) return;
     levelSelect.style.transform = '';
@@ -347,6 +345,12 @@ function selectPuzzle() {
     transitionToGame();
 };
 
+// pixsim submenu submenus
+const pixsimSelectHostButton = document.getElementById('pixsimSelectHost');
+const pixsimSelectJoinButton = document.getElementById('pixsimSelectJoin');
+const pixsimSelectSpectateButton = document.getElementById('pixsimSelectSpectate');
+const pixsimSelectScrimmageButton = document.getElementById('pixsimSelectScrimmage');
+const pixsimSelectLeaderboardsButton = document.getElementById('pixsimSelectLeaderboards');
 const pixsimjoinTitle = document.getElementById('pixsimJoinTitle');
 const pixsimJoinGameCodeCode = document.getElementById('joinGameCodeCode');
 const pixsimJoinGameCodeJoin = document.getElementById('joinGameCodeJoin');
@@ -414,6 +418,9 @@ pixsimSelectSpectateButton.onclick = (e) => {
 };
 pixsimSelectScrimmageButton.onclick = (e) => {
     pixsimMenuContents.style.transform = 'translateX(-100%)';
+};
+pixsimSelectLeaderboardsButton.onclick = (e) => {
+    pixsimMenuContents.style.transform = 'translateX(100%)';
 };
 document.querySelectorAll('.pixsimBackButton').forEach(e => e.onclick = (e) => {
     pixsimMenuContents.style.transform = '';

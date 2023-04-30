@@ -36,13 +36,26 @@
     <script src="./redprint.js" defer></script>
     <script src="./menu.js" defer></script>
     <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./game.css">
     <link rel="stylesheet" href="./menu.css">
 </head>
 <body>
-    <div id="tempCover" style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; background-color: black; z-index: 1001;">
-        <div id="tempCoverLoading"></div>
+    <div id="pageLoadCover">
+        <div id="pageLoadCoverLoading"></div>
+        <noscript id="noscript">JavaScript was disabled! Red Pixel Simulator requires JavaScript to run!<br>Please enable it again and <a href="">reload</a>!</noscript>
         <style>
-            #tempCoverLoading {
+            #pageLoadCover {
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                width: 100vw;
+                height: 100vh;
+                background-color: black;
+                transition: 500ms linear opacity;
+                z-index: 1001;
+                cursor: wait;
+            }
+            #pageLoadCoverLoading {
                 position: fixed;
                 top: calc(50vh - 0.5vw);
                 left: 35vw;
@@ -52,9 +65,16 @@
                 background-size: 60% 100%;
                 background-repeat: no-repeat;
                 box-shadow: 0px 0px 0.5vw rgba(255, 255, 255, 0.5);
-                animation: tempCoverProgress 2s infinite;
+                animation: pageLoadCoverProgress 2s infinite;
             }
-            @keyframes tempCoverProgress {
+            #noscript {
+                position: fixed;
+                top: 55vh;
+                left: 0vw;
+                width: 100vw;
+                text-align: center;
+            }
+            @keyframes pageLoadCoverProgress {
                 0% {
                     background-position: -150% 0,-150% 0;
                 }
@@ -344,14 +364,15 @@
                     <!-- future devlog - sign in and accounts system + scrimagging -->
                 </div>
                 <div id="pixsimMenuContents">
-                    <div id="pixsimSelectMenu">
+                    <div id="pixsimSelectMenu" class="pixsimContentBody">
                         <h1>PixSim Multiplayer</h1>
-                        <button id="pixsimSelectHost" class="bclick">HOST GAME</button>
-                        <button id="pixsimSelectJoin" class="bclick">JOIN GAME</button>
-                        <button id="pixsimSelectSpectate" class="bclick">SPECTATE GAME</button>
-                        <button id="pixsimSelectScrimmage" class="bclick">SCRIMMAGE</button>
+                        <button id="pixsimSelectHost" class="bclick pixsimSelectButton">HOST GAME</button>
+                        <button id="pixsimSelectJoin" class="bclick pixsimSelectButton">JOIN GAME</button>
+                        <button id="pixsimSelectSpectate" class="bclick pixsimSelectButton">SPECTATE GAME</button>
+                        <button id="pixsimSelectScrimmage" class="bclick pixsimSelectButton">SCRIMMAGE</button>
+                        <button id="pixsimSelectLeaderboards" class="bclick pixsimSelectButton">LEADERBOARDS</button>
                     </div>
-                    <div id="pixsimHostBody">
+                    <div id="pixsimHostBody" class="pixsimContentBody">
                         <h1>Host Game</h1>
                         <div>
                             <span style="font-size: 20px;">Join Code: </span>
@@ -397,7 +418,7 @@
                             <button id="hostStartGame" class="bclick">START</button>
                         </div>
                     </div>
-                    <div id="pixsimJoinBody">
+                    <div id="pixsimJoinBody" class="pixsimContentBody">
                         <button class="pixsimBackButton bclick"></button>
                         <h1 id="pixsimJoinTitle">Join Game</h1>
                         <div id="joinGameCodeWrapper">
@@ -409,12 +430,7 @@
                             <div id="joinListContent"></div>
                         </div>
                     </div>
-                    <div id="pixsimScrimmageBody">
-                        <button class="pixsimBackButton bclick"></button>
-                        <h1>Scrimmage</h1>
-                        <!-- puts in waiting list for scrimmages and puts against random player -->
-                    </div>
-                    <div id="pixsimGameWaitingBody">
+                    <div id="pixsimGameWaitingBody" class="pixsimContentBody">
                         <h1>Game Lobby</h1>
                         <div id="waitGameTypeWrapper">
                             <div id="waitGameTypeName">???</div>
@@ -428,6 +444,17 @@
                         <div>
                             <button id="waitLeaveGame" class="bclick">LEAVE</button>
                         </div>
+                    </div>
+                    <div id="pixsimScrimmageBody" class="pixsimContentBody">
+                        <button class="pixsimBackButton bclick"></button>
+                        <h1>Scrimmage</h1>
+                        <!-- puts in waiting list for scrimmages and puts against random player -->
+                        Nothing to see here!
+                    </div>
+                    <div id="pixsimLeaderboardsBody" class="pixsimContentBody">
+                        <button class="pixsimBackButton bclick"></button>
+                        <h1>Leaderboards</h1>
+                        there arent even accounts yet why are you here
                     </div>
                 </div>
             </div>

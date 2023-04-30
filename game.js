@@ -1,6 +1,9 @@
 window.addEventListener('error', (e) => {
     modal('An error occured:', `<span style="color: red;">${e.message}<br>${e.filename} ${e.lineno}:${e.colno}</span>`, false);
 });
+// Do not question why a lot of this code is written in procedural practices
+// RPS used to be a Khan Academy project so a lot of the code is written in procedural style
+// changing that now is too time-consuming and so it will probably never happen all at once
 
 // modal
 const modalContainer = document.getElementById('modalContainer');

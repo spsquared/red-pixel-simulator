@@ -62,8 +62,8 @@
     margin: 0px 0px;
     padding: 0px 0px;
     font-size: 4vh;
-    border: 1vh outset gold;
     background-color: goldenrod;
+    border: 1vh outset gold;
     box-shadow: 0px 0px 2vh rgba(255, 215, 0, 0.5);
     transition: 1500ms cubic-bezier(0.2, 0.2, 0, 1) transform;
     transform: none;
@@ -270,7 +270,7 @@
     transition: 300ms cubic-bezier(0.4, 0, 0.6, 1) transform;
     transform: none;
 }
-#pixsimSelectMenu, #pixsimHostBody, #pixsimJoinBody, #pixsimScrimmageBody, #pixsimGameWaitingBody {
+.pixsimContentBody {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -278,7 +278,7 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
-#pixsimSelectMenu::-webkit-scrollbar, #pixsimHostBody::-webkit-scrollbar, #pixsimJoinBody::-webkit-scrollbar, #pixsimScrimmageBody::-webkit-scrollbar, #pixsimGameWaitingBody::-webkit-scrollbar {
+.pixsimContentBody::-webkit-scrollbar {
     width: 0px;
 }
 #pixsimSelectMenu {
@@ -294,19 +294,25 @@
     top: 100%;
     left: 0%;
 }
-#pixsimScrimmageBody {
-    top: 0%;
-    left: 100%;
-}
 #pixsimGameWaitingBody {
     top: 100%;
     right: 100%;
 }
-#pixsimSelectHost, #pixsimSelectJoin, #pixsimSelectSpectate, #pixsimSelectScrimmage {
+#pixsimScrimmageBody {
+    top: 0%;
+    left: 100%;
+}
+#pixsimLeaderboardsBody {
+    top: 0%;
+    right: 100%;
+}
+.pixsimSelectButton {
     width: 60%;
     height: 48px;
     font-size: 24px;
     margin-top: 16px;
+    background-color: goldenrod;
+    border-color: gold;
 }
 .pixsimBackButton {
     position: absolute;
