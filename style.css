@@ -116,19 +116,6 @@ table {
     vertical-align: top;
 }
 
-#sidebar {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: var(--max-sidebar-width);
-    height: 100vh;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    user-select: none;
-}
-
 #modalContainer {
     position: fixed;
     top: 0px;

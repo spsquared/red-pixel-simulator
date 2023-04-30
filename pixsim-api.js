@@ -134,6 +134,7 @@ class PixSimAPI {
         });
     }
     static async createGame() {
+        if (this.#inGame) return;
         return await new Promise((resolve, reject) => {
             if (!apiconnected || !socket.connected) reject(new Error('PixSim API not connected'));
             socket.once('gameCode', (code) => {
@@ -147,6 +148,7 @@ class PixSimAPI {
         });
     }
     static async joinGame(code) {
+        if (this.#inGame) return 1;
         return await new Promise((resolve, reject) => {
             if (!apiconnected || !socket.connected) reject(new Error('PixSim API not connected'));
             socket.once('joinSuccess', (team) => {
@@ -167,6 +169,7 @@ class PixSimAPI {
         });
     }
     static async leaveGame() {
+        if (!this.#inGame) return;
         if (this.#isHost && !this.#gameRunning) socket.emit('cancelCreateGame');
         else socket.emit('leaveGame');
         this.#inGame = false;
@@ -181,7 +184,7 @@ class PixSimAPI {
         socket.emit('movePlayer', { username: username, team: team });
     }
     static async startGame() {
-        socket.emit('startGame');
+        if (this.#inGame && !this.#gameRunning) socket.emit('startGame');
     }
 
     static set onUpdateTeamList(cb) {
@@ -200,6 +203,15 @@ class PixSimAPI {
             if (i == -1) return;
             this.#gameMode = i;
             cb(i);
+        });
+    }
+    static set onGameStart(cb) {
+        if (typeof cb != 'function') return;
+        socket.off('gameStart');
+        socket.on('gameStart', async () => {
+            this.#gameRunning = true;
+            await cb();
+            socket.emit('ready');
         });
     }
     static set onGameKicked(cb) {
@@ -224,7 +236,7 @@ class PixSimAPI {
     static set gridSize(size) {
         this.#gridWidth = size.width;
         this.#gridHeight = size.height;
-        socket.emit('gridSize', { width: this.#gridWidth, height: this.#gridHeight });
+        if (this.#inGame) socket.emit('gridSize', { width: this.#gridWidth, height: this.#gridHeight });
     }
     static set onNewGridSize(cb) {
         if (typeof cb != 'function') return;
@@ -232,11 +244,12 @@ class PixSimAPI {
         socket.on('gridSize', (size) => {
             this.#gridWidth = size.width;
             this.#gridHeight = size.height;
+            if (!this.#inGame || !this.#gameRunning) return;
             cb(this.#gridWidth, this.#gridHeight);
         });
     }
     static sendTick(grid, data) {
-        if (grid.length == 0 || grid[0].length == 0) return;
+        if (!this.#inGame || !this.#gameRunning || grid.length == 0 || grid[0].length == 0) return;
         // simple compression algorithm that compresses well with large horizontal spans of the same pixel
         // not as good as png compression but png is very complex
         let compressed = [];
@@ -258,6 +271,7 @@ class PixSimAPI {
         if (typeof cb != 'function') return;
         socket.off('tick');
         socket.on('tick', (data) => {
+            if (!this.#inGame || !this.#gameRunning) return;
             let compressed = [];
             cb(data.grid, data.data);
         });

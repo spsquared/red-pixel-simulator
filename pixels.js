@@ -5167,16 +5167,16 @@ function generateMusicPixel(id, data) {
     }
 };
 
-window.addEventListener('DOMContentLoaded', (e) => {
-    let pixIndex = 0;
-    for (const id in pixels) {
-        pixels[id].id = id;
-        pixels[id].numId = pixIndex;
-        pixNum[id.toUpperCase()] = pixIndex;
-        numPixels[pixIndex++] = pixels[id];
-    }
-});
-window.addEventListener('load', (e) => {
+let pixIndex = 0;
+for (const id in pixels) {
+    pixels[id].id = id;
+    pixels[id].numId = pixIndex;
+    pixNum[id.toUpperCase()] = pixIndex;
+    numPixels[pixIndex++] = pixels[id];
+}
+let pixelsResolveLoad;
+let pixelsLoad = new Promise((resolve, reject) => pixelsResolveLoad = resolve);
+window.addEventListener('load', async (e) => {
     function generateDescription(id) {
         return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Blast Resistance: ${pixels[id].blastResistance}/20<br>Flammability: ${pixels[id].flammability}/20<br>Pushable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`;
     };
@@ -5186,6 +5186,7 @@ window.addEventListener('load', (e) => {
     canvas2.height = 50;
     const groupNames = ['General', 'Mechanical', 'Lasers', 'Music', 'Destruction', 'Level Building'];
     for (const id in pixels) {
+        let start = performance.now();
         const pixel = pixels[id];
         pixel.prerender();
         if (pixel.pickable) {
@@ -5252,20 +5253,20 @@ window.addEventListener('load', (e) => {
                 parentGroup: pixelGroups[pixel.group]
             };
         }
+        await new Promise(resolve => setTimeout(resolve, 3 - (performance.now() - start)));
     }
     for (const group of pixelGroups) {
         pixelPicker.appendChild(group)
     }
     pixelSelectors[brush.pixel].box.onclick();
     resetPixelAmounts();
-    window.addEventListener('load', (e) => {
-        for (const group of pixelGroups) {
-            group.children[0]._refresh();
-        }
-    });
+    for (const group of pixelGroups) {
+        group.children[0]._refresh();
+    }
     window.addEventListener('resize', () => {
         for (const group of pixelGroups) {
             group.children[0]._refresh();
         }
     });
+    pixelsResolveLoad();
 });

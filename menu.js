@@ -6,8 +6,8 @@ const t_redpixel = document.getElementById('t_redpixel');
 const t_textRed = document.getElementById('t_textRed');
 const t_textPixel = document.getElementById('t_textPixel');
 const t_textSimulator = document.getElementById('t_textSimulator');
-const t_top = document.getElementById('t_top');
-const t_bottom = document.getElementById('t_bottom');
+const transitionBarTop = document.getElementById('t_top');
+const transitionBarBottom = document.getElementById('t_bottom');
 const sandboxButton = document.getElementById('sandboxButton');
 const puzzleButton = document.getElementById('puzzleButton');
 const multiplayerButton = document.getElementById('multiplayerButton');
@@ -17,7 +17,8 @@ window.addEventListener('resize', (e) => {
 });
 menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
+    await pixelsLoad;
     document.getElementById('pageLoadCover').style.opacity = 0;
     document.getElementById('pageLoadCover').style.pointerEvents = 'none';
     setTimeout(() => {
@@ -100,26 +101,44 @@ function setTransitionTimeout(cb, ms) {
     }, ms);
     transitionTimeouts.push(t);
 };
-function transitionWithinGame(cb) {
+function fadeToGame() {
+    acceptMenuInputs = false;
     for (let t of transitionTimeouts) {
         clearInterval(t);
     }
     transitionTimeouts.length = 0;
-    menuScreen.style.transitionDuration = '0s';
-    menuScreen.style.backgroundColor = 'transparent';
-    menuScreen.style.opacity = '1';
-    menuScreen.style.visibility = '';
-    menuScreen.style.pointerEvents = '';
-    inMenuScreen = true;
+    clearInterval(titleBobController);
+    document.getElementById('sidebar').scrollTo(0, 0);
+    clearMenuScreen();
+    setTransitionTimeout(() => {
+        menuScreen.style.opacity = '0';
+    }, 600);
+    setTransitionTimeout(() => {
+        menuScreen.style.pointerEvents = 'none';
+    }, 1100);
+    setTransitionTimeout(() => {
+        menuScreen.style.visibility = 'hidden';
+    }, 1600);
+};
+function transitionToGame(cb) {
+    acceptMenuInputs = false;
+    for (let t of transitionTimeouts) {
+        clearInterval(t);
+    }
+    transitionTimeouts.length = 0;
+    clearInterval(titleBobController);
+    document.getElementById('sidebar').scrollTo(0, 0);
+    clearMenuScreen();
     loadingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
     loadingTip.style.opacity = '1';
-    t_top.style.transform = 'translateY(60vh)';
-    t_bottom.style.transform = 'translateY(-60vh)';
+    transitionBarTop.style.transform = 'translateY(60vh)';
+    transitionBarBottom.style.transform = 'translateY(-60vh)';
     setTransitionTimeout(async () => {
         await cb();
+        menuScreen.style.backgroundColor = 'transparent';
         loadingTip.style.opacity = '0';
-        t_top.style.transform = '';
-        t_bottom.style.transform = '';
+        transitionBarTop.style.transform = '';
+        transitionBarBottom.style.transform = '';
         document.getElementById('sidebar').scrollTo(0, 0);
         inMenuScreen = false;
         setTransitionTimeout(() => {
@@ -146,63 +165,47 @@ function transitionToMenu() {
     inMenuScreen = true;
     loadingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
     loadingTip.style.opacity = '1';
-    t_top.style.transform = 'translateY(60vh)';
-    t_bottom.style.transform = 'translateY(-60vh)';
+    transitionBarTop.style.transform = 'translateY(60vh)';
+    transitionBarBottom.style.transform = 'translateY(-60vh)';
+    restoreMenuScreen();
     setTransitionTimeout(() => {
         menuScreen.style.transitionDuration = '';
         menuScreen.style.backgroundColor = '';
         loadingTip.style.opacity = '0';
-        t_top.style.transform = '';
-        t_bottom.style.transform = '';
-        stopAllMusic();
-        if (inMenuScreen && !playMusic('menu')) setTimeout(function wait() {
-            if (inMenuScreen && !playMusic('menu')) setTimeout(wait, 1000);
-        }, 1000);
+        transitionBarTop.style.transform = '';
+        transitionBarBottom.style.transform = '';
     }, 800);
-    titleContainer.style.transform = 'translateY(-20vh)';
-    setTransitionTimeout(() => {
-        sandboxButton.style.transform = 'translateY(-55vh)';
-    }, 600);
-    setTransitionTimeout(() => {
-        puzzleButton.style.transform = 'translateY(-55vh)';
-    }, 700);
-    setTransitionTimeout(() => {
-        multiplayerButton.style.transform = 'translateY(-55vh)';
-    }, 800);
-    setTransitionTimeout(() => {
-        titleBob();
-    }, 1500);
 };
-function transitionToGame() {
-    acceptMenuInputs = false;
+function transitionWithinGame(cb) {
     for (let t of transitionTimeouts) {
         clearInterval(t);
     }
     transitionTimeouts.length = 0;
-    clearInterval(titleBobController);
-    titleContainer.style.transitionDuration = '';
-    titleContainer.style.transform = 'translateY(-165vh)';
-    document.getElementById('sidebar').scrollTo(0, 0);
-    setTransitionTimeout(() => {
-        multiplayerButton.style.transform = '';
-    }, 200);
-    setTransitionTimeout(() => {
-        puzzleButton.style.transform = '';
-    }, 300);
-    setTransitionTimeout(() => {
-        sandboxButton.style.transform = '';
-    }, 400);
-    setTransitionTimeout(() => {
-        menuScreen.style.opacity = '0';
+    menuScreen.style.transitionDuration = '0s';
+    menuScreen.style.backgroundColor = 'transparent';
+    menuScreen.style.opacity = '1';
+    menuScreen.style.visibility = '';
+    menuScreen.style.pointerEvents = '';
+    inMenuScreen = true;
+    loadingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+    loadingTip.style.opacity = '1';
+    transitionBarTop.style.transform = 'translateY(60vh)';
+    transitionBarBottom.style.transform = 'translateY(-60vh)';
+    setTransitionTimeout(async () => {
+        await cb();
+        loadingTip.style.opacity = '0';
+        transitionBarTop.style.transform = '';
+        transitionBarBottom.style.transform = '';
+        document.getElementById('sidebar').scrollTo(0, 0);
         inMenuScreen = false;
-        stopAllMusic();
-    }, 600);
-    setTransitionTimeout(() => {
-        menuScreen.style.pointerEvents = 'none';
-    }, 1100);
-    setTransitionTimeout(() => {
-        menuScreen.style.visibility = 'hidden';
-    }, 1600);
+        setTransitionTimeout(() => {
+            menuScreen.style.visibility = 'hidden';
+            menuScreen.style.transitionDuration = '';
+            menuScreen.style.backgroundColor = '';
+            menuScreen.style.opacity = '0';
+            menuScreen.style.pointerEvents = 'none';
+        }, 300);
+    }, 800);
 };
 function clearMenuScreen() {
     acceptMenuInputs = false;
@@ -289,7 +292,7 @@ sandboxButton.onclick = (e) => {
     camera.y = 0;
     resetPixelAmounts();
     loadStoredSave();
-    transitionToGame();
+    fadeToGame();
 };
 puzzleButton.onclick = (e) => {
     if (!acceptMenuInputs || levelSelect._open || pixsimMenu._open) return;
@@ -342,7 +345,7 @@ function selectPuzzle() {
     sandboxMode = false;
     levelSelect.style.transform = '';
     levelSelect._open = false;
-    transitionToGame();
+    fadeToGame();
 };
 
 // pixsim submenu submenus
@@ -690,11 +693,17 @@ PixSimAPI.onUpdateTeamList = async (teams) => {
     shortDingSound();
 };
 PixSimAPI.onGameKicked = () => {
+    if (PixSimAPI.gameRunning) {
+        transitionToMenu();
+    }
     pixsimMenuContents.style.transform = 'translateY(-100%)';
     modal('Kicked from game', 'You were removed from the game by the host');
     loadPublicGameList(PixSimAPI.spectating);
 };
 PixSimAPI.onGameClosed = () => {
+    if (PixSimAPI.gameRunning) {
+        transitionToMenu();
+    }
     pixsimMenuContents.style.transform = 'translateY(-100%)';
     modal('Game closed', 'The game session was closed by the host');
     loadPublicGameList(PixSimAPI.spectating);
