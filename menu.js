@@ -699,6 +699,11 @@ PixSimAPI.onGameClosed = () => {
 };
 pixsimJoinGameCodeCode.onkeyup();
 
+PixSimAPI.onDisconnect = async () => {
+    await modal('PixSim API', '<span style="color: red;">PixSim API was disconnected.</span>', false);
+    pixsimMenuClose.onclick();
+};
+
 const copyrightNotice = document.getElementById('copyrightNotice');
 const creditsAnimation = document.getElementById('creditsAnimation');
 copyrightNotice.onclick = (e) => {

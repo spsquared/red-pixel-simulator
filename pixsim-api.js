@@ -1,22 +1,10 @@
-// const apiURI = 'https://api.pixelsimulator.repl.co';
-const apiURI = 'http://localhost:5000';
+const apiURI = 'https://api.pixelsimulator.repl.co';
+// const apiURI = 'http://localhost:5000';
 const socket = io(apiURI, {
     path: '/pixsim-api',
     autoConnect: false,
     reconnection: false
 });
-let apiconnected = false;
-async function handlePixSimAPIDisconnect() {
-    if (apiconnected) {
-        PixSimAPI.disconnect();
-        await modal('PixSim API', '<span style="color: red;">PixSim API was disconnected.</span>', false);
-        pixsimMenuClose.onclick();
-    }
-};
-socket.on('disconnect', handlePixSimAPIDisconnect);
-socket.on('disconnected', handlePixSimAPIDisconnect);
-socket.on('timeout', handlePixSimAPIDisconnect);
-socket.on('error', handlePixSimAPIDisconnect);
 
 // network metrics
 let pingSend = 0;
@@ -49,12 +37,11 @@ socket.on('pong', () => {
         highPingWarning.style.display = '';
     }
 });
-socket.on('ping', () => {
-    socket.emit('pong');
-});
 
+// reusable wrapper interface (ignore the stuff above)
 class PixSimAPI {
-    static #initialized = false;
+    static #undef = this.init();
+    static #connected = false;
     static #RSA = {
         key: null,
         encode: async (text) => {
@@ -82,7 +69,6 @@ class PixSimAPI {
     static #gridHeight = 0;
 
     static init() {
-        this.#initialized = true;
         this.onUpdateTeamList = () => { };
         this.onGameModeChange = () => { };
         this.onGameStart = () => { };
@@ -90,10 +76,11 @@ class PixSimAPI {
         this.onGameClosed = () => { };
         this.onNewGridSize = () => { };
         this.onGameTick = () => { };
+        this.onDisconnect = () => { };
     }
 
     static async connect() {
-        apiconnected = true;
+        this.#connected = true;
         await new Promise((resolve, reject) => {
             const wakeup = new XMLHttpRequest();
             wakeup.open('GET', apiURI);
@@ -122,14 +109,14 @@ class PixSimAPI {
         });
     }
     static async disconnect() {
-        apiconnected = false;
+        this.#connected = false;
         socket.disconnect();
         this.#inGame = false;
         this.#gameRunning = false;
     }
     static async getPublicGames(type) {
         return await new Promise((resolve, reject) => {
-            if (!apiconnected || !socket.connected) reject(new Error('PixSim API not connected'));
+            if (!this.#connected || !socket.connected) reject(new Error('PixSim API not connected'));
             socket.emit('getPublicRooms', { type: type, spectating: this.#spectating });
             socket.once('publicRooms', resolve);
         });
@@ -137,7 +124,7 @@ class PixSimAPI {
     static async createGame() {
         if (this.#inGame) return;
         return await new Promise((resolve, reject) => {
-            if (!apiconnected || !socket.connected) reject(new Error('PixSim API not connected'));
+            if (!this.#connected || !socket.connected) reject(new Error('PixSim API not connected'));
             socket.once('gameCode', (code) => {
                 this.#gameCode = code;
                 this.#inGame = true;
@@ -151,7 +138,7 @@ class PixSimAPI {
     static async joinGame(code) {
         if (this.#inGame) return 1;
         return await new Promise((resolve, reject) => {
-            if (!apiconnected || !socket.connected) reject(new Error('PixSim API not connected'));
+            if (!this.#connected || !socket.connected) reject(new Error('PixSim API not connected'));
             socket.once('joinSuccess', (team) => {
                 this.#isHost = false;
                 this.#inGame = true;
@@ -326,6 +313,22 @@ class PixSimAPI {
     }
     static get spectating() {
         return this.#spectating;
+    }
+
+    static set onDisconnect(cb) {
+        if (typeof cb != 'function') return;
+        socket.off('disconnect');
+        socket.off('timeout');
+        socket.off('error');
+        let handle = () => {
+            cb();
+            this.#connected = false;
+            this.#inGame = false;
+            this.#gameRunning = false;
+        };
+        socket.on('disconnect', handle);
+        socket.on('timeout', handle);
+        socket.on('error', handle);
     }
 
     static getUserData(username) {

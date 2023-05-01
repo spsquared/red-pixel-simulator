@@ -1660,6 +1660,9 @@ PixSimAPI.onGameStart = () => {
     transitionToGame(async () => {
         levelDetails.style.display = 'none';
         restartButton.style.display = '';
+        pauseButton.disabled = true;
+        fastSimulationButton.disabled = true;
+        advanceTickButton.disabled = true;
         saveCodeText.disabled = true;
         generateSaveButton.disabled = true;
         uploadSaveButton.disabled = true;
