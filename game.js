@@ -1654,6 +1654,25 @@ async function startDrawLoop() {
 window.addEventListener('load', startDrawLoop);
 
 // PixSim API
+PixSimAPI.onGameStart = () => {
+    sandboxMode = false;
+    PixSimAPI.gridSize = { width: gridWidth, height: gridHeight };
+    transitionToGame(async () => {
+        levelDetails.style.display = 'none';
+        restartButton.style.display = '';
+        saveCodeText.disabled = true;
+        generateSaveButton.disabled = true;
+        uploadSaveButton.disabled = true;
+        downloadSaveButton.disabled = true;
+        gridWidthText.disabled = true;
+        gridHeightText.disabled = true;
+        document.getElementById('premadeSaves').style.display = 'none';
+        resetPixelAmounts();
+        simulateSlowButton.checked = true;
+        slowSimulation = true;
+    });
+}
+PixSimAPI.onNewGridSize = createGrid;
 PixSimAPI.onGameTick = (compressedGrid, tickData) => {
     console.log(compressedGrid)
 };
@@ -2038,24 +2057,29 @@ window.addEventListener('DOMContentLoaded', (e) => {
             let pixType = pixels[brush.pixel];
             if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[(2 % possibleRotations(pixType.numId)) + pixType.numId - pixType.rotation].id].box.click();
         } else if (key == 'r') {
-            if (!brush.isSelection || selection.grid[0] == undefined) return;
-            const newGrid = [];
-            for (let i = 0; i < selection.grid[0].length; i++) {
-                newGrid[i] = [];
-            }
-            for (let i = 0; i < selection.grid.length; i++) {
-                for (let j = 0; j < selection.grid[i].length; j++) {
-                    let newPixel = selection.grid[i][j]
-                    let pixType = numPixels[selection.grid[i][j]] ?? numPixels[pixNum.MISSING];
-                    if (pixType.rotation != undefined) {
-                        let rotations = possibleRotations(grid[y][x]);
-                        newPixel = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % rotations) + rotations) % rotations);
-                    }
-                    newGrid[j][selection.grid.length - i - 1] = newPixel;
+            if (brush.isSelection && selection.grid[0] != undefined) {
+                const newGrid = [];
+                for (let i = 0; i < selection.grid[0].length; i++) {
+                    newGrid[i] = [];
                 }
+                for (let i = 0; i < selection.grid.length; i++) {
+                    for (let j = 0; j < selection.grid[i].length; j++) {
+                        let newPixel = selection.grid[i][j];
+                        let pixType = numPixels[selection.grid[i][j]] ?? numPixels[pixNum.MISSING];
+                        if (pixType.rotation != undefined) {
+                            let rotations = possibleRotations(grid[y][x]);
+                            newPixel = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % rotations) + rotations) % rotations);
+                        }
+                        newGrid[j][selection.grid.length - i - 1] = newPixel;
+                    }
+                }
+                selection.grid = newGrid;
+                window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
+            } else {
+                let pixType = pixels[brush.pixel];
+                let rotations = possibleRotations(pixType.numId);
+                if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation + ((((pixType.rotation + 1) % rotations) + rotations) % rotations)].id].box.click();
             }
-            selection.grid = newGrid;
-            window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
         } else if (key == 'shift') {
             removing = true;
         } else if (key == 'control') {
@@ -2196,28 +2220,17 @@ function updateTimeControlButtons() {
     if (simulationPaused) {
         pauseButton.style.backgroundColor = 'red';
         pauseButton.style.backgroundImage = 'url(/assets/play.svg)';
-        pauseButton.style.fontSize = '20px';
-        fastSimulationButton.style.backgroundColor = 'grey';
-        fastSimulationButton.style.cursor = 'not-allowed';
-        advanceTickButton.style.backgroundColor = 'lightgray';
-        advanceTickButton.style.cursor = '';
+        fastSimulationButton.style.backgroundColor = '';
+        fastSimulationButton.disabled = true;
+        advanceTickButton.disabled = false;
         pauseMusicPixels();
     } else {
         pauseButton.style.backgroundColor = 'lime';
         pauseButton.style.backgroundImage = 'url(/assets/pause.svg)';
-        pauseButton.style.fontSize = '';
-        if (fastSimulation) {
-            fastSimulationButton.style.backgroundColor = 'lime';
-            advanceTickButton.style.backgroundColor = 'grey';
-            advanceTickButton.style.cursor = 'not-allowed';
-        } else {
-            fastSimulationButton.style.backgroundColor = 'red';
-            advanceTickButton.style.backgroundColor = 'lightgray';
-            advanceTickButton.style.cursor = '';
-        }
-        fastSimulationButton.style.cursor = '';
-        advanceTickButton.style.backgroundColor = 'grey';
-        advanceTickButton.style.cursor = 'not-allowed';
+        if (fastSimulation) fastSimulationButton.style.backgroundColor = 'lime';
+        else fastSimulationButton.style.backgroundColor = 'red';
+        fastSimulationButton.disabled = false;
+        advanceTickButton.disabled = true;
         resumeMusicPixels();
     }
 };
@@ -2251,8 +2264,13 @@ advanceTickButton.onclick = (e) => {
 
 // save code inputs
 let writeSaveTimeout = setTimeout(() => { });
+const generateSaveButton = document.getElementById('generateSave');
+const uploadSaveButton = document.getElementById('uploadSave');
+const downloadSaveButton = document.getElementById('downloadSave');
+const resetButton = document.getElementById('reset');
+const restartButton = document.getElementById('restart');
 saveCodeText.oninput = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
     let i1 = saveCodeText.value.indexOf(';');
     let i2 = saveCodeText.value.indexOf('-');
     if (i1 > 0) {
@@ -2271,8 +2289,8 @@ saveCodeText.oninput = (e) => {
         }
     }, 1000);
 };
-document.getElementById('generateSave').onclick = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+generateSaveButton.onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
     simulationPaused = true;
     fastSimulation = false;
     updateTimeControlButtons();
@@ -2283,8 +2301,8 @@ document.getElementById('generateSave').onclick = (e) => {
         window.localStorage.setItem('saveCodeText', LZString.compressToBase64(saveCode));
     }
 };
-document.getElementById('uploadSave').onclick = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+uploadSaveButton.onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
     simulationPaused = true;
     fastSimulation = false;
     updateTimeControlButtons();
@@ -2308,8 +2326,8 @@ document.getElementById('uploadSave').onclick = (e) => {
         reader.readAsText(files[0]);
     };
 };
-document.getElementById('downloadSave').onclick = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+downloadSaveButton.onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
     simulationPaused = true;
     fastSimulation = false;
     updateTimeControlButtons();
@@ -2320,7 +2338,7 @@ document.getElementById('downloadSave').onclick = (e) => {
     a.download = `red-pixel-simulator_${Math.ceil(Math.random() * 1000)}.redpixel`;
     a.click();
 };
-document.getElementById('reset').onclick = async (e) => {
+resetButton.onclick = async (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
     simulationPaused = true;
     fastSimulation = false;
@@ -2331,7 +2349,7 @@ document.getElementById('reset').onclick = async (e) => {
         inResetState = true;
     }
 };
-document.getElementById('restart').onclick = async (e) => {
+restartButton.onclick = async (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
     simulationPaused = true;
     fastSimulation = false;
@@ -2342,13 +2360,13 @@ document.getElementById('restart').onclick = async (e) => {
     }
 };
 gridWidthText.oninput = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
     gridWidthText.value = Math.max(1, Math.min(parseInt(gridWidthText.value.replace('e', '')), 500));
     if (gridWidthText.value != '') saveCode = gridWidthText.value + saveCode.substring(saveCode.indexOf('-'));
     saveCodeText.value = saveCode;
 };
 gridHeightText.oninput = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
     gridHeightText.value = Math.max(1, Math.min(parseInt(gridHeightText.value.replace('e', '')), 500));
     if (gridHeightText.value != '') saveCode = saveCode.substring(0, saveCode.indexOf('-') + 1) + gridHeightText.value + saveCode.substring(saveCode.indexOf(';'));
     saveCodeText.value = saveCode;

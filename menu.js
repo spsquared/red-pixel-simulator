@@ -271,20 +271,14 @@ sandboxButton.onclick = (e) => {
     if (!acceptMenuInputs || levelSelect._open || pixsimMenu._open) return;
     levelSelect.style.transform = '';
     clearTimeout(startTitleBob);
-    document.getElementById('levelDetails').style.display = 'none';
-    document.getElementById('restart').style.display = 'none';
-    document.getElementById('saveCode').disabled = false;
-    document.getElementById('saveCode').style.cursor = '';
-    document.getElementById('generateSave').style.backgroundColor = '';
-    document.getElementById('uploadSave').style.backgroundColor = '';
-    document.getElementById('downloadSave').style.backgroundColor = '';
-    document.getElementById('generateSave').style.cursor = '';
-    document.getElementById('uploadSave').style.cursor = '';
-    document.getElementById('downloadSave').style.cursor = '';
-    document.getElementById('gridWidth').disabled = false;
-    document.getElementById('gridHeight').disabled = false;
-    document.getElementById('gridWidth').style.cursor = '';
-    document.getElementById('gridHeight').style.cursor = '';
+    levelDetails.style.display = 'none';
+    restartButton.style.display = 'none';
+    saveCodeText.disabled = false;
+    generateSaveButton.disabled = false;
+    uploadSaveButton.disabled = false;
+    downloadSaveButton.disabled = false;
+    gridWidthText.disabled = false;
+    gridHeightText.disabled = false;
     document.getElementById('premadeSaves').style.display = '';
     sandboxMode = true;
     camera.scale = 1;
@@ -327,20 +321,14 @@ pixsimMenuClose.onclick = (e) => {
 function selectPuzzle() {
     if (!acceptMenuInputs) return;
     clearTimeout(startTitleBob);
-    document.getElementById('levelDetails').style.display = '';
-    document.getElementById('restart').style.display = '';
-    document.getElementById('saveCode').disabled = true;
-    document.getElementById('saveCode').style.cursor = 'not-allowed';
-    document.getElementById('generateSave').style.backgroundColor = 'grey';
-    document.getElementById('uploadSave').style.backgroundColor = 'grey';
-    document.getElementById('downloadSave').style.backgroundColor = 'grey';
-    document.getElementById('generateSave').style.cursor = 'not-allowed';
-    document.getElementById('uploadSave').style.cursor = 'not-allowed';
-    document.getElementById('downloadSave').style.cursor = 'not-allowed';
-    document.getElementById('gridWidth').disabled = true;
-    document.getElementById('gridHeight').disabled = true;
-    document.getElementById('gridWidth').style.cursor = 'not-allowed';
-    document.getElementById('gridHeight').style.cursor = 'not-allowed';
+    levelDetails.style.display = '';
+    restartButton.style.display = '';
+    saveCodeText.disabled = true;
+    generateSaveButton.disabled = true;
+    uploadSaveButton.disabled = true;
+    downloadSaveButton.disabled = true;
+    gridWidthText.disabled = true;
+    gridHeightText.disabled = true;
     document.getElementById('premadeSaves').style.display = 'none';
     sandboxMode = false;
     levelSelect.style.transform = '';
@@ -702,6 +690,7 @@ PixSimAPI.onGameKicked = () => {
 };
 PixSimAPI.onGameClosed = () => {
     if (PixSimAPI.gameRunning) {
+        console.log('aaa')
         transitionToMenu();
     }
     pixsimMenuContents.style.transform = 'translateY(-100%)';

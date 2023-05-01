@@ -1,5 +1,5 @@
-const apiURI = 'https://api.pixelsimulator.repl.co';
-// const apiURI = 'http://localhost:503';
+// const apiURI = 'https://api.pixelsimulator.repl.co';
+const apiURI = 'http://localhost:5000';
 const socket = io(apiURI, {
     path: '/pixsim-api',
     autoConnect: false,
@@ -85,6 +85,7 @@ class PixSimAPI {
         this.#initialized = true;
         this.onUpdateTeamList = () => { };
         this.onGameModeChange = () => { };
+        this.onGameStart = () => { };
         this.onGameKicked = () => { };
         this.onGameClosed = () => { };
         this.onNewGridSize = () => { };
@@ -218,18 +219,18 @@ class PixSimAPI {
         if (typeof cb != 'function') return;
         socket.off('gameKicked');
         socket.on('gameKicked', () => {
+            cb();
             this.#inGame = false;
             this.#gameRunning = false;
-            cb();
         });
     }
     static set onGameClosed(cb) {
         if (typeof cb != 'function') return;
         socket.off('gameEnd');
         socket.on('gameEnd', () => {
+            cb();
             this.#inGame = false;
             this.#gameRunning = false;
-            cb();
         });
     }
 

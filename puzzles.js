@@ -355,6 +355,7 @@ function triggerWin() {
     document.addEventListener('keydown', keyHandle);
 };
 
+const levelDetails = document.getElementById('levelDetails');
 const levelName = document.getElementById('levelName');
 const levelDescription = document.getElementById('levelDescription');
 function loadPuzzle(section, level) {
@@ -372,7 +373,7 @@ function loadPuzzle(section, level) {
         saveCodeText.value = saveCode;
         loadSaveCode();
         inResetState = true;
-        resetPixelAmounts();
+        resetPixelAmounts(false);
         if (savedData !== null) {
             let isFirst = true;
             for (let pixelType in savedData.pixels) {
