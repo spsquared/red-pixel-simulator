@@ -80,7 +80,7 @@
     bottom: 0px;
     height: 2px;
     margin-top: -2px;
-    background-color: white;
+    background-color: black;
 }
 .pixelGroup {
     border-bottom: 2px solid black;
@@ -512,6 +512,9 @@
 @media (prefers-color-scheme: dark) {
     #levelName, #levelDescription, #pixelPicker, .pixelGroup, .pixelGroupContents, #pixelPickerDescription, .pickerPixel:hover {
         border-color: white;
+    }
+    #pixelPicker::after {
+        background-color: white;
     }
     .pixelGroupHeaderDropdownIcon {
         background-image: url(/assets/dropdown-light.svg);

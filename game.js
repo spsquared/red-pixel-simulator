@@ -1516,7 +1516,7 @@ function drawUI() {
     }
 };
 function updateTick() {
-    if ((!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && performance.now() - lastTick >= 100)) {
+    if ((!PixSimAPI.inGame || PixSimAPI.isHost) && (!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && performance.now() - lastTick >= 100)) {
         runTicks = 0; // lol
         let max = fastSimulation ? 10 : 1;
         for (let i = 0; i < max; i++) {
@@ -1661,10 +1661,16 @@ window.addEventListener('load', startDrawLoop);
 // PixSim API
 PixSimAPI.onGameStart = () => {
     sandboxMode = false;
-    PixSimAPI.gridSize = { width: gridWidth, height: gridHeight };
     transitionToGame(async () => {
+        if (PixSimAPI.isHost) {
+            createGrid(100, 100);
+            PixSimAPI.gridSize = { width: gridWidth, height: gridHeight };
+        }
         pixsimMenu._open = false;
         pixsimMenu.style.transform = '';
+        pixsimHostCancelGame.onclick = null;
+        pixsimHostStartGame.onclick = null;
+        pixsimWaitLeaveGame.onclick = null;
         slowSimulation = true;
         simulationPaused = false;
         simulateSlowButton.checked = true;
@@ -1846,7 +1852,6 @@ function clickLine(x1, y1, x2, y2, remove) {
                     }
                 });
             } else {
-                console.log('a')
                 act(function (x, y) {
                     if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
                         let pixel = pixelAt(x, y).id;

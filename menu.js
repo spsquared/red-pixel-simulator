@@ -526,6 +526,7 @@ function handleJoinGame(status) {
             pixsimMenuContents.style.transform = 'translateY(-100%)';
             PixSimAPI.leaveGame();
             loadPublicGameList(PixSimAPI.spectating);
+            pixsimWaitLeaveGame.onclick = null;
         };
     } else {
         modal('Could not join game', status == 1 ? 'Game does not exist or already started' : 'Banned by game host');
@@ -698,6 +699,9 @@ PixSimAPI.onGameKicked = () => {
         fastSimulation = false;
         updateTimeControlButtons();
         stopAllMusicPixels();
+        pixsimHostCancelGame.onclick = null;
+        pixsimHostStartGame.onclick = null;
+        pixsimWaitLeaveGame.onclick = null;
         PixSimAPI.disconnect();
         transitionToMenu();
     }
@@ -711,6 +715,9 @@ PixSimAPI.onGameClosed = () => {
         fastSimulation = false;
         updateTimeControlButtons();
         stopAllMusicPixels();
+        pixsimHostCancelGame.onclick = null;
+        pixsimHostStartGame.onclick = null;
+        pixsimWaitLeaveGame.onclick = null;
         PixSimAPI.disconnect();
         transitionToMenu();
     }

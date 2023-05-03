@@ -37,6 +37,7 @@ socket.on('pong', () => {
         highPingWarning.style.display = '';
     }
 });
+
 // reusable wrapper interface (ignore the stuff above)
 class PixSimAPI {
     static #undef = this.init();
@@ -253,6 +254,7 @@ class PixSimAPI {
                 len++;
             }
         }
+        compressed.push(curr, len);
         socket.emit('tick', { grid: new Uint8ClampedArray(compressed), data: data, origin: 'rps' });
     }
     static set onGameTick(cb) {
