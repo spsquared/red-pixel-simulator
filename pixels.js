@@ -631,7 +631,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 12,
+        blastResistance: 15,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -735,7 +735,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 16,
+        blastResistance: 17,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -782,7 +782,7 @@ const pixels = {
                 nextFireGrid[y][x] = nextFireGrid[y][x] ?? false;
             });
             let aerated = updateTouchingPixel(x, y, pixNum.AIR);
-            if (random() < (20 - flammability) / (aerated ? 240 : 20)) {
+            if (random() < (20 - flammability) / (aerated ? 280 : 20)) {
                 nextFireGrid[y][x] = nextFireGrid[y][x] ?? false;
             }
             if (random() < flammability / 1200 && nextGrid[y][x] == null && !isLava) {
@@ -5122,7 +5122,7 @@ const pixels = {
         numId: 0
     }
 };
-const numPixels = {};
+const numPixels = [];
 const pixNum = {};
 const pixelAmounts = {};
 const pixelSelectors = {};

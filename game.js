@@ -1081,6 +1081,7 @@ function explode(x1, y1, size) {
         if (random() < (power / size) * ((20 - pixelAt(x, y).blastResistance) / (85 - power))) {
             nextGrid[y][x] = pixNum.AIR;
             monsterGrid[y][x] = false;
+            if (grid[y][x] == pixNum.AIR) return 0;
             if (chained < 5) {
                 if (grid[y][x] == pixNum.NUKE) {
                     pendingExplosions.push([x, y, 20]);
@@ -1096,7 +1097,9 @@ function explode(x1, y1, size) {
                     chained++;
                 }
             }
-            if (grid[y][x] == pixNum.GUNPOWDER) {
+            if (grid[y][x] == pixNum.WATER) {
+                if (random() < (power * power / size) * 0.2) nextGrid[y][x] = pixNum.STEAM;
+            } else if (grid[y][x] == pixNum.GUNPOWDER) {
                 pendingExplosions.push([x, y, 5]);
                 grid[y][x] = pixNum.WALL;
             } else if (grid[y][x] == pixNum.C4) {
@@ -1105,6 +1108,8 @@ function explode(x1, y1, size) {
             } else if (grid[y][x] >= pixNum.FLAMETHROWER_LEFT && grid[y][x] <= pixNum.FLAMETHROWER_LEFT) {
                 pendingExplosions.push([x, y, 15]);
                 grid[y][x] = pixNum.WALL;
+            } else if (random() < 1.2 - (power / size)) {
+                nextGrid[y][x] = pixNum.ASH;
             }
             if (random() < 0.5 * power / size) {
                 fireGrid[y][x] = true;
