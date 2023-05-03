@@ -384,7 +384,8 @@ const pixsimDragging = {
     draggingName: '',
     startX: 0,
     startY: 0,
-    hoveringTeam: -1
+    hoveringTeam: -1,
+    hoveringName: null
 };
 pixsimSelectHostButton.onclick = (e) => {
     pixsimMenuContents.style.transform = 'translateY(100%)';
@@ -550,17 +551,23 @@ function loadPublicGameList(spectating) {
     PixSimAPI.getPublicGames('all').then(refreshGameList, stopRefreshLoop);
 };
 function stopRefreshLoop() { };
-async function generatePlayerCard(username) {
+async function generatePlayerCard(username, allowDrag = true) {
     const userData = await PixSimAPI.getUserData(username);
     const card = document.createElement('div');
     card.classList.add('pxPlayerCard');
-    if (PixSimAPI.isHost) {
+    if (PixSimAPI.isHost && allowDrag) {
         card.classList.add('pxHostPlayerCard');
         card.onmousedown = (e) => {
             if (!e.target.matches('.pxPlayerCardKick')) {
                 startDragPlayerCard(card, username, e.pageX, e.pageY);
             }
-        }
+        };
+        card.onmouseover = (e) => {
+            pixsimDragging.hoveringName = username;
+        };
+        card.onmouseout = (e) => {
+            pixsimDragging.hoveringName = null;
+        };
     }
     const img = new Image();
     img.classList.add('pxPlayerCardProfileImg');
@@ -606,13 +613,12 @@ async function startDragPlayerCard(card, username, pageX, pageY) {
     document.addEventListener('mouseup', function release(e) {
         pixsimDragCard.style.visibility = '';
         pixsimDragging.dragging = false;
-        if (pixsimDragging.hoveringTeam != -1) PixSimAPI.movePlayer(pixsimDragging.draggingName, pixsimDragging.hoveringTeam);
+        if (pixsimDragging.hoveringTeam != -1) PixSimAPI.movePlayer(pixsimDragging.draggingName, pixsimDragging.hoveringTeam, pixsimDragging.hoveringName);
         card.style.visibility = '';
         document.removeEventListener('mouseup', release);
         document.removeEventListener('mousemove', move);
         pixsimTeamsTAPlayers.onmouseout();
         pixsimTeamsTBPlayers.onmouseout();
-        pixsimSpectatorsList.onmouseout();
         tickSound();
     });
     tickSound();
@@ -620,17 +626,12 @@ async function startDragPlayerCard(card, username, pageX, pageY) {
 pixsimTeamsTAPlayers.onmouseover = (e) => {
     if (!pixsimDragging.dragging) return;
     pixsimTeamsTAPlayers.style.backgroundColor = '#FFFFFF22';
-    pixsimDragging.hoveringTeam = 1;
+    pixsimDragging.hoveringTeam = 0;
 };
 pixsimTeamsTBPlayers.onmouseover = (e) => {
     if (!pixsimDragging.dragging) return;
     pixsimTeamsTBPlayers.style.backgroundColor = '#FFFFFF22';
-    pixsimDragging.hoveringTeam = 2;
-};
-pixsimSpectatorsList.onmouseover = (e) => {
-    if (!pixsimDragging.dragging) return;
-    pixsimSpectatorsList.style.backgroundColor = '#FFFFFF22';
-    pixsimDragging.hoveringTeam = 0;
+    pixsimDragging.hoveringTeam = 1;
 };
 pixsimTeamsTAPlayers.onmouseout = (e) => {
     pixsimTeamsTAPlayers.style.backgroundColor = '';
@@ -638,10 +639,6 @@ pixsimTeamsTAPlayers.onmouseout = (e) => {
 };
 pixsimTeamsTBPlayers.onmouseout = (e) => {
     pixsimTeamsTBPlayers.style.backgroundColor = '';
-    pixsimDragging.hoveringTeam = -1;
-};
-pixsimSpectatorsList.onmouseout = (e) => {
-    pixsimSpectatorsList.style.backgroundColor = '';
     pixsimDragging.hoveringTeam = -1;
 };
 PixSimAPI.onUpdateTeamList = async (teams) => {
@@ -673,12 +670,8 @@ PixSimAPI.onUpdateTeamList = async (teams) => {
         pixsimTeamsTBPlayers.appendChild(document.createElement('div'));
     }
     for (let username of teams.spectators) {
-        const card = await generatePlayerCard(username);
+        const card = await generatePlayerCard(username, false);
         pixsimSpectatorsList.appendChild(card);
-        if (pixsimDragging.dragging && username == pixsimDragging.draggingName) {
-            startDragPlayerCard(card, username);
-            stillDragging = true;
-        }
     }
     if (!stillDragging) {
         pixsimDragCard.style.visibility = '';

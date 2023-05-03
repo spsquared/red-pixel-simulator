@@ -167,9 +167,9 @@ class PixSimAPI {
         if (!this.#isHost || !this.#inGame || this.#gameRunning) return;
         socket.emit('kickPlayer', username);
     }
-    static async movePlayer(username, team) {
+    static async movePlayer(username, team, username2) {
         if (!this.#isHost || !this.#inGame || this.#gameRunning) return;
-        socket.emit('movePlayer', { username: username, team: team });
+        socket.emit('movePlayer', { username: username, team: team, username2: username2 });
     }
     static async startGame() {
         if (this.#inGame && !this.#gameRunning) socket.emit('startGame');
