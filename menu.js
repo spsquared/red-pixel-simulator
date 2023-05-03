@@ -277,6 +277,8 @@ sandboxButton.onclick = (e) => {
     fastSimulationButton.disabled = false;
     simulateSlowButton.disabled = false;
     advanceTickButton.disabled = false;
+    resetButton.disabled = false;
+    restartButton.disabled = false;
     saveCodeText.disabled = false;
     generateSaveButton.disabled = false;
     uploadSaveButton.disabled = false;
@@ -331,6 +333,8 @@ function selectPuzzle() {
     fastSimulationButton.disabled = false;
     simulateSlowButton.disabled = false;
     advanceTickButton.disabled = false;
+    resetButton.disabled = false;
+    restartButton.disabled = false;
     saveCodeText.disabled = true;
     generateSaveButton.disabled = true;
     uploadSaveButton.disabled = true;
@@ -690,6 +694,11 @@ PixSimAPI.onUpdateTeamList = async (teams) => {
 };
 PixSimAPI.onGameKicked = () => {
     if (PixSimAPI.gameRunning) {
+        simulationPaused = true;
+        fastSimulation = false;
+        updateTimeControlButtons();
+        stopAllMusicPixels();
+        PixSimAPI.disconnect();
         transitionToMenu();
     }
     pixsimMenuContents.style.transform = 'translateY(-100%)';
@@ -697,7 +706,14 @@ PixSimAPI.onGameKicked = () => {
     loadPublicGameList(PixSimAPI.spectating);
 };
 PixSimAPI.onGameClosed = () => {
-    if (PixSimAPI.gameRunning) transitionToMenu();
+    if (PixSimAPI.gameRunning) {
+        simulationPaused = true;
+        fastSimulation = false;
+        updateTimeControlButtons();
+        stopAllMusicPixels();
+        PixSimAPI.disconnect();
+        transitionToMenu();
+    }
     pixsimMenuContents.style.transform = 'translateY(-100%)';
     modal('Game closed', 'The game session was closed by the host');
     loadPublicGameList(PixSimAPI.spectating);
@@ -705,6 +721,13 @@ PixSimAPI.onGameClosed = () => {
 pixsimJoinGameCodeCode.onkeyup();
 
 PixSimAPI.onDisconnect = async () => {
+    if (PixSimAPI.gameRunning) {
+        simulationPaused = true;
+        fastSimulation = false;
+        updateTimeControlButtons();
+        stopAllMusicPixels();
+        transitionToMenu();
+    }
     await modal('PixSim API', '<span style="color: red;">PixSim API was disconnected.</span>', false);
     pixsimMenuClose.onclick();
 };

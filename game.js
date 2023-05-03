@@ -188,7 +188,8 @@ const brush = {
     lineStartY: 0,
     startsInRPE: false,
     mouseButtonStack: [],
-    mouseButton: -1
+    mouseButton: -1,
+    lastMouseButton: -1,
 };
 let mX = 0;
 let mY = 0;
@@ -1633,7 +1634,11 @@ function updateTick() {
                 if (hasMonsters && hasUnfulfilledTargets) break search;
             }
         }
-        if (!hasMonsters && !hasUnfulfilledTargets && !sandboxMode) triggerWin();
+        if (!hasMonsters && !hasUnfulfilledTargets && !sandboxMode && !PixSimAPI.inGame) triggerWin();
+
+        // send tick
+        if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, {});
+
         lastTick = performance.now();
     }
 };
@@ -1658,11 +1663,20 @@ PixSimAPI.onGameStart = () => {
     sandboxMode = false;
     PixSimAPI.gridSize = { width: gridWidth, height: gridHeight };
     transitionToGame(async () => {
+        pixsimMenu._open = false;
+        pixsimMenu.style.transform = '';
+        slowSimulation = true;
+        simulationPaused = false;
+        simulateSlowButton.checked = true;
+        updateTimeControlButtons();
         levelDetails.style.display = 'none';
         restartButton.style.display = '';
         pauseButton.disabled = true;
         fastSimulationButton.disabled = true;
+        simulateSlowButton.disabled = true;
         advanceTickButton.disabled = true;
+        resetButton.disabled = true;
+        restartButton.disabled = true;
         saveCodeText.disabled = true;
         generateSaveButton.disabled = true;
         uploadSaveButton.disabled = true;
@@ -1671,13 +1685,20 @@ PixSimAPI.onGameStart = () => {
         gridHeightText.disabled = true;
         document.getElementById('premadeSaves').style.display = 'none';
         resetPixelAmounts();
-        simulateSlowButton.checked = true;
-        slowSimulation = true;
     });
 }
 PixSimAPI.onNewGridSize = createGrid;
 PixSimAPI.onGameTick = (compressedGrid, tickData) => {
-    console.log(compressedGrid)
+    let compressed = new Uint8ClampedArray(compressedGrid);
+    // sync to framerate to reduce tearing (probably not necessary)?
+    let loc = 0;
+    for (let i = 0; i < compressed.length; i += 2) {
+        let pixel = compressed[i];
+        let run = compressed[i + 1];
+        for (let j = 0; j < run; j++, loc++) {
+            grid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
+        }
+    }
 };
 
 // brush
@@ -1701,7 +1722,7 @@ function updateMouseControls() {
             }
             if (brush.mouseButton == -1) {
                 brush.lineMode = false;
-                clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.mouseButton == 2 || removing);
+                clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
             }
         } else if (brush.mouseButton != -1) {
             brush.lineMode = false;
@@ -1752,14 +1773,15 @@ function updateMouseControls() {
                 selection.x2 = mXGrid;
                 selection.y2 = mYGrid;
             } else {
-                clickLine(prevMXGrid, prevMYGrid, mXGrid, mYGrid, brush.mouseButton == 2 || removing);
+                clickLine(prevMXGrid, prevMYGrid, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
             }
         }
     } else if (brush.mouseButton == -1 && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined) && !brush.startsInRPE) {
         brush.lineMode = false;
-        clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.mouseButton == 2 || removing);
+        clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
     }
     if (brush.mouseButton == -1 || !holdingControl) brush.selecting = false;
+    brush.lastMouseButton = brush.mouseButton;
 };
 function brushActionLine(x1, y1, x2, y2, cb) {
     let slope = (y2 - y1) / (x2 - x1);
@@ -1797,7 +1819,7 @@ function brushActionLine(x1, y1, x2, y2, cb) {
     }
 };
 function clickLine(x1, y1, x2, y2, remove) {
-    if (!sandboxMode && !inResetState) return;
+    if ((!sandboxMode && !PixSimAPI.inGame) && !inResetState) return;
     let modifiedPixelCounts = [];
     let clickPixelNum = pixels[brush.pixel].numId;
     let skipToEnd = false;
@@ -1824,9 +1846,12 @@ function clickLine(x1, y1, x2, y2, remove) {
                     }
                 });
             } else {
+                console.log('a')
                 act(function (x, y) {
                     if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
-                        pixelAmounts[pixelAt(x, y).id]++;
+                        let pixel = pixelAt(x, y).id;
+                        if (pixelAmounts[pixel] == -Infinity) pixelAmounts[pixel] = 0;
+                        pixelAmounts[pixel]++;
                         modifiedPixelCounts[grid[y][x]] = true;
                         grid[y][x] = pixNum.AIR;
                         if (fireGrid[y][x]) {
@@ -1889,7 +1914,9 @@ function clickLine(x1, y1, x2, y2, remove) {
                 else if (act(function (x, y) {
                     if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum) {
                         modifiedPixelCounts[grid[y][x]] = true;
-                        pixelAmounts[pixelAt(x, y).id]++;
+                        let pixel = pixelAt(x, y).id;
+                        if (pixelAmounts[pixel] == -Infinity) pixelAmounts[pixel] = 0;
+                        pixelAmounts[pixel]++;
                         grid[y][x] = clickPixelNum;
                         if (musicGrid[y][x]) {
                             musicPixel(musicGrid[y][x], false);
@@ -1906,7 +1933,7 @@ function clickLine(x1, y1, x2, y2, remove) {
     for (let pixelType in modifiedPixelCounts) {
         if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
     }
-    if (!sandboxMode) {
+    if (!sandboxMode && !PixSimAPI.inGame) {
         saveCode = generateSaveCode();
         window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compressToBase64(JSON.stringify({
             code: saveCode,
@@ -2035,7 +2062,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 brush.isSelection = true;
             }
         } else if (key == 'enter') {
-            if (simulationPaused) {
+            if (simulationPaused && !PixSimAPI.inGame) {
                 runTicks = 1;
                 tickSound();
             }
@@ -2114,10 +2141,12 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 debugInfo = !debugInfo;
                 clickSound();
             } else if (key == 'p') {
-                simulationPaused = !simulationPaused;
-                fastSimulation = false;
-                updateTimeControlButtons();
-                clickSound();
+                if (!PixSimAPI.inGame) {
+                    simulationPaused = !simulationPaused;
+                    fastSimulation = false;
+                    updateTimeControlButtons();
+                    clickSound();
+                }
             } else if (key == '[' && mouseOver) {
                 let cScale = camera.scale;
                 let percentX = (mX + camera.x) / (canvasSize * camera.scale);
@@ -2210,8 +2239,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 brush.mouseButton = -1;
             }
             hasFocus = document.hasFocus();
-        }, { timeout: 100 });
-    }, 200);
+        }, { timeout: 50 });
+    }, 50);
 });
 
 // game control buttons
@@ -2422,8 +2451,14 @@ document.getElementById('changeResolution').onclick = (e) => {
     }
 };
 // menu
-document.getElementById('backToMenu').onclick = (e) => {
+const menuButton = document.getElementById('backToMenu');
+menuButton.onclick = async (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
+    if (PixSimAPI.inGame && !await modal('Leave game?', 'Are you sure you want to leave the game? You will NOT be able to rejoin!', true)) return;
+    if (PixSimAPI.inGame) {
+        PixSimAPI.leaveGame();
+        PixSimAPI.disconnect();
+    }
     simulationPaused = true;
     fastSimulation = false;
     updateTimeControlButtons();

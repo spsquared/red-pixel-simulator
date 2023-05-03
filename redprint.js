@@ -222,6 +222,7 @@ function rpDraw() {
 };
 // copy + paste, brush size, & history
 const rpUnplaceablePixels = ['fire', 'placementUnRestriction', 'placementRestriction', 'monster', 'target', 'remove'];
+let lastMouseButton = brush.mouseButton;
 function rpUpdateMouseControls() {
     if (rpUnplaceablePixels.indexOf(brush.pixel) == -1 && acceptInputs && rpMX >= 0 && rpMX < rpCanvasRes && rpMY >= 0 && rpMY < rpCanvasRes) {
         if (((brush.mouseButton != -1 && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined)) {
@@ -245,7 +246,7 @@ function rpUpdateMouseControls() {
         } else if (brush.mouseButton != -1) {
             brush.lineMode = false;
             if (brush.mouseButton == 1) brush.pixel = numPixels[rpGrid[rpMYGrid][rpMXGrid]].id;
-            else if ((brush.mouseButton == 2 || removing)) {
+            else if ((lastMouseButton == 2 || removing)) {
                 let xmin = Math.max(0, rpMXGrid - brush.size + 1);
                 let xmax = Math.min(rpGridWidth - 1, rpMXGrid + brush.size - 1);
                 let ymin = Math.max(0, rpMYGrid - brush.size + 1);
@@ -278,6 +279,7 @@ function rpUpdateMouseControls() {
             }
         });
     }
+    lastMouseButton = brush.mouseButton;
 };
 function rpDrawBrush() {
     if (brush.lineMode && brush.startsInRPE) {
