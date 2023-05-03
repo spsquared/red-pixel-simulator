@@ -2188,6 +2188,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
     document.onmousedown = (e) => {
         brush.mouseButtonStack.unshift(e.button);
         brush.mouseButton = brush.mouseButtonStack[0];
+        brush.lastMouseButton = brush.mouseButton;
     };
     document.onmouseup = (e) => {
         // most efficient code ever
