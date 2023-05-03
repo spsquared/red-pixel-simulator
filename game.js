@@ -1759,7 +1759,7 @@ function updateMouseControls() {
         brush.lineMode = false;
         clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.mouseButton == 2 || removing);
     }
-    if (brush.mouseButton == -1 || brush.mouseButton == 0) brush.selecting = false;
+    if (brush.mouseButton == -1 || !holdingControl) brush.selecting = false;
 };
 function brushActionLine(x1, y1, x2, y2, cb) {
     let slope = (y2 - y1) / (x2 - x1);

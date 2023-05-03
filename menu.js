@@ -273,6 +273,10 @@ sandboxButton.onclick = (e) => {
     clearTimeout(startTitleBob);
     levelDetails.style.display = 'none';
     restartButton.style.display = 'none';
+    pauseButton.disabled = false;
+    fastSimulationButton.disabled = false;
+    simulateSlowButton.disabled = false;
+    advanceTickButton.disabled = false;
     saveCodeText.disabled = false;
     generateSaveButton.disabled = false;
     uploadSaveButton.disabled = false;
@@ -323,6 +327,10 @@ function selectPuzzle() {
     clearTimeout(startTitleBob);
     levelDetails.style.display = '';
     restartButton.style.display = '';
+    pauseButton.disabled = false;
+    fastSimulationButton.disabled = false;
+    simulateSlowButton.disabled = false;
+    advanceTickButton.disabled = false;
     saveCodeText.disabled = true;
     generateSaveButton.disabled = true;
     uploadSaveButton.disabled = true;
@@ -689,10 +697,7 @@ PixSimAPI.onGameKicked = () => {
     loadPublicGameList(PixSimAPI.spectating);
 };
 PixSimAPI.onGameClosed = () => {
-    if (PixSimAPI.gameRunning) {
-        console.log('aaa')
-        transitionToMenu();
-    }
+    if (PixSimAPI.gameRunning) transitionToMenu();
     pixsimMenuContents.style.transform = 'translateY(-100%)';
     modal('Game closed', 'The game session was closed by the host');
     loadPublicGameList(PixSimAPI.spectating);

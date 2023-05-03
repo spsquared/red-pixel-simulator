@@ -5271,7 +5271,7 @@ window.addEventListener('load', async (e) => {
     const ctx2 = canvas2.getContext('2d');
     canvas2.width = 50;
     canvas2.height = 50;
-    const groupNames = ['General', 'Mechanical', 'Lasers', 'Music', 'Destruction', 'Level Building'];
+    const groupNames = ['General', 'Mechanical', 'Lasers', 'Music', 'Destruction', 'Puzzle Construction'];
     for (const id in pixels) {
         let start = performance.now();
         const pixel = pixels[id];
@@ -5326,6 +5326,7 @@ window.addEventListener('load', async (e) => {
                 groupHeader.onclick = (e) => {
                     open = !open;
                     groupHeader._refresh();
+                    clickSound();
                 };
                 groupHeader._refresh = () => {
                     if (open) groupBody.style.maxHeight = groupContents.getBoundingClientRect().height + 'px';

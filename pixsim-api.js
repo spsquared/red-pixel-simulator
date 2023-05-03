@@ -1,5 +1,5 @@
-const apiURI = 'https://api.pixelsimulator.repl.co';
-// const apiURI = 'http://localhost:5000';
+// const apiURI = 'https://api.pixelsimulator.repl.co';
+const apiURI = 'http://localhost:5000';
 const socket = io(apiURI, {
     path: '/pixsim-api',
     autoConnect: false,
@@ -37,7 +37,6 @@ socket.on('pong', () => {
         highPingWarning.style.display = '';
     }
 });
-
 // reusable wrapper interface (ignore the stuff above)
 class PixSimAPI {
     static #undef = this.init();
@@ -98,7 +97,7 @@ class PixSimAPI {
                         this.#RSA.key = await window.crypto.subtle.importKey('jwk', key, { name: "RSA-OAEP", hash: "SHA-256" }, false, ['encrypt']);
                     }
                     socket.emit('clientInfo', {
-                        gameType: 'rps',
+                        client: 'rps',
                         username: this.#username,
                         password: await this.#RSA.encode('')
                     });
@@ -221,9 +220,10 @@ class PixSimAPI {
         });
     }
 
-    static set gridSize(size) {
-        this.#gridWidth = size.width;
-        this.#gridHeight = size.height;
+    static set gridSize({ width, height } = {}) {
+        if (typeof width != 'number' || typeof height != 'number') return;
+        this.#gridWidth = width;
+        this.#gridHeight = height;
         if (this.#inGame) socket.emit('gridSize', { width: this.#gridWidth, height: this.#gridHeight });
     }
     static set onNewGridSize(cb) {
@@ -245,12 +245,12 @@ class PixSimAPI {
         let len = 0;
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid[i].length; j++) {
-                len++;
                 if (grid[i][j] != curr || len == 255) {
                     compressed.push(curr, len);
                     curr = grid[i][j];
                     len = 0;
                 }
+                len++;
             }
         }
         socket.emit('tick', { grid: new Uint8ClampedArray(compressed), data: data, origin: 'rps' });
@@ -321,6 +321,7 @@ class PixSimAPI {
         socket.off('timeout');
         socket.off('error');
         let handle = () => {
+            if (!this.#connected) return;
             cb();
             this.#connected = false;
             this.#inGame = false;
