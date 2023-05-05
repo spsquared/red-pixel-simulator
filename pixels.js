@@ -5087,7 +5087,7 @@ const pixels = {
     },
     red: {
         name: 'Red Pixel',
-        description: 'What???',
+        description: 'Mise en abyme',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 0, 0)';

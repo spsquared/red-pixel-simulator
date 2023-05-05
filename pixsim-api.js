@@ -84,11 +84,22 @@ class PixSimAPI {
         await new Promise((resolve, reject) => {
             const wakeup = new XMLHttpRequest();
             wakeup.open('GET', apiURI);
-            wakeup.onload = (e) => {
+            wakeup.onload = (res) => {
+                if (wakeup.status != 200) {
+                    wakeup.onerror();
+                    return;
+                }
+                try {
+                    let response = JSON.parse(wakeup.response);
+                    if (response.active == false) reject(new Error(`Wakeup call failed - PixSim API server not active. Try again later or contact Teh Developers`));
+                } catch (err) {
+                    reject(new Error(`Wakeup call failed - Invalid JSON response: ${wakeup.response}`))
+                    return;
+                }
                 if (!socket.connected) socket.connect();
             };
-            wakeup.onerror = (e) => {
-                reject(new Error(`wakeup call failed: ${wakeup.status} ${wakeup.statusText}`));
+            wakeup.onerror = (err) => {
+                reject(new Error(`Wakeup call failed - HTTP: ${wakeup.status} ${wakeup.statusText}`));
             };
             wakeup.send();
             socket.connect();
@@ -237,25 +248,32 @@ class PixSimAPI {
             cb(this.#gridWidth, this.#gridHeight);
         });
     }
-    static sendTick(grid, data) {
+    static sendTick(grid, {tick, }) {
         if (!this.#inGame || !this.#gameRunning || grid.length == 0 || grid[0].length == 0) return;
         // simple compression algorithm that compresses well with large horizontal spans of the same pixel
         // not as good as png compression but png is very complex
-        let compressed = [];
+        let compressedGrid = [];
         let curr = grid[0][0];
         let len = 0;
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid[i].length; j++) {
                 if (grid[i][j] != curr || len == 255) {
-                    compressed.push(curr, len);
+                    compressedGrid.push(curr, len);
                     curr = grid[i][j];
                     len = 0;
                 }
                 len++;
             }
         }
-        compressed.push(curr, len);
-        socket.emit('tick', { grid: new Uint8ClampedArray(compressed), data: data, origin: 'rps' });
+        compressedGrid.push(curr, len);
+        socket.emit('tick', {
+            grid: new Uint8ClampedArray(compressedGrid),
+            data: {
+                tick: tick,
+                teamPixelAmounts: []
+            },
+            origin: 'rps'
+        });
     }
     static set onGameTick(cb) {
         if (typeof cb != 'function') return;
@@ -265,6 +283,9 @@ class PixSimAPI {
             let compressed = [];
             cb(data.grid, data.data);
         });
+    }
+    static sendInput() {
+
     }
 
     static set teamSize(size) {

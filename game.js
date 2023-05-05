@@ -133,6 +133,7 @@ function resetCanvases() {
     placeablectx.imageSmoothingEnabled = false;
     placeablectx.webkitImageSmoothingEnabled = false;
     placeablectx.mozImageSmoothingEnabled = false;
+    ctx.textRendering = 'optimizeSpeed';
     rpResetCanvases();
 };
 const sidebar = document.getElementById('sidebar');
@@ -165,17 +166,6 @@ const lastMusicGrid = [];
 const placeableGrid = [];
 const lastPlaceableGrid = [];
 const noiseGrid = [];
-let pendingExplosions = [];
-let frameCount = 0;
-let ticks = 0;
-let simulationPaused = true;
-let slowSimulation = false;
-let fastSimulation = false;
-let runTicks = 0;
-const frameList = [];
-const fpsList = [];
-let lastFpsList = -1;
-let lastTick = -1;
 
 // camera and brush
 const brush = {
@@ -1192,10 +1182,22 @@ function explode(x1, y1, size) {
     }
 };
 
-// draw loop
+// draw and update
+let frameCount = 0;
+let ticks = 0;
+let simulationPaused = true;
+let slowSimulation = false;
+let fastSimulation = false;
+let runTicks = 0;
+const frameList = [];
+const fpsList = [];
+let lastFpsList = 0;
+let lastTick = 0;
+let frameTime = 0;
+let tickTime = 0;
 function draw() {
     if (inMenuScreen) return;
-
+    
     // reset stuff
     ctx.resetTransform();
     gamectx.resetTransform();
@@ -1228,7 +1230,8 @@ function draw() {
     updateTick();
 
     // fps
-    while (frameList[0] + 1000 < performance.now()) {
+    let now = performance.now();
+    while (frameList[0] + 1000 < now) {
         frameList.shift(1);
     }
 
@@ -1265,6 +1268,7 @@ function draw() {
     prevMY = mY;
 };
 function drawFrame() {
+    let frameStart = performance.now();
     if (!fastSimulation || frameCount % 10 == 0) {
         ctx.clearRect(0, 0, canvasResolution, canvasResolution);
         gamectx.fillStyle = backgroundColor + (255 - fadeEffect).toString(16);
@@ -1321,6 +1325,7 @@ function drawFrame() {
     if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 != 0)) {
         frameList.push(performance.now());
     }
+    frameTime = performance.now() - frameStart;
 };
 function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
     let scale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
@@ -1478,8 +1483,8 @@ function drawUI() {
         }
         ctx.fillText('Last 10 seconds:', 10, 42);
     }
-    let fpsText = `FPS: ${frameList.length}`;
-    let tickText = `Tick: ${ticks}`;
+    let fpsText = `FPS: ${frameList.length} ${debugInfo ? `(${frameTime.toFixed(2)}ms)` : ''}`;
+    let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(2)}ms)` : ''}`;
     let brushSizeText = `Brush Size: ${(brush.isSelection && selection.grid[0] != undefined) ? '-' : brush.size * 2 - 1}`;
     let brushPixelText = (brush.isSelection && selection.grid[0] != undefined) ? `Brush: Paste` : `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
@@ -1521,6 +1526,7 @@ function drawUI() {
     }
 };
 function updateTick() {
+    let tickStart = performance.now();
     if ((!PixSimAPI.inGame || PixSimAPI.isHost) && (!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && performance.now() - lastTick >= 100)) {
         runTicks = 0; // lol
         let max = fastSimulation ? 10 : 1;
@@ -1646,6 +1652,7 @@ function updateTick() {
 
         lastTick = performance.now();
     }
+    tickTime = performance.now() - tickStart;
 };
 async function startDrawLoop() {
     let start, remaining;
