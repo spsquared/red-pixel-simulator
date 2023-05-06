@@ -65,7 +65,7 @@
                 background-size: 60% 100%;
                 background-repeat: no-repeat;
                 box-shadow: 0px 0px 0.5vw rgba(255, 255, 255, 0.5);
-                animation: pageLoadCoverProgress 2s infinite;
+                animation: pageLoadCoverProgress ease 2s infinite;
             }
             #noscript {
                 position: fixed;
@@ -459,7 +459,9 @@
                 </div>
             </div>
             <div id="pixsimMenuConnecting">
-                <div id="pixsimMenuConnectingSpinner"></div><br>
+                <div id="pixsimMenuConnectingSpinnerContainer">
+                    <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                </div><br>
                 <div id="pixsimMenuConnectingText">Connecting to PixSim API...</div>
                 <div id="pixsimMenuConnectingTip">This is a loading tip.</div>
             </div>
@@ -546,10 +548,10 @@
         <div id="copyrightNotice"><a href="">Copyright &copy; 2023 Sampleprovider(sp) under MIT License</a></div>
         <div id="t_bottom"></div>
         <div id="t_top">
-            <div id="t_loadingContainer"><table><tbody><tr>
-                <td><div id="t_loadingRedpixel"></div></td>
-                <td><div id="t_loadingText"><div>Red Pixel<br>Simulator</div></div></td>
-            </tr></tbody></table></div>
+            <div id="t_loadingContainer">
+                <div id="t_loadingRedpixel"></div>
+                <div id="t_loadingText"><div>Red Pixel<br>Simulator</div></div>
+            </div>
         </div>
         <div id="loadingTip">This is a loading tip.</div>
         <div id="pixsimDragCardWrapper"></div>

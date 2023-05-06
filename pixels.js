@@ -5341,7 +5341,7 @@ window.addEventListener('load', async (e) => {
                 parentGroup: pixelGroups[pixel.group]
             };
         }
-        await new Promise(resolve => setTimeout(resolve, 3 - (performance.now() - start)));
+        await new Promise(resolve => setTimeout(resolve, 2 - (performance.now() - start)));
     }
     for (const group of pixelGroups) {
         pixelPicker.appendChild(group)

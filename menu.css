@@ -232,15 +232,60 @@
     transition: 200ms linear opacity;
     text-align: center;
 }
-#pixsimMenuConnectingSpinner {
+#pixsimMenuConnectingSpinnerContainer {
     display: inline-block;
     position: relative;
     top: 20vh;
     width: 10vh;
     height: 10vh;
-    background-color: red;
+}
+#pixsimMenuConnectingSpinnerContainer div {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 10vh;
+    height: 10vh;
+    animation: 4s cubic-bezier(0.5, 0, 0.5, 1) spin infinite;
+}
+#pixsimMenuConnectingSpinnerContainer div:nth-child(8) {
+    background-color: rgb(255, 0, 0);
     box-shadow: 0px 0px 1vh rgba(255, 0, 0, 0.5);
-    animation: 500ms cubic-bezier(0.5, 0, 0.5, 1) spin infinite;
+    animation-delay: 400ms;
+}
+#pixsimMenuConnectingSpinnerContainer div:nth-child(7) {
+    background-color: rgb(255, 180, 0);
+    box-shadow: 0px 0px 1vh rgba(255, 180, 0, 0.5);
+    animation-delay: 800ms;
+}
+#pixsimMenuConnectingSpinnerContainer div:nth-child(6) {
+    background-color: rgb(255, 255, 0);
+    box-shadow: 0px 0px 1vh rgba(255, 255, 0, 0.5);
+    animation-delay: 1200ms;
+}
+#pixsimMenuConnectingSpinnerContainer div:nth-child(5) {
+    background-color: rgb(0, 255, 0);
+    box-shadow: 0px 0px 1vh rgba(0, 255, 0, 0.5);
+    animation-delay: 1600ms;
+}
+#pixsimMenuConnectingSpinnerContainer div:nth-child(4) {
+    background-color: rgb(0, 255, 255);
+    box-shadow: 0px 0px 1vh rgba(0, 255, 255, 0.5);
+    animation-delay: 2000ms;
+}
+#pixsimMenuConnectingSpinnerContainer div:nth-child(3) {
+    background-color: rgb(0, 180, 255);
+    box-shadow: 0px 0px 1vh rgba(0, 180, 255, 0.5);
+    animation-delay: 2400ms;
+}
+#pixsimMenuConnectingSpinnerContainer div:nth-child(2) {
+    background-color: rgb(0, 0, 255);
+    box-shadow: 0px 0px 1vh rgba(0, 0, 255, 0.5);
+    animation-delay: 2800ms;
+}
+#pixsimMenuConnectingSpinnerContainer div:nth-child(1) {
+    background-color: rgb(255, 0, 255);
+    box-shadow: 0px 0px 1vh rgba(255, 0, 255, 0.5);
+    animation-delay: 3200ms;
 }
 #pixsimMenuConnectingText {
     display: inline-block;
@@ -255,6 +300,18 @@
     left: 5vw;
     width: 40vw;
     font-size: 2.5vh;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotateZ(0deg);
+    }
+    40% {
+        transform: rotateZ(90deg);
+    }
+    100% {
+        transform: rotateZ(90deg);
+    }
 }
 
 #pixsimMenuBody {
@@ -324,15 +381,6 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: 80% 80%;
-}
-
-@keyframes spin {
-    from {
-        transform: rotateZ(0deg);
-    }
-    to {
-        transform: rotateZ(90deg);
-    }
 }
 
 #hostJoinCode {
@@ -758,6 +806,7 @@
     top: 110vh;
 }
 #t_loadingContainer {
+    display: grid;
     position: absolute;
     left: 50vw;
     bottom: -8vh;
@@ -765,7 +814,7 @@
     transform: translateX(-50%);
 }
 #t_loadingRedpixel {
-    display: inline-block;
+    grid-column: 1;
     width: 16vh;
     height: 16vh;
     margin-right: 1vh;
@@ -773,6 +822,7 @@
     box-shadow: 0px 0px 1vh rgba(255, 0, 0, 0.7);
 }
 #t_loadingText {
+    grid-column: 2;
     display: inline-block;
     height: 16vh;
     font-family: 'Lucida Console', Lucida, monospace;
