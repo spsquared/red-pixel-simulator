@@ -383,7 +383,7 @@ function loadPuzzle(section, level) {
                 }
                 if (puzzle.inventory[pixelType] !== undefined || (savedData.pixels[pixelType] != 0 && pixelType != 'air')) {
                     pixelAmounts[pixelType] = savedData.pixels[pixelType];
-                    updatePixelAmount(pixelType, false, true);
+                    updatePixelAmount(pixelType, pixelAmounts, false, true);
                 }
             }
             currentPuzzleCompleted = savedData.completed ?? false;
@@ -395,11 +395,11 @@ function loadPuzzle(section, level) {
                     isFirst = false;
                 }
                 pixelAmounts[pixelType] = puzzle.inventory[pixelType];
-                updatePixelAmount(pixelType, false, true);
+                updatePixelAmount(pixelType, pixelAmounts, false, true);
             }
         }
         pixelAmounts['air'] = Infinity;
-        updatePixelAmount('air', false, false);
+        updatePixelAmount('air', pixelAmounts, false, false);
         camera.scale = 1;
         camera.x = 0;
         camera.y = 0;
