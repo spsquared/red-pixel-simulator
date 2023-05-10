@@ -1870,7 +1870,6 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
             });
         } else {
             if (sandboxMode) {
-                console.log('buh')
                 act(function (x, y) {
                     grid[y][x] = clickPixelNum;
                     if (musicGrid[y][x]) {
@@ -1880,7 +1879,6 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                     if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
                 });
             } else {
-                console.log('not buh')
                 modifiedPixelCounts[clickPixelNum] = true;
                 if (inventory[placePixel] <= 0) skipToEnd = true;
                 else if (act(function (x, y) {
