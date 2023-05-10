@@ -1892,7 +1892,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                             musicPixel(musicGrid[y][x], false);
                             musicGrid[y][x] = -1;
                         }
-                        inventory[brush.placePixel]--;
+                        inventory[placePixel]--;
                         if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
                     }
                     return inventory[placePixel] <= 0;
