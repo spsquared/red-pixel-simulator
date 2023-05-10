@@ -1788,11 +1788,11 @@ function brushActionLine(x1, y1, x2, y2, size, cb) {
         }
     }
 };
-function clickLine(x1, y1, x2, y2, remove, pixel = brush.pixel, size = brush.size) {
+function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brush.size) {
     if ((!sandboxMode && !PixSimAPI.inGame) && !inResetState) return;
     const inventory = PixSimAPI.inGame ? (PixSimAPI.team ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
     let modifiedPixelCounts = [];
-    let clickPixelNum = pixels[pixel].numId;
+    let clickPixelNum = pixels[placePixel].numId;
     let skipToEnd = false;
     brushActionLine(x1, y1, x2, y2, size, (rect) => {
         if (skipToEnd) return;
@@ -1836,40 +1836,41 @@ function clickLine(x1, y1, x2, y2, remove, pixel = brush.pixel, size = brush.siz
                     }
                 });
             }
-        } else if (pixel == 'fire') {
+        } else if (placePixel == 'fire') {
             if (sandboxMode) {
                 act(function (x, y) {
                     fireGrid[y][x] = true;
                 });
             } else {
                 modifiedPixelCounts[clickPixelNum] = true;
-                if (inventory[pixel] <= 0) skipToEnd = true;
+                if (inventory[placePixel] <= 0) skipToEnd = true;
                 else if (act(function (x, y) {
                     if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && !fireGrid[y][x]) {
                         fireGrid[y][x] = true;
-                        inventory[pixel]--;
+                        inventory[placePixel]--;
                     }
-                    return inventory[pixel] <= 0;
+                    return inventory[placePixel] <= 0;
                 })) skipToEnd = true;
             }
-        } else if (pixel == 'placementRestriction') {
+        } else if (placePixel == 'placementRestriction') {
             if (sandboxMode) act(function (x, y) {
                 placeableGrid[y][x] = false;
             })
-        } else if (pixel == 'placementUnRestriction') {
+        } else if (placePixel == 'placementUnRestriction') {
             if (sandboxMode) act(function (x, y) {
                 placeableGrid[y][x] = true;
             })
-        } else if (pixel == 'monster') {
+        } else if (placePixel == 'monster') {
             if (sandboxMode) act(function (x, y) {
                 monsterGrid[y][x] = true;
             });
-        } else if (pixel == 'target') {
+        } else if (placePixel == 'target') {
             if (sandboxMode) act(function (x, y) {
                 targetGrid[y][x] = true;
             });
         } else {
             if (sandboxMode) {
+                console.log('buh')
                 act(function (x, y) {
                     grid[y][x] = clickPixelNum;
                     if (musicGrid[y][x]) {
@@ -1879,8 +1880,9 @@ function clickLine(x1, y1, x2, y2, remove, pixel = brush.pixel, size = brush.siz
                     if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
                 });
             } else {
+                console.log('not buh')
                 modifiedPixelCounts[clickPixelNum] = true;
-                if (inventory[pixel] <= 0) skipToEnd = true;
+                if (inventory[placePixel] <= 0) skipToEnd = true;
                 else if (act(function (x, y) {
                     if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum) {
                         modifiedPixelCounts[grid[y][x]] = true;
@@ -1892,10 +1894,10 @@ function clickLine(x1, y1, x2, y2, remove, pixel = brush.pixel, size = brush.siz
                             musicPixel(musicGrid[y][x], false);
                             musicGrid[y][x] = -1;
                         }
-                        inventory[pixel]--;
+                        inventory[brush.placePixel]--;
                         if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
                     }
-                    return inventory[pixel] <= 0;
+                    return inventory[placePixel] <= 0;
                 })) skipToEnd = true;
             }
         }

@@ -68,6 +68,7 @@ class PixSimAPI {
     static #spectating = false;
     static #gridWidth = 0;
     static #gridHeight = 0;
+    static #inputQueue = [];
 
     static init() {
         this.onUpdateTeamList = () => { };
@@ -80,6 +81,12 @@ class PixSimAPI {
         this.onGameInput = () => { };
         this.onDisconnect = () => { };
         socket.on('team', (team) => this.#team = team);
+        setInterval(() => {
+            if (this.#connected && this.#inGame && this.#gameRunning && this.#inputQueue.length > 0) {
+                socket.emit('inputBatch', this.#inputQueue);
+                this.#inputQueue.length = 0;
+            }
+        }, 50);
     }
 
     static async connect() {
@@ -292,7 +299,7 @@ class PixSimAPI {
         switch (type) {
             case 0:
                 if (typeof data.x1 != 'number' || typeof data.y1 != 'number' || typeof data.x2 != 'number' || typeof data.y2 != 'number' || typeof data.pixel != 'number') return;
-                socket.emit('input', { type: type, data: [data.x1, data.y1, data.x2, data.y2, data.size, data.pixel] });
+                this.#inputQueue.push({ type: type, data: [data.x1, data.y1, data.x2, data.y2, data.size, data.pixel] });
                 break;
             case 1:
                 if (!(data.grid instanceof Array) || data.grid.length == 0 || data.grid[0].length == 0) return;
@@ -310,14 +317,14 @@ class PixSimAPI {
                     }
                 }
                 compressedGrid.push(curr, len);
-                socket.emit('input', { type: type, data: [data[0].length, ...compressedGrid] });
+                this.#inputQueue.push({ type: type, data: [data[0].length, ...compressedGrid] })
                 break;
         }
     }
     static set onGameInput(cb) {
         if (typeof cb != 'function') return;
         socket.off('input');
-        socket.on('input', (input) => {
+        let handleInput = (input) => {
             if (!this.#inGame || !this.#gameRunning) return;
             switch (input.type) {
                 case 0:
@@ -327,6 +334,10 @@ class PixSimAPI {
                     cb(input.type, { width: input.data[0], grid: input.data.slice(1) }, input.team);
                     break;
             }
+        };
+        socket.on('input', handleInput);
+        socket.on('inputBatch', (inputs) => {
+            for (let input of inputs) handleInput(input);
         });
     }
 

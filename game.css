@@ -128,6 +128,7 @@
     margin-bottom: 3px;
     margin-right: 2px;
     border: 2px solid transparent;
+    outline: 2px solid transparent;
     transition: 50ms linear transform;
     cursor: pointer;
 }
@@ -136,11 +137,8 @@
     transform: translateY(-5px);
 }
 .pickerPixelSelected {
-    margin-top: 4px;
-    margin-left: 3px;
-    margin-bottom: 0px;
-    margin-right: 0px;
-    border: 4px solid gold;
+    border-color: gold;
+    outline-color: gold;
 }
 .pickerPixelSelected:hover {
     border-color: gold !important;

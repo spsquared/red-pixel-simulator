@@ -408,7 +408,7 @@ function loadPuzzle(section, level) {
     }
 };
 
-window.addEventListener('load', (e) => {
+window.addEventListener('DOMContentLoaded', (e) => {
     for (let section in puzzles) {
         const block = document.createElement('div');
         block.classList.add('levelGroup');
@@ -460,3 +460,4 @@ window.addEventListener('load', (e) => {
         key = window.localStorage.key(i);
     }
 });
+
