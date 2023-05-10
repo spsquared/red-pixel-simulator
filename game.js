@@ -1197,7 +1197,7 @@ let frameTime = 0;
 let tickTime = 0;
 function draw() {
     if (inMenuScreen) return;
-    
+
     // reset stuff
     ctx.resetTransform();
     gamectx.resetTransform();
@@ -1396,7 +1396,7 @@ function drawBrush() {
         } else if (brush.lineMode && !brush.startsInRPE) {
             const clickPixelNum = (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
             abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
-            brushActionLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, (rect) => {
+            brushActionLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.size, (rect) => {
                 drawPixels(rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, clickPixelNum, 1, abovectx, true);
             });
             ctx.globalAlpha = 0.5;
@@ -1527,7 +1527,7 @@ function drawUI() {
 };
 function updateTick() {
     let tickStart = performance.now();
-    if ((!PixSimAPI.inGame || PixSimAPI.isHost) && (!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && performance.now() - lastTick >= 100)) {
+    if ((!PixSimAPI.inGame || PixSimAPI.isHost) && ((!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && performance.now() - lastTick >= 100))) {
         runTicks = 0; // lol
         let max = fastSimulation ? 10 : 1;
         for (let i = 0; i < max; i++) {
@@ -1648,7 +1648,7 @@ function updateTick() {
         if (!hasMonsters && !hasUnfulfilledTargets && !sandboxMode && !PixSimAPI.inGame) triggerWin();
 
         // send tick
-        if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, {});
+        if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, { tick: ticks, pixelAmounts: teamPixelAmounts });
 
         lastTick = performance.now();
     }
@@ -1670,10 +1670,270 @@ async function startDrawLoop() {
 };
 window.addEventListener('load', startDrawLoop);
 
+// brush
+function calcBrushRectCoordinates(x, y, size = brush.size) {
+    return {
+        xmin: Math.max(0, Math.min(x - size + 1, gridWidth)),
+        xmax: Math.max(-1, Math.min(x + size - 1, gridWidth - 1)),
+        ymin: Math.max(0, Math.min(y - size + 1, gridHeight)),
+        ymax: Math.max(-1, Math.min(y + size - 1, gridHeight - 1))
+    };
+};
+function updateMouseControls() {
+    const inventory = PixSimAPI.inGame ? (PixSimAPI.team ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
+    if (brush.mouseButton == 2 || removing) brush.isSelection = false;
+    if (!fastSimulation && acceptInputs && !inWinScreen && mouseOver && (!brush.lineMode || !brush.startsInRPE)) {
+        if (((brush.mouseButton != -1 && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined)) {
+            if (!brush.lineMode) {
+                brush.lineMode = true;
+                brush.lineStartX = mXGrid;
+                brush.lineStartY = mYGrid;
+                brush.startsInRPE = false;
+            }
+            if (brush.mouseButton == -1) {
+                brush.lineMode = false;
+                clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
+            }
+        } else if (brush.mouseButton != -1) {
+            brush.lineMode = false;
+            if (brush.isSelection && selection.grid[0] != undefined) {
+                let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
+                let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
+                let modifiedPixelCounts = [];
+                for (let y = 0; y < selection.grid.length; y++) {
+                    if (y + offsetY >= 0 && y + offsetY < gridHeight) for (let x = 0; x < selection.grid[y].length; x++) {
+                        if (x + offsetX >= 0 && x + offsetX < gridWidth) {
+                            if (sandboxMode || (placeableGrid[y + offsetY][x + offsetX] && grid[y + offsetY][x + offsetX] != pixNum.DELETER)) {
+                                if (!sandboxMode) {
+                                    let pid = (numPixels[selection.grid[y][x]] ?? numPixels[pixNum.MISSING]).id;
+                                    if (inventory[pid] <= 0) continue;
+                                    modifiedPixelCounts[grid[y + offsetY][x + offsetX]] = true;
+                                    inventory[pixelAt(x + offsetX, y + offsetY).id]++;
+                                    modifiedPixelCounts[selection.grid[y][x]] = true;
+                                    inventory[pid]--;
+                                }
+                                grid[y + offsetY][x + offsetX] = selection.grid[y][x];
+                                if (musicGrid[y + offsetY][x + offsetX]) {
+                                    musicPixel(musicGrid[y + offsetY][x + offsetX], false);
+                                    musicGrid[y + offsetY][x + offsetX] = -1;
+                                }
+                                if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_86) musicGrid[y + offsetY][x + offsetX] = -1;
+                            }
+                        }
+                    }
+                }
+                for (let pixelType in modifiedPixelCounts) {
+                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id, );
+                }
+            } else if (brush.mouseButton == 1) {
+                if (holdingControl) {
+                    camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+                    camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+                    forceRedraw = true;
+                } else if (pixelAt(mXGrid, mYGrid).pickable && pixelSelectors[pixelAt(mXGrid, mYGrid).id].box.style.display != 'none') {
+                    pixelSelectors[pixelAt(mXGrid, mYGrid).id].box.onclick();
+                }
+            } else if (brush.mouseButton == 0 && holdingControl) {
+                if (!brush.selecting) {
+                    brush.selecting = true;
+                    selection.x1 = mXGrid;
+                    selection.y1 = mYGrid;
+                    selection.show = true;
+                }
+                selection.x2 = mXGrid;
+                selection.y2 = mYGrid;
+            } else {
+                clickLine(prevMXGrid, prevMYGrid, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
+            }
+        }
+    } else if (brush.mouseButton == -1 && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined) && !brush.startsInRPE) {
+        brush.lineMode = false;
+        clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
+    }
+    if (brush.mouseButton == -1 || !holdingControl) brush.selecting = false;
+    brush.lastMouseButton = brush.mouseButton;
+};
+function brushActionLine(x1, y1, x2, y2, size, cb) {
+    let slope = (y2 - y1) / (x2 - x1);
+    if (!isFinite(slope)) {
+        cb({
+            xmin: Math.max(0, Math.min(x1 - size + 1, gridWidth - 1)),
+            xmax: Math.max(0, Math.min(x1 + size - 1, gridWidth - 1)),
+            ymin: Math.max(0, Math.min(Math.min(y2, y1) - size + 1, gridHeight - 1)),
+            ymax: Math.max(0, Math.min(Math.max(y2, y1) + size - 1, gridHeight - 1))
+        });
+    } else if (slope == 0) {
+        cb({
+            xmin: Math.max(0, Math.min(Math.min(x2, x1) - size + 1, gridWidth - 1)),
+            xmax: Math.max(0, Math.min(Math.max(x2, x1) + size - 1, gridWidth - 1)),
+            ymin: Math.max(0, Math.min(y1 - size + 1, gridHeight - 1)),
+            ymax: Math.max(0, Math.min(y1 + size - 1, gridHeight - 1))
+        });
+    } else if (Math.abs(slope) > 1) {
+        slope = 1 / slope;
+        let xmin = y2 < y1 ? x2 : x1;
+        let start = Math.min(y2, y1);
+        let end = Math.max(y2, y1);
+        for (let y = start; y <= end; y++) {
+            let x = Math.round(slope * (y - start)) + xmin;
+            cb(calcBrushRectCoordinates(x, y, size));
+        }
+    } else {
+        let ymin = x2 < x1 ? y2 : y1;
+        let start = Math.min(x2, x1);
+        let end = Math.max(x2, x1);
+        for (let x = start; x <= end; x++) {
+            let y = Math.round(slope * (x - start)) + ymin;
+            cb(calcBrushRectCoordinates(x, y, size));
+        }
+    }
+};
+function clickLine(x1, y1, x2, y2, remove, pixel = brush.pixel, size = brush.size) {
+    if ((!sandboxMode && !PixSimAPI.inGame) && !inResetState) return;
+    const inventory = PixSimAPI.inGame ? (PixSimAPI.team ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
+    let modifiedPixelCounts = [];
+    let clickPixelNum = pixels[pixel].numId;
+    let skipToEnd = false;
+    brushActionLine(x1, y1, x2, y2, size, (rect) => {
+        if (skipToEnd) return;
+        function act(cb) {
+            for (let i = rect.ymin; i <= rect.ymax; i++) {
+                for (let j = rect.xmin; j <= rect.xmax; j++) {
+                    if (cb(j, i)) return true;
+                }
+            }
+            return false;
+        };
+        if (remove) {
+            if (sandboxMode) {
+                act(function (x, y) {
+                    grid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                    monsterGrid[y][x] = false;
+                    targetGrid[y][x] = false;
+                    if (musicGrid[y][x]) {
+                        musicPixel(musicGrid[y][x], false);
+                        musicGrid[y][x] = 0;
+                    }
+                });
+            } else {
+                act(function (x, y) {
+                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
+                        let pixel = pixelAt(x, y).id;
+                        if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
+                        inventory[pixel]++;
+                        modifiedPixelCounts[grid[y][x]] = true;
+                        grid[y][x] = pixNum.AIR;
+                        if (fireGrid[y][x]) {
+                            inventory['fire']++;
+                            modifiedPixelCounts[pixNum.FIRE] = true;
+                            fireGrid[y][x] = false;
+                        }
+                        if (musicGrid[y][x]) {
+                            musicPixel(musicGrid[y][x], false);
+                            musicGrid[y][x] = 0;
+                        }
+                    }
+                });
+            }
+        } else if (pixel == 'fire') {
+            if (sandboxMode) {
+                act(function (x, y) {
+                    fireGrid[y][x] = true;
+                });
+            } else {
+                modifiedPixelCounts[clickPixelNum] = true;
+                if (inventory[pixel] <= 0) skipToEnd = true;
+                else if (act(function (x, y) {
+                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && !fireGrid[y][x]) {
+                        fireGrid[y][x] = true;
+                        inventory[pixel]--;
+                    }
+                    return inventory[pixel] <= 0;
+                })) skipToEnd = true;
+            }
+        } else if (pixel == 'placementRestriction') {
+            if (sandboxMode) act(function (x, y) {
+                placeableGrid[y][x] = false;
+            })
+        } else if (pixel == 'placementUnRestriction') {
+            if (sandboxMode) act(function (x, y) {
+                placeableGrid[y][x] = true;
+            })
+        } else if (pixel == 'monster') {
+            if (sandboxMode) act(function (x, y) {
+                monsterGrid[y][x] = true;
+            });
+        } else if (pixel == 'target') {
+            if (sandboxMode) act(function (x, y) {
+                targetGrid[y][x] = true;
+            });
+        } else {
+            if (sandboxMode) {
+                act(function (x, y) {
+                    grid[y][x] = clickPixelNum;
+                    if (musicGrid[y][x]) {
+                        musicPixel(musicGrid[y][x], false);
+                        musicGrid[y][x] = -1;
+                    }
+                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
+                });
+            } else {
+                modifiedPixelCounts[clickPixelNum] = true;
+                if (inventory[pixel] <= 0) skipToEnd = true;
+                else if (act(function (x, y) {
+                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum) {
+                        modifiedPixelCounts[grid[y][x]] = true;
+                        let pixel = pixelAt(x, y).id;
+                        if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
+                        inventory[pixel]++;
+                        grid[y][x] = clickPixelNum;
+                        if (musicGrid[y][x]) {
+                            musicPixel(musicGrid[y][x], false);
+                            musicGrid[y][x] = -1;
+                        }
+                        inventory[pixel]--;
+                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
+                    }
+                    return inventory[pixel] <= 0;
+                })) skipToEnd = true;
+            }
+        }
+    });
+    for (let pixelType in modifiedPixelCounts) {
+        if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id, inventory);
+    }
+    if (PixSimAPI.inGame && PixSimAPI.gameRunning && !PixSimAPI.isHost) {
+        PixSimAPI.sendInput(0, { x1: x1, y1: y1, x2: x2, y2: y2, size: brush.size, pixel: remove ? -1 : clickPixelNum });
+    }
+    if (!sandboxMode && !PixSimAPI.inGame) {
+        saveCode = generateSaveCode();
+        window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compressToBase64(JSON.stringify({
+            code: saveCode,
+            pixels: getPixelAmounts(),
+            completed: currentPuzzleCompleted
+        })));
+        saveCodeText.value = saveCode;
+    }
+};
+
 // PixSim API
+const teamPixelAmounts = [
+    {},
+    {}
+];
+function resetPixSimPixelAmounts() {
+    for (const id in pixels) {
+        teamPixelAmounts[0][id] = -Infinity;
+        teamPixelAmounts[1][id] = -Infinity;
+    }
+    teamPixelAmounts[0]['air'] = Infinity;
+    teamPixelAmounts[1]['air'] = Infinity;
+};
 PixSimAPI.onGameStart = () => {
     sandboxMode = false;
     transitionToGame(async () => {
+        resetPixSimPixelAmounts();
         if (PixSimAPI.isHost) {
             createGrid(100, 100);
             PixSimAPI.gridSize = { width: gridWidth, height: gridHeight };
@@ -1704,260 +1964,28 @@ PixSimAPI.onGameStart = () => {
         document.getElementById('premadeSaves').style.display = 'none';
         resetPixelAmounts();
     });
-}
+};
 PixSimAPI.onNewGridSize = createGrid;
 PixSimAPI.onGameTick = (compressedGrid, tickData) => {
-    let compressed = new Uint8ClampedArray(compressedGrid);
     // sync to framerate to reduce tearing (probably not necessary)?
+    ticks = tickData.tick;
     let loc = 0;
-    for (let i = 0; i < compressed.length; i += 2) {
-        let pixel = compressed[i];
-        let run = compressed[i + 1];
+    for (let i = 0; i < compressedGrid.length; i += 2) {
+        let pixel = compressedGrid[i];
+        let run = compressedGrid[i + 1];
         for (let j = 0; j < run; j++, loc++) {
             grid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
         }
     }
 };
-
-// brush
-function calcBrushRectCoordinates(x, y) {
-    return {
-        xmin: Math.max(0, Math.min(x - brush.size + 1, gridWidth)),
-        xmax: Math.max(-1, Math.min(x + brush.size - 1, gridWidth - 1)),
-        ymin: Math.max(0, Math.min(y - brush.size + 1, gridHeight)),
-        ymax: Math.max(-1, Math.min(y + brush.size - 1, gridHeight - 1))
-    };
-};
-function updateMouseControls() {
-    if (brush.mouseButton == 2 || removing) brush.isSelection = false;
-    if (!fastSimulation && acceptInputs && !inWinScreen && mouseOver && (!brush.lineMode || !brush.startsInRPE)) {
-        if (((brush.mouseButton != -1 && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined)) {
-            if (!brush.lineMode) {
-                brush.lineMode = true;
-                brush.lineStartX = mXGrid;
-                brush.lineStartY = mYGrid;
-                brush.startsInRPE = false;
-            }
-            if (brush.mouseButton == -1) {
-                brush.lineMode = false;
-                clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
-            }
-        } else if (brush.mouseButton != -1) {
-            brush.lineMode = false;
-            if (brush.isSelection && selection.grid[0] != undefined) {
-                let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
-                let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
-                let modifiedPixelCounts = [];
-                for (let y = 0; y < selection.grid.length; y++) {
-                    if (y + offsetY >= 0 && y + offsetY < gridHeight) for (let x = 0; x < selection.grid[y].length; x++) {
-                        if (x + offsetX >= 0 && x + offsetX < gridWidth) {
-                            if (sandboxMode || (placeableGrid[y + offsetY][x + offsetX] && grid[y + offsetY][x + offsetX] != pixNum.DELETER)) {
-                                if (!sandboxMode) {
-                                    let pid = (numPixels[selection.grid[y][x]] ?? numPixels[pixNum.MISSING]).id;
-                                    if (pixelAmounts[pid] <= 0) continue;
-                                    modifiedPixelCounts[grid[y + offsetY][x + offsetX]] = true;
-                                    pixelAmounts[pixelAt(x + offsetX, y + offsetY).id]++;
-                                    modifiedPixelCounts[selection.grid[y][x]] = true;
-                                    pixelAmounts[pid]--;
-                                }
-                                grid[y + offsetY][x + offsetX] = selection.grid[y][x];
-                                if (musicGrid[y + offsetY][x + offsetX]) {
-                                    musicPixel(musicGrid[y + offsetY][x + offsetX], false);
-                                    musicGrid[y + offsetY][x + offsetX] = -1;
-                                }
-                                if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_86) musicGrid[y + offsetY][x + offsetX] = -1;
-                            }
-                        }
-                    }
-                }
-                for (let pixelType in modifiedPixelCounts) {
-                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
-                }
-            } else if (brush.mouseButton == 1) {
-                if (holdingControl) {
-                    camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
-                    camera.y = Math.max(0, Math.min(camera.y + prevMY - mY, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
-                    forceRedraw = true;
-                } else if (pixelAt(mXGrid, mYGrid).pickable && pixelSelectors[pixelAt(mXGrid, mYGrid).id].box.style.display != 'none') {
-                    pixelSelectors[pixelAt(mXGrid, mYGrid).id].box.onclick();
-                }
-            } else if (brush.mouseButton == 0 && holdingControl) {
-                if (!brush.selecting) {
-                    brush.selecting = true;
-                    selection.x1 = mXGrid;
-                    selection.y1 = mYGrid;
-                    selection.show = true;
-                }
-                selection.x2 = mXGrid;
-                selection.y2 = mYGrid;
-            } else {
-                clickLine(prevMXGrid, prevMYGrid, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
-            }
-        }
-    } else if (brush.mouseButton == -1 && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined) && !brush.startsInRPE) {
-        brush.lineMode = false;
-        clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
-    }
-    if (brush.mouseButton == -1 || !holdingControl) brush.selecting = false;
-    brush.lastMouseButton = brush.mouseButton;
-};
-function brushActionLine(x1, y1, x2, y2, cb) {
-    let slope = (y2 - y1) / (x2 - x1);
-    if (!isFinite(slope)) {
-        cb({
-            xmin: Math.max(0, Math.min(x1 - brush.size + 1, gridWidth - 1)),
-            xmax: Math.max(0, Math.min(x1 + brush.size - 1, gridWidth - 1)),
-            ymin: Math.max(0, Math.min(Math.min(y2, y1) - brush.size + 1, gridHeight - 1)),
-            ymax: Math.max(0, Math.min(Math.max(y2, y1) + brush.size - 1, gridHeight - 1))
-        });
-    } else if (slope == 0) {
-        cb({
-            xmin: Math.max(0, Math.min(Math.min(x2, x1) - brush.size + 1, gridWidth - 1)),
-            xmax: Math.max(0, Math.min(Math.max(x2, x1) + brush.size - 1, gridWidth - 1)),
-            ymin: Math.max(0, Math.min(y1 - brush.size + 1, gridHeight - 1)),
-            ymax: Math.max(0, Math.min(y1 + brush.size - 1, gridHeight - 1))
-        });
-    } else if (Math.abs(slope) > 1) {
-        slope = 1 / slope;
-        let xmin = y2 < y1 ? x2 : x1;
-        let start = Math.min(y2, y1);
-        let end = Math.max(y2, y1);
-        for (let y = start; y <= end; y++) {
-            let x = Math.round(slope * (y - start)) + xmin;
-            cb(calcBrushRectCoordinates(x, y));
-        }
-    } else {
-        let ymin = x2 < x1 ? y2 : y1;
-        let start = Math.min(x2, x1);
-        let end = Math.max(x2, x1);
-        for (let x = start; x <= end; x++) {
-            let y = Math.round(slope * (x - start)) + ymin;
-            cb(calcBrushRectCoordinates(x, y));
-        }
-    }
-};
-function clickLine(x1, y1, x2, y2, remove) {
-    if ((!sandboxMode && !PixSimAPI.inGame) && !inResetState) return;
-    let modifiedPixelCounts = [];
-    let clickPixelNum = pixels[brush.pixel].numId;
-    let skipToEnd = false;
-    brushActionLine(x1, y1, x2, y2, (rect) => {
-        if (skipToEnd) return;
-        function act(cb) {
-            for (let i = rect.ymin; i <= rect.ymax; i++) {
-                for (let j = rect.xmin; j <= rect.xmax; j++) {
-                    if (cb(j, i)) return true;
-                }
-            }
-            return false;
-        };
-        if (remove) {
-            if (sandboxMode) {
-                act(function (x, y) {
-                    grid[y][x] = pixNum.AIR;
-                    fireGrid[y][x] = false;
-                    monsterGrid[y][x] = false;
-                    targetGrid[y][x] = false;
-                    if (musicGrid[y][x]) {
-                        musicPixel(musicGrid[y][x], false);
-                        musicGrid[y][x] = 0;
-                    }
-                });
-            } else {
-                act(function (x, y) {
-                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
-                        let pixel = pixelAt(x, y).id;
-                        if (pixelAmounts[pixel] == -Infinity) pixelAmounts[pixel] = 0;
-                        pixelAmounts[pixel]++;
-                        modifiedPixelCounts[grid[y][x]] = true;
-                        grid[y][x] = pixNum.AIR;
-                        if (fireGrid[y][x]) {
-                            pixelAmounts['fire']++;
-                            modifiedPixelCounts[pixNum.FIRE] = true;
-                            fireGrid[y][x] = false;
-                        }
-                        if (musicGrid[y][x]) {
-                            musicPixel(musicGrid[y][x], false);
-                            musicGrid[y][x] = 0;
-                        }
-                    }
-                });
-            }
-        } else if (brush.pixel == 'fire') {
-            if (sandboxMode) {
-                act(function (x, y) {
-                    fireGrid[y][x] = true;
-                });
-            } else {
-                modifiedPixelCounts[clickPixelNum] = true;
-                if (pixelAmounts[brush.pixel] <= 0) skipToEnd = true;
-                else if (act(function (x, y) {
-                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && !fireGrid[y][x]) {
-                        fireGrid[y][x] = true;
-                        pixelAmounts[brush.pixel]--;
-                    }
-                    return pixelAmounts[brush.pixel] <= 0;
-                })) skipToEnd = true;
-            }
-        } else if (brush.pixel == 'placementRestriction') {
-            if (sandboxMode) act(function (x, y) {
-                placeableGrid[y][x] = false;
-            })
-        } else if (brush.pixel == 'placementUnRestriction') {
-            if (sandboxMode) act(function (x, y) {
-                placeableGrid[y][x] = true;
-            })
-        } else if (brush.pixel == 'monster') {
-            if (sandboxMode) act(function (x, y) {
-                monsterGrid[y][x] = true;
-            });
-        } else if (brush.pixel == 'target') {
-            if (sandboxMode) act(function (x, y) {
-                targetGrid[y][x] = true;
-            });
-        } else {
-            if (sandboxMode) {
-                act(function (x, y) {
-                    grid[y][x] = clickPixelNum;
-                    if (musicGrid[y][x]) {
-                        musicPixel(musicGrid[y][x], false);
-                        musicGrid[y][x] = -1;
-                    }
-                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
-                });
-            } else {
-                modifiedPixelCounts[clickPixelNum] = true;
-                if (pixelAmounts[brush.pixel] <= 0) skipToEnd = true;
-                else if (act(function (x, y) {
-                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum) {
-                        modifiedPixelCounts[grid[y][x]] = true;
-                        let pixel = pixelAt(x, y).id;
-                        if (pixelAmounts[pixel] == -Infinity) pixelAmounts[pixel] = 0;
-                        pixelAmounts[pixel]++;
-                        grid[y][x] = clickPixelNum;
-                        if (musicGrid[y][x]) {
-                            musicPixel(musicGrid[y][x], false);
-                            musicGrid[y][x] = -1;
-                        }
-                        pixelAmounts[brush.pixel]--;
-                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
-                    }
-                    return pixelAmounts[brush.pixel] <= 0;
-                })) skipToEnd = true;
-            }
-        }
-    });
-    for (let pixelType in modifiedPixelCounts) {
-        if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
-    }
-    if (!sandboxMode && !PixSimAPI.inGame) {
-        saveCode = generateSaveCode();
-        window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compressToBase64(JSON.stringify({
-            code: saveCode,
-            pixels: getPixelAmounts(),
-            completed: currentPuzzleCompleted
-        })));
-        saveCodeText.value = saveCode;
+PixSimAPI.onGameInput = (type, data, team) => {
+    switch (type) {
+        case 0:
+            clickLine(data.x1, data.y1, data.x2, data.y2, data.pixel == -1, (numPixels[data.pixel] ?? pixNum.MISSING).id, data.size);
+            break;
+        case 1:
+            // buh paste
+            break;
     }
 };
 
@@ -1990,6 +2018,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             }
         } else if (key == 'x' && e.ctrlKey) {
             if (selection.show) {
+                const inventory = PixSimAPI.inGame ? (PixSimAPI.team ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
                 selection.grid = [];
                 let xmin = Math.min(selection.x1, selection.x2);
                 let xmax = Math.max(selection.x1, selection.x2);
@@ -2008,7 +2037,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                             }
                         } else if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
                             selection.grid[y - ymin][x - xmin] = grid[y][x];
-                            pixelAmounts[pixelAt(x, y).id]++;
+                            inventory[pixelAt(x, y).id]++;
                             modifiedPixelCounts[grid[y][x]] = true;
                             grid[y][x] = pixNum.AIR;
                             if (musicGrid[y][x]) {
@@ -2020,12 +2049,13 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 }
                 selection.show = false;
                 for (let pixelType in modifiedPixelCounts) {
-                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
+                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id, inventory);
                 }
                 window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
             }
         } else if (key == 'backspace') {
             if (selection.show) {
+                const inventory = PixSimAPI.inGame ? (PixSimAPI.team ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
                 let xmin = Math.min(selection.x1, selection.x2);
                 let xmax = Math.max(selection.x1, selection.x2);
                 let ymin = Math.min(selection.y1, selection.y2);
@@ -2040,7 +2070,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                                 musicGrid[y][x] = 0;
                             }
                         } else if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
-                            pixelAmounts[pixelAt(x, y).id]++;
+                            inventory[pixelAt(x, y).id]++;
                             modifiedPixelCounts[grid[y][x]] = true;
                             grid[y][x] = pixNum.AIR;
                             if (musicGrid[y][x]) {
@@ -2052,7 +2082,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 }
                 selection.show = false;
                 for (let pixelType in modifiedPixelCounts) {
-                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id);
+                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id, inventory);
                 }
             }
         } else if (key == 'c' && e.ctrlKey) {

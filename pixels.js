@@ -5133,12 +5133,12 @@ function resetPixelAmounts(showPixels = true) {
     }
     for (const id in pixels) {
         pixelAmounts[id] = -Infinity;
-        updatePixelAmount(id, true, showPixels);
+        updatePixelAmount(id, pixelAmounts, true, showPixels);
     }
     pixelAmounts['air'] = Infinity;
-    updatePixelAmount('air', false, true);
+    updatePixelAmount('air', pixelAmounts, false, true);
 };
-function updatePixelAmount(id, hideEmpty, forceShow) {
+function updatePixelAmount(id, inventory = pixelAmounts, hideEmpty = false, forceShow = false) {
     if (pixelSelectors[id] != undefined) {
         if (sandboxMode) {
             pixelSelectors[id].count.innerText = '';
@@ -5147,8 +5147,8 @@ function updatePixelAmount(id, hideEmpty, forceShow) {
             pixelSelectors[id].parentGroup.style.display = '';
             pixelSelectors[id].parentGroup.children[0]._refresh();
         } else {
-            pixelSelectors[id].count.innerText = pixelAmounts[id] == Infinity ? '∞' : pixelAmounts[id] == -Infinity ? 0 : pixelAmounts[id];
-            if (pixelAmounts[id] <= 0 || pixelAmounts[id] == Infinity || (PixSimAPI.gameRunning && !pixels[id].pixsimCompatible)) {
+            pixelSelectors[id].count.innerText = inventory[id] == Infinity ? '∞' : inventory[id] == -Infinity ? 0 : inventory[id];
+            if (inventory[id] <= 0 || inventory[id] == Infinity || (PixSimAPI.gameRunning && !pixels[id].pixsimCompatible)) {
                 pixelSelectors[id].box.classList.add('pickerNoPixels');
                 if (forceShow && !(PixSimAPI.inGame && !pixels[id].pixsimCompatible)) {
                     pixelSelectors[id].box.style.display = '';
@@ -5173,7 +5173,6 @@ function getPixelAmounts() {
     }
     return ret;
 };
-
 function generateMusicPixel(id, data) {
     return {
         name: data.name,

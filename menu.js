@@ -134,7 +134,7 @@ function transitionToGame(cb) {
     transitionBarTop.style.transform = 'translateY(60vh)';
     transitionBarBottom.style.transform = 'translateY(-60vh)';
     setTransitionTimeout(async () => {
-        await cb();
+        if (cb) await cb();
         menuScreen.style.backgroundColor = 'transparent';
         loadingTip.style.opacity = '0';
         transitionBarTop.style.transform = '';
@@ -150,7 +150,7 @@ function transitionToGame(cb) {
         }, 300);
     }, 800);
 };
-function transitionToMenu() {
+function transitionToMenu(cb) {
     acceptMenuInputs = true;
     for (let t of transitionTimeouts) {
         clearInterval(t);
@@ -168,7 +168,8 @@ function transitionToMenu() {
     transitionBarTop.style.transform = 'translateY(60vh)';
     transitionBarBottom.style.transform = 'translateY(-60vh)';
     restoreMenuScreen();
-    setTransitionTimeout(() => {
+    setTransitionTimeout(async () => {
+        if (cb) await cb();
         menuScreen.style.transitionDuration = '';
         menuScreen.style.backgroundColor = '';
         loadingTip.style.opacity = '0';
@@ -192,7 +193,7 @@ function transitionWithinGame(cb) {
     transitionBarTop.style.transform = 'translateY(60vh)';
     transitionBarBottom.style.transform = 'translateY(-60vh)';
     setTransitionTimeout(async () => {
-        await cb();
+        if (cb) await cb();
         loadingTip.style.opacity = '0';
         transitionBarTop.style.transform = '';
         transitionBarBottom.style.transform = '';
@@ -696,10 +697,13 @@ PixSimAPI.onGameKicked = () => {
         pixsimHostStartGame.onclick = null;
         pixsimWaitLeaveGame.onclick = null;
         PixSimAPI.disconnect();
-        transitionToMenu();
+        transitionToMenu(async() => {
+            await modal('Kicked from game', 'You were removed from the game by the host');
+        });
+    } else {
+        modal('Kicked from game', 'You were removed from the game by the host');
     }
     pixsimMenuContents.style.transform = 'translateY(-100%)';
-    modal('Kicked from game', 'You were removed from the game by the host');
     loadPublicGameList(PixSimAPI.spectating);
 };
 PixSimAPI.onGameClosed = () => {
@@ -712,10 +716,13 @@ PixSimAPI.onGameClosed = () => {
         pixsimHostStartGame.onclick = null;
         pixsimWaitLeaveGame.onclick = null;
         PixSimAPI.disconnect();
-        transitionToMenu();
+        transitionToMenu(async() => {
+            await modal('Game closed', 'The game session was closed by the host');
+        });
+    } else {
+        modal('Game closed', 'The game session was closed by the host');
     }
     pixsimMenuContents.style.transform = 'translateY(-100%)';
-    modal('Game closed', 'The game session was closed by the host');
     loadPublicGameList(PixSimAPI.spectating);
 };
 pixsimJoinGameCodeCode.onkeyup();

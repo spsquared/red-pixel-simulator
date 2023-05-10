@@ -57,13 +57,14 @@ class PixSimAPI {
     static #isHost = false;
     static #gameMode = 0;
     static #teamSize = 1;
+    static #team = 0;
     static #gameModes = [
         {
             name: 'Pixelite Crash',
             id: 'pixelcrash',
             description: 'Build vaults of Color and battle to destroy the other Pixelite crystal!<br>Teams must collect colors to create pixels in a battle-royale competition to break through and destroy their opponent.'
         }
-    ]
+    ];
     static #spectating = false;
     static #gridWidth = 0;
     static #gridHeight = 0;
@@ -76,7 +77,9 @@ class PixSimAPI {
         this.onGameClosed = () => { };
         this.onNewGridSize = () => { };
         this.onGameTick = () => { };
+        this.onGameInput = () => { };
         this.onDisconnect = () => { };
+        socket.on('team', (team) => this.#team = team);
     }
 
     static async connect() {
@@ -153,6 +156,7 @@ class PixSimAPI {
             socket.once('joinSuccess', (team) => {
                 this.#isHost = false;
                 this.#inGame = true;
+                this.#team = team;
                 socket.off('forcedSpectator');
                 resolve(0);
             });
@@ -248,8 +252,8 @@ class PixSimAPI {
             cb(this.#gridWidth, this.#gridHeight);
         });
     }
-    static sendTick(grid, {tick, }) {
-        if (!this.#inGame || !this.#gameRunning || grid.length == 0 || grid[0].length == 0) return;
+    static sendTick(grid, { tick, pixelAmounts }) {
+        if (!this.#inGame || !this.#gameRunning || !(grid instanceof Array) || grid.length == 0 || grid[0].length == 0 || typeof tick != 'number' || !(grid instanceof Array)) return;
         // simple compression algorithm that compresses well with large horizontal spans of the same pixel
         // not as good as png compression but png is very complex
         let compressedGrid = [];
@@ -270,7 +274,7 @@ class PixSimAPI {
             grid: new Uint8ClampedArray(compressedGrid),
             data: {
                 tick: tick,
-                teamPixelAmounts: []
+                teamPixelAmounts: pixelAmounts
             },
             origin: 'rps'
         });
@@ -280,12 +284,50 @@ class PixSimAPI {
         socket.off('tick');
         socket.on('tick', (data) => {
             if (!this.#inGame || !this.#gameRunning) return;
-            let compressed = [];
-            cb(data.grid, data.data);
+            cb(new Uint8ClampedArray(data.grid), data.data);
         });
     }
-    static sendInput() {
-
+    static sendInput(type, data) {
+        if (typeof type != 'number' || typeof data != 'object' || data == null) return;
+        switch (type) {
+            case 0:
+                if (typeof data.x1 != 'number' || typeof data.y1 != 'number' || typeof data.x2 != 'number' || typeof data.y2 != 'number' || typeof data.pixel != 'number') return;
+                socket.emit('input', { type: type, data: [data.x1, data.y1, data.x2, data.y2, data.size, data.pixel] });
+                break;
+            case 1:
+                if (!(data.grid instanceof Array) || data.grid.length == 0 || data.grid[0].length == 0) return;
+                let compressedGrid = [];
+                let curr = data.grid[0][0];
+                let len = 0;
+                for (let i = 0; i < data.grid.length; i++) {
+                    for (let j = 0; j < data.grid[i].length; j++) {
+                        if (data.grid[i][j] != curr || len == 255) {
+                            compressedGrid.push(curr, len);
+                            curr = data.grid[i][j];
+                            len = 0;
+                        }
+                        len++;
+                    }
+                }
+                compressedGrid.push(curr, len);
+                socket.emit('input', { type: type, data: [data[0].length, ...compressedGrid] });
+                break;
+        }
+    }
+    static set onGameInput(cb) {
+        if (typeof cb != 'function') return;
+        socket.off('input');
+        socket.on('input', (input) => {
+            if (!this.#inGame || !this.#gameRunning) return;
+            switch (input.type) {
+                case 0:
+                    cb(input.type, { x1: input.data[0], y1: input.data[1], x2: input.data[2], y2: input.data[3], size: input.data[4], pixel: input.data[5] }, input.team);
+                    break;
+                case 1:
+                    cb(input.type, { width: input.data[0], grid: input.data.slice(1) }, input.team);
+                    break;
+            }
+        });
     }
 
     static set teamSize(size) {
@@ -321,6 +363,9 @@ class PixSimAPI {
     }
     static get teamSize() {
         return this.#teamSize;
+    }
+    static get team() {
+        return this.#team;
     }
     static get gameMode() {
         return this.#gameMode;
