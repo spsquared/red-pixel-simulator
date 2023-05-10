@@ -184,6 +184,7 @@ class PixSimAPI {
         else socket.emit('leaveGame');
         this.#inGame = false;
         this.#gameRunning = false;
+        this.#spectating = false;
     }
     static async kickPlayer(username) {
         if (!this.#isHost || !this.#inGame || this.#gameRunning) return;
@@ -231,6 +232,7 @@ class PixSimAPI {
             cb();
             this.#inGame = false;
             this.#gameRunning = false;
+            this.#spectating = false;
         });
     }
     static set onGameClosed(cb) {
@@ -240,6 +242,7 @@ class PixSimAPI {
             cb();
             this.#inGame = false;
             this.#gameRunning = false;
+            this.#spectating = false;
         });
     }
 

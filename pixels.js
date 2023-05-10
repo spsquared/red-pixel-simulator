@@ -5148,7 +5148,7 @@ function updatePixelAmount(id, inventory = pixelAmounts, hideEmpty = false, forc
             pixelSelectors[id].parentGroup.children[0]._refresh();
         } else {
             pixelSelectors[id].count.innerText = inventory[id] == Infinity ? '∞' : inventory[id] == -Infinity ? 0 : inventory[id];
-            if (inventory[id] <= 0 || inventory[id] == Infinity || (PixSimAPI.gameRunning && !pixels[id].pixsimCompatible)) {
+            if (inventory[id] <= 0 || (PixSimAPI.gameRunning && !pixels[id].pixsimCompatible)) {
                 pixelSelectors[id].box.classList.add('pickerNoPixels');
                 if (forceShow && !(PixSimAPI.inGame && !pixels[id].pixsimCompatible)) {
                     pixelSelectors[id].box.style.display = '';

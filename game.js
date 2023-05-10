@@ -1696,7 +1696,7 @@ function updateMouseControls() {
             }
         } else if (brush.mouseButton != -1) {
             brush.lineMode = false;
-            if (brush.isSelection && selection.grid[0] != undefined) {
+            if (brush.isSelection && selection.grid[0] != undefined && (!PixSimAPI.inGame || !PixSimAPI.spectating)) {
                 let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
                 let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
                 let modifiedPixelCounts = [];
@@ -1788,9 +1788,9 @@ function brushActionLine(x1, y1, x2, y2, size, cb) {
         }
     }
 };
-function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brush.size) {
-    if ((!sandboxMode && !PixSimAPI.inGame) && !inResetState) return;
-    const inventory = PixSimAPI.inGame ? (PixSimAPI.team ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
+function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brush.size, pxteam = PixSimAPI.team) {
+    if ((!sandboxMode && !PixSimAPI.inGame && !inResetState) || (PixSimAPI.inGame && PixSimAPI.spectating)) return;
+    const inventory = PixSimAPI.inGame ? (pxteam ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
     let modifiedPixelCounts = [];
     let clickPixelNum = pixels[placePixel].numId;
     let skipToEnd = false;
@@ -1981,7 +1981,7 @@ PixSimAPI.onGameTick = (compressedGrid, tickData) => {
 PixSimAPI.onGameInput = (type, data, team) => {
     switch (type) {
         case 0:
-            clickLine(data.x1, data.y1, data.x2, data.y2, data.pixel == -1, (numPixels[data.pixel] ?? pixNum.MISSING).id, data.size);
+            clickLine(data.x1, data.y1, data.x2, data.y2, data.pixel == -1, (numPixels[data.pixel] ?? pixNum.MISSING).id, data.size, team);
             break;
         case 1:
             // buh paste
@@ -2017,7 +2017,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 if (brush.size != bsize) tickSound();
             }
         } else if (key == 'x' && e.ctrlKey) {
-            if (selection.show) {
+            if (selection.show && (!PixSimAPI.inGame || !PixSimAPI.spectating)) {
                 const inventory = PixSimAPI.inGame ? (PixSimAPI.team ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
                 selection.grid = [];
                 let xmin = Math.min(selection.x1, selection.x2);
@@ -2054,7 +2054,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
             }
         } else if (key == 'backspace') {
-            if (selection.show) {
+            if (selection.show && (!PixSimAPI.inGame || !PixSimAPI.spectating)) {
                 const inventory = PixSimAPI.inGame ? (PixSimAPI.team ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
                 let xmin = Math.min(selection.x1, selection.x2);
                 let xmax = Math.max(selection.x1, selection.x2);
