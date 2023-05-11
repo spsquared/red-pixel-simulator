@@ -93,7 +93,7 @@ class PixSimAPI {
         this.#connected = true;
         await new Promise((resolve, reject) => {
             const wakeup = new XMLHttpRequest();
-            wakeup.open('GET', apiURI);
+            wakeup.open('GET', apiURI + '/status');
             wakeup.onload = (res) => {
                 if (wakeup.status != 200) {
                     wakeup.onerror();

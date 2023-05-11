@@ -608,7 +608,7 @@ function updateTouchingAnything(x, y, action) {
 function pixelAt(x, y) {
     return numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING];
 };
-function validMovingPixel(x, y) {
+function validChangingPixel(x, y) {
     return nextGrid[y][x] == null;
 };
 function isAir(x, y) {
@@ -1091,13 +1091,13 @@ function explode(x1, y1, size) {
                 if (random() < (power * power / size) * 0.2) nextGrid[y][x] = pixNum.STEAM;
             } else if (grid[y][x] == pixNum.GUNPOWDER) {
                 pendingExplosions.push([x, y, 5]);
-                grid[y][x] = pixNum.WALL;
+                grid[y][x] = pixNum.AIR;
             } else if (grid[y][x] == pixNum.C4) {
                 pendingExplosions.push([x, y, 15]);
-                grid[y][x] = pixNum.WALL;
+                grid[y][x] = pixNum.AIR;
             } else if (grid[y][x] >= pixNum.FLAMETHROWER_LEFT && grid[y][x] <= pixNum.FLAMETHROWER_LEFT) {
                 pendingExplosions.push([x, y, 15]);
-                grid[y][x] = pixNum.WALL;
+                grid[y][x] = pixNum.ASH;
             } else if (random() < 1.2 - (power / size)) {
                 nextGrid[y][x] = pixNum.ASH;
             }

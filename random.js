@@ -10,6 +10,6 @@ function randomSeed(t, x, y) {
 };
 
 const perlinNoiseGenerator = new perlinNoise3d();
-function noise(x, y, t) {
+function noise(x, y, t = 0) {
     return perlinNoiseGenerator.get(x, y, t);
 };
