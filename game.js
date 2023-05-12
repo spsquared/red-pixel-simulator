@@ -221,6 +221,7 @@ function createGrid(width = 100, height = 100) {
     gridHeight = height;
     gridScale = canvasResolution / Math.min(gridWidth, gridHeight);
     pendingExplosions = [];
+    forceRedraw = true;
     selection.show = false;
     grid.length = 0;
     lastGrid.length = 0;
@@ -386,7 +387,6 @@ function loadSaveCode() {
         if (sections[5]) parseBooleanCode(monsterGrid, sections[5]);
         if (sections[6]) parseBooleanCode(targetGrid, sections[6]);
         updateTimeControlButtons();
-        forceRedraw = true;
     }
     if (sandboxMode) {
         window.localStorage.setItem('saveCode', LZString.compressToBase64(saveCode));
@@ -1648,7 +1648,7 @@ function updateTick() {
         if (!hasMonsters && !hasUnfulfilledTargets && !sandboxMode && !PixSimAPI.inGame) triggerWin();
 
         // send tick
-        if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, { tick: ticks, pixelAmounts: teamPixelAmounts });
+        if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, [fireGrid, monsterGrid, targetGrid], { tick: ticks, pixelAmounts: teamPixelAmounts });
 
         lastTick = performance.now();
     }
@@ -1966,7 +1966,7 @@ PixSimAPI.onGameStart = () => {
     });
 };
 PixSimAPI.onNewGridSize = createGrid;
-PixSimAPI.onGameTick = (compressedGrid, tickData) => {
+PixSimAPI.onGameTick = (compressedGrid, compressedBooleanGrids, tickData) => {
     // sync to framerate to reduce tearing (probably not necessary)?
     ticks = tickData.tick;
     let loc = 0;
@@ -1975,6 +1975,27 @@ PixSimAPI.onGameTick = (compressedGrid, tickData) => {
         let run = compressedGrid[i + 1];
         for (let j = 0; j < run; j++, loc++) {
             grid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
+        }
+    }
+    loc = 0;
+    let pixel = false;
+    for (let i = 0; i < compressedBooleanGrids[0].length; i++, pixel = !pixel) {
+        for (let j = 0; j < compressedBooleanGrids[0][i]; j++, loc++) {
+            fireGrid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
+        }
+    }
+    loc = 0;
+    pixel = false;
+    for (let i = 0; i < compressedBooleanGrids[1].length; i++, pixel = !pixel) {
+        for (let j = 0; j < compressedBooleanGrids[1][i]; j++, loc++) {
+            monsterGrid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
+        }
+    }
+    loc = 0;
+    pixel = false;
+    for (let i = 0; i < compressedBooleanGrids[2].length; i++, pixel = !pixel) {
+        for (let j = 0; j < compressedBooleanGrids[2][i]; j++, loc++) {
+            targetGrid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
         }
     }
 };

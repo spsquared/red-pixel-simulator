@@ -97,26 +97,33 @@ class PixSimAPI {
     static async connect() {
         this.#connected = true;
         await new Promise((resolve, reject) => {
-            const wakeup = new XMLHttpRequest();
-            wakeup.open('GET', apiURI + '/status');
-            wakeup.onload = (res) => {
-                if (wakeup.status != 200) {
-                    wakeup.onerror();
-                    return;
-                }
-                try {
-                    let response = JSON.parse(wakeup.response);
+            function sendHTTPRequest() {
+                const req = new XMLHttpRequest();
+                req.open('GET', apiURI + '/status');
+                req.onload = (res) => {
+                    if (req.status != 200) {
+                        req.onerror();
+                        return;
+                    }
+                    let response = {};
+                    try {
+                        response = JSON.parse(req.response);
+                    } catch (err) {
+                        reject(new Error(`Wakeup call failed - Invalid JSON response: ${req.response}`))
+                        return;
+                    }
                     if ((response.active == false && response.starting == false) || response.crashed == true) reject(new Error(`Wakeup call failed - PixSim API server not active. Try again later or contact Teh Developers.`));
-                } catch (err) {
-                    reject(new Error(`Wakeup call failed - Invalid JSON response: ${wakeup.response}`))
-                    return;
-                }
-                if (!socket.connected) socket.connect();
+                    if (!socket.connected) {
+                        if (response.active == true) socket.connect();
+                        else setTimeout(sendHTTPRequest, 3000);
+                    }
+                };
+                req.onerror = (err) => {
+                    reject(new Error(`Wakeup call failed - HTTP: ${req.status} ${req.statusText}`));
+                };
+                req.send();
             };
-            wakeup.onerror = (err) => {
-                reject(new Error(`Wakeup call failed - HTTP: ${wakeup.status} ${wakeup.statusText}`));
-            };
-            wakeup.send();
+            sendHTTPRequest();
             socket.connect();
             socket.once('connect', () => {
                 socket.once('requestClientInfo', async (key) => {
@@ -267,8 +274,8 @@ class PixSimAPI {
             cb(this.#gridWidth, this.#gridHeight);
         });
     }
-    static sendTick(grid, { tick, pixelAmounts }) {
-        if (!this.#inGame || !this.#gameRunning || !(grid instanceof Array) || grid.length == 0 || grid[0].length == 0 || typeof tick != 'number' || !(grid instanceof Array)) return;
+    static sendTick(grid, booleanGrids, { tick, pixelAmounts }) {
+        if (!this.#inGame || !this.#gameRunning || !(grid instanceof Array) || grid.length == 0 || grid[0].length == 0 || !(booleanGrids instanceof Array) || typeof tick != 'number' || !(grid instanceof Array)) return;
         // simple compression algorithm that compresses well with large horizontal spans of the same pixel
         // not as good as png compression but png is very complex
         let compressedGrid = [];
@@ -285,8 +292,32 @@ class PixSimAPI {
             }
         }
         compressedGrid.push(curr, len);
+        let compressedBooleanGrids = [];
+        for (let boolGrid of booleanGrids) {
+            if (boolGrid.length == 0 || boolGrid[0].length == 0) continue;
+            let compressedBoolGrid = [];
+            let curr = false;
+            let len = 0;
+            for (let i = 0; i < boolGrid.length; i++) {
+                for (let j = 0; j < boolGrid[i].length; j++) {
+                    if (boolGrid[i][j] != curr) {
+                        compressedBoolGrid.push(len);
+                        curr = boolGrid[i][j];
+                        len = 0;
+                    } else if (len == 255) {
+                        compressedBoolGrid.push(len);
+                        compressedBoolGrid.push(0);
+                        len = 0;
+                    }
+                    len++;
+                }
+            }
+            compressedBoolGrid.push(len);
+            compressedBooleanGrids.push(new Uint8ClampedArray(compressedBoolGrid));
+        }
         socket.emit('tick', {
             grid: new Uint8ClampedArray(compressedGrid),
+            booleanGrids: compressedBooleanGrids,
             data: {
                 tick: tick,
                 teamPixelAmounts: pixelAmounts
@@ -297,9 +328,9 @@ class PixSimAPI {
     static set onGameTick(cb) {
         if (typeof cb != 'function') return;
         socket.off('tick');
-        socket.on('tick', (data) => {
+        socket.on('tick', (tick) => {
             if (!this.#inGame || !this.#gameRunning) return;
-            cb(new Uint8ClampedArray(data.grid), data.data);
+            cb(new Uint8ClampedArray(tick.grid), tick.booleanGrids.map(g => new Uint8ClampedArray(g)), tick.data);
         });
     }
     static sendInput(type, data) {

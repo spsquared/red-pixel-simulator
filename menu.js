@@ -531,7 +531,7 @@ function handleJoinGame(status) {
             pixsimWaitLeaveGame.onclick = null;
         };
     } else {
-        modal('Could not join game', status == 1 ? 'Game does not exist or already started' : 'Banned by game host');
+        modal('Could not join game', status == 1 ? 'Game does not exist or already started!' : 'Banned by game host!');
     }
 };
 function loadPublicGameList(spectating) {
@@ -679,11 +679,11 @@ PixSimAPI.onUpdateTeamList = async (teams) => {
         pixsimDragging.dragging = false;
     }
     if (teams.teamA.length == PixSimAPI.teamSize && teams.teamB.length == PixSimAPI.teamSize) {
-        pixsimHostStartGame.style.filter = '';
-        pixsimHostStartGame.style.cursor = '';
+        pixsimHostStartGame.disabled = false;
+        pixsimHostStartGame.style.backgroundColor = '';
     } else {
-        pixsimHostStartGame.style.filter = 'saturate(0)';
-        pixsimHostStartGame.style.cursor = 'not-allowed';
+        pixsimHostStartGame.disabled = true;
+        pixsimHostStartGame.style.backgroundColor = 'grey';
     }
     shortDingSound();
 };
