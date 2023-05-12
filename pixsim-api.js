@@ -63,6 +63,11 @@ class PixSimAPI {
             name: 'Pixelite Crash',
             id: 'pixelcrash',
             description: 'Build vaults of Color and battle to destroy the other Pixelite crystal!<br>Teams must collect colors to create pixels in a battle-royale competition to break through and destroy their opponent.'
+        },
+        {
+            name: 'Platformer Godmode',
+            id: 'platformer',
+            description: '<b>Requires a Pixel Simulator Platformer player</b><br>Play god and prevent the Platformer Pixel from reaching the goal!'
         }
     ];
     static #spectating = false;
@@ -101,7 +106,7 @@ class PixSimAPI {
                 }
                 try {
                     let response = JSON.parse(wakeup.response);
-                    if (response.active == false) reject(new Error(`Wakeup call failed - PixSim API server not active. Try again later or contact Teh Developers`));
+                    if ((response.active == false && response.starting == false) || response.crashed == true) reject(new Error(`Wakeup call failed - PixSim API server not active. Try again later or contact Teh Developers.`));
                 } catch (err) {
                     reject(new Error(`Wakeup call failed - Invalid JSON response: ${wakeup.response}`))
                     return;

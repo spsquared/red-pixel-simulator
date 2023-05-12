@@ -735,7 +735,7 @@ PixSimAPI.onDisconnect = async () => {
         stopAllMusicPixels();
         transitionToMenu();
     }
-    await modal('PixSim API', '<span style="color: red;">PixSim API was disconnected.</span>', false);
+    await modal('PixSim API Disconnected', '<span style="color: red;">PixSim API was disconnected.</span>', false);
     pixsimMenuClose.onclick();
 };
 
