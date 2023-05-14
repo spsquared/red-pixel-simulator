@@ -252,11 +252,11 @@ function createGrid(width = 100, height = 100) {
         noiseGrid[i] = [];
         for (let j = 0; j < gridWidth; j++) {
             grid[i][j] = pixNum.AIR;
-            lastGrid[i][j] = null;
-            nextGrid[i][j] = null;
+            lastGrid[i][j] = -1;
+            nextGrid[i][j] = -1;
             fireGrid[i][j] = false;
             lastFireGrid[i][j] = false;
-            nextFireGrid[i][j] = false;
+            nextFireGrid[i][j] = -1;
             monsterGrid[i][j] = false;
             targetGrid[i][j] = false;
             musicGrid[i][j] = 0;
@@ -394,13 +394,13 @@ function loadSaveCode() {
 };
 function generateSaveCode() {
     let saveCode = `${gridWidth}-${gridHeight};${'0000'.substring(0, 4 - (ticks % 65536).toString(16).length)}${(ticks % 65536).toString(16)};`;
-    let pixel = null;
+    let pixel = -1;
     let amount = 0;
     for (let i = 0; i < gridHeight; i++) {
         for (let j = 0; j < gridWidth; j++) {
             amount++;
             if (grid[i][j] != pixel) {
-                if (pixel != null && amount != 0) {
+                if (pixel != -1 && amount != 0) {
                     if (amount == 1) {
                         saveCode += `${(numPixels[pixel] ?? numPixels[pixNum.MISSING]).id}:`;
                     } else {
@@ -413,7 +413,7 @@ function generateSaveCode() {
         }
     }
     amount++;
-    if (pixel != null) {
+    if (pixel != -1) {
         if (amount == 1) {
             saveCode += `${(numPixels[pixel] ?? numPixels[pixNum.MISSING]).id}:`;
         } else {
@@ -567,40 +567,40 @@ function updatePixel(x, y, i) {
 };
 function updateTouchingPixel(x, y, type, action) {
     let touchingPixel = false;
-    if (x > 0 && grid[y][x - 1] == type) {
-        if (typeof action == 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
+    if (x > 0 && grid[y][x - 1] === type) {
+        if (typeof action === 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (x < gridWidth - 1 && grid[y][x + 1] == type) {
-        if (typeof action == 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
+    if (x < gridWidth - 1 && grid[y][x + 1] === type) {
+        if (typeof action === 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (y > 0 && grid[y - 1][x] == type) {
-        if (typeof action == 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
+    if (y > 0 && grid[y - 1][x] === type) {
+        if (typeof action === 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (y < gridHeight - 1 && grid[y + 1][x] == type) {
-        if (typeof action == 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
+    if (y < gridHeight - 1 && grid[y + 1][x] === type) {
+        if (typeof action === 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
     return touchingPixel;
 };
 function updateTouchingAnything(x, y, action) {
     let touchingPixel = false;
-    if (x > 0 && grid[y][x - 1] != pixNum.AIR) {
-        if (typeof action == 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
+    if (x > 0 && grid[y][x - 1] !== pixNum.AIR) {
+        if (typeof action === 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR) {
-        if (typeof action == 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
+    if (x < gridWidth - 1 && grid[y][x + 1] !== pixNum.AIR) {
+        if (typeof action === 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (y > 0 && grid[y - 1][x] != pixNum.AIR) {
-        if (typeof action == 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
+    if (y > 0 && grid[y - 1][x] !== pixNum.AIR) {
+        if (typeof action === 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
-    if (y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR) {
-        if (typeof action == 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
+    if (y < gridHeight - 1 && grid[y + 1][x] !== pixNum.AIR) {
+        if (typeof action === 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
         else touchingPixel = true;
     }
     return touchingPixel;
@@ -609,7 +609,7 @@ function pixelAt(x, y) {
     return numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING];
 };
 function validChangingPixel(x, y) {
-    return nextGrid[y][x] == null;
+    return nextGrid[y][x] == -1;
 };
 function isAir(x, y) {
     return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.DELETER;
@@ -624,7 +624,7 @@ function isTransparent(x, y) {
     return (grid[y][x] == pixNum.AIR && !monsterGrid[y][x]) || grid[y][x] == pixNum.GLASS || grid[y][x] == pixNum.REINFORCED_GLASS;
 };
 function canMoveTo(x, y) {
-    return nextGrid[y][x] == null || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.DELETER;
+    return nextGrid[y][x] == -1 || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.DELETER;
 };
 function move(x1, y1, x2, y2) {
     if (grid[y2][x2] == pixNum.DELETER) {
@@ -796,9 +796,9 @@ function flow(x, y, isPassable = isAir) {
     }
 };
 function push(x, y, dir, movePusher = true, ignorePistons = false) {
-    let moveX = null;
-    let moveY = null;
-    let lastCollapsible = null;
+    let moveX = -1;
+    let moveY = -1;
+    let lastCollapsible = -1;
     switch (dir) {
         case 0:
             for (let i = x - 1; i >= 0; i--) {
@@ -816,10 +816,10 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
             }
-            if (moveX == null && lastCollapsible != null) {
+            if (moveX === -1 && lastCollapsible !== -1) {
                 moveX = lastCollapsible;
             }
-            if (moveX != null) {
+            if (moveX !== -1) {
                 for (let i = moveX; i < x; i++) {
                     if (!canMoveTo(i + 1, y)) return false;
                 }
@@ -850,10 +850,10 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
             }
-            if (moveY == null && lastCollapsible != null) {
+            if (moveY === -1 && lastCollapsible !== -1) {
                 moveY = lastCollapsible;
             }
-            if (moveY != null) {
+            if (moveY !== -1) {
                 for (let i = moveY; i < y; i++) {
                     if (!canMoveTo(x, i + 1)) return false;
                 }
@@ -884,10 +884,10 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
             }
-            if (moveX == null && lastCollapsible != null) {
+            if (moveX === -1 && lastCollapsible !== -1) {
                 moveX = lastCollapsible;
             }
-            if (moveX != null) {
+            if (moveX != -1) {
                 for (let i = moveX; i > x; i--) {
                     if (!canMoveTo(i - 1, y)) return false;
                 }
@@ -918,10 +918,10 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
             }
-            if (moveY == null && lastCollapsible != null) {
+            if (moveY === -1 && lastCollapsible !== -1) {
                 moveY = lastCollapsible;
             }
-            if (moveY != null) {
+            if (moveY !== -1) {
                 for (let i = moveY; i > y; i--) {
                     if (!canMoveTo(x, i - 1)) return false;
                 }
@@ -943,14 +943,14 @@ function possibleRotations(id) {
     return (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2) ? 2 : 4;
 };
 function rotatePixel(x, y) {
-    if (nextGrid[y][x] != null) return;
+    if (nextGrid[y][x] != -1) return;
     let thisPixel = numPixels[grid[y][x]];
-    if (thisPixel == undefined) return;
+    if (thisPixel === undefined) return;
     let rotate = 0;
     let touchedRotators = [];
     updateTouchingAnything(x, y, function (actionX, actionY) {
         let pixel = grid[actionY][actionX];
-        if (pixel == undefined) return;
+        if (pixel === undefined) return;
         if (pixel == pixNum.ROTATOR_CLOCKWISE) {
             rotate++;
         } else if (pixel == pixNum.ROTATOR_COUNTERCLOCKWISE) {
@@ -1534,16 +1534,13 @@ function updateTick() {
             /*
             update priority:
             -: fire
-            0: nukes, plants, moss, sponges, gunpowder, detonators, and lasers
-            1, 2, 3, 4: pushers, sticky pushers
-            5, 6, 7, 8: copiers, cloners, super copiers
-            9: gravity solids
-            10: steam
-            11: fluids, concrete, and leaves
-            12: pumps
-            13: lag, music
-            14: rotators
-            -: monster
+            0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers
+            1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers
+            5: gravity solids, ice, rotators
+            6: steam
+            7: water, lava, stone, leaves, pumps, lava generators, freezers
+            8: lag, music pixels
+            -: monsters
             */
             let monsterCount = 0;
             let fulfilledTargetCount = 0;
@@ -1568,9 +1565,9 @@ function updateTick() {
             for (let y = 0; y < gridHeight; y++) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (grid[y][x] == pixNum.MONSTER) grid[y][x] = pixNum.AIR;
-                    if (nextFireGrid[y][x] != null) {
+                    if (nextFireGrid[y][x] !== -1) {
                         fireGrid[y][x] = nextFireGrid[y][x];
-                        nextFireGrid[y][x] = null;
+                        nextFireGrid[y][x] = -1;
                     }
                     lastMusicGrid[y][x] = musicGrid[y][x];
                     musicGrid[y][x] = 0;
@@ -1581,7 +1578,7 @@ function updateTick() {
             for (let explosion of currentExplosions) {
                 explode(...explosion);
             }
-            for (let updateStage = 0; updateStage <= 14; updateStage++) {
+            for (let updateStage = 0; updateStage <= 8; updateStage++) {
                 if (ticks % 2 == 0) {
                     for (let y = 0; y < gridHeight; y++) {
                         for (let x = gridWidth - 1; x >= 0; x--) {
@@ -1599,9 +1596,9 @@ function updateTick() {
                 }
                 for (let y = 0; y < gridHeight; y++) {
                     for (let x = 0; x < gridWidth; x++) {
-                        if (nextGrid[y][x] != null) {
+                        if (nextGrid[y][x] !== -1) {
                             grid[y][x] = nextGrid[y][x];
-                            nextGrid[y][x] = null;
+                            nextGrid[y][x] = -1;
                         }
                     }
                 }
@@ -1610,9 +1607,9 @@ function updateTick() {
             for (let y = gridHeight - 1; y >= 0; y--) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) monsterPixelType.update(x, y);
-                    if (nextFireGrid[y][x] != null) {
+                    if (nextFireGrid[y][x] !== -1) {
                         fireGrid[y][x] = nextFireGrid[y][x];
-                        nextFireGrid[y][x] = null;
+                        nextFireGrid[y][x] = -1;
                     }
                 }
             }
