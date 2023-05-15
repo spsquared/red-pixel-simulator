@@ -1991,7 +1991,7 @@ PixSimAPI.onGameTick = (compressedGrid, compressedBooleanGrids, tickData) => {
             targetGrid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
         }
     }
-    let teamPixelAmount1 = tickData.pixelAmounts[PixSimAPI.team];
+    let teamPixelAmount1 = tickData.teamPixelAmounts[PixSimAPI.team];
     let teamPixelAmount2 = teamPixelAmounts[PixSimAPI.team];
     if (teamPixelAmount1 !== undefined) {
         for (let id in teamPixelAmount1) {
