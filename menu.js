@@ -476,7 +476,7 @@ pixsimJoinGameCodeCode.onkeydown = (e) => {
 };
 pixsimJoinGameCodeJoin.onclick = (e) => {
     if (pixsimJoinGameCodeCode.value.length == 8) {
-        PixSimAPI.joinGame(pixsimJoinGameCodeCode.value).then(handleJoinGame);
+        PixSimAPI.joinGame(pixsimJoinGameCodeCode.value.toUpperCase()).then(handleJoinGame);
     }
 };
 function refreshGameList(games) {

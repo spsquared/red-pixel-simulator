@@ -1641,7 +1641,10 @@ function updateTick() {
         inResetState = false;
 
         // send tick
-        if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, [fireGrid, monsterGrid, targetGrid], { tick: ticks, pixelAmounts: teamPixelAmounts });
+        if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, [fireGrid, monsterGrid, targetGrid], {
+            tick: ticks,
+            pixelAmounts: getPixSimPixelAmounts()
+        });
 
         lastTick = performance.now();
     }
@@ -1893,7 +1896,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
             }
         }
     });
-    for (let pixelType in modifiedPixelCounts) {
+    if (!PixSimAPI.inGame || PixSimAPI.team === pxteam) for (let pixelType in modifiedPixelCounts) {
         if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id, inventory);
     }
     if (PixSimAPI.inGame && PixSimAPI.gameRunning && !PixSimAPI.isHost) {
@@ -1922,6 +1925,15 @@ function resetPixSimPixelAmounts() {
     }
     teamPixelAmounts[0]['air'] = Infinity;
     teamPixelAmounts[1]['air'] = Infinity;
+};
+function getPixSimPixelAmounts() {
+    return teamPixelAmounts.map(amounts => {
+        const mappedAmounts = [];
+        for (let id in amounts) {
+            mappedAmounts[pixels[id].numId] = !isFinite(amounts[id]) ? (amounts[id] < 0 ? '-i' : 'i') : amounts[id];
+        }
+        return mappedAmounts;
+    });
 };
 PixSimAPI.onGameStart = () => {
     sandboxMode = false;
@@ -1994,9 +2006,10 @@ PixSimAPI.onGameTick = (compressedGrid, compressedBooleanGrids, tickData) => {
     let teamPixelAmount1 = tickData.teamPixelAmounts[PixSimAPI.team];
     let teamPixelAmount2 = teamPixelAmounts[PixSimAPI.team];
     if (teamPixelAmount1 !== undefined) {
-        for (let id in teamPixelAmount1) {
-            if (teamPixelAmount1[id] !== teamPixelAmount2[id]) {
-                teamPixelAmount2[id] = teamPixelAmount1[id];
+        for (let n in teamPixelAmount1) {
+            let id = (numPixels[n] ?? numPixels[pixNum.MISSING]).id;
+            if (teamPixelAmount1[n] !== teamPixelAmount2[id]) {
+                teamPixelAmount2[id] = teamPixelAmount1[n] === '-i' ? -Infinity : (teamPixelAmount1[n] === 'i' ? Infinity : teamPixelAmount1[n]);
                 updatePixelAmount(id, teamPixelAmount2);
             }
         }
