@@ -561,7 +561,7 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
 };
 function updatePixel(x, y, i) {
     let pixelType = numPixels[grid[y][x]];
-    if (pixelType != undefined && pixelType.updateStage == i) {
+    if (pixelType !== undefined && pixelType.updateStage == i) {
         pixelType.update(x, y);
     }
 };
@@ -1071,6 +1071,9 @@ function explode(x1, y1, size) {
         if (random() < (power / size) * ((20 - pixelAt(x, y).blastResistance) / (85 - power))) {
             nextGrid[y][x] = pixNum.AIR;
             monsterGrid[y][x] = false;
+            if (random() < 0.5 * power / size) {
+                fireGrid[y][x] = true;
+            }
             if (grid[y][x] == pixNum.AIR) return 0;
             if (chained < 5) {
                 if (grid[y][x] == pixNum.NUKE) {
@@ -1100,9 +1103,6 @@ function explode(x1, y1, size) {
                 grid[y][x] = pixNum.ASH;
             } else if (random() < 1.2 - (power / size)) {
                 nextGrid[y][x] = pixNum.ASH;
-            }
-            if (random() < 0.5 * power / size) {
-                fireGrid[y][x] = true;
             }
             return pixelAt(x, y).blastResistance / 40;
         }
@@ -1371,7 +1371,7 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
 };
 function drawBrush() {
     if (!fastSimulation && !brush.selecting) {
-        if (brush.isSelection && selection.grid[0] != undefined) {
+        if (brush.isSelection && selection.grid[0] !== undefined) {
             let x1 = Math.min(gridWidth, Math.max(0, Math.floor(mXGrid - selection.grid[0].length / 2)));
             let x2 = Math.min(gridWidth - 1, Math.max(-1, Math.floor(mXGrid + selection.grid[0].length / 2) - 1));
             let y1 = Math.min(gridHeight, Math.max(0, Math.floor(mYGrid - selection.grid.length / 2)));
@@ -1485,8 +1485,8 @@ function drawUI() {
     }
     let fpsText = `FPS: ${frameList.length} ${debugInfo ? `(${frameTime.toFixed(2)}ms)` : ''}`;
     let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(2)}ms)` : ''}`;
-    let brushSizeText = `Brush Size: ${(brush.isSelection && selection.grid[0] != undefined) ? '-' : brush.size * 2 - 1}`;
-    let brushPixelText = (brush.isSelection && selection.grid[0] != undefined) ? `Brush: Paste` : `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
+    let brushSizeText = `Brush Size: ${(brush.isSelection && selection.grid[0] !== undefined) ? '-' : brush.size * 2 - 1}`;
+    let brushPixelText = (brush.isSelection && selection.grid[0] !== undefined) ? `Brush: Paste` : `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
     ctx.fillStyle = '#FFF5';
     ctx.fillRect(1, 0, ctx.measureText(fpsText).width + 4, 20);
@@ -1615,34 +1615,30 @@ function updateTick() {
             }
             let newMonsterCount = 0;
             let newFulfilledTargetCount = 0;
+            let hasUnfulfilledTargets = false;
             for (let y = 0; y < gridHeight; y++) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) newMonsterCount++;
-                    if (targetGrid[y][x] && grid[y][x] == pixNum.GOAL) newFulfilledTargetCount++;
+                    if (targetGrid[y][x]) {
+                        if (grid[y][x] == pixNum.GOAL) newFulfilledTargetCount++;
+                        else hasUnfulfilledTargets = true;
+                    }
                     if (musicGrid[y][x] != lastMusicGrid[y][x]) {
                         if (musicGrid[y][x] != 0) musicPixel(musicGrid[y][x], true);
                         else if (musicGrid[y][x] == 0) musicPixel(lastMusicGrid[y][x], false);
                     }
                 }
             }
-            if (newMonsterCount != monsterCount && window.playMonsterDeathSound != undefined) window.playMonsterDeathSound();
-            if (newFulfilledTargetCount != fulfilledTargetCount && window.playTargetFillSound != undefined) window.playTargetFillSound();
+            if (newMonsterCount != monsterCount && window.playMonsterDeathSound !== undefined) window.playMonsterDeathSound();
+            if (newFulfilledTargetCount != fulfilledTargetCount && window.playTargetFillSound !== undefined) window.playTargetFillSound();
             frameList.push(performance.now());
             ticks++;
-        }
-        inResetState = false;
-
-        // check win
-        let hasMonsters = false;
-        let hasUnfulfilledTargets = false;
-        search: for (let y = 0; y < gridHeight; y++) {
-            for (let x = 0; x < gridWidth; x++) {
-                if (monsterGrid[y][x]) hasMonsters = true;
-                if (targetGrid[y][x] && grid[y][x] != pixNum.GOAL) hasUnfulfilledTargets = true;
-                if (hasMonsters && hasUnfulfilledTargets) break search;
+            if (!sandboxMode && newMonsterCount == 0 && !hasUnfulfilledTargets && !PixSimAPI.inGame) {
+                triggerWin();
+                break;
             }
         }
-        if (!hasMonsters && !hasUnfulfilledTargets && !sandboxMode && !PixSimAPI.inGame) triggerWin();
+        inResetState = false;
 
         // send tick
         if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, [fireGrid, monsterGrid, targetGrid], { tick: ticks, pixelAmounts: teamPixelAmounts });
@@ -1680,7 +1676,7 @@ function updateMouseControls() {
     const inventory = PixSimAPI.inGame ? (PixSimAPI.team ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
     if (brush.mouseButton == 2 || removing) brush.isSelection = false;
     if (!fastSimulation && acceptInputs && !inWinScreen && mouseOver && (!brush.lineMode || !brush.startsInRPE)) {
-        if (((brush.mouseButton != -1 && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] != undefined)) {
+        if (((brush.mouseButton != -1 && holdingAlt) || brush.lineMode) && !(brush.isSelection && selection.grid[0] !== undefined)) {
             if (!brush.lineMode) {
                 brush.lineMode = true;
                 brush.lineStartX = mXGrid;
@@ -1693,7 +1689,7 @@ function updateMouseControls() {
             }
         } else if (brush.mouseButton != -1) {
             brush.lineMode = false;
-            if (brush.isSelection && selection.grid[0] != undefined && (!PixSimAPI.inGame || !PixSimAPI.spectating)) {
+            if (brush.isSelection && selection.grid[0] !== undefined && (!PixSimAPI.inGame || !PixSimAPI.spectating)) {
                 let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
                 let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
                 let modifiedPixelCounts = [];
@@ -1743,7 +1739,7 @@ function updateMouseControls() {
                 clickLine(prevMXGrid, prevMYGrid, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
             }
         }
-    } else if (brush.mouseButton == -1 && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined) && !brush.startsInRPE) {
+    } else if (brush.mouseButton == -1 && brush.lineMode && !(brush.isSelection && selection.grid[0] !== undefined) && !brush.startsInRPE) {
         brush.lineMode = false;
         clickLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.lastMouseButton == 2 || removing);
     }
@@ -1995,6 +1991,16 @@ PixSimAPI.onGameTick = (compressedGrid, compressedBooleanGrids, tickData) => {
             targetGrid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
         }
     }
+    let teamPixelAmount1 = tickData.pixelAmounts[PixSimAPI.team];
+    let teamPixelAmount2 = teamPixelAmounts[PixSimAPI.team];
+    if (teamPixelAmount1 !== undefined) {
+        for (let id in teamPixelAmount1) {
+            if (teamPixelAmount1[id] !== teamPixelAmount2[id]) {
+                teamPixelAmount2[id] = teamPixelAmount1[id];
+                updatePixelAmount(id, teamPixelAmount2);
+            }
+        }
+    }
 };
 PixSimAPI.onGameInput = (type, data, team) => {
     switch (type) {
@@ -2122,7 +2128,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 window.localStorage.setItem('clipboard', LZString.compressToBase64(JSON.stringify(selection.grid)));
             }
         } else if (key == 'v' && e.ctrlKey) {
-            if (window.localStorage.getItem('clipboard') !== undefined) {
+            if (window.localStorage.getItem('clipboard') !== null) {
                 selection.grid = JSON.parse(LZString.decompressFromBase64(window.localStorage.getItem('clipboard')));
                 brush.isSelection = true;
             }
@@ -2141,18 +2147,18 @@ window.addEventListener('DOMContentLoaded', (e) => {
             camera.mRight = true;
         } else if (key == 'i') {
             let pixType = pixels[brush.pixel];
-            if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation + 1].id].box.click();
+            if (pixType && pixType.rotation !== undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation + 1].id].box.click();
         } else if (key == 'k') {
             let pixType = pixels[brush.pixel];
-            if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[(3 % possibleRotations(pixType.numId)) + pixType.numId - pixType.rotation].id].box.click();
+            if (pixType && pixType.rotation !== undefined) pixelSelectors[numPixels[(3 % possibleRotations(pixType.numId)) + pixType.numId - pixType.rotation].id].box.click();
         } else if (key == 'j') {
             let pixType = pixels[brush.pixel];
-            if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation].id].box.click();
+            if (pixType && pixType.rotation !== undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation].id].box.click();
         } else if (key == 'l') {
             let pixType = pixels[brush.pixel];
-            if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[(2 % possibleRotations(pixType.numId)) + pixType.numId - pixType.rotation].id].box.click();
+            if (pixType && pixType.rotation !== undefined) pixelSelectors[numPixels[(2 % possibleRotations(pixType.numId)) + pixType.numId - pixType.rotation].id].box.click();
         } else if (key == 'r') {
-            if (brush.isSelection && selection.grid[0] != undefined) {
+            if (brush.isSelection && selection.grid[0] !== undefined) {
                 const newGrid = [];
                 for (let i = 0; i < selection.grid[0].length; i++) {
                     newGrid[i] = [];
@@ -2161,8 +2167,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
                     for (let j = 0; j < selection.grid[i].length; j++) {
                         let newPixel = selection.grid[i][j];
                         let pixType = numPixels[selection.grid[i][j]] ?? numPixels[pixNum.MISSING];
-                        if (pixType.rotation != undefined) {
-                            let rotations = possibleRotations(grid[y][x]);
+                        if (pixType.rotation !== undefined) {
+                            let rotations = possibleRotations(grid[i][j]);
                             newPixel = selection.grid[i][j] - pixType.rotation + ((((pixType.rotation + 1) % rotations) + rotations) % rotations);
                         }
                         newGrid[j][selection.grid.length - i - 1] = newPixel;
@@ -2173,7 +2179,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             } else {
                 let pixType = pixels[brush.pixel];
                 let rotations = possibleRotations(pixType.numId);
-                if (pixType && pixType.rotation != undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation + ((((pixType.rotation + 1) % rotations) + rotations) % rotations)].id].box.click();
+                if (pixType && pixType.rotation !== undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation + ((((pixType.rotation + 1) % rotations) + rotations) % rotations)].id].box.click();
             }
         } else if (key == 'shift') {
             removing = true;

@@ -4346,7 +4346,7 @@ const pixels = {
         rotateable: false,
         group: 4,
         key: Infinity,
-        updateStage: 9,
+        updateStage: 0,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -4765,6 +4765,9 @@ const pixels = {
                     nextGrid[actionY][actionX] = pixNum.LAVA_GENERATOR;
                 }
                 if (validChangingPixel(actionX, actionY) && random() < 0.1) {
+                    nextGrid[actionY][actionX] = pixNum.FREEZER;
+                }
+                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
                     nextGrid[actionY][actionX] = pixNum.PUSH_CLONER_DOWN;
                 }
                 if (validChangingPixel(actionX, actionY) && random() < 0.1) {
@@ -4947,7 +4950,7 @@ const pixels = {
     },
     placementUnRestriction: {
         name: 'Allow Placement',
-        description: 'Remove placement restrictions in sandbox levels',
+        description: 'Remove placement restrictions in puzzles',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
         },
@@ -4979,7 +4982,7 @@ const pixels = {
     },
     placementRestriction: {
         name: 'Prevent Placement',
-        description: 'Prevents players from placing pixels in sandbox levels',
+        description: 'Prevents players from placing pixels in puzzles',
         draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity * 0.2;
             imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
@@ -5320,7 +5323,7 @@ function resetPixelAmounts(showPixels = true) {
     updatePixelAmount('air', pixelAmounts, false, true);
 };
 function updatePixelAmount(id, inventory = pixelAmounts, hideEmpty = false, forceShow = false) {
-    if (pixelSelectors[id] != undefined) {
+    if (pixelSelectors[id] !== undefined) {
         if (sandboxMode) {
             pixelSelectors[id].count.innerText = '';
             pixelSelectors[id].box.classList.remove('pickerNoPixels');

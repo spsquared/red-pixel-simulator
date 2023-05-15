@@ -681,9 +681,11 @@ PixSimAPI.onUpdateTeamList = async (teams) => {
     if (teams.teamA.length == PixSimAPI.teamSize && teams.teamB.length == PixSimAPI.teamSize) {
         pixsimHostStartGame.disabled = false;
         pixsimHostStartGame.style.backgroundColor = '';
+        pixsimHostStartGame.style.borderColor = '';
     } else {
         pixsimHostStartGame.disabled = true;
         pixsimHostStartGame.style.backgroundColor = 'grey';
+        pixsimHostStartGame.style.borderColor = 'grey';
     }
     shortDingSound();
 };
