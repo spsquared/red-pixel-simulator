@@ -277,9 +277,6 @@ function loadSaveCode() {
         runTicks = 0;
         ticks = 0;
         stopAllMusicPixels();
-        camera.x = 0;
-        camera.y = 0;
-        camera.scale = 1;
         let sections = saveCode.split(';');
         if (isNaN(parseInt(sections[0]))) return;
         function parseSaveCode(code) {
@@ -387,6 +384,8 @@ function loadSaveCode() {
         if (sections[5]) parseBooleanCode(monsterGrid, sections[5]);
         if (sections[6]) parseBooleanCode(targetGrid, sections[6]);
         updateTimeControlButtons();
+        camera.x = Math.max(0, Math.min(camera.x, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+        camera.y = Math.max(0, Math.min(camera.y, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
     }
     if (sandboxMode) {
         window.localStorage.setItem('saveCode', LZString.compressToBase64(saveCode));

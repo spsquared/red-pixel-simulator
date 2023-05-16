@@ -1714,9 +1714,9 @@ const pixels = {
                 nextGrid[y][x] = pixNum.ASH;
                 return;
             }
-            if (push(x < gridWidth - 1 ? x + 1 : x, y, 0)) {
-                if (y > 0 && !isAir(x, y - 1) && grid[y - 1][x] != pixNum.STICKY_PISTON_LEFT) push(x, y - 1, 0);
-                if (y < gridHeight - 1 && !isAir(x, y + 1) && grid[y + 1][x] != pixNum.STICKY_PISTON_LEFT) push(x, y + 1, 0);
+            if (push((x < gridWidth - 1 && pixelAt(x + 1, y).pushable) ? x + 1 : x, y, 0)) {
+                if (y > 0 && !isAir(x, y - 1) && grid[y - 1][x] != pixNum.STICKY_PISTON_LEFT && pixelAt(x, y - 1).pushable) push(x, y - 1, 0);
+                if (y < gridHeight - 1 && !isAir(x, y + 1) && grid[y + 1][x] != pixNum.STICKY_PISTON_LEFT && pixelAt(x, y + 1).pushable) push(x, y + 1, 0);
             }
         },
         drawPreview: function (ctx) {
@@ -1765,9 +1765,9 @@ const pixels = {
                 nextGrid[y][x] = pixNum.ASH;
                 return;
             }
-            if (push(x, y < gridHeight - 1 ? y + 1 : y, 1)) {
-                if (x > 0 && !isAir(x - 1, y) && grid[y][x - 1] != pixNum.STICKY_PISTON_UP) push(x - 1, y, 1);
-                if (x < gridWidth - 1 && !isAir(x + 1, y) && grid[y][x + 1] != pixNum.STICKY_PISTON_UP) push(x + 1, y, 1);
+            if (push(x, (y < gridHeight - 1 && pixelAt(x, y + 1).pushable) ? y + 1 : y, 1)) {
+                if (x > 0 && !isAir(x - 1, y) && grid[y][x - 1] != pixNum.STICKY_PISTON_UP && pixelAt(x - 1, y).pushable) push(x - 1, y, 1);
+                if (x < gridWidth - 1 && !isAir(x + 1, y) && grid[y][x + 1] != pixNum.STICKY_PISTON_UP && pixelAt(x + 1, y).pushable) push(x + 1, y, 1);
             }
         },
         drawPreview: function (ctx) {
@@ -1816,9 +1816,9 @@ const pixels = {
                 nextGrid[y][x] = pixNum.ASH;
                 return;
             }
-            if (push(x > 0 ? x - 1 : x, y, 2)) {
-                if (y > 0 && !isAir(x, y - 1) && grid[y - 1][x] != pixNum.STICKY_PISTON_RIGHT) push(x, y - 1, 2);
-                if (y < gridHeight - 1 && !isAir(x, y + 1) && grid[y + 1][x] != pixNum.STICKY_PISTON_RIGHT) push(x, y + 1, 2);
+            if (push((x > 0 && pixelAt(x - 1, y).pushable) ? x - 1 : x, y, 2)) {
+                if (y > 0 && !isAir(x, y - 1) && grid[y - 1][x] != pixNum.STICKY_PISTON_RIGHT && pixelAt(x, y - 1).pushable) push(x, y - 1, 2);
+                if (y < gridHeight - 1 && !isAir(x, y + 1) && grid[y + 1][x] != pixNum.STICKY_PISTON_RIGHT && pixelAt(x, y + 1).pushable) push(x, y + 1, 2);
             }
         },
         drawPreview: function (ctx) {
@@ -1867,9 +1867,9 @@ const pixels = {
                 nextGrid[y][x] = pixNum.ASH;
                 return;
             }
-            if (push(x, y > 0 ? y - 1 : y, 3)) {
-                if (x > 0 && !isAir(x - 1, y) && grid[y][x - 1] != pixNum.STICKY_PISTON_DOWN) push(x - 1, y, 3);
-                if (x < gridWidth - 1 && !isAir(x + 1, y) && grid[y][x + 1] != pixNum.STICKY_PISTON_DOWN) push(x + 1, y, 3);
+            if (push(x, (y > 0 && pixelAt(x, y - 1).pushable) ? y - 1 : y, 3)) {
+                if (x > 0 && !isAir(x - 1, y) && grid[y][x - 1] != pixNum.STICKY_PISTON_DOWN && pixelAt(x - 1, y).pushable) push(x - 1, y, 3);
+                if (x < gridWidth - 1 && !isAir(x + 1, y) && grid[y][x + 1] != pixNum.STICKY_PISTON_DOWN && pixelAt(x + 1, y).pushable) push(x + 1, y, 3);
             }
         },
         drawPreview: function (ctx) {
@@ -5439,6 +5439,9 @@ function generateMusicPixel(id, data) {
         numId: 0
     }
 };
+function generateDescription(id) {
+    return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Blast Resistance: ${pixels[id].blastResistance}/20<br>Flammability: ${pixels[id].flammability}/20<br>Moveable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`;
+};
 
 let pixIndex = 0;
 for (const id in pixels) {
@@ -5450,9 +5453,6 @@ for (const id in pixels) {
 let pixelsResolveLoad;
 let pixelsLoad = new Promise((resolve, reject) => pixelsResolveLoad = resolve);
 window.addEventListener('DOMContentLoaded', async (e) => {
-    function generateDescription(id) {
-        return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Blast Resistance: ${pixels[id].blastResistance}/20<br>Flammability: ${pixels[id].flammability}/20<br>Pushable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`;
-    };
     const canvas2 = document.createElement('canvas');
     const ctx2 = canvas2.getContext('2d');
     canvas2.width = 50;
