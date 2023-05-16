@@ -1319,7 +1319,7 @@ function drawFrame() {
         gamectx.drawImage(target, 0, 0);
         gamectx.drawImage(fire, 0, 0);
         ctx.drawImage(gameCanvas, 0, 0);
-        if (inResetState || sandboxMode) ctx.drawImage(placeable, 0, 0);
+        if (inResetState || sandboxMode || PixSimAPI.inGame) ctx.drawImage(placeable, 0, 0);
     }
     if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 != 0)) {
         frameList.push(performance.now());
@@ -1640,7 +1640,7 @@ function updateTick() {
         inResetState = false;
 
         // send tick
-        if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, [fireGrid, monsterGrid, targetGrid], {
+        if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, [fireGrid, monsterGrid, targetGrid, placeableGrid], {
             tick: ticks,
             pixelAmounts: getPixSimPixelAmounts()
         });
@@ -1934,6 +1934,13 @@ function getPixSimPixelAmounts() {
         return mappedAmounts;
     });
 };
+function extractBooleanGrid(grid, compressed) {
+    for (let i = 0, loc = 0, pixel = false; i < compressed.length; i++, pixel = !pixel) {
+        for (let j = 0; j < compressed[i]; j++, loc++) {
+            grid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
+        }
+    }
+};
 PixSimAPI.onGameStart = () => {
     sandboxMode = false;
     transitionToGame(async () => {
@@ -1981,27 +1988,10 @@ PixSimAPI.onGameTick = (compressedGrid, compressedBooleanGrids, tickData) => {
             grid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
         }
     }
-    loc = 0;
-    let pixel = false;
-    for (let i = 0; i < compressedBooleanGrids[0].length; i++, pixel = !pixel) {
-        for (let j = 0; j < compressedBooleanGrids[0][i]; j++, loc++) {
-            fireGrid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
-        }
-    }
-    loc = 0;
-    pixel = false;
-    for (let i = 0; i < compressedBooleanGrids[1].length; i++, pixel = !pixel) {
-        for (let j = 0; j < compressedBooleanGrids[1][i]; j++, loc++) {
-            monsterGrid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
-        }
-    }
-    loc = 0;
-    pixel = false;
-    for (let i = 0; i < compressedBooleanGrids[2].length; i++, pixel = !pixel) {
-        for (let j = 0; j < compressedBooleanGrids[2][i]; j++, loc++) {
-            targetGrid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
-        }
-    }
+    extractBooleanGrid(fireGrid, compressedBooleanGrids[0]);
+    extractBooleanGrid(monsterGrid, compressedBooleanGrids[1]);
+    extractBooleanGrid(targetGrid, compressedBooleanGrids[2]);
+    extractBooleanGrid(placeableGrid, compressedBooleanGrids[3]);
     let teamPixelAmount1 = tickData.teamPixelAmounts[PixSimAPI.team];
     let teamPixelAmount2 = teamPixelAmounts[PixSimAPI.team];
     if (teamPixelAmount1 !== undefined) {
