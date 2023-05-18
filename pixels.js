@@ -2942,10 +2942,9 @@ const pixels = {
         name: 'Rotator (Clockwise)',
         description: 'Rotates directional pixels clockwise',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
-            if (frameCount % 10 != 0) return;
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
+                if (frameCount % 10 == 0 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
             });
         },
         update: function (x, y) {
@@ -3018,10 +3017,9 @@ const pixels = {
         name: 'Rotator (Counterclockwise)',
         description: 'Rotates directional pixels counterclockwise',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
-            if (frameCount % 10 != 0) return;
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
+                if (frameCount % 10 == 0 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
             });
         },
         update: function (x, y) {
@@ -4332,7 +4330,7 @@ const pixels = {
             ctx.fillRect(10, 10, 10, 30);
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(5);
+            const { ctx, fillPixels, toImage } = new PreRenderer(15);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 0, 0)';
@@ -4398,7 +4396,7 @@ const pixels = {
             ctx.fillRect(10, 10, 30, 10);
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(5);
+            const { ctx, fillPixels, toImage } = new PreRenderer(15);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 0, 0)';
@@ -4464,7 +4462,7 @@ const pixels = {
             ctx.fillRect(30, 10, 10, 30);
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(5);
+            const { ctx, fillPixels, toImage } = new PreRenderer(15);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 0, 0)';
@@ -4530,7 +4528,7 @@ const pixels = {
             ctx.fillRect(10, 30, 30, 10);
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(5);
+            const { ctx, fillPixels, toImage } = new PreRenderer(15);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 0, 0)';
@@ -4560,12 +4558,11 @@ const pixels = {
     },
     detonator: {
         name: 'Detonator',
-        description: 'Triggers Gunpowder and C-4 on contact by exploding',
+        description: 'Triggers gunpowder and C-4 on contact by exploding',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
-            if (noAnimations && frameCount % 30 != 0 && !forceRedraw) return;
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 30) % 2)], ctx);
+                if (frameCount % 30 == 0 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 30) % 2)], ctx);
             });
         },
         update: function (x, y) {
@@ -5816,7 +5813,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
                 pixelPickerDescription.innerHTML = pixel.generatedDescription;
             };
             box.onmouseout = (e) => {
-                pixelPickerDescription.innerHTML = pixel.generatedDescription;
+                pixelPickerDescription.innerHTML = pixels[brush.pixel].generatedDescription;
             };
             pixel.drawPreview(ctx2);
             const img = new Image(50, 50);
