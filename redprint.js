@@ -182,6 +182,9 @@ function rpDraw() {
     rpCtx.globalAlpha = 1;
 
     // draw grid onto transfer canvas and cheat while doing it
+    for (let i in numPixels) {
+        numPixels[i].rectangles.length = 0;
+    }
     let scale = rpCamera.scale * rpGridScale;
     let offsetX = rpCanvasRes / 2 - rpGridScale * rpGridWidth / 2;
     let offsetY = rpCanvasRes / 2 - rpGridScale * rpGridHeight / 2;
@@ -191,12 +194,15 @@ function rpDraw() {
         for (let j = 0; j < rpGridWidth; j++) {
             amount++;
             if (rpGrid[i][j] != curr) {
-                if (curr != pixNum.AIR) drawPixels(j - amount, i, amount, 1, curr, 1, rpDCtx, true);
+                if (curr != pixNum.AIR) numPixels[curr].rectangles.push([j - amount, i, amount, 1, true]);
                 curr = rpGrid[i][j];
                 amount = 0;
             }
         }
-        if (curr != pixNum.AIR) drawPixels(rpGridWidth - amount - 1, i, amount + 1, 1, curr, 1, rpDCtx, true);
+        if (curr != pixNum.AIR) numPixels[curr].rectangles.push([rpGridWidth - amount - 1, i, amount + 1, 1, true]);
+    }
+    for (let i in numPixels) {
+        if (numPixels[i].rectangles.length > 0) drawPixels(i, numPixels[i].rectangles, 1, rpDCtx, true);
     }
 
     // copy transfer canvas
@@ -288,7 +294,7 @@ function rpDrawBrush() {
         let offsetY = rpCanvasRes / 2 - rpGridScale * rpGridHeight / 2;
         rpDCtx.clearRect(0, 0, canvasResolution, canvasResolution);
         brushActionLine(brush.lineStartX, brush.lineStartY, rpMXGrid, rpMYGrid, (rect) => {
-            drawPixels(rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, clickPixelNum, 1, rpDCtx, true);
+            drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 1, rpDCtx, true);
         });
         rpCtx.globalAlpha = 0.5;
         rpCtx.drawImage(rpDCanvas, 0, 0, rpGridWidth * gridScale, rpGridHeight * gridScale, offsetX, offsetY, rpGridWidth * rpGridScale, rpGridHeight * rpGridScale);
@@ -304,7 +310,7 @@ function rpDrawBrush() {
         let offsetX = rpCanvasRes / 2 - rpGridScale * rpGridWidth / 2;
         let offsetY = rpCanvasRes / 2 - rpGridScale * rpGridHeight / 2;
         rpDCtx.clearRect(0, 0, canvasResolution, canvasResolution);
-        drawPixels(rpMXGrid - brush.size + 1, rpMYGrid - brush.size + 1, brush.size * 2 - 1, brush.size * 2 - 1, (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, rpDCtx, true);
+        drawPixels((brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, [[rpMXGrid - brush.size + 1, rpMYGrid - brush.size + 1, brush.size * 2 - 1, brush.size * 2 - 1, true]], 0.5, rpDCtx, true);
         rpCtx.drawImage(rpDCanvas, 0, 0, rpGridWidth * gridScale, rpGridHeight * gridScale, offsetX, offsetY, rpGridWidth * rpGridScale, rpGridHeight * rpGridScale);
         rpCtx.fillStyle = 'rgb(255, 255, 255)';
         rpCtx.strokeStyle = 'rgb(255, 255, 255)';
@@ -330,8 +336,12 @@ function startRPDrawLoop() {
             camera.scale = rpCamera.scale;
             let forceRedraw2 = forceRedraw;
             let gridScale2 = gridScale;
+            let drawScale2 = drawScale;
+            let screenScale2 = screenScale;
             forceRedraw = true;
             gridScale = rpGridScale;
+            drawScale = rpGridScale * rpCamera.scale;
+            screenScale = (rpGridWidth < rpGridHeight ? rpGridWidth : rpGridHeight) / rpCanvasSize / rpCamera.scale / rpCanvasScale;
             try {
                 rpDraw();
             } catch (err) {
@@ -343,6 +353,8 @@ function startRPDrawLoop() {
                 camera.scale = cameraTemp.scale;
                 forceRedraw = forceRedraw2;
                 gridScale = gridScale2;
+                drawScale = drawScale2;
+                screenScale = screenScale2;
             }
         });
     }, 1000 / 40);

@@ -461,3 +461,4 @@ window.addEventListener('DOMContentLoaded', (e) => {
     }
 });
 
+// puzzle streak wher you have 1 attempt and tehn it goes to next one and oof

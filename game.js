@@ -84,6 +84,8 @@ const fire = createCanvas2();
 const monster = createCanvas2();
 const target = createCanvas2();
 const placeable = createCanvas2();
+const noiseCanvas = createCanvas2();
+const bufferCanvas = createCanvas2();
 const ctx = canvas.getContext('2d');
 const gamectx = gameCanvas.getContext('2d');
 const gridctx = gridCanvas.getContext('2d');
@@ -92,6 +94,8 @@ const firectx = fire.getContext('2d');
 const monsterctx = monster.getContext('2d');
 const targetctx = target.getContext('2d');
 const placeablectx = placeable.getContext('2d');
+const noisectx = noiseCanvas.getContext('2d');
+const bufctx = bufferCanvas.getContext('2d');
 function resetCanvases() {
     canvas.width = canvasResolution;
     canvas.height = canvasResolution;
@@ -109,6 +113,10 @@ function resetCanvases() {
     target.height = canvasResolution;
     placeable.width = canvasResolution;
     placeable.height = canvasResolution;
+    noiseCanvas.width = canvasResolution;
+    noiseCanvas.height = canvasResolution;
+    bufferCanvas.width = canvasResolution;
+    bufferCanvas.height = canvasResolution;
     ctx.imageSmoothingEnabled = false;
     ctx.webkitImageSmoothingEnabled = false;
     ctx.mozImageSmoothingEnabled = false;
@@ -133,6 +141,12 @@ function resetCanvases() {
     placeablectx.imageSmoothingEnabled = false;
     placeablectx.webkitImageSmoothingEnabled = false;
     placeablectx.mozImageSmoothingEnabled = false;
+    noisectx.imageSmoothingEnabled = false;
+    noisectx.webkitImageSmoothingEnabled = false;
+    noisectx.mozImageSmoothingEnabled = false;
+    bufctx.imageSmoothingEnabled = false;
+    bufctx.webkitImageSmoothingEnabled = false;
+    bufctx.mozImageSmoothingEnabled = false;
     ctx.textRendering = 'optimizeSpeed';
     rpResetCanvases();
 };
@@ -165,7 +179,6 @@ const musicGrid = [];
 const lastMusicGrid = [];
 const placeableGrid = [];
 const lastPlaceableGrid = [];
-const noiseGrid = [];
 
 // camera and brush
 const brush = {
@@ -189,6 +202,8 @@ let prevMX = 0;
 let prevMY = 0;
 let prevMXGrid = 0;
 let prevMYGrid = 0;
+let drawScale = 1;
+let screenScale = 1;
 let mouseOver = false;
 const camera = {
     x: 0,
@@ -220,6 +235,8 @@ function createGrid(width = 100, height = 100) {
     gridWidth = width;
     gridHeight = height;
     gridScale = canvasResolution / Math.min(gridWidth, gridHeight);
+    drawScale = gridScale * camera.scale;
+    screenScale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
     pendingExplosions = [];
     forceRedraw = true;
     selection.show = false;
@@ -235,7 +252,8 @@ function createGrid(width = 100, height = 100) {
     lastMusicGrid.length = 0;
     placeableGrid.length = 0;
     lastPlaceableGrid.length = 0;
-    noiseGrid.length = 0;
+    noisectx.clearRect(0, 0, canvasResolution, canvasResolution);
+    noisectx.fillStyle = 'rgb(0, 0, 0)';
     for (let i = 0; i < gridHeight; i++) {
         grid[i] = [];
         lastGrid[i] = [];
@@ -249,7 +267,6 @@ function createGrid(width = 100, height = 100) {
         lastMusicGrid[i] = [];
         placeableGrid[i] = [];
         lastPlaceableGrid[i] = [];
-        noiseGrid[i] = [];
         for (let j = 0; j < gridWidth; j++) {
             grid[i][j] = pixNum.AIR;
             lastGrid[i][j] = -1;
@@ -263,7 +280,8 @@ function createGrid(width = 100, height = 100) {
             lastMusicGrid[i][j] = 0;
             placeableGrid[i][j] = true;
             lastPlaceableGrid[i][j] = true;
-            noiseGrid[i][j] = noise(j / 2, i / 2);
+            noisectx.globalAlpha = constantNoise(j / 2, i / 2);
+            noisectx.fillRect(j * gridScale, i * gridScale, gridScale, gridScale);
         }
     }
     gridWidthText.value = gridWidth;
@@ -516,7 +534,7 @@ function PreRenderer(size = 60) {
     rendctx.mozImageSmoothingEnabled = false;
     return {
         ctx: rendctx,
-        fillPixel: function (x, y, width, height) {
+        fillPixels: function (x, y, width, height) {
             rendctx.fillRect(x * size, y * size, width * size, height * size);
         },
         toImage: function () {
@@ -526,28 +544,29 @@ function PreRenderer(size = 60) {
         }
     }
 };
-function drawPixels(x, y, width, height, type, opacity, ctx, avoidGrid = false) {
-    if (numPixels[type]) {
-        numPixels[type].draw(x, y, width, height, opacity, ctx, avoidGrid);
-    } else {
-        numPixels[pixNum.MISSING].draw(x, y, width, height, opacity, ctx, avoidGrid);
-    }
+function drawPixels(type, rectangles, opacity, ctx, avoidGrid = false) {
+    (numPixels[type] ?? numPixels[pixNum.MISSING]).draw(rectangles, opacity, ctx, avoidGrid);
 };
 function clearPixels(x, y, width, height, ctx) {
-    let scale = gridScale * camera.scale;
-    ctx.clearRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
+    ctx.clearRect(x * drawScale - camera.x, y * drawScale - camera.y, width * drawScale, height * drawScale);
 };
-function fillPixel(x, y, width, height, ctx) {
-    let scale = gridScale * camera.scale;
-    ctx.fillRect(x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
+function forRectangles(rectangles, cb) {
+    for (let rect of rectangles) {
+        cb(...rect);
+    }
 };
-function imagePixel(x, y, width, height, source, ctx) {
-    let scale = gridScale * camera.scale;
+function fillPixels(x, y, width, height, ctx) {
+    ctx.fillRect(x * drawScale - camera.x, y * drawScale - camera.y, width * drawScale, height * drawScale);
+};
+function imagePixels(x, y, width, height, source, ctx) {
     for (let i = y; i < y + height; i++) {
         for (let j = x; j < x + width; j++) {
-            ctx.drawImage(source, j * scale - camera.x, i * scale - camera.y, scale, scale);
+            ctx.drawImage(source, j * drawScale - camera.x, i * drawScale - camera.y, drawScale, drawScale);
         }
     }
+};
+function copyPixelRect(sx, sy, dx, dy, width, height, src, ctx) {
+    ctx.drawImage(src, sx * drawScale, sy * drawScale, width * drawScale, height * drawScale, dx * drawScale, dy * drawScale, width * drawScale, height * drawScale);
 };
 function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
     let multiplier1 = (Math.sin(frameCount * Math.PI / p) + 1) / 2;
@@ -720,6 +739,7 @@ function flow(x, y, isPassable = isAir) {
         let foundRightDrop = false;
         let incrementLeft = canMoveTo(x - 1, y) && isPassable(x - 1, y);
         let incrementRight = canMoveTo(x + 1, y) && isPassable(x + 1, y);
+        if (!incrementLeft && !incrementRight) return;
         // move directly to destination?
         while (incrementLeft) {
             left--;
@@ -1032,32 +1052,32 @@ function getLaserPath(x, y, dir) {
 function drawLaserPath(path) {
     for (let line of path) {
         if (line[1] == line[3]) {
-            fillPixel(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
+            fillPixels(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
             if (grid[line[1]][line[0]] == pixNum.MIRROR_1 || grid[line[1]][line[0]] == pixNum.MIRROR_2) {
                 if (line[0] < line[2]) {
-                    fillPixel(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
-                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixel(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
-                    else fillPixel(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
+                    fillPixels(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixels(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
+                    else fillPixels(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
                 } else {
-                    fillPixel(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
-                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixel(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
-                    else fillPixel(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
+                    fillPixels(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixels(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
+                    else fillPixels(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
                 }
-                imagePixel(line[0], line[1], 1, 1, pixelAt(line[0], line[1]).prerenderedFrames[0], abovectx);
+                imagePixels(line[0], line[1], 1, 1, pixelAt(line[0], line[1]).prerenderedFrames[0], abovectx);
             }
         } else {
-            fillPixel(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
+            fillPixels(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
             if (grid[line[1]][line[0]] == pixNum.MIRROR_1 || grid[line[1]][line[0]] == pixNum.MIRROR_2) {
                 if (line[1] < line[3]) {
-                    fillPixel(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
-                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixel(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
-                    else fillPixel(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                    fillPixels(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
+                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixels(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                    else fillPixels(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
                 } else {
-                    fillPixel(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
-                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixel(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
-                    else fillPixel(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                    fillPixels(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
+                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixels(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
+                    else fillPixels(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
                 }
-                imagePixel(line[0], line[1], 1, 1, pixelAt(line[0], line[1]).prerenderedFrames[0], abovectx);
+                imagePixels(line[0], line[1], 1, 1, pixelAt(line[0], line[1]).prerenderedFrames[0], abovectx);
             }
         }
     }
@@ -1280,20 +1300,22 @@ function drawFrame() {
             placeablectx.clearRect(0, 0, canvasResolution, canvasResolution);
         }
         abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
-        let scale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
-        let xmin = Math.max(0, Math.floor(camera.x * scale) - 1);
-        let xmax = Math.min(gridWidth - 1, Math.floor((camera.x + canvasResolution) * scale) + 1);
-        let ymin = Math.max(0, Math.floor(camera.y * scale) - 1);
-        let ymax = Math.min(gridHeight - 1, Math.floor((camera.y + canvasResolution) * scale) + 1);
+        for (let i in numPixels) {
+            numPixels[i].rectangles.length = 0;
+        }
+        let xmin = Math.max(0, Math.floor(camera.x * screenScale) - 1);
+        let xmax = Math.min(gridWidth - 1, Math.floor((camera.x + canvasResolution) * screenScale) + 1);
+        let ymin = Math.max(0, Math.floor(camera.y * screenScale) - 1);
+        let ymax = Math.min(gridHeight - 1, Math.floor((camera.y + canvasResolution) * screenScale) + 1);
         for (let y = ymin; y <= ymax; y++) {
             let curr = pixNum.AIR;
             let redrawing = grid[y][0] != lastGrid[y][0];
             let amount = 0;
             for (let x = xmin; x <= xmax; x++) {
                 amount++;
-                if (grid[y][x] != curr || (grid[y][x] != lastGrid[y][x]) != redrawing) {
+                if (grid[y][x] != curr || grid[y][x] != lastGrid[y][x] != redrawing) {
                     let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
-                    if (curr != pixNum.AIR && (redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations) || forceRedraw)) drawPixels(x - amount, y, amount, 1, curr, 1, gridctx);
+                    if (curr != pixNum.AIR && (redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations) || forceRedraw)) numPixels[curr].rectangles.push([x - amount, y, amount, 1, redrawing]);
                     else if (curr == pixNum.AIR && (redrawing || forceRedraw)) clearPixels(x - amount, y, amount, 1, gridctx);
                     curr = grid[y][x];
                     redrawing = grid[y][x] != lastGrid[y][x];
@@ -1302,8 +1324,11 @@ function drawFrame() {
                 lastGrid[y][x] = grid[y][x];
             }
             let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
-            if (curr != pixNum.AIR && (redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations) || forceRedraw)) drawPixels(xmax - amount, y, amount + 1, 1, curr, 1, gridctx);
+            if (curr != pixNum.AIR && (redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations) || forceRedraw)) numPixels[curr].rectangles.push([xmax - amount, y, amount + 1, 1, redrawing]);
             else if (curr == pixNum.AIR && (redrawing || forceRedraw)) clearPixels(xmax - amount, y, amount + 1, 1, gridctx);
+        }
+        for (let i in numPixels) {
+            if (numPixels[i].rectangles.length > 0) drawPixels(i, numPixels[i].rectangles, 1, gridctx);
         }
         drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
         drawBooleanGrid(monsterGrid, monsterGrid, pixNum.MONSTER, monsterctx);
@@ -1327,11 +1352,11 @@ function drawFrame() {
     frameTime = performance.now() - frameStart;
 };
 function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
-    let scale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
-    let xmin = Math.max(0, Math.floor(camera.x * scale) - 1);
-    let xmax = Math.min(gridWidth - 1, Math.floor((camera.x + canvasResolution) * scale) + 1);
-    let ymin = Math.max(0, Math.floor(camera.y * scale) - 1);
-    let ymax = Math.min(gridHeight - 1, Math.floor((camera.y + canvasResolution) * scale) + 1);
+    numPixels[type].rectangles.length = 0;
+    let xmin = Math.max(0, Math.floor(camera.x * screenScale) - 1);
+    let xmax = Math.min(gridWidth - 1, Math.floor((camera.x + canvasResolution) * screenScale) + 1);
+    let ymin = Math.max(0, Math.floor(camera.y * screenScale) - 1);
+    let ymax = Math.min(gridHeight - 1, Math.floor((camera.y + canvasResolution) * screenScale) + 1);
     if (grid === lastGrid) {
         ctx.clearRect(0, 0, canvasResolution, canvasResolution);
         for (let y = ymin; y <= ymax; y++) {
@@ -1340,12 +1365,12 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
             for (let x = xmin; x <= xmax; x++) {
                 amount++;
                 if (grid[y][x] != pixel) {
-                    if (pixel ^ invert) drawPixels(x - amount, y, amount, 1, type, 1, ctx);
+                    if (pixel ^ invert) numPixels[type].rectangles.push([x - amount, y, amount, 1, true]);
                     pixel = grid[y][x];
                     amount = 0;
                 }
             }
-            if (pixel) drawPixels(xmax - amount, y, amount + 1, 1, type, 1, ctx);
+            if (pixel) numPixels[type].rectangles.push([xmax - amount, y, amount + 1, 1, true]);
         }
     } else {
         for (let y = ymin; y <= ymax; y++) {
@@ -1355,7 +1380,7 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
             for (let x = xmin; x <= xmax; x++) {
                 amount++;
                 if (grid[y][x] != pixel || (grid[y][x] != lastGrid[y][x]) != redrawing) {
-                    if (pixel ^ invert && (redrawing || forceRedraw)) drawPixels(x - amount, y, amount, 1, type, 1, ctx);
+                    if (pixel ^ invert && (redrawing || forceRedraw)) numPixels[type].rectangles.push([x - amount, y, amount, 1, true]);
                     else if (!pixel ^ invert && (redrawing || forceRedraw)) clearPixels(x - amount, y, amount, 1, ctx);
                     pixel = grid[y][x];
                     redrawing = grid[y][x] != lastGrid[y][x];
@@ -1363,10 +1388,11 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
                 }
                 lastGrid[y][x] = grid[y][x];
             }
-            if (pixel ^ invert && (redrawing || forceRedraw)) drawPixels(xmax - amount, y, amount + 1, 1, type, 1, ctx);
+            if (pixel ^ invert && (redrawing || forceRedraw)) numPixels[type].rectangles.push([xmax - amount, y, amount + 1, 1, true]);
             else if (!pixel ^ invert && (redrawing || forceRedraw)) clearPixels(xmax - amount, y, amount + 1, 1, ctx);
         }
     }
+    if (numPixels[type].rectangles.length > 0) drawPixels(type, numPixels[type].rectangles, 1, ctx);
 };
 function drawBrush() {
     if (!fastSimulation && !brush.selecting) {
@@ -1380,48 +1406,45 @@ function drawBrush() {
             for (let y = 0; y < selection.grid.length; y++) {
                 for (let x = 0; x < selection.grid[y].length; x++) {
                     if (x + offsetX >= 0 && x + offsetX < gridWidth && y + offsetY >= 0 && y + offsetY < gridHeight) {
-                        drawPixels(x + offsetX, y + offsetY, 1, 1, selection.grid[y][x], 0.5, ctx, true);
+                        drawPixels(selection.grid[y][x], [[x + offsetX, y + offsetY, 1, 1, true]], 0.5, ctx, true);
                     }
                 }
             }
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(0, 0, 0)';
-            let scale = gridScale * camera.scale;
-            ctx.setLineDash([scale / 2, scale / 2]);
+            ctx.setLineDash([drawScale / 2, drawScale / 2]);
             ctx.lineWidth = 2 * camera.scale;
             ctx.beginPath();
-            ctx.strokeRect(x1 * scale - camera.x, y1 * scale - camera.y, (x2 - x1 + 1) * scale, (y2 - y1 + 1) * scale);
+            ctx.strokeRect(x1 * drawScale - camera.x, y1 * drawScale - camera.y, (x2 - x1 + 1) * drawScale, (y2 - y1 + 1) * drawScale);
             ctx.stroke();
         } else if (brush.lineMode && !brush.startsInRPE) {
             const clickPixelNum = (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
-            abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
+            bufctx.clearRect(0, 0, canvasResolution, canvasResolution);
             brushActionLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.size, (rect) => {
-                drawPixels(rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, clickPixelNum, 1, abovectx, true);
+                drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 1, bufctx, true);
             });
             ctx.globalAlpha = 0.5;
-            ctx.drawImage(above, 0, 0);
+            ctx.drawImage(bufferCanvas, 0, 0);
             let rect = calcBrushRectCoordinates(mXGrid, mYGrid);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(255, 255, 255)';
-            let scale = gridScale * camera.scale;
             ctx.setLineDash([]);
             ctx.lineWidth = 2 * camera.scale;
             ctx.globalCompositeOperation = 'difference';
             ctx.beginPath();
-            ctx.strokeRect(rect.xmin * scale - camera.x, rect.ymin * scale - camera.y, (rect.xmax - rect.xmin + 1) * scale, (rect.ymax - rect.ymin + 1) * scale);
+            ctx.strokeRect(rect.xmin * drawScale - camera.x, rect.ymin * drawScale - camera.y, (rect.xmax - rect.xmin + 1) * drawScale, (rect.ymax - rect.ymin + 1) * drawScale);
             ctx.stroke();
             ctx.globalCompositeOperation = 'source-over';
         } else {
             let rect = calcBrushRectCoordinates(mXGrid, mYGrid)
-            drawPixels(rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, 0.5, ctx, true);
+            drawPixels((brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 0.5, ctx, true);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(255, 255, 255)';
-            let scale = gridScale * camera.scale;
             ctx.setLineDash([]);
             ctx.lineWidth = 2 * camera.scale;
             ctx.globalCompositeOperation = 'difference';
             ctx.beginPath();
-            ctx.strokeRect(rect.xmin * scale - camera.x, rect.ymin * scale - camera.y, (rect.xmax - rect.xmin + 1) * scale, (rect.ymax - rect.ymin + 1) * scale);
+            ctx.strokeRect(rect.xmin * drawScale - camera.x, rect.ymin * drawScale - camera.y, (rect.xmax - rect.xmin + 1) * drawScale, (rect.ymax - rect.ymin + 1) * drawScale);
             ctx.stroke();
             ctx.globalCompositeOperation = 'source-over';
         }
@@ -1433,14 +1456,13 @@ function drawBrush() {
         let xmax = Math.max(selection.x1, selection.x2);
         let ymin = Math.min(selection.y1, selection.y2);
         let ymax = Math.max(selection.y1, selection.y2);
-        fillPixel(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ctx);
+        fillPixels(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1, ctx);
         ctx.globalAlpha = 1;
         ctx.strokeStyle = 'rgb(0, 0, 0)';
-        let scale = gridScale * camera.scale;
-        ctx.setLineDash([scale / 2, scale / 2]);
+        ctx.setLineDash([drawScale / 2, drawScale / 2]);
         ctx.lineWidth = 2 * camera.scale;
         ctx.beginPath();
-        ctx.strokeRect(xmin * scale - camera.x, ymin * scale - camera.y, (xmax - xmin + 1) * scale, (ymax - ymin + 1) * scale);
+        ctx.strokeRect(xmin * drawScale - camera.x, ymin * drawScale - camera.y, (xmax - xmin + 1) * drawScale, (ymax - ymin + 1) * drawScale);
         ctx.stroke();
     }
 };
@@ -1461,9 +1483,8 @@ function updateCamera() {
             forceRedraw = true;
         }
         if (forceRedraw) {
-            let scale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
-            mXGrid = Math.floor((mX + camera.x) * scale);
-            mYGrid = Math.floor((mY + camera.y) * scale);
+            mXGrid = Math.floor((mX + camera.x) * screenScale);
+            mYGrid = Math.floor((mY + camera.y) * screenScale);
         }
     }
 };
@@ -2229,9 +2250,10 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
                 forceRedraw = true;
                 if (camera.scale != cScale) tickSound();
-                let scale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
-                mXGrid = Math.floor((mX + camera.x) * scale);
-                mYGrid = Math.floor((mY + camera.y) * scale);
+                drawScale = gridScale * camera.scale;
+                screenScale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
+                mXGrid = Math.floor((mX + camera.x) * screenScale);
+                mYGrid = Math.floor((mY + camera.y) * screenScale);
                 mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
             } else if (key == ']' && mouseOver) {
                 let cScale = camera.scale;
@@ -2242,9 +2264,10 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
                 forceRedraw = true;
                 if (camera.scale != cScale) tickSound();
-                let scale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
-                mXGrid = Math.floor((mX + camera.x) * scale);
-                mYGrid = Math.floor((mY + camera.y) * scale);
+                drawScale = gridScale * camera.scale;
+                screenScale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
+                mXGrid = Math.floor((mX + camera.x) * screenScale);
+                mYGrid = Math.floor((mY + camera.y) * screenScale);
                 mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
             } else if (key == 'escape') {
                 brush.isSelection = false;
@@ -2268,9 +2291,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
     document.onmousemove = (e) => {
         mX = Math.round((e.pageX - 10) * canvasScale);
         mY = Math.round((e.pageY - 10) * canvasScale);
-        let scale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
-        mXGrid = Math.floor((mX + camera.x) * scale);
-        mYGrid = Math.floor((mY + camera.y) * scale);
+        mXGrid = Math.floor((mX + camera.x) * screenScale);
+        mYGrid = Math.floor((mY + camera.y) * screenScale);
         mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
     };
     document.addEventListener('wheel', (e) => {
@@ -2283,6 +2305,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 camera.x = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentX) - mX, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
                 camera.y = Math.max(0, Math.min(Math.round(canvasSize * camera.scale * percentY) - mY, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
                 forceRedraw = true;
+                drawScale = gridScale * camera.scale;
+                screenScale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
                 document.onmousemove(e);
                 if (camera.scale != cScale) tickSound();
             } else if (!brush.isSelection) {

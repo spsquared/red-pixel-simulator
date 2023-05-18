@@ -10,6 +10,25 @@ function randomSeed(t, x, y) {
 };
 
 const perlinNoiseGenerator = new perlinNoise3d();
+const constantNoiseCache = new Map();
 function noise(x, y, t = 0) {
     return perlinNoiseGenerator.get(x, y, t);
+};
+function constantNoise(x, y) {
+    let x2 = Math.round(x * 100);
+    let y2 = Math.round(y * 100);
+    if (constantNoiseCache.has(y2)) {
+        if (constantNoiseCache.get(y2).has(x2)) {
+            return constantNoiseCache.get(y2).get(x2);
+        } else {
+            let n = noise(x, y, 0);
+            constantNoiseCache.get(y2).set(x2, n);
+            return n;
+        }
+    } else {
+        constantNoiseCache.set(y2, new Map());
+        let n = noise(x, y, 0);
+        constantNoiseCache.get(y2).set(x2, n);
+        return n;
+    }
 };

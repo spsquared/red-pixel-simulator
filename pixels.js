@@ -2,7 +2,7 @@ const pixels = {
     air: {
         name: 'Air',
         description: 'It\'s air... What else would it be?',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) { },
+        draw: function (rectangles, opacity, ctx, avoidGrid) { },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -30,10 +30,12 @@ const pixels = {
     wall: {
         name: 'Wall',
         description: 'An immovable wall (good luck finding an unstoppable force-OH NO)',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -62,10 +64,12 @@ const pixels = {
     dirt: {
         name: 'Dirt',
         description: 'Wash your hands after handling it, it\'s pretty dirty',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(125, 75, 0)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -103,10 +107,12 @@ const pixels = {
     grass: {
         name: 'Grass',
         description: 'Go touch some',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(25, 175, 25)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -162,20 +168,26 @@ const pixels = {
     mud: {
         name: 'Mud',
         description: 'Basically wet dirt',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(100, 60, 0)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(90, 50, 0)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(105, 70, 0, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                bufctx.fillStyle = 'rgb(105, 70, 0)';
+                bufctx.globalCompositeOperation = 'source-over';
+                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
+                bufctx.globalCompositeOperation = 'destination-atop';
+                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                });
             }
         },
         update: function (x, y) {
@@ -216,10 +228,12 @@ const pixels = {
     sand: {
         name: 'Sand',
         description: 'Weird yellow powdery stuff that falls',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 225, 125)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -251,20 +265,26 @@ const pixels = {
     gravel: {
         name: 'Gravel',
         description: 'Weird grey rocky stuff that falls',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(100, 100, 80)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(90, 90, 75)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(120, 120, 100, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                bufctx.fillStyle = 'rgb(120, 120, 100)';
+                bufctx.globalCompositeOperation = 'source-over';
+                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
+                bufctx.globalCompositeOperation = 'destination-atop';
+                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                });
             }
         },
         update: function (x, y) {
@@ -297,14 +317,18 @@ const pixels = {
     wood: {
         name: 'Wood',
         description: 'Just some logs',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(175, 125, 75)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(150, 100, 75)';
-            for (let i = 0; i < width; i++) {
-                fillPixel(x + i, y, 1 / 2, height, ctx);
-            }
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    fillPixels(x + i, y, 1 / 2, height, ctx);
+                }
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -335,10 +359,12 @@ const pixels = {
     leaves: {
         name: 'Leaves',
         description: 'Lush green leaves... or was it leafs?',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 220, 0)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -385,20 +411,26 @@ const pixels = {
     moss: {
         name: 'Moss',
         description: 'Very mossy moss that grows on mossy stone',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(50, 150, 25)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(0, 125, 0)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(75, 200, 50, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                bufctx.fillStyle = 'rgb(75, 200, 50)';
+                bufctx.globalCompositeOperation = 'source-over';
+                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
+                bufctx.globalCompositeOperation = 'destination-atop';
+                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                });
             }
         },
         update: function (x, y) {
@@ -440,20 +472,26 @@ const pixels = {
     ash: {
         name: 'Ash',
         description: 'Burnt stuff, doesn\'t burn easily though',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(100, 110, 120)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(80, 85, 90)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(120, 130, 140, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                bufctx.fillStyle = 'rgb(120, 130, 140)';
+                bufctx.globalCompositeOperation = 'source-over';
+                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
+                bufctx.globalCompositeOperation = 'destination-atop';
+                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                });
             }
         },
         update: function (x, y) {
@@ -496,20 +534,26 @@ const pixels = {
     wet_ash: {
         name: 'Wet Ash',
         description: 'Definitely not silt',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(80, 80, 90)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(70, 70, 80)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(85, 85, 90, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                bufctx.fillStyle = 'rgb(85, 85, 90)';
+                bufctx.globalCompositeOperation = 'source-over';
+                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
+                bufctx.globalCompositeOperation = 'destination-atop';
+                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                });
             }
         },
         update: function (x, y) {
@@ -549,10 +593,12 @@ const pixels = {
     stone: {
         name: 'Stone',
         description: 'Very stony and hard',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(110, 110, 110)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -591,19 +637,39 @@ const pixels = {
     water: {
         name: 'Water',
         description: 'Unrealistically flows and may or may not be wet',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(75, 100, 255)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(100, 175, 255)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(75, 50, 255, ${noise((x + i) / 4, (y + j) / 4, noAnimations ? 0 : (frameCount / 10)) + 0.1})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                ctx.fillStyle = 'rgb(75, 50, 255)';
+                if (noAnimations) {
+                    forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                        for (let i = 0; i < width; i++) {
+                            for (let j = 0; j < height; j++) {
+                                if (redrawing || forceRedraw) {
+                                    ctx.globalAlpha = constantNoise((x + i) / 4, (y + j) / 4) + 0.1;
+                                    fillPixels(x + i, y + j, 1, 1, ctx);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                        for (let i = 0; i < width; i++) {
+                            for (let j = 0; j < height; j++) {
+                                ctx.globalAlpha = noise((x + i) / 4, (y + j) / 4, frameCount / 10) + 0.1;
+                                fillPixels(x + i, y + j, 1, 1, ctx);
+                            }
+                        }
+                    });
                 }
             }
         },
@@ -648,19 +714,39 @@ const pixels = {
     ice: {
         name: 'Ice',
         description: 'Cold water',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(180, 200, 255)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(180, 180, 240)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(190, 200, 255, ${noise((x + i) / 2, (y + j) / 2, noAnimations ? 0 : (frameCount / 300))})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                ctx.fillStyle = 'rgb(190, 200, 255)';
+                if (noAnimations) {
+                    forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                        for (let i = 0; i < width; i++) {
+                            for (let j = 0; j < height; j++) {
+                                if (redrawing || forceRedraw) {
+                                    ctx.globalAlpha = constantNoise((x + i) / 2, (y + j) / 2);
+                                    fillPixels(x + i, y + j, 1, 1, ctx);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                        for (let i = 0; i < width; i++) {
+                            for (let j = 0; j < height; j++) {
+                                ctx.globalAlpha = noise((x + i) / 2, (y + j) / 2, frameCount / 300);
+                                fillPixels(x + i, y + j, 1, 1, ctx);
+                            }
+                        }
+                    });
                 }
             }
         },
@@ -705,20 +791,26 @@ const pixels = {
     snow: {
         name: 'Snow',
         description: 'Fluffy cold water',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(230, 240, 240)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(230, 230, 230)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(230, 250, 250, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                bufctx.fillStyle = 'rgb(230, 250, 250)';
+                bufctx.globalCompositeOperation = 'source-over';
+                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
+                bufctx.globalCompositeOperation = 'destination-atop';
+                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                });
             }
         },
         update: function (x, y) {
@@ -755,19 +847,39 @@ const pixels = {
     steam: {
         name: 'Steam',
         description: 'Very hot steam that will give you second-degree burns if you\'re not careful',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(210, 210, 210)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(225, 225, 225)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(200, 200, 200, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                if (noAnimations) {
+                    forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                        for (let i = 0; i < width; i++) {
+                            for (let j = 0; j < height; j++) {
+                                if (redrawing || forceRedraw) {
+                                    ctx.globalAlpha = constantNoise((x + i) / 2, (y + j) / 2);
+                                    fillPixels(x + i, y + j, 1, 1, ctx);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                        for (let i = 0; i < width; i++) {
+                            for (let j = 0; j < height; j++) {
+                                ctx.globalAlpha = noise((x + i) / 2, (y + j) / 2, frameCount / 5);
+                                fillPixels(x + i, y + j, 1, 1, ctx);
+                            }
+                        }
+                    });
                 }
             }
         },
@@ -908,19 +1020,39 @@ const pixels = {
     lava: {
         name: 'Lava',
         description: 'Melts stuff and sets things on fire (and flows unrealistically)',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(255, 100, 0)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(255, 0, 0)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(255, 255, 0, ${noise((x + i) / 6, (y + j) / 6, noAnimations ? 0 : (frameCount / 30))})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                ctx.fillStyle = 'rgb(255, 255, 0)';
+                if (noAnimations) {
+                    forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                        for (let i = 0; i < width; i++) {
+                            for (let j = 0; j < height; j++) {
+                                if (redrawing || forceRedraw) {
+                                    ctx.globalAlpha = constantNoise((x + i) / 6, (y + j) / 6);
+                                    fillPixels(x + i, y + j, 1, 1, ctx);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                        for (let i = 0; i < width; i++) {
+                            for (let j = 0; j < height; j++) {
+                                ctx.globalAlpha = noise((x + i) / 6, (y + j) / 6, frameCount / 30);
+                                fillPixels(x + i, y + j, 1, 1, ctx);
+                            }
+                        }
+                    });
                 }
             }
         },
@@ -1027,21 +1159,27 @@ const pixels = {
     fire: {
         name: 'Fire',
         description: 'AAAAAA!!! It burns!',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             if (noNoise) {
                 ctx.globalAlpha = opacity / 2;
                 ctx.fillStyle = 'rgb(255, 180, 0)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.globalAlpha = opacity / 3;
                 ctx.fillStyle = 'rgb(255, 100, 0)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(255, 255, 0, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                bufctx.fillStyle = 'rgb(255, 255, 0)';
+                bufctx.globalCompositeOperation = 'source-over';
+                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
+                bufctx.globalCompositeOperation = 'destination-atop';
+                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                });
             }
         },
         update: function (x, y) {
@@ -1107,10 +1245,12 @@ const pixels = {
     concrete_powder: {
         name: 'Concrete Powder',
         description: 'Like sand, but hardens into concrete when in contact with water',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(150, 150, 150)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1146,10 +1286,12 @@ const pixels = {
     concrete: {
         name: 'Concrete',
         description: 'Hard stuff that doesn\'t move easily, behaves similarly to stone but does not melt',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 75, 75)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1188,9 +1330,11 @@ const pixels = {
     crate: {
         name: 'Wooden Crate',
         description: 'A crate made of wood that floats on water',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1209,14 +1353,14 @@ const pixels = {
             ctx.resetTransform();
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(40);
+            const { ctx, fillPixels, toImage } = new PreRenderer(40);
             ctx.fillStyle = 'rgb(150, 100, 75)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(175, 125, 75)';
-            fillPixel(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
             ctx.fillStyle = 'rgb(150, 100, 75)';
             ctx.rotate(Math.PI / 4);
-            fillPixel(1 / Math.sqrt(2) - 0.1, -1 / Math.sqrt(2), 0.2, Math.sqrt(2));
+            fillPixels(1 / Math.sqrt(2) - 0.1, -1 / Math.sqrt(2), 0.2, Math.sqrt(2));
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },
@@ -1240,10 +1384,12 @@ const pixels = {
     plant: {
         name: 'P.L.A.N.T.',
         description: '<span style="font-style: italic;">Persistent Loud Aesthetic Nail Tables.</span><br>No, it doesn\'t actually stand for anything. But it does consume concrete alarmingly fast...',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(125, 255, 75)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1289,10 +1435,12 @@ const pixels = {
     sponge: {
         name: 'S.P.O.N.G.E.',
         description: '<span style="font-style: italic;">Sample Providing Oceanic Nucleolic Green Egg</span><br>buh',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(225, 255, 75)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1332,9 +1480,11 @@ const pixels = {
     pump: {
         name: 'Water Pump',
         description: 'Violates the Laws of Thermodynamics to create water',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1355,11 +1505,11 @@ const pixels = {
             ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(3);
             ctx.fillStyle = 'rgb(25, 125, 75)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 100, 255)';
-            fillPixel(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -1382,9 +1532,11 @@ const pixels = {
     lava_generator: {
         name: 'Lava Heater',
         description: 'Violates the Laws of Thermodynamics to create lava',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1418,11 +1570,11 @@ const pixels = {
             ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(3);
             ctx.fillStyle = 'rgb(25, 125, 75)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 125, 0)';
-            fillPixel(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -1445,9 +1597,11 @@ const pixels = {
     freezer: {
         name: 'Freezer',
         description: 'Violates the Laws of Thermodynamics to freeze stuff',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1473,11 +1627,11 @@ const pixels = {
             ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(3);
             ctx.fillStyle = 'rgb(25, 125, 75)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(180, 200, 255)';
-            fillPixel(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -1505,16 +1659,20 @@ const pixels = {
     piston_left: {
         name: 'Pusher (Left)',
         description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1553,16 +1711,20 @@ const pixels = {
     piston_up: {
         name: 'Pusher (Up)',
         description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1601,16 +1763,20 @@ const pixels = {
     piston_right: {
         name: 'Pusher (Right)',
         description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1649,16 +1815,20 @@ const pixels = {
     piston_down: {
         name: 'Pusher (Down)',
         description: 'Pushes pixels in its path',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1697,16 +1867,20 @@ const pixels = {
     sticky_piston_left: {
         name: 'Sticky Pusher (Left)',
         description: 'Sticks to and pushes pixels in its path, also pushing any pixels in the way of pixels stuck to it',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 75)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(0, 125, 0)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1748,16 +1922,20 @@ const pixels = {
     sticky_piston_up: {
         name: 'Sticky Pusher (Up)',
         description: 'Sticks to and pushes pixels in its path, also pushing any pixels in the way of pixels stuck to it',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 75)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(0, 125, 0)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1799,16 +1977,20 @@ const pixels = {
     sticky_piston_right: {
         name: 'Sticky Pusher (Right)',
         description: 'Sticks to and pushes pixels in its path, also pushing any pixels in the way of pixels stuck to it',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 75)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(0, 125, 0)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1850,16 +2032,20 @@ const pixels = {
     sticky_piston_down: {
         name: 'Sticky Pusher (Down)',
         description: 'Sticks to and pushes pixels in its path, also pushing any pixels in the way of pixels stuck to it',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(75, 255, 75)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(0, 125, 0)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -1901,9 +2087,11 @@ const pixels = {
     cloner_left: {
         name: 'Copier (Left)',
         description: 'Copies pixels from its right to its left',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
@@ -1921,14 +2109,14 @@ const pixels = {
             ctx.fillRect(50 / 6, 50 / 4, 50 / 6, 25);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
-            fillPixel(1 / 6, 1 / 4, 1 / 6, 1 / 2);
+            fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 6, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -1952,9 +2140,11 @@ const pixels = {
     cloner_up: {
         name: 'Copier (Up)',
         description: 'Copies pixels from below it to above it',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
@@ -1972,14 +2162,14 @@ const pixels = {
             ctx.fillRect(50 / 4, 50 / 6, 25, 50 / 6);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
-            fillPixel(1 / 4, 1 / 6, 1 / 2, 1 / 6);
+            fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixels(1 / 4, 1 / 6, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2003,9 +2193,11 @@ const pixels = {
     cloner_right: {
         name: 'Copier (Right)',
         description: 'Copies pixels from its left to its right',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
@@ -2023,14 +2215,14 @@ const pixels = {
             ctx.fillRect(200 / 6, 50 / 4, 50 / 6, 25);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
-            fillPixel(2 / 3, 1 / 4, 1 / 6, 1 / 2);
+            fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(2 / 3, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2054,9 +2246,11 @@ const pixels = {
     cloner_down: {
         name: 'Copier (Down)',
         description: 'Copies pixels from above it to below it',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
@@ -2074,14 +2268,14 @@ const pixels = {
             ctx.fillRect(50 / 4, 200 / 6, 25, 50 / 6);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
-            fillPixel(1 / 4, 2 / 3, 1 / 2, 1 / 6);
+            fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 4, 2 / 3, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2105,9 +2299,11 @@ const pixels = {
     push_cloner_left: {
         name: 'Cloner (Left)',
         description: 'Clones pixels from its right to its left, pushing pixels in the way',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && canMoveTo(x - 1, y)) {
@@ -2129,16 +2325,16 @@ const pixels = {
             ctx.fillRect(50 / 3, 20, 50 / 3, 10);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixels, toImage } = new PreRenderer(60);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
-            fillPixel(1 / 6, 1 / 4, 1 / 6, 1 / 2);
+            fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 6, 1 / 4, 1 / 6, 1 / 2);
             ctx.fillStyle = 'rgb(255, 255, 0)';
-            fillPixel(1 / 3, 2 / 5, 1 / 3, 1 / 5);
+            fillPixels(1 / 3, 2 / 5, 1 / 3, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2162,9 +2358,11 @@ const pixels = {
     push_cloner_up: {
         name: 'Cloner (Up)',
         description: 'Clones pixels from below it to above it, pushing pixels in the way',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && canMoveTo(x, y - 1)) {
@@ -2186,16 +2384,16 @@ const pixels = {
             ctx.fillRect(20, 50 / 3, 10, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixels, toImage } = new PreRenderer(60);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
-            fillPixel(1 / 4, 1 / 6, 1 / 2, 1 / 6);
+            fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixels(1 / 4, 1 / 6, 1 / 2, 1 / 6);
             ctx.fillStyle = 'rgb(255, 255, 0)';
-            fillPixel(2 / 5, 1 / 3, 1 / 5, 1 / 3);
+            fillPixels(2 / 5, 1 / 3, 1 / 5, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2219,9 +2417,11 @@ const pixels = {
     push_cloner_right: {
         name: 'Cloner (Right)',
         description: 'Clones pixels from its left to its right, pushing pixels in the way',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && canMoveTo(x + 1, y)) {
@@ -2243,16 +2443,16 @@ const pixels = {
             ctx.fillRect(50 / 3, 20, 50 / 3, 10);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixels, toImage } = new PreRenderer(60);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
-            fillPixel(2 / 3, 1 / 4, 1 / 6, 1 / 2);
+            fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(2 / 3, 1 / 4, 1 / 6, 1 / 2);
             ctx.fillStyle = 'rgb(255, 255, 0)';
-            fillPixel(1 / 3, 2 / 5, 1 / 3, 1 / 5);
+            fillPixels(1 / 3, 2 / 5, 1 / 3, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2276,9 +2476,11 @@ const pixels = {
     push_cloner_down: {
         name: 'Cloner (Down)',
         description: 'Clones pixels from above it to below it, pushing pixels in the way',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && canMoveTo(x, y + 1)) {
@@ -2300,16 +2502,16 @@ const pixels = {
             ctx.fillRect(20, 50 / 3, 10, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixels, toImage } = new PreRenderer(60);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
-            fillPixel(1 / 4, 2 / 3, 1 / 2, 1 / 6);
+            fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 4, 2 / 3, 1 / 2, 1 / 6);
             ctx.fillStyle = 'rgb(255, 255, 0)';
-            fillPixel(2 / 5, 1 / 3, 1 / 5, 1 / 3);
+            fillPixels(2 / 5, 1 / 3, 1 / 5, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2333,9 +2535,11 @@ const pixels = {
     super_cloner_left: {
         name: 'Super Copier (Left)',
         description: 'Copies pixels from its right to its left, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (x > 0 && x < gridWidth - 1) {
@@ -2352,14 +2556,14 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
-            fillPixel(1 / 6, 1 / 4, 1 / 6, 1 / 2);
+            fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 6, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2383,9 +2587,11 @@ const pixels = {
     super_cloner_up: {
         name: 'Super Copier (Up)',
         description: 'Copies pixels from below it to above it, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (y > 0 && y < gridHeight - 1) {
@@ -2402,14 +2608,14 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
-            fillPixel(1 / 4, 1 / 6, 1 / 2, 1 / 6);
+            fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixels(1 / 4, 1 / 6, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2435,9 +2641,11 @@ const pixels = {
     super_cloner_right: {
         name: 'Super Copier (Right)',
         description: 'Copies pixels from its left to its right, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (x > 0 && x < gridWidth - 1) {
@@ -2454,14 +2662,14 @@ const pixels = {
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(0, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(2 / 3, 1 / 3, 1 / 3, 1 / 3);
-            fillPixel(2 / 3, 1 / 4, 1 / 6, 1 / 2);
+            fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(2 / 3, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2485,9 +2693,11 @@ const pixels = {
     super_cloner_down: {
         name: 'Super Copier (Down)',
         description: 'Copies pixels from above it to below it, removing whatever was previously there',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (y > 0 && y < gridHeight - 1) {
@@ -2504,14 +2714,14 @@ const pixels = {
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(36);
+            const { ctx, fillPixels, toImage } = new PreRenderer(36);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
-            fillPixel(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(125, 255, 75)';;
-            fillPixel(1 / 3, 2 / 3, 1 / 3, 1 / 3);
-            fillPixel(1 / 4, 2 / 3, 1 / 2, 1 / 6);
+            fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 4, 2 / 3, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2535,16 +2745,20 @@ const pixels = {
     rotator_left: {
         name: 'Rotator (Left)',
         description: 'Rotates directional pixels to face left',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2580,16 +2794,20 @@ const pixels = {
     rotator_up: {
         name: 'Rotator (Up)',
         description: 'Rotates directional pixels to face up',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2625,16 +2843,20 @@ const pixels = {
     rotator_right: {
         name: 'Rotator (Right)',
         description: 'Rotates directional pixels to face right',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2670,16 +2892,20 @@ const pixels = {
     rotator_down: {
         name: 'Rotator (Down)',
         description: 'Rotates directional pixels to face down',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2715,9 +2941,12 @@ const pixels = {
     rotator_clockwise: {
         name: 'Rotator (Clockwise)',
         description: 'Rotates directional pixels clockwise',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (frameCount % 10 != 0) return;
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
+            });
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2742,30 +2971,30 @@ const pixels = {
             ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(3);
+            const { ctx, fillPixels, toImage } = new PreRenderer(3);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(0, 0, 2 / 3, 1 / 3);
-            fillPixel(1 / 3, 2 / 3, 2 / 3, 1 / 3);
+            fillPixels(0, 0, 2 / 3, 1 / 3);
+            fillPixels(1 / 3, 2 / 3, 2 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(1 / 3, 0, 2 / 3, 1 / 3);
-            fillPixel(0, 2 / 3, 2 / 3, 1 / 3);
+            fillPixels(1 / 3, 0, 2 / 3, 1 / 3);
+            fillPixels(0, 2 / 3, 2 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(2 / 3, 0, 1 / 3, 2 / 3);
-            fillPixel(0, 1 / 3, 1 / 3, 2 / 3);
+            fillPixels(2 / 3, 0, 1 / 3, 2 / 3);
+            fillPixels(0, 1 / 3, 1 / 3, 2 / 3);
             this.prerenderedFrames.push(toImage());
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(2 / 3, 1 / 3, 1 / 3, 2 / 3);
-            fillPixel(0, 0, 1 / 3, 2 / 3);
+            fillPixels(2 / 3, 1 / 3, 1 / 3, 2 / 3);
+            fillPixels(0, 0, 1 / 3, 2 / 3);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2788,9 +3017,12 @@ const pixels = {
     rotator_counterclockwise: {
         name: 'Rotator (Counterclockwise)',
         description: 'Rotates directional pixels counterclockwise',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (frameCount % 10 != 0) return;
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
+            });
         },
         update: function (x, y) {
             updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -2815,30 +3047,30 @@ const pixels = {
             ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(3);
+            const { ctx, fillPixels, toImage } = new PreRenderer(3);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(1 / 3, 0, 2 / 3, 1 / 3);
-            fillPixel(0, 2 / 3, 2 / 3, 1 / 3);
+            fillPixels(1 / 3, 0, 2 / 3, 1 / 3);
+            fillPixels(0, 2 / 3, 2 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(0, 0, 2 / 3, 1 / 3);
-            fillPixel(1 / 3, 2 / 3, 2 / 3, 1 / 3);
+            fillPixels(0, 0, 2 / 3, 1 / 3);
+            fillPixels(1 / 3, 2 / 3, 2 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(2 / 3, 1 / 3, 1 / 3, 2 / 3);
-            fillPixel(0, 0, 1 / 3, 2 / 3);
+            fillPixels(2 / 3, 1 / 3, 1 / 3, 2 / 3);
+            fillPixels(0, 0, 1 / 3, 2 / 3);
             this.prerenderedFrames.push(toImage());
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(75, 255, 255)';
-            fillPixel(2 / 3, 0, 1 / 3, 2 / 3);
-            fillPixel(0, 1 / 3, 1 / 3, 2 / 3);
+            fillPixels(2 / 3, 0, 1 / 3, 2 / 3);
+            fillPixels(0, 1 / 3, 1 / 3, 2 / 3);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -2861,14 +3093,18 @@ const pixels = {
     slider_horizontal: {
         name: 'Horizontal Slider',
         description: 'Can only be pushed left and right',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 180, 0)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(200, 100, 0)';
-            for (let i = 0; i < height; i++) {
-                fillPixel(x, y + i + 1 / 4, width, 1 / 2, ctx);
-            }
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < height; i++) {
+                    fillPixels(x, y + i + 1 / 4, width, 1 / 2, ctx);
+                }
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -2900,14 +3136,18 @@ const pixels = {
     slider_vertical: {
         name: 'Vertical Slider',
         description: 'Can only be pushed up and down',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(250, 180, 0)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(200, 100, 0)';
-            for (let i = 0; i < width; i++) {
-                fillPixel(x + i + 1 / 4, y, 1 / 2, height, ctx);
-            }
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    fillPixels(x + i + 1 / 4, y, 1 / 2, height, ctx);
+                }
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -2939,9 +3179,11 @@ const pixels = {
     collapsible: {
         name: 'Collapsible Box',
         description: 'A box that will disintegrate when squished',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -2956,14 +3198,14 @@ const pixels = {
             ctx.resetTransform();
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(40);
+            const { ctx, fillPixels, toImage } = new PreRenderer(40);
             ctx.fillStyle = 'rgb(250, 180, 0)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(200, 100, 0)';
-            fillPixel(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
             ctx.fillStyle = 'rgb(250, 180, 0)';
             ctx.rotate(Math.PI / 4);
-            fillPixel(0, -0.1, Math.sqrt(2), 0.2);
+            fillPixels(0, -0.1, Math.sqrt(2), 0.2);
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },
@@ -2987,23 +3229,31 @@ const pixels = {
     laser_left: {
         name: 'L.A.S.E.R. (Left)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(90, 0, 120)';
-            fillPixel(x, y, width, height, ctx);
-            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
-            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
-                }
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (!noAnimations || forceRedraw) {
+                ctx.globalAlpha = opacity;
+                ctx.fillStyle = 'rgb(90, 0, 120)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
+                ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    for (let i = 0; i < width; i++) {
+                        for (let j = 0; j < height; j++) {
+                            fillPixels(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
+                        }
+                    }
+                });
             }
             if (avoidGrid) return;
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
-            for (let i = 0; i < height; i++) {
-                drawLaserPath(getLaserPath(x, y + i, 0));
-            }
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < height; i++) {
+                    drawLaserPath(getLaserPath(x, y + i, 0));
+                }
+            });
         },
         update: function (x, y) {
             let path = getLaserPath(x, y, 0);
@@ -3050,23 +3300,31 @@ const pixels = {
     laser_up: {
         name: 'L.A.S.E.R. (Up)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(90, 0, 120)';
-            fillPixel(x, y, width, height, ctx);
-            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
-            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2, ctx);
-                }
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (!noAnimations || forceRedraw) {
+                ctx.globalAlpha = opacity;
+                ctx.fillStyle = 'rgb(90, 0, 120)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
+                ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    for (let i = 0; i < width; i++) {
+                        for (let j = 0; j < height; j++) {
+                            fillPixels(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2, ctx);
+                        }
+                    }
+                });
             }
             if (avoidGrid) return;
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
-            for (let i = 0; i < width; i++) {
-                drawLaserPath(getLaserPath(x + i, y, 1));
-            }
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    drawLaserPath(getLaserPath(x + i, y, 1));
+                }
+            });
         },
         update: function (x, y) {
             let path = getLaserPath(x, y, 1);
@@ -3113,23 +3371,31 @@ const pixels = {
     laser_right: {
         name: 'L.A.S.E.R. (Right)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(90, 0, 120)';
-            fillPixel(x, y, width, height, ctx);
-            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
-            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
-                }
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (!noAnimations || forceRedraw) {
+                ctx.globalAlpha = opacity;
+                ctx.fillStyle = 'rgb(90, 0, 120)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
+                ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    for (let i = 0; i < width; i++) {
+                        for (let j = 0; j < height; j++) {
+                            fillPixels(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
+                        }
+                    }
+                });
             }
             if (avoidGrid) return;
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
-            for (let i = 0; i < height; i++) {
-                drawLaserPath(getLaserPath(x + width - 1, y + i, 2));
-            }
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < height; i++) {
+                    drawLaserPath(getLaserPath(x + width - 1, y + i, 2));
+                }
+            });
         },
         update: function (x, y) {
             let path = getLaserPath(x, y, 2);
@@ -3176,23 +3442,31 @@ const pixels = {
     laser_down: {
         name: 'L.A.S.E.R. (Down)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(90, 0, 120)';
-            fillPixel(x, y, width, height, ctx);
-            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
-            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2, ctx);
-                }
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (!noAnimations || forceRedraw) {
+                ctx.globalAlpha = opacity;
+                ctx.fillStyle = 'rgb(90, 0, 120)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
+                ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    for (let i = 0; i < width; i++) {
+                        for (let j = 0; j < height; j++) {
+                            fillPixels(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2, ctx);
+                        }
+                    }
+                });
             }
             if (avoidGrid) return;
             abovectx.globalAlpha = opacity;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
-            for (let i = 0; i < width; i++) {
-                drawLaserPath(getLaserPath(x + i, y + height - 1, 3));
-            }
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    drawLaserPath(getLaserPath(x + i, y + height - 1, 3));
+                }
+            });
         },
         update: function (x, y) {
             let path = getLaserPath(x, y, 3);
@@ -3239,9 +3513,11 @@ const pixels = {
     glass: {
         name: 'Glass',
         description: 'For some reason you can see it',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -3255,14 +3531,14 @@ const pixels = {
             ctx.fillRect(28, 38, 10, 10);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(25);
+            const { ctx, fillPixels, toImage } = new PreRenderer(25);
             ctx.fillStyle = 'rgb(240, 240, 245)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 255, 255)';
-            fillPixel(1 / 25, 6 / 25, 1 / 5, 1 / 5);
-            fillPixel(6 / 25, 1 / 25, 1 / 5, 1 / 5);
-            fillPixel(19 / 25, 14 / 25, 1 / 5, 1 / 5);
-            fillPixel(14 / 25, 19 / 25, 1 / 5, 1 / 5);
+            fillPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
+            fillPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
+            fillPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
+            fillPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -3285,9 +3561,11 @@ const pixels = {
     reinforced_glass: {
         name: 'Reinforced Glass',
         description: 'Really heavy glass',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -3306,19 +3584,19 @@ const pixels = {
             ctx.fillRect(0, 0, 5, 50);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(150);
+            const { ctx, fillPixels, toImage } = new PreRenderer(150);
             ctx.fillStyle = 'rgb(240, 240, 245)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 255, 255)';
-            fillPixel(1 / 25, 6 / 25, 1 / 5, 1 / 5);
-            fillPixel(6 / 25, 1 / 25, 1 / 5, 1 / 5);
-            fillPixel(19 / 25, 14 / 25, 1 / 5, 1 / 5);
-            fillPixel(14 / 25, 19 / 25, 1 / 5, 1 / 5);
+            fillPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
+            fillPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
+            fillPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
+            fillPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
             ctx.fillStyle = 'rgb(220, 220, 230)';
-            fillPixel(0, 0, 1, 1 / 10);
-            fillPixel(9 / 10, 0, 1 / 10, 1);
-            fillPixel(0, 9 / 10, 1, 1 / 10);
-            fillPixel(0, 0, 1 / 10, 1);
+            fillPixels(0, 0, 1, 1 / 10);
+            fillPixels(9 / 10, 0, 1 / 10, 1);
+            fillPixels(0, 9 / 10, 1, 1 / 10);
+            fillPixels(0, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -3341,15 +3619,19 @@ const pixels = {
     laser_scatterer: {
         name: 'Laser Scatterer',
         description: 'Scatters lasers that pass through it and makes them useless',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(220, 220, 255)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(210, 210, 220)';
-            for (let i = 0; i < width; i++) {
-                fillPixel(x + i, y, 1 / 4, height, ctx);
-                fillPixel(x + i + 1 / 2, y, 1 / 4, height, ctx);
-            }
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    fillPixels(x + i, y, 1 / 4, height, ctx);
+                    fillPixels(x + i + 1 / 2, y, 1 / 4, height, ctx);
+                }
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -3381,10 +3663,12 @@ const pixels = {
     mirror_1: {
         name: 'Mirror',
         description: 'Be careful around lasers, as it will redirect those to who knows where',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            clearPixels(x, y, width, height, ctx);
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                clearPixels(x, y, width, height, ctx);
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -3408,22 +3692,22 @@ const pixels = {
             ctx.fillRect(5 / 3, 0, 5, 50);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixels, toImage } = new PreRenderer(60);
             ctx.fillStyle = 'rgb(220, 220, 220)';
-            fillPixel(0, 2 / 3, 1 / 3, 1 / 3);
-            fillPixel(1 / 6, 1 / 2, 1 / 3, 1 / 3);
-            fillPixel(1 / 3, 1 / 3, 1 / 3, 1 / 3);
-            fillPixel(1 / 2, 1 / 6, 1 / 3, 1 / 3);
-            fillPixel(2 / 3, 0, 1 / 3, 1 / 3);
+            fillPixels(0, 2 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 6, 1 / 2, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 2, 1 / 6, 1 / 3, 1 / 3);
+            fillPixels(2 / 3, 0, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1 / 6, 1 / 6);
-            fillPixel(5 / 6, 0, 1 / 6, 1 / 6);
-            fillPixel(5 / 6, 5 / 6, 1 / 6, 1 / 6);
-            fillPixel(0, 5 / 6, 1 / 6, 1 / 6);
-            fillPixel(0, 1 / 30, 1, 1 / 10);
-            fillPixel(13 / 15, 0, 1 / 10, 1);
-            fillPixel(0, 13 / 15, 1, 1 / 10);
-            fillPixel(1 / 30, 0, 1 / 10, 1);
+            fillPixels(0, 0, 1 / 6, 1 / 6);
+            fillPixels(5 / 6, 0, 1 / 6, 1 / 6);
+            fillPixels(5 / 6, 5 / 6, 1 / 6, 1 / 6);
+            fillPixels(0, 5 / 6, 1 / 6, 1 / 6);
+            fillPixels(0, 1 / 30, 1, 1 / 10);
+            fillPixels(13 / 15, 0, 1 / 10, 1);
+            fillPixels(0, 13 / 15, 1, 1 / 10);
+            fillPixels(1 / 30, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -3447,10 +3731,12 @@ const pixels = {
     mirror_2: {
         name: 'Mirror',
         description: 'Be careful around lasers, as it will redirect those to who knows where',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            clearPixels(x, y, width, height, ctx);
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                clearPixels(x, y, width, height, ctx);
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -3474,22 +3760,22 @@ const pixels = {
             ctx.fillRect(5 / 3, 0, 5, 50);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixels, toImage } = new PreRenderer(60);
             ctx.fillStyle = 'rgb(220, 220, 220)';
-            fillPixel(0, 0, 1 / 3, 1 / 3);
-            fillPixel(1 / 6, 1 / 6, 1 / 3, 1 / 3);
-            fillPixel(1 / 3, 1 / 3, 1 / 3, 1 / 3);
-            fillPixel(1 / 2, 1 / 2, 1 / 3, 1 / 3);
-            fillPixel(2 / 3, 2 / 3, 1 / 3, 1 / 3);
+            fillPixels(0, 0, 1 / 3, 1 / 3);
+            fillPixels(1 / 6, 1 / 6, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(1 / 2, 1 / 2, 1 / 3, 1 / 3);
+            fillPixels(2 / 3, 2 / 3, 1 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1 / 6, 1 / 6);
-            fillPixel(5 / 6, 0, 1 / 6, 1 / 6);
-            fillPixel(5 / 6, 5 / 6, 1 / 6, 1 / 6);
-            fillPixel(0, 5 / 6, 1 / 6, 1 / 6);
-            fillPixel(0, 1 / 30, 1, 1 / 10);
-            fillPixel(13 / 15, 0, 1 / 10, 1);
-            fillPixel(0, 13 / 15, 1, 1 / 10);
-            fillPixel(1 / 30, 0, 1 / 10, 1);
+            fillPixels(0, 0, 1 / 6, 1 / 6);
+            fillPixels(5 / 6, 0, 1 / 6, 1 / 6);
+            fillPixels(5 / 6, 5 / 6, 1 / 6, 1 / 6);
+            fillPixels(0, 5 / 6, 1 / 6, 1 / 6);
+            fillPixels(0, 1 / 30, 1, 1 / 10);
+            fillPixels(13 / 15, 0, 1 / 10, 1);
+            fillPixels(0, 13 / 15, 1, 1 / 10);
+            fillPixels(1 / 30, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -4011,9 +4297,11 @@ const pixels = {
     flamethrower_left: {
         name: 'Flamethrower (Left)',
         description: 'Throws flames',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             let flamey = y;
@@ -4044,14 +4332,14 @@ const pixels = {
             ctx.fillRect(10, 10, 10, 30);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            const { ctx, fillPixels, toImage } = new PreRenderer(5);
             ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 0, 0)';
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             ctx.fillStyle = 'rgb(180, 0, 0)';
-            fillPixel(0, 1 / 3, 1 / 5, 1 / 3);
-            fillPixel(1 / 5, 1 / 5, 1 / 5, 3 / 5);
+            fillPixels(0, 1 / 3, 1 / 5, 1 / 3);
+            fillPixels(1 / 5, 1 / 5, 1 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -4075,9 +4363,11 @@ const pixels = {
     flamethrower_up: {
         name: 'Flamethrower (Up)',
         description: 'Throws flames',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             let flamex = x;
@@ -4108,14 +4398,14 @@ const pixels = {
             ctx.fillRect(10, 10, 30, 10);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            const { ctx, fillPixels, toImage } = new PreRenderer(5);
             ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 0, 0)';
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             ctx.fillStyle = 'rgb(180, 0, 0)';
-            fillPixel(1 / 3, 0, 1 / 3, 1 / 5);
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 1 / 5);
+            fillPixels(1 / 3, 0, 1 / 3, 1 / 5);
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -4139,9 +4429,11 @@ const pixels = {
     flamethrower_right: {
         name: 'Flamethrower (Right)',
         description: 'Throws flames',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             let flamey = y;
@@ -4172,14 +4464,14 @@ const pixels = {
             ctx.fillRect(30, 10, 10, 30);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            const { ctx, fillPixels, toImage } = new PreRenderer(5);
             ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 0, 0)';
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             ctx.fillStyle = 'rgb(180, 0, 0)';
-            fillPixel(4 / 5, 1 / 3, 1 / 5, 1 / 3);
-            fillPixel(3 / 5, 1 / 5, 1 / 5, 3 / 5);
+            fillPixels(4 / 5, 1 / 3, 1 / 5, 1 / 3);
+            fillPixels(3 / 5, 1 / 5, 1 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -4203,9 +4495,11 @@ const pixels = {
     flamethrower_down: {
         name: 'Flamethrower (Down)',
         description: 'Throws flames',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             let flamex = x;
@@ -4236,14 +4530,14 @@ const pixels = {
             ctx.fillRect(10, 30, 30, 10);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            const { ctx, fillPixels, toImage } = new PreRenderer(5);
             ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 0, 0)';
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             ctx.fillStyle = 'rgb(180, 0, 0)';
-            fillPixel(1 / 3, 4 / 5, 1 / 3, 1 / 5);
-            fillPixel(1 / 5, 3 / 5, 3 / 5, 1 / 5);
+            fillPixels(1 / 3, 4 / 5, 1 / 3, 1 / 5);
+            fillPixels(1 / 5, 3 / 5, 3 / 5, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -4267,9 +4561,12 @@ const pixels = {
     detonator: {
         name: 'Detonator',
         description: 'Triggers Gunpowder and C-4 on contact by exploding',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (noAnimations && frameCount % 30 != 0 && !forceRedraw) return;
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 30) % 2)], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 30) % 2)], ctx);
+            });
         },
         update: function (x, y) {
             let explosion = updateTouchingPixel(x, y, pixNum.GUNPOWDER) || updateTouchingPixel(x, y, pixNum.C4) || updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x];
@@ -4283,14 +4580,14 @@ const pixels = {
             ctx.fillRect(10, 10, 30, 30);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            const { ctx, fillPixels, toImage } = new PreRenderer(5);
             ctx.fillStyle = 'rgb(20, 20, 20)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(180, 0, 0)';
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
             ctx.fillStyle = 'rgb(255, 0, 0)';
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -4313,20 +4610,26 @@ const pixels = {
     gunpowder: {
         name: 'Gunpowder',
         description: 'A low explosive that explodes when lit on fire',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
                 ctx.fillStyle = 'rgb(50, 25, 25)';
-                fillPixel(x, y, width, height, ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
             } else {
                 ctx.fillStyle = 'rgb(30, 20, 20)';
-                fillPixel(x, y, width, height, ctx);
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = `rgb(55, 40, 40, ${avoidGrid ? noise(x + i, y + j) : noiseGrid[y + j][x + i]})`;
-                        fillPixel(x + i, y + j, 1, 1, ctx);
-                    }
-                }
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                bufctx.fillStyle = 'rgb(55, 40, 40)';
+                bufctx.globalCompositeOperation = 'source-over';
+                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
+                bufctx.globalCompositeOperation = 'destination-atop';
+                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                });
             }
         },
         update: function (x, y) {
@@ -4361,10 +4664,12 @@ const pixels = {
     c4: {
         name: 'C-4',
         description: 'A high explosive that can only be triggered by other explosions',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(245, 245, 200)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -4393,17 +4698,21 @@ const pixels = {
     nuke_diffuser: {
         name: 'Nuke Diffuser',
         description: 'Doesn\'t cause diffusion, but will defuse nukes touching it',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(175, 50, 0)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(225, 125, 0)';
-            for (let i = 0; i < width; i++) {
-                fillPixel(x + i + 1 / 3, y, 1 / 3, height, ctx);
-            }
-            for (let i = 0; i < height; i++) {
-                fillPixel(x, y + i + 1 / 3, width, 1 / 3, ctx);
-            }
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    fillPixels(x + i + 1 / 3, y, 1 / 3, height, ctx);
+                }
+                for (let i = 0; i < height; i++) {
+                    fillPixels(x, y + i + 1 / 3, width, 1 / 3, ctx);
+                }
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -4435,10 +4744,12 @@ const pixels = {
     nuke: {
         name: 'Nuke',
         description: 'Not really a nuke lol',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(0, 255, 125)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -4484,10 +4795,12 @@ const pixels = {
     huge_nuke: {
         name: 'Huge Nuke',
         description: 'KABOOM!!!',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 60, 255)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -4533,10 +4846,12 @@ const pixels = {
     very_huge_nuke: {
         name: 'Very Huge Nuke',
         description: 'AAAAAAAAAAAAAAAAAAAAA',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 0, 70)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
@@ -4582,17 +4897,22 @@ const pixels = {
     deleter: {
         name: 'Deleter',
         description: 'undefined',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (noAnimations && !forceRedraw) return;
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             let color = noAnimations ? [200, 0, 255] : colorAnimate(200, 0, 255, 255, 0, 255, 96);
             ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + 1 / 4 + i, y + 1 / 4 + j, 1 / 2, 1 / 2, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + 1 / 4 + i, y + 1 / 4 + j, 1 / 2, 1 / 2, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -4623,14 +4943,14 @@ const pixels = {
     lag_spike_generator: {
         name: 'lag_spike_generator',
         description: 'Not that laggy',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
                     ctx.fillStyle = 'rgb(255, 255, 255)';
-                    fillPixel(x + i, y + j, 1, 1, ctx);
+                    fillPixels(x + i, y + j, 1, 1, ctx);
                     ctx.fillStyle = `rgb(125, 255, 0, ${(random() * 0.6 + 0.4)})`;
-                    fillPixel(x + i, y + j, 1, 1, ctx);
+                    fillPixels(x + i, y + j, 1, 1, ctx);
                 }
             }
         },
@@ -4678,7 +4998,7 @@ const pixels = {
     corruption: {
         name: '�',
         description: '<span style="color: red">�</span>',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -4696,9 +5016,9 @@ const pixels = {
                         let borkXScale = random(0, 4);
                         let borkYScale = random(0, 2);
                         ctx.fillStyle = 'rgb(0, 0, 0)';
-                        fillPixel(0, 0, borkXScale, borkYScale, ctx);
+                        fillPixels(0, 0, borkXScale, borkYScale, ctx);
                         ctx.fillStyle = `rgb(100, 255, 0, ${(random() * 0.6 + 0.4)})`;
-                        fillPixel(0, 0, borkXScale, borkYScale, ctx);
+                        fillPixels(0, 0, borkXScale, borkYScale, ctx);
                         ctx.restore();
                         ctx.rotate(-rotationAmount);
                         ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
@@ -4711,7 +5031,7 @@ const pixels = {
                             let translateY = random(-20 * gridScale, 20 * gridScale);
                             ctx.translate(translateX, translateY);
                             ctx.rotate(rotationAmount);
-                            drawPixels(0, 0, 1, 1, pixNum.MISSING, opacity, ctx);
+                            drawPixels(pixNum.MISSING, [[0, 0, 1, 1, true]], opacity, ctx, true);
                             ctx.rotate(-rotationAmount);
                             ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
                         }
@@ -4874,7 +5194,7 @@ const pixels = {
     spin: {
         name: 'Spin',
         description: 'SPINNY CARRIER GO WEEEEEEEEEEEEEEEEEEEEEEEEE!!!!',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j < height; j++) {
@@ -4912,7 +5232,7 @@ const pixels = {
     rickastley: {
         name: 'Rick Astley',
         description: 'Never gonna give you up<br>Never gonna let you down<br>Never gonna run around and desert you<br>Never gonna make you cry<br>Never gonna say goodbye<br>Never gonna tell a lie and hurt you',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             let scale = gridScale * camera.scale;
             if (this.prerenderedFrames[0]) ctx.drawImage(this.prerenderedFrames[0], x * scale - camera.x, y * scale - camera.y, width * scale, height * scale, x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
@@ -4926,7 +5246,7 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(canvasResolution);
+            const { ctx, fillPixels, toImage } = new PreRenderer(canvasResolution);
             let rickastley = new Image();
             rickastley.src = './assets/rickastley.png';
             rickastley.onload = (e) => {
@@ -4954,9 +5274,7 @@ const pixels = {
     placementUnRestriction: {
         name: 'Allow Placement',
         description: 'Remove placement restrictions in puzzles',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-        },
+        draw: function (rectangles, opacity, ctx, avoidGrid) { },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -4986,9 +5304,11 @@ const pixels = {
     placementRestriction: {
         name: 'Prevent Placement',
         description: 'Prevents players from placing pixels in puzzles',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity * 0.2;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -5009,14 +5329,14 @@ const pixels = {
             ctx.fillRect(37, 37, 8, 8);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixels, toImage } = new PreRenderer(60);
             ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.rotate(-Math.PI / 4);
-            fillPixel(-0.1, 0, 0.2, 0.1);
-            fillPixel(-Math.sqrt(2) / 2, Math.sqrt(2) / 2 - 0.1, Math.sqrt(2), 0.2);
-            fillPixel(-0.1, Math.sqrt(2) - 0.1, 0.2, 0.1);
+            fillPixels(-0.1, 0, 0.2, 0.1);
+            fillPixels(-Math.sqrt(2) / 2, Math.sqrt(2) / 2 - 0.1, Math.sqrt(2), 0.2);
+            fillPixels(-0.1, Math.sqrt(2) - 0.1, 0.2, 0.1);
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },
@@ -5040,9 +5360,11 @@ const pixels = {
     monster: {
         name: 'Monster',
         description: 'The bad pixels in challenge puzzles',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) {
             if (grid[y][x] != pixNum.AIR) {
@@ -5076,15 +5398,15 @@ const pixels = {
             ctx.fillRect(50 / 4, 30, 25, 50 / 6);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer();
+            const { ctx, fillPixels, toImage } = new PreRenderer(60);
             ctx.fillStyle = 'rgb(200, 20, 0)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 30, 0)';
-            fillPixel(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
             ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixel(1 / 6, 1 / 5, 1 / 5, 1 / 5);
-            fillPixel(19 / 30, 1 / 5, 1 / 5, 1 / 5);
-            fillPixel(1 / 4, 3 / 5, 1 / 2, 1 / 6);
+            fillPixels(1 / 6, 1 / 5, 1 / 5, 1 / 5);
+            fillPixels(19 / 30, 1 / 5, 1 / 5, 1 / 5);
+            fillPixels(1 / 4, 3 / 5, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -5107,20 +5429,24 @@ const pixels = {
     goal: {
         name: 'Goal',
         description: 'Must be pushed into targets in puzzles',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 200, 0)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
             ctx.fillStyle = 'rgb(255, 240, 0)';
             abovectx.globalAlpha = opacity * 0.2;
             abovectx.fillStyle = 'rgb(255, 180, 0)';
             let margin = (Math.sin(frameCount * Math.PI / 120) + 1) / 4;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x + i + 1 / 5, y + j + 1 / 5, 3 / 5, 3 / 5, ctx);
-                    fillPixel(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 5, y + j + 1 / 5, 3 / 5, 3 / 5, ctx);
+                        fillPixels(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -5151,17 +5477,21 @@ const pixels = {
     target: {
         name: 'Target',
         description: 'Goal pixels must be pushed into it in puzzles',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
             abovectx.globalAlpha = opacity * 0.2;
             abovectx.fillStyle = 'rgb(0, 255, 255)';
             let margin = (Math.sin(frameCount * Math.PI / 120) + 1) / 4;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    fillPixel(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -5172,12 +5502,12 @@ const pixels = {
             ctx.fillRect(10, 10, 30, 30);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(5);
+            const { ctx, fillPixels, toImage } = new PreRenderer(5);
             ctx.fillStyle = 'rgb(0, 200, 255)';
-            fillPixel(0, 0, 1, 1 / 5);
-            fillPixel(0, 0, 1 / 5, 1);
-            fillPixel(0, 4 / 5, 1, 1 / 5);
-            fillPixel(4 / 5, 0, 1 / 5, 1);
+            fillPixels(0, 0, 1, 1 / 5);
+            fillPixels(0, 0, 1 / 5, 1);
+            fillPixels(0, 4 / 5, 1, 1 / 5);
+            fillPixels(4 / 5, 0, 1 / 5, 1);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -5200,10 +5530,12 @@ const pixels = {
     remove: {
         name: 'Remove (brush only)',
         description: 'Unfortunately it\'s not THE red pixel...',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 0, 0)';
-            fillPixel(x, y, width, height, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -5232,9 +5564,11 @@ const pixels = {
     missing: {
         name: 'Missing Pixel',
         description: 'Check your save code, it probably has pixels that don\'t exist in it',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -5246,12 +5580,12 @@ const pixels = {
             ctx.fillRect(25, 25, 25, 25);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(2);
+            const { ctx, fillPixels, toImage } = new PreRenderer(2);
             ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(255, 0, 255)';
-            fillPixel(0, 0, 1 / 2, 1 / 2);
-            fillPixel(1 / 2, 1 / 2, 1 / 2, 1 / 2);
+            fillPixels(0, 0, 1 / 2, 1 / 2);
+            fillPixels(1 / 2, 1 / 2, 1 / 2, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -5275,7 +5609,7 @@ const pixels = {
     red: {
         name: 'Red Pixel',
         description: 'Mise en abyme',
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 0, 0)';
             ctx.fillRect(0, 0, canvasResolution, canvasResolution);
@@ -5364,20 +5698,24 @@ function generateMusicPixel(id, data) {
     return {
         name: data.name,
         description: data.description,
-        draw: function (x, y, width, height, opacity, ctx, avoidGrid) {
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (avoidGrid) {
-                imagePixel(x, y, width, height, this.prerenderedFrames[0], ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                });
             } else {
-                for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridHeight); y1++) {
-                    for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridWidth); x1++) {
-                        if (lastMusicGrid[y1][x1] != musicGrid[y1][x1] || forceRedraw || lastGrid[y1][x1] != grid[y1][x1]) {
-                            if (musicGrid[y1][x1] == -1) musicGrid[y1][x1] = 0;
-                            if (musicGrid[y1][x1]) imagePixel(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
-                            else imagePixel(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridHeight); y1++) {
+                        for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridWidth); x1++) {
+                            if (lastMusicGrid[y1][x1] != musicGrid[y1][x1] || forceRedraw || redrawing) {
+                                if (musicGrid[y1][x1] == -1) musicGrid[y1][x1] = 0;
+                                if (musicGrid[y1][x1]) imagePixels(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
+                                else imagePixels(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
+                            }
                         }
                     }
-                }
+                });
             }
         },
         update: function (x, y) {
@@ -5401,13 +5739,13 @@ function generateMusicPixel(id, data) {
             ctx.fillText(data.text, 25, 20);
         },
         prerender: function () {
-            const { ctx, fillPixel, toImage } = new PreRenderer(120);
+            const { ctx, fillPixels, toImage } = new PreRenderer(120);
             ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixel(0, 0, 1, 1);
+            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(200, 0, 180)';
-            fillPixel(1 / 5, 2 / 5, 3 / 5, 2 / 5);
+            fillPixels(1 / 5, 2 / 5, 3 / 5, 2 / 5);
             ctx.fillStyle = data.color;
-            fillPixel(1 / 5, 1 / 5, 3 / 5, 1 / 5);
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 1 / 5);
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.font = '40px Courier New, courier, monospace';
             ctx.textAlign = 'center';
@@ -5415,7 +5753,7 @@ function generateMusicPixel(id, data) {
             ctx.fillText(data.text, 60, 48);
             this.prerenderedFrames.push(toImage());
             ctx.fillStyle = 'rgb(255, 0, 255)';
-            fillPixel(1 / 5, 2 / 5, 3 / 5, 2 / 5);
+            fillPixels(1 / 5, 2 / 5, 3 / 5, 2 / 5);
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillText(data.text, 60, 48);
             this.prerenderedFrames.push(toImage());
@@ -5439,16 +5777,15 @@ function generateMusicPixel(id, data) {
         numId: 0
     }
 };
-function generateDescription(id) {
-    return `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Blast Resistance: ${pixels[id].blastResistance}/20<br>Flammability: ${pixels[id].flammability}/20<br>Moveable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`;
-};
 
 let pixIndex = 0;
 for (const id in pixels) {
     pixels[id].id = id;
     pixels[id].numId = pixIndex;
     pixNum[id.toUpperCase()] = pixIndex;
-    numPixels[pixIndex++] = pixels[id];
+    numPixels[pixIndex] = pixels[id];
+    numPixels[pixIndex].rectangles = [];
+    pixIndex++;
 }
 let pixelsResolveLoad;
 let pixelsLoad = new Promise((resolve, reject) => pixelsResolveLoad = resolve);
@@ -5461,6 +5798,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     for (const id in pixels) {
         const pixel = pixels[id];
         pixel.prerender();
+        pixel.generatedDescription = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Blast Resistance: ${pixels[id].blastResistance}/20<br>Flammability: ${pixels[id].flammability}/20<br>Moveable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`
         if (pixel.pickable) {
             const box = document.createElement('div');
             box.classList.add('pickerPixel');
@@ -5472,13 +5810,13 @@ window.addEventListener('DOMContentLoaded', async (e) => {
                     }
                 }
                 box.classList.add('pickerPixelSelected');
-                pixelPickerDescription.innerHTML = generateDescription(id);
+                pixelPickerDescription.innerHTML = pixel.generatedDescription;
             };
             box.onmouseover = (e) => {
-                pixelPickerDescription.innerHTML = generateDescription(id);
+                pixelPickerDescription.innerHTML = pixel.generatedDescription;
             };
             box.onmouseout = (e) => {
-                pixelPickerDescription.innerHTML = generateDescription(brush.pixel);
+                pixelPickerDescription.innerHTML = pixel.generatedDescription;
             };
             pixel.drawPreview(ctx2);
             const img = new Image(50, 50);
