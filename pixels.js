@@ -180,13 +180,9 @@ const pixels = {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
                 });
-                bufctx.fillStyle = 'rgb(105, 70, 0)';
-                bufctx.globalCompositeOperation = 'source-over';
-                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
-                bufctx.globalCompositeOperation = 'destination-atop';
-                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                gridoverctx.fillStyle = 'rgb(105, 70, 0)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                    fillPixels(x, y, width, height, gridoverctx);
                 });
             }
         },
@@ -277,13 +273,9 @@ const pixels = {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
                 });
-                bufctx.fillStyle = 'rgb(120, 120, 100)';
-                bufctx.globalCompositeOperation = 'source-over';
-                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
-                bufctx.globalCompositeOperation = 'destination-atop';
-                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                gridoverctx.fillStyle = 'rgb(120, 120, 100)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                    fillPixels(x, y, width, height, gridoverctx);
                 });
             }
         },
@@ -423,13 +415,9 @@ const pixels = {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
                 });
-                bufctx.fillStyle = 'rgb(75, 200, 50)';
-                bufctx.globalCompositeOperation = 'source-over';
-                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
-                bufctx.globalCompositeOperation = 'destination-atop';
-                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                gridoverctx.fillStyle = 'rgb(75, 200, 50)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                    fillPixels(x, y, width, height, gridoverctx);
                 });
             }
         },
@@ -484,13 +472,9 @@ const pixels = {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
                 });
-                bufctx.fillStyle = 'rgb(120, 130, 140)';
-                bufctx.globalCompositeOperation = 'source-over';
-                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
-                bufctx.globalCompositeOperation = 'destination-atop';
-                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                gridoverctx.fillStyle = 'rgb(120, 130, 140)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                    fillPixels(x, y, width, height, gridoverctx);
                 });
             }
         },
@@ -546,13 +530,9 @@ const pixels = {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
                 });
-                bufctx.fillStyle = 'rgb(85, 85, 90)';
-                bufctx.globalCompositeOperation = 'source-over';
-                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
-                bufctx.globalCompositeOperation = 'destination-atop';
-                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                gridoverctx.fillStyle = 'rgb(85, 85, 90)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                    fillPixels(x, y, width, height, gridoverctx);
                 });
             }
         },
@@ -803,13 +783,9 @@ const pixels = {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
                 });
-                bufctx.fillStyle = 'rgb(230, 250, 250)';
-                bufctx.globalCompositeOperation = 'source-over';
-                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
-                bufctx.globalCompositeOperation = 'destination-atop';
-                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                gridoverctx.fillStyle = 'rgb(230, 250, 250)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                    fillPixels(x, y, width, height, gridoverctx);
                 });
             }
         },
@@ -836,8 +812,8 @@ const pixels = {
         group: 0,
         key: Infinity,
         updateStage: 5,
-        animatedNoise: true,
-        animated: true,
+        animatedNoise: false,
+        animated: false,
         alwaysRedraw: false,
         pickable: true,
         pixsimCompatible: true,
@@ -846,7 +822,7 @@ const pixels = {
     },
     steam: {
         name: 'Steam',
-        description: 'Very hot steam that will give you second-degree burns if you\'re not careful',
+        description: 'Very hot water that will give you second-degree burns if you\'re not careful',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             if (noNoise) {
@@ -1009,8 +985,8 @@ const pixels = {
         group: 0,
         key: Infinity,
         updateStage: 6,
-        animatedNoise: false,
-        animated: false,
+        animatedNoise: true,
+        animated: true,
         alwaysRedraw: false,
         pickable: true,
         pixsimCompatible: true,
@@ -1172,13 +1148,9 @@ const pixels = {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
                 });
-                bufctx.fillStyle = 'rgb(255, 255, 0)';
-                bufctx.globalCompositeOperation = 'source-over';
-                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
-                bufctx.globalCompositeOperation = 'destination-atop';
-                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                gridoverctx.fillStyle = 'rgb(255, 255, 0)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                    fillPixels(x, y, width, height, gridoverctx);
                 });
             }
         },
@@ -4619,13 +4591,9 @@ const pixels = {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
                 });
-                bufctx.fillStyle = 'rgb(55, 40, 40)';
-                bufctx.globalCompositeOperation = 'source-over';
-                fillPixels(0, 0, gridWidth, gridHeight, bufctx);
-                bufctx.globalCompositeOperation = 'destination-atop';
-                copyPixelRect(0, 0, 0, 0, gridWidth, gridHeight, noiseCanvas, bufctx);
+                gridoverctx.fillStyle = 'rgb(55, 40, 40)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    copyPixelRect(x, y, x, y, width, height, bufferCanvas, ctx);
+                    fillPixels(x, y, width, height, gridoverctx);
                 });
             }
         },
@@ -4942,14 +4910,16 @@ const pixels = {
         description: 'Not that laggy',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    ctx.fillStyle = 'rgb(255, 255, 255)';
-                    fillPixels(x + i, y + j, 1, 1, ctx);
-                    ctx.fillStyle = `rgb(125, 255, 0, ${(random() * 0.6 + 0.4)})`;
-                    fillPixels(x + i, y + j, 1, 1, ctx);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        ctx.fillStyle = 'rgb(255, 255, 255)';
+                        fillPixels(x + i, y + j, 1, 1, ctx);
+                        ctx.fillStyle = `rgb(125, 255, 0, ${(random() * 0.6 + 0.4)})`;
+                        fillPixels(x + i, y + j, 1, 1, ctx);
+                    }
                 }
-            }
+            });
         },
         update: function (x, y) {
             updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
@@ -4996,70 +4966,72 @@ const pixels = {
         name: '�',
         description: '<span style="color: red">�</span>',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    for (let k = 0; k < random(0, 1); k++) {
-                        let rotationAmount = Math.floor(random(0, 360));
-                        ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
-                        let translateX = random(-10 * gridScale, 10 * gridScale);
-                        let translateY = random(-10 * gridScale, 10 * gridScale);
-                        let skewX = random(-Math.PI / 6, Math.PI / 6);
-                        let skewY = random(-Math.PI / 6, Math.PI / 6);
-                        ctx.translate(translateX, translateY);
-                        ctx.rotate(rotationAmount);
-                        ctx.save();
-                        ctx.transform(1, skewY, skewX, 1, 0, 0);
-                        let borkXScale = random(0, 4);
-                        let borkYScale = random(0, 2);
-                        ctx.fillStyle = 'rgb(0, 0, 0)';
-                        fillPixels(0, 0, borkXScale, borkYScale, ctx);
-                        ctx.fillStyle = `rgb(100, 255, 0, ${(random() * 0.6 + 0.4)})`;
-                        fillPixels(0, 0, borkXScale, borkYScale, ctx);
-                        ctx.restore();
-                        ctx.rotate(-rotationAmount);
-                        ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
-                    }
-                    if (random(1, 5) < 1.2) {
-                        for (let k = 0; k < random(1, 10); k++) {
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                ctx.globalAlpha = opacity;
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        for (let k = 0; k < random(0, 1); k++) {
                             let rotationAmount = Math.floor(random(0, 360));
                             ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
-                            let translateX = random(-20 * gridScale, 20 * gridScale);
-                            let translateY = random(-20 * gridScale, 20 * gridScale);
+                            let translateX = random(-10 * gridScale, 10 * gridScale);
+                            let translateY = random(-10 * gridScale, 10 * gridScale);
+                            let skewX = random(-Math.PI / 6, Math.PI / 6);
+                            let skewY = random(-Math.PI / 6, Math.PI / 6);
                             ctx.translate(translateX, translateY);
                             ctx.rotate(rotationAmount);
-                            drawPixels(pixNum.MISSING, [[0, 0, 1, 1, true]], opacity, ctx, true);
+                            ctx.save();
+                            ctx.transform(1, skewY, skewX, 1, 0, 0);
+                            let borkXScale = random(0, 4);
+                            let borkYScale = random(0, 2);
+                            ctx.fillStyle = 'rgb(0, 0, 0)';
+                            fillPixels(0, 0, borkXScale, borkYScale, ctx);
+                            ctx.fillStyle = `rgb(100, 255, 0, ${(random() * 0.6 + 0.4)})`;
+                            fillPixels(0, 0, borkXScale, borkYScale, ctx);
+                            ctx.restore();
                             ctx.rotate(-rotationAmount);
                             ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
                         }
-                        let rotationAmount = Math.floor(random(0, 360));
-                        ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
-                        let translateX = random(-gridWidth * gridScale, gridHeight * gridScale);
-                        let translateY = random(-gridWidth * gridScale, gridHeight * gridScale);
-                        let skewX = random(-Math.PI / 6, Math.PI / 6);
-                        let skewY = random(-Math.PI / 6, Math.PI / 6);
-                        ctx.translate(translateX, translateY);
-                        ctx.rotate(rotationAmount);
-                        ctx.save();
-                        ctx.transform(1, skewY, skewX, 1, 0, 0);
-                        ctx.fillStyle = 'rgb(255, 0, 0)';
-                        ctx.fillRect(0, 0, 90, 90);
-                        ctx.fillStyle = 'rgb(255, 255, 0)';
-                        ctx.fillRect(10, 10, 70, 70);
-                        ctx.fillStyle = 'rgb(255, 0, 0)';
-                        ctx.fillRect(40, 20, 10, 30);
-                        ctx.fillRect(40, 60, 10, 10);
-                        ctx.restore();
-                        ctx.rotate(-rotationAmount);
-                        ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
-                    }
-                    abovectx.globalAlpha = opacity;
-                    abovectx.fillStyle = 'rgb(255, 0, 0)';
-                    for (let i = 0; i < width; i++) {
-                        drawLaserPath(getLaserPath(x + i, y + j, Math.floor(Math.random() * 4)));
+                        if (random(1, 5) < 1.2) {
+                            for (let k = 0; k < random(1, 10); k++) {
+                                let rotationAmount = Math.floor(random(0, 360));
+                                ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
+                                let translateX = random(-20 * gridScale, 20 * gridScale);
+                                let translateY = random(-20 * gridScale, 20 * gridScale);
+                                ctx.translate(translateX, translateY);
+                                ctx.rotate(rotationAmount);
+                                drawPixels(pixNum.MISSING, [[0, 0, 1, 1, true]], opacity, ctx, true);
+                                ctx.rotate(-rotationAmount);
+                                ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
+                            }
+                            let rotationAmount = Math.floor(random(0, 360));
+                            ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
+                            let translateX = random(-gridWidth * gridScale, gridHeight * gridScale);
+                            let translateY = random(-gridWidth * gridScale, gridHeight * gridScale);
+                            let skewX = random(-Math.PI / 6, Math.PI / 6);
+                            let skewY = random(-Math.PI / 6, Math.PI / 6);
+                            ctx.translate(translateX, translateY);
+                            ctx.rotate(rotationAmount);
+                            ctx.save();
+                            ctx.transform(1, skewY, skewX, 1, 0, 0);
+                            ctx.fillStyle = 'rgb(255, 0, 0)';
+                            ctx.fillRect(0, 0, 90, 90);
+                            ctx.fillStyle = 'rgb(255, 255, 0)';
+                            ctx.fillRect(10, 10, 70, 70);
+                            ctx.fillStyle = 'rgb(255, 0, 0)';
+                            ctx.fillRect(40, 20, 10, 30);
+                            ctx.fillRect(40, 60, 10, 10);
+                            ctx.restore();
+                            ctx.rotate(-rotationAmount);
+                            ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
+                        }
+                        abovectx.globalAlpha = opacity;
+                        abovectx.fillStyle = 'rgb(255, 0, 0)';
+                        for (let i = 0; i < width; i++) {
+                            drawLaserPath(getLaserPath(x + i, y + j, Math.floor(Math.random() * 4)));
+                        }
                     }
                 }
-            }
+            });
         },
         update: function (x, y) {
             function chaos(actionX, actionY) {
@@ -5800,13 +5772,9 @@ window.addEventListener('DOMContentLoaded', async (e) => {
             const box = document.createElement('div');
             box.classList.add('pickerPixel');
             box.onclick = (e) => {
-                brush.pixel = id;
-                for (const pickGroup of pixelPicker.children) {
-                    for (const pickDiv of pickGroup.children[1].children[0].children) {
-                        pickDiv.classList.remove('pickerPixelSelected');
-                    }
-                }
+                pixelSelectors[brush.pixel].box.classList.remove('pickerPixelSelected');
                 box.classList.add('pickerPixelSelected');
+                brush.pixel = id;
                 pixelPickerDescription.innerHTML = pixel.generatedDescription;
             };
             box.onmouseover = (e) => {
