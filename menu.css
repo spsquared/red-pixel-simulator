@@ -232,65 +232,36 @@
     transition: 200ms linear opacity;
     text-align: center;
 }
-#pixsimMenuConnectingSpinnerContainer {
-    display: inline-block;
+#pixsimMenuConnectingPixelContainer {
+    display: inline-grid;
+    grid-template-columns: repeat(3, 9.9vh);
+    grid-template-rows: repeat(3, 9.9vh);
     position: relative;
-    top: 20vh;
+    top: 10vh;
+    width: 30vh;
+    height: 30vh;
+}
+#pixsimMenuConnectingPixelContainer div {
     width: 10vh;
     height: 10vh;
+    animation: 5s cubic-bezier(0.2, 0, 0.8, 1) loadingColors infinite;
 }
-#pixsimMenuConnectingSpinnerContainer div {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 10vh;
-    height: 10vh;
-    animation: 4s cubic-bezier(0.5, 0, 0.5, 1) spin infinite;
+#pixsimMenuConnectingPixelContainer div:nth-child(4), #pixsimMenuConnectingPixelContainer div:nth-child(8) {
+    animation-delay: 100ms;
 }
-#pixsimMenuConnectingSpinnerContainer div:nth-child(8) {
-    background-color: rgb(255, 0, 0);
-    box-shadow: 0px 0px 1vh rgba(255, 0, 0, 0.5);
+#pixsimMenuConnectingPixelContainer div:nth-child(1), #pixsimMenuConnectingPixelContainer div:nth-child(5), #pixsimMenuConnectingPixelContainer div:nth-child(9) {
+    animation-delay: 200ms;
+}
+#pixsimMenuConnectingPixelContainer div:nth-child(2), #pixsimMenuConnectingPixelContainer div:nth-child(6) {
+    animation-delay: 300ms;
+}
+#pixsimMenuConnectingPixelContainer div:nth-child(3) {
     animation-delay: 400ms;
-}
-#pixsimMenuConnectingSpinnerContainer div:nth-child(7) {
-    background-color: rgb(255, 180, 0);
-    box-shadow: 0px 0px 1vh rgba(255, 180, 0, 0.5);
-    animation-delay: 800ms;
-}
-#pixsimMenuConnectingSpinnerContainer div:nth-child(6) {
-    background-color: rgb(255, 255, 0);
-    box-shadow: 0px 0px 1vh rgba(255, 255, 0, 0.5);
-    animation-delay: 1200ms;
-}
-#pixsimMenuConnectingSpinnerContainer div:nth-child(5) {
-    background-color: rgb(0, 255, 0);
-    box-shadow: 0px 0px 1vh rgba(0, 255, 0, 0.5);
-    animation-delay: 1600ms;
-}
-#pixsimMenuConnectingSpinnerContainer div:nth-child(4) {
-    background-color: rgb(0, 255, 255);
-    box-shadow: 0px 0px 1vh rgba(0, 255, 255, 0.5);
-    animation-delay: 2000ms;
-}
-#pixsimMenuConnectingSpinnerContainer div:nth-child(3) {
-    background-color: rgb(0, 180, 255);
-    box-shadow: 0px 0px 1vh rgba(0, 180, 255, 0.5);
-    animation-delay: 2400ms;
-}
-#pixsimMenuConnectingSpinnerContainer div:nth-child(2) {
-    background-color: rgb(0, 0, 255);
-    box-shadow: 0px 0px 1vh rgba(0, 0, 255, 0.5);
-    animation-delay: 2800ms;
-}
-#pixsimMenuConnectingSpinnerContainer div:nth-child(1) {
-    background-color: rgb(255, 0, 255);
-    box-shadow: 0px 0px 1vh rgba(255, 0, 255, 0.5);
-    animation-delay: 3200ms;
 }
 #pixsimMenuConnectingText {
     display: inline-block;
     position: relative;
-    top: 25vh;
+    top: 12vh;
     font-size: 4vh;
     margin: 0px 8px;
 }
@@ -302,15 +273,62 @@
     font-size: 2.5vh;
 }
 
-@keyframes spin {
+@keyframes loadingColors {
     0% {
-        transform: rotateZ(0deg);
+        transform: scale(1);
+        background-color: #FF0000;
     }
-    40% {
-        transform: rotateZ(90deg);
+    9% {
+        transform: scale(0);
+        background-color: #FF0000;
+    }
+    10% {
+        transform: scale(0);
+        background-color: #00FF00;
+    }
+    19% {
+        transform: scale(1);
+        background-color: #00FF00;
+    }
+    33% {
+        transform: scale(1);
+        background-color: #00FF00;
+    }
+    42% {
+        transform: scale(0);
+        background-color: #00FF00;
+    }
+    43% {
+        transform: scale(0);
+        background-color: #0000FF;
+    }
+    52% {
+        transform: scale(1);
+        background-color: #0000FF;
+    }
+    66% {
+        transform: scale(1);
+        background-color: #0000FF;
+    }
+    75% {
+        transform: scale(0);
+        background-color: #0000FF;
+    }
+    76% {
+        transform: scale(0);
+        background-color: #FF0000;
+    }
+    85% {
+        transform: scale(1);
+        background-color: #FF0000;
+    }
+    99% {
+        transform: scale(1);
+        background-color: #FF0000;
     }
     100% {
-        transform: rotateZ(90deg);
+        transform: scale(1);
+        background-color: #FF0000;
     }
 }
 
