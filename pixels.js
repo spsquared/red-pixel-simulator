@@ -17,7 +17,6 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -51,7 +50,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -94,7 +92,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -155,7 +152,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -211,7 +207,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -248,7 +243,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -296,7 +290,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -338,7 +331,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -390,7 +382,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 7,
         animatedNoise: false,
         animated: false,
@@ -447,7 +438,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -505,7 +495,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -560,7 +549,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -604,7 +592,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 7,
         animatedNoise: false,
         animated: false,
@@ -681,7 +668,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 7,
         animatedNoise: true,
         animated: true,
@@ -758,7 +744,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: true,
         animated: true,
@@ -810,7 +795,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -983,7 +967,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 6,
         animatedNoise: true,
         animated: true,
@@ -1122,7 +1105,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 7,
         animatedNoise: true,
         animated: true,
@@ -1148,9 +1130,15 @@ const pixels = {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
                 });
-                gridoverctx.fillStyle = 'rgb(255, 255, 0)';
+                // jank code instead of a good fix that can be reused
+                bufferctx.globalAlpha = 1;
+                bufferctx.fillStyle = 'rgb(255, 255, 0)';
+                bufferctx.fillRect(0, 0, canvasResolution, canvasResolution);
+                bufferctx.globalCompositeOperation = 'destination-in';
+                bufferctx.drawImage(noiseCanvas, camera.x / drawScale, camera.y / drawScale, canvasResolution / drawScale, canvasResolution / drawScale, 0, 0, canvasResolution, canvasResolution);
+                ctx.globalAlpha = opacity / 2;
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
+                    ctx.drawImage(bufferCanvas, x * drawScale - camera.x, y * drawScale - camera.y, width * drawScale, height * drawScale, x * drawScale - camera.x, y * drawScale - camera.y, width * drawScale, height * drawScale);
                 });
             }
         },
@@ -1204,7 +1192,6 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -1245,7 +1232,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -1289,7 +1275,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -1343,7 +1328,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -1394,7 +1378,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -1439,7 +1422,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -1491,7 +1473,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 7,
         animatedNoise: false,
         animated: false,
@@ -1556,7 +1537,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 7,
         animatedNoise: false,
         animated: false,
@@ -1613,7 +1593,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        key: Infinity,
         updateStage: 7,
         animatedNoise: false,
         animated: false,
@@ -1670,7 +1649,6 @@ const pixels = {
         rotateable: true,
         rotation: 0,
         group: 1,
-        key: Infinity,
         updateStage: 3,
         animatedNoise: false,
         animated: false,
@@ -1722,7 +1700,6 @@ const pixels = {
         rotateable: true,
         rotation: 1,
         group: 1,
-        key: Infinity,
         updateStage: 1,
         animatedNoise: false,
         animated: false,
@@ -1774,7 +1751,6 @@ const pixels = {
         rotateable: true,
         rotation: 2,
         group: 1,
-        key: Infinity,
         updateStage: 4,
         animatedNoise: false,
         animated: false,
@@ -1826,7 +1802,6 @@ const pixels = {
         rotateable: true,
         rotation: 3,
         group: 1,
-        key: Infinity,
         updateStage: 2,
         animatedNoise: false,
         animated: false,
@@ -1881,7 +1856,6 @@ const pixels = {
         rotateable: true,
         rotation: 0,
         group: 1,
-        key: Infinity,
         updateStage: 3,
         animatedNoise: false,
         animated: false,
@@ -1936,7 +1910,6 @@ const pixels = {
         rotateable: true,
         rotation: 1,
         group: 1,
-        key: Infinity,
         updateStage: 1,
         animatedNoise: false,
         animated: false,
@@ -1991,7 +1964,6 @@ const pixels = {
         rotateable: true,
         rotation: 2,
         group: 1,
-        key: Infinity,
         updateStage: 4,
         animatedNoise: false,
         animated: false,
@@ -2046,7 +2018,6 @@ const pixels = {
         rotateable: true,
         rotation: 3,
         group: 1,
-        key: Infinity,
         updateStage: 2,
         animatedNoise: false,
         animated: false,
@@ -2099,7 +2070,6 @@ const pixels = {
         rotateable: true,
         rotation: 0,
         group: 1,
-        key: Infinity,
         updateStage: 3,
         animatedNoise: false,
         animated: false,
@@ -2152,7 +2122,6 @@ const pixels = {
         rotateable: true,
         rotation: 1,
         group: 1,
-        key: Infinity,
         updateStage: 1,
         animatedNoise: false,
         animated: false,
@@ -2205,7 +2174,6 @@ const pixels = {
         rotateable: true,
         rotation: 2,
         group: 1,
-        key: Infinity,
         updateStage: 4,
         animatedNoise: false,
         animated: false,
@@ -2258,7 +2226,6 @@ const pixels = {
         rotateable: true,
         rotation: 3,
         group: 1,
-        key: Infinity,
         updateStage: 2,
         animatedNoise: false,
         animated: false,
@@ -2317,7 +2284,6 @@ const pixels = {
         rotateable: true,
         group: 1,
         rotation: 0,
-        key: Infinity,
         updateStage: 3,
         animatedNoise: false,
         animated: false,
@@ -2376,7 +2342,6 @@ const pixels = {
         rotateable: true,
         group: 1,
         rotation: 1,
-        key: Infinity,
         updateStage: 1,
         animatedNoise: false,
         animated: false,
@@ -2435,7 +2400,6 @@ const pixels = {
         rotateable: true,
         group: 1,
         rotation: 2,
-        key: Infinity,
         updateStage: 4,
         animatedNoise: false,
         animated: false,
@@ -2494,7 +2458,6 @@ const pixels = {
         rotateable: true,
         group: 1,
         rotation: 3,
-        key: Infinity,
         updateStage: 2,
         animatedNoise: false,
         animated: false,
@@ -2546,7 +2509,6 @@ const pixels = {
         rotateable: true,
         rotation: 0,
         group: 1,
-        key: Infinity,
         updateStage: 3,
         animatedNoise: false,
         animated: false,
@@ -2600,7 +2562,6 @@ const pixels = {
         rotateable: true,
         rotation: 1,
         group: 1,
-        key: Infinity,
         updateStage: 1,
         animatedNoise: false,
         animated: false,
@@ -2652,7 +2613,6 @@ const pixels = {
         rotateable: true,
         rotation: 2,
         group: 1,
-        key: Infinity,
         updateStage: 4,
         animatedNoise: false,
         animated: false,
@@ -2704,7 +2664,6 @@ const pixels = {
         rotateable: true,
         rotation: 3,
         group: 1,
-        key: Infinity,
         updateStage: 2,
         animatedNoise: false,
         animated: false,
@@ -2753,7 +2712,6 @@ const pixels = {
         rotateable: false,
         rotation: 0,
         group: 1,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -2802,7 +2760,6 @@ const pixels = {
         rotateable: false,
         rotation: 1,
         group: 1,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -2851,7 +2808,6 @@ const pixels = {
         rotateable: false,
         rotation: 2,
         group: 1,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -2900,7 +2856,6 @@ const pixels = {
         rotateable: false,
         rotation: 3,
         group: 1,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
@@ -2975,7 +2930,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 1,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: true,
@@ -3050,7 +3004,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 1,
-        key: Infinity,
         updateStage: 5,
         animatedNoise: false,
         animated: true,
@@ -3093,7 +3046,6 @@ const pixels = {
         rotateable: true,
         rotation: 0,
         group: 1,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -3136,7 +3088,6 @@ const pixels = {
         rotateable: true,
         rotation: 1,
         group: 1,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -3186,7 +3137,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 1,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -3257,7 +3207,6 @@ const pixels = {
         rotateable: true,
         rotation: 0,
         group: 2,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: true,
@@ -3328,7 +3277,6 @@ const pixels = {
         rotateable: true,
         rotation: 1,
         group: 2,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: true,
@@ -3399,7 +3347,6 @@ const pixels = {
         rotateable: true,
         rotation: 2,
         group: 2,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: true,
@@ -3470,7 +3417,6 @@ const pixels = {
         rotateable: true,
         rotation: 3,
         group: 2,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: true,
@@ -3518,7 +3464,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 2,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -3576,7 +3521,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 2,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -3620,7 +3564,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 2,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -3688,7 +3631,6 @@ const pixels = {
         rotateable: true,
         rotation: 0,
         group: 2,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -3756,7 +3698,6 @@ const pixels = {
         rotateable: true,
         rotation: 1,
         group: 2,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -4320,7 +4261,6 @@ const pixels = {
         rotateable: true,
         rotation: 0,
         group: 4,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -4386,7 +4326,6 @@ const pixels = {
         rotateable: true,
         rotation: 1,
         group: 4,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -4452,7 +4391,6 @@ const pixels = {
         rotateable: true,
         rotation: 2,
         group: 4,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -4518,7 +4456,6 @@ const pixels = {
         rotateable: true,
         rotation: 3,
         group: 4,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -4566,7 +4503,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: true,
@@ -4616,7 +4552,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -4650,7 +4585,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -4696,7 +4630,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -4747,7 +4680,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -4798,7 +4730,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -4849,7 +4780,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -4895,7 +4825,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: true,
@@ -4952,7 +4881,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: 8,
         animatedNoise: false,
         animated: true,
@@ -5150,7 +5078,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: 8,
         animatedNoise: false,
         animated: true,
@@ -5188,7 +5115,6 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: true,
@@ -5230,7 +5156,6 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: 4,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animated: false,
@@ -5260,7 +5185,6 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: 5,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -5316,7 +5240,6 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: 5,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -5385,7 +5308,6 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: 5,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -5399,6 +5321,7 @@ const pixels = {
         name: 'Goal',
         description: 'Must be pushed into targets in puzzles',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (noAnimations && !forceRedraw) return;
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 200, 0)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
@@ -5412,7 +5335,7 @@ const pixels = {
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
                         fillPixels(x + i + 1 / 5, y + j + 1 / 5, 3 / 5, 3 / 5, ctx);
-                        fillPixels(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
+                        if (!noAnimations) fillPixels(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
                     }
                 }
             });
@@ -5433,11 +5356,10 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: 5,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: true,
-        alwaysRedraw: true,
+        alwaysRedraw: false,
         pickable: true,
         pixsimCompatible: true,
         id: 'goal',
@@ -5447,20 +5369,23 @@ const pixels = {
         name: 'Target',
         description: 'Goal pixels must be pushed into it in puzzles',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (noAnimations && !forceRedraw) return;
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
             });
-            abovectx.globalAlpha = opacity * 0.2;
-            abovectx.fillStyle = 'rgb(0, 255, 255)';
-            let margin = (Math.sin(frameCount * Math.PI / 120) + 1) / 4;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
+            if (!noAnimations) {
+                abovectx.globalAlpha = opacity * 0.2;
+                abovectx.fillStyle = 'rgb(0, 255, 255)';
+                let margin = (Math.sin(frameCount * Math.PI / 120) + 1) / 4;
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    for (let i = 0; i < width; i++) {
+                        for (let j = 0; j < height; j++) {
+                            fillPixels(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
+                        }
                     }
-                }
-            });
+                });
+            }
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -5486,19 +5411,53 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: 5,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: true,
-        alwaysRedraw: true,
+        alwaysRedraw: false,
         pickable: true,
         pixsimCompatible: true,
         id: 'target',
         numId: 0
     },
+    color_red: {
+        name: 'Red Colors',
+        description: 'Unfortunately it\'s not THE red pixel...',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (noAnimations && !forceRedraw) return;
+            ctx.globalAlpha = opacity;
+            let color = noAnimations ? [255, 80, 80] : colorAnimate(255, 80, 80, 200, 0, 0, 60);
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 80, 80)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 12,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: false,
+        pixsimCompatible: true,
+        id: 'color_red',
+        numId: 0
+    },
     remove: {
         name: 'Remove (brush only)',
-        description: 'Unfortunately it\'s not THE red pixel...',
+        description: 'For removing pixels from the grid',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 0, 0)';
@@ -5520,7 +5479,6 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: -1,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
@@ -5564,7 +5522,6 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: -1,
-        key: Infinity,
         updateStage: -1,
         animatedNoise: false,
         animatedNoise: false,
@@ -5600,7 +5557,6 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: -1,
-        key: Infinity,
         updateStage: 0,
         animatedNoise: false,
         animatedNoise: false,
@@ -5735,7 +5691,6 @@ function generateMusicPixel(id, data) {
         rotateable: false,
         musicPixel: 0,
         group: 3,
-        key: Infinity,
         updateStage: 8,
         animatedNoise: false,
         animated: true,
@@ -5763,7 +5718,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     const ctx2 = canvas2.getContext('2d');
     canvas2.width = 50;
     canvas2.height = 50;
-    const groupNames = ['General', 'Mechanical', 'Lasers', 'Music', 'Destruction', 'Puzzle Construction'];
+    const groupNames = ['General', 'Mechanical', 'Lasers', 'Music', 'Destruction', 'Puzzle Construction', 'Multiplayer Construction'];
     for (const id in pixels) {
         const pixel = pixels[id];
         pixel.prerender();

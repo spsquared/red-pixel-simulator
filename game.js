@@ -84,8 +84,9 @@ const aboveCanvas = createCanvas2();
 const monsterCanvas = createCanvas2();
 const fireCanvas = createCanvas2();
 const targetCanvas = createCanvas2();
-const placeable = createCanvas2();
+const placeableCanvas = createCanvas2();
 const noiseCanvas = createCanvas2();
+const bufferCanvas = createCanvas2();
 const ctx = canvas.getContext('2d');
 const gamectx = gameCanvas.getContext('2d');
 const gridctx = gridCanvas.getContext('2d');
@@ -94,8 +95,9 @@ const abovectx = aboveCanvas.getContext('2d');
 const monsterctx = monsterCanvas.getContext('2d');
 const firectx = fireCanvas.getContext('2d');
 const targetctx = targetCanvas.getContext('2d');
-const placeablectx = placeable.getContext('2d');
+const placeablectx = placeableCanvas.getContext('2d');
 const noisectx = noiseCanvas.getContext('2d');
+const bufferctx = bufferCanvas.getContext('2d');
 function resetCanvases() {
     canvas.width = canvasResolution;
     canvas.height = canvasResolution;
@@ -113,10 +115,12 @@ function resetCanvases() {
     fireCanvas.height = canvasResolution;
     targetCanvas.width = canvasResolution;
     targetCanvas.height = canvasResolution;
-    placeable.width = canvasResolution;
-    placeable.height = canvasResolution;
-    noiseCanvas.width = canvasResolution;
-    noiseCanvas.height = canvasResolution;
+    placeableCanvas.width = canvasResolution;
+    placeableCanvas.height = canvasResolution;
+    noiseCanvas.width = gridWidth;
+    noiseCanvas.height = gridHeight;
+    bufferCanvas.width = canvasResolution;
+    bufferCanvas.height = canvasResolution;
     ctx.imageSmoothingEnabled = false;
     ctx.webkitImageSmoothingEnabled = false;
     gamectx.imageSmoothingEnabled = false;
@@ -137,11 +141,13 @@ function resetCanvases() {
     placeablectx.webkitImageSmoothingEnabled = false;
     noisectx.imageSmoothingEnabled = false;
     noisectx.webkitImageSmoothingEnabled = false;
+    bufferctx.imageSmoothingEnabled = false;
+    bufferctx.webkitImageSmoothingEnabled = false;
     noisectx.clearRect(0, 0, canvasResolution, canvasResolution);
     for (let i = 0; i < gridHeight; i++) {
         for (let j = 0; j < gridWidth; j++) {
             noisectx.globalAlpha = constantNoise(j / 2, i / 2);
-            noisectx.fillRect(j * gridScale, i * gridScale, gridScale, gridScale);
+            noisectx.fillRect(j, i, 1, 1);
         }
     }
     ctx.textRendering = 'optimizeSpeed';
@@ -234,6 +240,8 @@ function createGrid(width = 100, height = 100) {
     gridScale = canvasResolution / Math.min(gridWidth, gridHeight);
     drawScale = gridScale * camera.scale;
     screenScale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
+    noiseCanvas.width = gridWidth;
+    noiseCanvas.height = gridHeight;
     pendingExplosions = [];
     forceRedraw = true;
     selection.show = false;
@@ -278,7 +286,7 @@ function createGrid(width = 100, height = 100) {
             placeableGrid[i][j] = true;
             lastPlaceableGrid[i][j] = true;
             noisectx.globalAlpha = constantNoise(j / 2, i / 2);
-            noisectx.fillRect(j * gridScale, i * gridScale, gridScale, gridScale);
+            noisectx.fillRect(j, i, 1, 1);
         }
     }
     gridWidthText.value = gridWidth;
@@ -561,9 +569,6 @@ function imagePixels(x, y, width, height, source, ctx) {
             ctx.drawImage(source, j * drawScale - camera.x, i * drawScale - camera.y, drawScale, drawScale);
         }
     }
-};
-function copyPixelRect(sx, sy, dx, dy, width, height, src, ctx) {
-    ctx.drawImage(src, sx * drawScale, sy * drawScale, width * drawScale, height * drawScale, dx * drawScale, dy * drawScale, width * drawScale, height * drawScale);
 };
 function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
     let multiplier1 = (Math.sin(frameCount * Math.PI / p) + 1) / 2;
@@ -1224,6 +1229,7 @@ function draw() {
     targetctx.resetTransform();
     placeablectx.resetTransform();
     gridoverctx.resetTransform();
+    bufferctx.resetTransform();
     ctx.globalAlpha = 1;
     gamectx.globalAlpha = 1;
     gridctx.globalAlpha = 1;
@@ -1233,6 +1239,9 @@ function draw() {
     targetctx.globalAlpha = 1;
     placeablectx.globalAlpha = 1;
     gridoverctx.globalAlpha = 1;
+    bufferctx.globalAlpha = 1;
+    bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
+    bufferctx.globalCompositeOperation = 'source-over';
 
     // frame
     drawFrame();
@@ -1349,7 +1358,7 @@ function drawFrame() {
         gamectx.drawImage(fireCanvas, 0, 0);
     }
     ctx.drawImage(gameCanvas, 0, 0);
-    if (inResetState || sandboxMode || PixSimAPI.inGame) ctx.drawImage(placeable, 0, 0);
+    if (inResetState || sandboxMode || PixSimAPI.inGame) ctx.drawImage(placeableCanvas, 0, 0);
     if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 != 0)) {
         frameList.push(performance.now());
     }
@@ -1423,12 +1432,12 @@ function drawBrush() {
             ctx.stroke();
         } else if (brush.lineMode && !brush.startsInRPE) {
             const clickPixelNum = (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
-            gridoverctx.clearRect(0, 0, canvasResolution, canvasResolution);
+            bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
             brushActionLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.size, (rect) => {
-                drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 1, gridoverctx, true);
+                drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 1, bufferctx, true);
             });
             ctx.globalAlpha = 0.5;
-            ctx.drawImage(gridOverlayCanvas, 0, 0, canvasResolution, canvasResolution);
+            ctx.drawImage(bufferCanvas, 0, 0, canvasResolution, canvasResolution);
             let rect = calcBrushRectCoordinates(mXGrid, mYGrid);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(255, 255, 255)';

@@ -1,4 +1,3 @@
-// random (change to normal functions when remove p5)
 let randSeed = 1;
 function random(min = 0, max = 1) {
     // return ((randSeed = (randSeed * 1664525 + 1013904223) % 4294967296) / 4294967296) * (max - min) + min;
