@@ -298,6 +298,7 @@ const winBox = document.getElementById('winBox');
 const winReset = document.getElementById('winReset');
 const winNext = document.getElementById('winNext');
 const winMenu = document.getElementById('winMenu');
+winScreen.addEventListener('contextmenu', e => e.preventDefault());
 let inWinScreen = false;
 function triggerWin() {
     if (inWinScreen) return;
@@ -403,6 +404,8 @@ function loadPuzzle(section, level) {
         camera.scale = 1;
         camera.x = 0;
         camera.y = 0;
+        drawScale = gridScale * camera.scale;
+        screenScale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
     } catch (err) {
         modal('Could not load puzzle:', `<span style="color: red;">${err.message}</span><br>Restart the puzzle if issues persist.`, false).then(transitionToMenu);
     }

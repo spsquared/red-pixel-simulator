@@ -1017,6 +1017,9 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
+            function act(actionX, actionY) {
+
+            };
             updateTouchingPixel(x, y, pixNum.LASER_SCATTERER, function (actionX, actionY) {
                 if (validChangingPixel(actionX, actionY) && random() < 0.1) {
                     nextGrid[actionY][actionX] = pixNum.SAND;
@@ -1028,7 +1031,7 @@ const pixels = {
                 }
             });
             updateTouchingPixel(x, y, pixNum.GLASS, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
+                if (validChangingPixel(actionX, actionY) && random() < 0.01) {
                     nextGrid[actionY][actionX] = pixNum.SAND;
                 }
             });
@@ -2245,7 +2248,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && canMoveTo(x - 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && grid[y][x - 1] != pixNum.PUSH_CLONER_LEFT && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && canMoveTo(x - 1, y)) {
                 if (push(x, y, 0, false, true)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
                 }
@@ -2303,7 +2306,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && canMoveTo(x, y - 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && grid[y - 1][x] != pixNum.PUSH_CLONER_UP && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && canMoveTo(x, y - 1)) {
                 if (push(x, y, 1, false, true)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
                 }
@@ -2361,7 +2364,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && canMoveTo(x + 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && grid[y][x + 1] != pixNum.PUSH_CLONER_RIGHT && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && canMoveTo(x + 1, y)) {
                 if (push(x, y, 2, false, true)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
                 }
@@ -2419,7 +2422,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && canMoveTo(x, y + 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && grid[y + 1][x] != pixNum.PUSH_CLONER_UP && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && canMoveTo(x, y + 1)) {
                 if (push(x, y, 3, false, true)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
                 }
@@ -3475,7 +3478,7 @@ const pixels = {
     },
     reinforced_glass: {
         name: 'Reinforced Glass',
-        description: 'Really heavy glass',
+        description: 'Really heavy glass that happens to also be heat-resistant',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
@@ -5421,7 +5424,7 @@ const pixels = {
         numId: 0
     },
     color_red: {
-        name: 'Red Colors',
+        name: 'Red Color',
         description: 'Unfortunately it\'s not THE red pixel...',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             if (noAnimations && !forceRedraw) return;

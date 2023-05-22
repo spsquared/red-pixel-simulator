@@ -173,7 +173,7 @@ function generateRPCode() {
 
 // draw
 function rpDraw() {
-    if (inMenuScreen) return;
+    if (inMenuScreen || inWinScreen) return;
 
     // reset
     rpCtx.clearRect(0, 0, rpCanvasRes, rpCanvasRes);

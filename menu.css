@@ -286,11 +286,7 @@
         transform: scale(0);
         background-color: #00FF00;
     }
-    19% {
-        transform: scale(1);
-        background-color: #00FF00;
-    }
-    33% {
+    19%, 33% {
         transform: scale(1);
         background-color: #00FF00;
     }
@@ -302,11 +298,7 @@
         transform: scale(0);
         background-color: #0000FF;
     }
-    52% {
-        transform: scale(1);
-        background-color: #0000FF;
-    }
-    66% {
+    52%, 66% {
         transform: scale(1);
         background-color: #0000FF;
     }
@@ -318,15 +310,7 @@
         transform: scale(0);
         background-color: #FF0000;
     }
-    85% {
-        transform: scale(1);
-        background-color: #FF0000;
-    }
-    99% {
-        transform: scale(1);
-        background-color: #FF0000;
-    }
-    100% {
+    85%, 100% {
         transform: scale(1);
         background-color: #FF0000;
     }

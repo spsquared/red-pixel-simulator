@@ -581,49 +581,31 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
 };
 function updatePixel(x, y, i) {
     let pixelType = numPixels[grid[y][x]];
-    if (pixelType !== undefined && pixelType.updateStage == i) {
-        pixelType.update(x, y);
-    }
+    pixelType !== undefined && pixelType.updateStage === i && pixelType.update(x, y);
 };
 function updateTouchingPixel(x, y, type, action) {
-    let touchingPixel = false;
-    if (x > 0 && grid[y][x - 1] === type) {
-        if (typeof action === 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
-        else touchingPixel = true;
+    if (typeof action == 'function') {
+        let touchingPixel = false;
+        if (x > 0 && grid[y][x - 1] === type) touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
+        if (x < gridWidth - 1 && grid[y][x + 1] === type) touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
+        if (y > 0 && grid[y - 1][x] === type) touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
+        if (y < gridHeight - 1 && grid[y + 1][x] === type) touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
+        return touchingPixel;
+    } else {
+        return (x > 0 && grid[y][x - 1] === type) || (x < gridWidth - 1 && grid[y][x + 1] === type) || (y > 0 && grid[y - 1][x] === type) || (y < gridHeight - 1 && grid[y + 1][x] === type);
     }
-    if (x < gridWidth - 1 && grid[y][x + 1] === type) {
-        if (typeof action === 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
-        else touchingPixel = true;
-    }
-    if (y > 0 && grid[y - 1][x] === type) {
-        if (typeof action === 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
-        else touchingPixel = true;
-    }
-    if (y < gridHeight - 1 && grid[y + 1][x] === type) {
-        if (typeof action === 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
-        else touchingPixel = true;
-    }
-    return touchingPixel;
 };
 function updateTouchingAnything(x, y, action) {
-    let touchingPixel = false;
-    if (x > 0 && grid[y][x - 1] !== pixNum.AIR) {
-        if (typeof action === 'function') touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
-        else touchingPixel = true;
+    if (typeof action == 'function') {
+        let touchingPixel = false;
+        if (x > 0 && grid[y][x - 1] !== pixNum.AIR) touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
+        if (x < gridWidth - 1 && grid[y][x + 1] !== pixNum.AIR) touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
+        if (y > 0 && grid[y - 1][x] !== pixNum.AIR) touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
+        if (y < gridHeight - 1 && grid[y + 1][x] !== pixNum.AIR) touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
+        return touchingPixel;
+    } else {
+        return (x > 0 && grid[y][x - 1] !== pixNum.AIR) || (x < gridWidth - 1 && grid[y][x + 1] === type) || (y > 0 && grid[y - 1][x] === type) || (y < gridHeight - 1 && grid[y + 1][x] === type);
     }
-    if (x < gridWidth - 1 && grid[y][x + 1] !== pixNum.AIR) {
-        if (typeof action === 'function') touchingPixel = (action(x + 1, y) ?? true) || touchingPixel;
-        else touchingPixel = true;
-    }
-    if (y > 0 && grid[y - 1][x] !== pixNum.AIR) {
-        if (typeof action === 'function') touchingPixel = (action(x, y - 1) ?? true) || touchingPixel;
-        else touchingPixel = true;
-    }
-    if (y < gridHeight - 1 && grid[y + 1][x] !== pixNum.AIR) {
-        if (typeof action === 'function') touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
-        else touchingPixel = true;
-    }
-    return touchingPixel;
 };
 function pixelAt(x, y) {
     return numPixels[grid[y][x]] ?? numPixels[pixNum.MISSING];
@@ -1265,7 +1247,7 @@ function draw() {
     // fps
     let now = performance.now();
     while (frameList[0] + 1000 < now) {
-        frameList.shift(1);
+        frameList.shift();
     }
 
     // ui
@@ -1421,7 +1403,7 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
     if (numPixels[type].rectangles.length > 0) drawPixels(type, numPixels[type].rectangles, 1, ctx);
 };
 function drawBrush() {
-    if (!fastSimulation && !brush.selecting) {
+    if (!fastSimulation && !brush.selecting && !inWinScreen) {
         if (brush.isSelection && selection.grid[0] !== undefined) {
             let x1 = Math.min(gridWidth, Math.max(0, Math.floor(mXGrid - selection.grid[0].length / 2)));
             let x2 = Math.min(gridWidth - 1, Math.max(-1, Math.floor(mXGrid + selection.grid[0].length / 2) - 1));
@@ -1530,7 +1512,7 @@ function drawUI() {
         ctx.fillText('Last 10 seconds:', 10, 42);
     }
     let fpsText = `FPS: ${frameList.length} ${debugInfo ? `(${frameTime.toFixed(1)}ms/${averageFrameTime.toFixed(1)}ms)` : ''}`;
-    let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(1)}ms)/${averageTickTime.toFixed(1)}ms)` : ''}`;
+    let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(1)}ms/${averageTickTime.toFixed(1)}ms)` : ''}`;
     let brushSizeText = `Brush Size: ${(brush.isSelection && selection.grid[0] !== undefined) ? '-' : brush.size * 2 - 1}`;
     let brushPixelText = (brush.isSelection && selection.grid[0] !== undefined) ? `Brush: Paste` : `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
@@ -1698,17 +1680,15 @@ function updateTick() {
     averageTickTime = 0.95 * averageTickTime + 0.05 * tickTime;
 };
 async function startDrawLoop() {
-    let start, remaining;
+    let start;
     while (true) {
         start = performance.now();
         await new Promise((resolve, reject) => {
             window.requestAnimationFrame(() => {
                 draw();
-                resolve();
+                setTimeout(resolve, ~~(1000 / 60 - (performance.now() - start) - 0.5));
             });
         });
-        remaining = ~~(1000 / 60 - (performance.now() - start) - 0.5);
-        await new Promise((resolve, reject) => setTimeout(resolve, remaining));
     }
 };
 window.addEventListener('load', startDrawLoop);
