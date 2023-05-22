@@ -632,7 +632,7 @@ const pixels = {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
                         for (let i = 0; i < width; i++) {
                             for (let j = 0; j < height; j++) {
-                                ctx.globalAlpha = noise((x + i) / 4, (y + j) / 4, frameCount / 10) + 0.1;
+                                ctx.globalAlpha = noise((x + i) / 4, (y + j) / 4, deltaTime / 10) + 0.1;
                                 fillPixels(x + i, y + j, 1, 1, ctx);
                             }
                         }
@@ -708,7 +708,7 @@ const pixels = {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
                         for (let i = 0; i < width; i++) {
                             for (let j = 0; j < height; j++) {
-                                ctx.globalAlpha = noise((x + i) / 2, (y + j) / 2, frameCount / 300);
+                                ctx.globalAlpha = noise((x + i) / 2, (y + j) / 2, deltaTime / 300);
                                 fillPixels(x + i, y + j, 1, 1, ctx);
                             }
                         }
@@ -835,7 +835,7 @@ const pixels = {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
                         for (let i = 0; i < width; i++) {
                             for (let j = 0; j < height; j++) {
-                                ctx.globalAlpha = noise((x + i) / 2, (y + j) / 2, frameCount / 5);
+                                ctx.globalAlpha = noise((x + i) / 2, (y + j) / 2, deltaTime / 5);
                                 fillPixels(x + i, y + j, 1, 1, ctx);
                             }
                         }
@@ -1007,7 +1007,7 @@ const pixels = {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
                         for (let i = 0; i < width; i++) {
                             for (let j = 0; j < height; j++) {
-                                ctx.globalAlpha = noise((x + i) / 6, (y + j) / 6, frameCount / 30);
+                                ctx.globalAlpha = noise((x + i) / 6, (y + j) / 6, deltaTime / 30);
                                 fillPixels(x + i, y + j, 1, 1, ctx);
                             }
                         }
@@ -2871,7 +2871,7 @@ const pixels = {
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                if (frameCount % 10 == 0 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
+                if (frameModulo.get(10) >= 10 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(deltaTime / 10) % 4)], ctx);
             });
         },
         update: function (x, y) {
@@ -2945,7 +2945,7 @@ const pixels = {
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                if (frameCount % 10 == 0 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 10) % 4)], ctx);
+                if (frameModulo.get(10) >= 10 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(deltaTime / 10) % 4)], ctx);
             });
         },
         update: function (x, y) {
@@ -4471,7 +4471,7 @@ const pixels = {
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                if (frameCount % 30 == 0 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(frameCount / 30) % 2)], ctx);
+                if (frameModulo.get(30) >= 30 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(deltaTime / 30) % 2)], ctx);
             });
         },
         update: function (x, y) {
@@ -5330,7 +5330,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 240, 0)';
             abovectx.globalAlpha = opacity * 0.2;
             abovectx.fillStyle = 'rgb(255, 180, 0)';
-            let margin = (Math.sin(frameCount * Math.PI / 120) + 1) / 4;
+            let margin = (Math.sin(deltaTime * Math.PI / 120) + 1) / 4;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
@@ -5377,7 +5377,7 @@ const pixels = {
             if (!noAnimations) {
                 abovectx.globalAlpha = opacity * 0.2;
                 abovectx.fillStyle = 'rgb(0, 255, 255)';
-                let margin = (Math.sin(frameCount * Math.PI / 120) + 1) / 4;
+                let margin = (Math.sin(deltaTime * Math.PI / 120) + 1) / 4;
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     for (let i = 0; i < width; i++) {
                         for (let j = 0; j < height; j++) {

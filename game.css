@@ -246,10 +246,7 @@
     font-size: 12px;
     border-width: 3px;
 }
-#noNoise {
-    background-color: red;
-}
-#noAnimation {
+#noNoise, #noAnimation {
     background-color: lime;
 }
 #fadeEffect {

@@ -571,8 +571,8 @@ function imagePixels(x, y, width, height, source, ctx) {
     }
 };
 function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
-    let multiplier1 = (Math.sin(frameCount * Math.PI / p) + 1) / 2;
-    let multiplier2 = (Math.sin((frameCount + p) * Math.PI / p) + 1) / 2;
+    let multiplier1 = (Math.sin(deltaTime * Math.PI / p) + 1) / 2;
+    let multiplier2 = (Math.sin((deltaTime + p) * Math.PI / p) + 1) / 2;
     return [
         (r1 * multiplier1) + (r2 * multiplier2),
         (g1 * multiplier1) + (g2 * multiplier2),
@@ -1204,7 +1204,8 @@ function explode(x1, y1, size) {
 };
 
 // draw and update
-let frameCount = 0;
+let deltaTime = 0;
+let lastDeltaTime = 0;
 let ticks = 0;
 let simulationPaused = true;
 let slowSimulation = false;
@@ -1212,10 +1213,15 @@ let fastSimulation = false;
 let runTicks = 0;
 const frameList = [];
 const fpsList = [];
+const frameModulo = new Map(); // what do i name this??
+frameModulo.set(10, 0); // yes jank
+frameModulo.set(30, 0);
 let lastFpsList = 0;
 let lastTick = 0;
 let frameTime = 0;
 let tickTime = 0;
+let averageFrameTime = 0;
+let averageTickTime = 0;
 function draw() {
     if (inMenuScreen) return;
 
@@ -1288,16 +1294,17 @@ function draw() {
     }
 
     // set up for next frame
-    frameCount++;
     prevMXGrid = mXGrid;
     prevMYGrid = mYGrid;
     prevMX = mX;
     prevMY = mY;
+
+    deltaTime = Math.round(performance.now() * 0.06);
 };
 function drawFrame() {
     let frameStart = performance.now();
     ctx.clearRect(0, 0, canvasResolution, canvasResolution);
-    if (!fastSimulation || frameCount % 10 == 0) {
+    if (!fastSimulation || deltaTime % 10 == 0) {
         gamectx.fillStyle = backgroundColor + (255 - fadeEffect).toString(16);
         gamectx.fillRect(0, 0, canvasResolution, canvasResolution);
         if (forceRedraw) {
@@ -1359,10 +1366,16 @@ function drawFrame() {
     }
     ctx.drawImage(gameCanvas, 0, 0);
     if (inResetState || sandboxMode || PixSimAPI.inGame) ctx.drawImage(placeableCanvas, 0, 0);
-    if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && frameCount % 6 != 0)) {
+    if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && Math.round(deltaTime) % 6 != 0)) {
         frameList.push(performance.now());
     }
     frameTime = performance.now() - frameStart;
+    averageFrameTime = 0.95 * averageFrameTime + 0.05 * frameTime;
+    frameModulo.forEach((v, k) => {
+        if (v >= k) frameModulo.set(k, 0);
+        frameModulo.set(k, v + deltaTime - lastDeltaTime);
+    });
+    lastDeltaTime = deltaTime;
 };
 function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
     numPixels[type].rectangles.length = 0;
@@ -1516,8 +1529,8 @@ function drawUI() {
         }
         ctx.fillText('Last 10 seconds:', 10, 42);
     }
-    let fpsText = `FPS: ${frameList.length} ${debugInfo ? `(${frameTime.toFixed(2)}ms)` : ''}`;
-    let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(2)}ms)` : ''}`;
+    let fpsText = `FPS: ${frameList.length} ${debugInfo ? `(${frameTime.toFixed(1)}ms/${averageFrameTime.toFixed(1)}ms)` : ''}`;
+    let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(1)}ms)/${averageTickTime.toFixed(1)}ms)` : ''}`;
     let brushSizeText = `Brush Size: ${(brush.isSelection && selection.grid[0] !== undefined) ? '-' : brush.size * 2 - 1}`;
     let brushPixelText = (brush.isSelection && selection.grid[0] !== undefined) ? `Brush: Paste` : `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
@@ -1682,6 +1695,7 @@ function updateTick() {
         lastTick = performance.now();
     }
     tickTime = performance.now() - tickStart;
+    averageTickTime = 0.95 * averageTickTime + 0.05 * tickTime;
 };
 async function startDrawLoop() {
     let start, remaining;
@@ -2528,7 +2542,7 @@ const noAnimationsButton = document.getElementById('noAnimation');
 const fadeEffectButton = document.getElementById('fadeEffect');
 noNoiseButton.onclick = (e) => {
     noNoise = !noNoise;
-    if (noNoise) noNoiseButton.style.backgroundColor = 'lime';
+    if (!noNoise) noNoiseButton.style.backgroundColor = 'lime';
     else noNoiseButton.style.backgroundColor = 'red';
     forceRedraw = true;
     window.localStorage.setItem('noNoise', noNoise ? 1 : 0);
@@ -2547,7 +2561,7 @@ fadeEffectButton.onclick = (e) => {
     window.localStorage.setItem('fadeEffect', fadeEffect);
 };
 window.addEventListener('load', () => {
-    if (noNoise) noNoiseButton.style.backgroundColor = 'lime';
+    if (!noNoise) noNoiseButton.style.backgroundColor = 'lime';
     else noNoiseButton.style.backgroundColor = 'red';
     if (!noAnimations) noAnimationsButton.style.backgroundColor = 'lime';
     else noAnimationsButton.style.backgroundColor = 'red';

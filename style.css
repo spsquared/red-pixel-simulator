@@ -11,9 +11,6 @@
     src: url(/assets/SourceCodePro-Italic.ttf) format('truetype');
 }
 
-.p5Canvas {
-    display: none;
-}
 body {
     --canvas-size: min(100vw, 100vh);
     --max-sidebar-width: calc(100vw - var(--canvas-size));
@@ -34,7 +31,10 @@ body::-webkit-scrollbar {
 
 img {
     -webkit-user-drag: none;
-    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+canvas {
+    image-rendering: crisp-edges;
 }
 
 button {
