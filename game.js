@@ -961,17 +961,17 @@ function rayTrace(x1, y1, x2, y2, cb) {
         let xmin = y2 < y1 ? x2 : x1;
         let start = Math.max(0, Math.min(y2, y1));
         let end = Math.min(gridHeight - 1, Math.max(y2, y1));
-        for (let y = start, x = 0; y <= end && x >= 0 && x < gridWidth; y++) {
+        for (let y = start, x = 0; y <= end; y++) {
             x = Math.round(slope * (y - start)) + xmin;
-            if (cb(x, y)) break;
+            if (x < 0 || x >= gridWidth || cb(x, y)) break;
         }
     } else {
         let ymin = x2 < x1 ? y2 : y1;
         let start = Math.max(0, Math.min(x2, x1));
         let end = Math.min(gridWidth - 1, Math.max(x2, x1));
-        for (let x = start, y = 0; x <= end && y >= 0 && y < gridHeight; x++) {
+        for (let x = start, y = 0; x <= end; x++) {
             y = Math.round(slope * (x - start)) + ymin;
-            if (cb(x, y)) break;
+            if (y < 0 || y >= gridHeight || cb(x, y)) break;
         }
     }
 };

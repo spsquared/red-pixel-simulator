@@ -1017,40 +1017,30 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            function act(actionX, actionY) {
-
-            };
-            updateTouchingPixel(x, y, pixNum.LASER_SCATTERER, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.SAND;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.SAND, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.05) {
-                    nextGrid[actionY][actionX] = pixNum.GLASS;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.GLASS, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.01) {
-                    nextGrid[actionY][actionX] = pixNum.SAND;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.ICE, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.5) {
-                    nextGrid[actionY][actionX] = pixNum.WATER;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.SNOW, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.5) {
-                    nextGrid[actionY][actionX] = pixNum.WATER;
-                }
-            });
             let cooldownSpeed = 2;
-            updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
-                cooldownSpeed--;
-            });
-            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                cooldownSpeed++;
+            let act = (actionX, actionY) => {
+                if (grid[actionY][actionX] == pixNum.LAVA) {
+                    cooldownSpeed--;
+                } else if (grid[actionY][actionX] == pixNum.AIR) {
+                    cooldownSpeed++;
+                } else if (validChangingPixel(actionX, actionY)) {
+                    if (grid[actionY][actionX] == pixNum.LASER_SCATTERER) {
+                        if (random() < 0.1) nextGrid[actionY][actionX] = pixNum.SAND;
+                    } else if (grid[actionY][actionX] == pixNum.SAND) {
+                        if (random() < 0.01) nextGrid[actionY][actionX] = pixNum.GLASS;
+                    } else if (grid[actionY][actionX] == pixNum.GLASS) {
+                        if (random() < 0.01) nextGrid[actionY][actionX] = pixNum.SAND;
+                    }
+                }
+            };
+            updateTouchingAnything(x, y, act);
+            let meltAngle = Math.random() * Math.PI * 2;
+            let travel = 0;
+            rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 15), Math.round(y + Math.sin(meltAngle) * 15), (actionX, actionY) => {
+                if (grid[actionY][actionX] == pixNum.SNOW || grid[actionY][actionX] == pixNum.ICE) {
+                    if (random() < (15 - travel) / 45) nextGrid[actionY][actionX] = pixNum.WATER;
+                } else if (grid[actionY][actionX] !== pixNum.AIR) return true;
+                travel++;
             });
             if (random() < 0.0001 * cooldownSpeed) {
                 nextGrid[y][x] = pixNum.STONE;
@@ -1159,6 +1149,14 @@ const pixels = {
             if (random() < (20 - flammability) / (aerated ? 280 : 20)) {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
             }
+            let meltAngle = Math.random() * Math.PI * 2;
+            let travel = 0;
+            rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 10), Math.round(y + Math.sin(meltAngle) * 10), (actionX, actionY) => {
+                if (grid[actionY][actionX] == pixNum.SNOW || grid[actionY][actionX] == pixNum.ICE) {
+                    if (random() < (10 - travel) / 30) nextGrid[actionY][actionX] = pixNum.WATER;
+                } else if (grid[actionY][actionX] !== pixNum.AIR) return true;
+                travel++;
+            });
             if (random() < flammability / 1200 && validChangingPixel(x, y) && !isLava) {
                 if (grid[y][x] >= pixNum.LASER_UP && grid[y][x] <= pixNum.LASER_RIGHT) {
                     nextGrid[y][x] = pixNum.AIR;
@@ -5423,39 +5421,225 @@ const pixels = {
         id: 'target',
         numId: 0
     },
-    color_red: {
-        name: 'Red Color',
-        description: 'Unfortunately it\'s not THE red pixel...',
+    generic_color_well: {
+        name: 'Rainbow Color Well',
+        description: 'A portal to the color vats hidden within the machinery of the Simulator',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             if (noAnimations && !forceRedraw) return;
             ctx.globalAlpha = opacity;
-            let color = noAnimations ? [255, 80, 80] : colorAnimate(255, 80, 80, 200, 0, 0, 60);
-            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+            ctx.fillStyle = 'rgb(0, 0, 0)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                fillPixels(x, y, width, height, ctx);
+                if (!noAnimations || redrawing || forceRedraw) fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = noAnimations ? `hsl(0, 100%, 50%)` : `hsl(${(deltaTime * 2) % 360}, 100%, 50%)`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        fillPixels(x + i + 1 / 4, y + j + 1 / 4, 1 / 2, 1 / 2, ctx);
+                    }
+                }
+            });
+            if (!noAnimations) {
+                abovectx.globalAlpha = opacity * 0.5 * (1 - ((deltaTime % 60) / 60));
+                abovectx.fillStyle = `hsl(${(deltaTime * 2) % 360}, 100%, 50%)`;
+                let margin = ((deltaTime % 60) / 60);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    for (let i = 0; i < width; i++) {
+                        for (let j = 0; j < height; j++) {
+                            fillPixels(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
+                        }
+                    }
+                });
+            }
+        },
+        update: function (x, y) {
+            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
+                if (validChangingPixel(actionX, actionY) && random() < 0.125) {
+                    nextGrid[actionY][actionX] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
+                }
             });
         },
-        update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 80, 80)';
+            ctx.fillStyle = 'rgb(0, 0, 0)';
             ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(25 / 2, 25 / 2, 25, 25);
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 12,
+        blastResistance: 20,
         flammability: 0,
         pushable: false,
         cloneable: false,
         rotateable: false,
         group: 6,
-        updateStage: -1,
+        updateStage: 7,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
         pickable: false,
         pixsimCompatible: true,
-        id: 'color_red',
+        id: 'color_well',
+        numId: 0
+    },
+    color_red: generateColorPixel({
+        color: 'Red',
+        rgb0: [255, 80, 80],
+        rgb1: [200, 0, 0],
+        description: 'Unfortunately it\'s not <i>THE</i> red pixel...'
+    }),
+    color_orange: generateColorPixel({
+        color: 'Orange',
+        rgb0: [255, 200, 80],
+        rgb1: [220, 200, 0]
+    }),
+    color_yellow: generateColorPixel({
+        color: 'Yellow',
+        rgb0: [255, 255, 50],
+        rgb1: [200, 200, 0]
+    }),
+    color_lime: generateColorPixel({
+        color: 'Lime',
+        rgb0: [80, 255, 80],
+        rgb1: [0, 220, 0]
+    }),
+    color_green: generateColorPixel({
+        color: 'Green',
+        rgb0: [10, 200, 10],
+        rgb1: [0, 160, 0]
+    }),
+    color_cyan: generateColorPixel({
+        color: 'Cyan',
+        rgb0: [50, 255, 255],
+        rgb1: [0, 200, 200]
+    }),
+    color_blue: generateColorPixel({
+        color: 'Blue',
+        rgb0: [80, 80, 255],
+        rgb1: [0, 0, 200]
+    }),
+    color_violet: generateColorPixel({
+        color: 'Violet',
+        rgb0: [180, 40, 255],
+        rgb1: [180, 0, 220]
+    }),
+    color_grey: generateColorPixel({
+        color: 'Grey/Gray',
+        rgb0: [120, 120, 120],
+        rgb1: [80, 80, 80]
+    }),
+    color_black: generateColorPixel({
+        color: 'Black',
+        rgb0: [80, 80, 80],
+        rgb1: [0, 0, 0]
+    }),
+    color_collector_a: {
+        name: 'Color Collector (team &alpha;)',
+        description: 'Collects colors for team &alpha;',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (noAnimations && !forceRedraw) return;
+            ctx.globalAlpha = opacity;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) {
+            // touching color pixels and collect
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(80, 80, 80)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = '#FF0099';
+            ctx.font = 'bold 30px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('α', 25, 25);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(120);
+            ctx.fillStyle = 'rgb(80, 80, 80)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#FF0099';
+            ctx.font = 'bold 75px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('α', 60, 60);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: true,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: 7,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: false,
+        pixsimCompatible: true,
+        id: 'color_collector_a',
+        numId: 0
+    },
+    color_collector_b: {
+        name: 'Color Collector (team &beta;)',
+        description: 'Collects colors for team &beta;',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (noAnimations && !forceRedraw) return;
+            ctx.globalAlpha = opacity;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) {
+            // touching color pixels and collect
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(80, 80, 80)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = '#3C70FF';
+            ctx.font = 'bold 30px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('β', 25, 25);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(120);
+            ctx.fillStyle = 'rgb(80, 80, 80)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#3C70FF';
+            ctx.font = 'bold 75px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('β', 60, 60);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: true,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: 7,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: false,
+        pixsimCompatible: true,
+        id: 'color_collector_b',
         numId: 0
     },
     remove: {
@@ -5703,6 +5887,43 @@ function generateMusicPixel(id, data) {
         id: `music_${id}`,
         numId: 0
     }
+};
+function generateColorPixel(data) {
+    return {
+        name: `${data.color} Color`,
+        description: data.description ?? `A blob of ${data.color.toLowerCase()}`,
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (noAnimations && !forceRedraw) return;
+            ctx.globalAlpha = opacity;
+            let color = noAnimations ? data.rgb0 : colorAnimate(...data.rgb0, ...data.rgb1, 60);
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = `rgb(${data.rgb0})`;
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 0,
+        pushable: true,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: false,
+        pixsimCompatible: true,
+        id: `color_${data.color.toLowerCase()}`,
+        numId: 0
+    };
 };
 
 let pixIndex = 0;
