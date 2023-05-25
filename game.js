@@ -604,7 +604,7 @@ function updateTouchingAnything(x, y, action) {
         if (y < gridHeight - 1 && grid[y + 1][x] !== pixNum.AIR) touchingPixel = (action(x, y + 1) ?? true) || touchingPixel;
         return touchingPixel;
     } else {
-        return (x > 0 && grid[y][x - 1] !== pixNum.AIR) || (x < gridWidth - 1 && grid[y][x + 1] === type) || (y > 0 && grid[y - 1][x] === type) || (y < gridHeight - 1 && grid[y + 1][x] === type);
+        return (x > 0 && grid[y][x - 1] !== pixNum.AIR) || (x < gridWidth - 1 && grid[y][x + 1] !== pixNum.AIR) || (y > 0 && grid[y - 1][x] !== pixNum.AIR) || (y < gridHeight - 1 && grid[y + 1][x] !== pixNum.AIR);
     }
 };
 function pixelAt(x, y) {
@@ -948,13 +948,13 @@ function rayTrace(x1, y1, x2, y2, cb) {
         let start = Math.max(0, Math.min(y2, y1));
         let end = Math.min(gridHeight - 1, Math.max(y2, y1));
         for (let y = start; y <= end; y++) {
-            cb(x1, y);
+            if (cb(x1, y)) break;
         }
     } else if (slope == 0) {
         let start = Math.max(0, Math.min(x2, x1));
         let end = Math.min(gridWidth - 1, Math.max(x2, x1));
         for (let x = start; x <= end; x++) {
-            cb(x, y1);
+            if (cb(x, y1)) break;
         }
     } else if (Math.abs(slope) > 1) {
         slope = 1 / slope;
@@ -963,7 +963,7 @@ function rayTrace(x1, y1, x2, y2, cb) {
         let end = Math.min(gridHeight - 1, Math.max(y2, y1));
         for (let y = start, x = 0; y <= end && x >= 0 && x < gridWidth; y++) {
             x = Math.round(slope * (y - start)) + xmin;
-            cb(x, y);
+            if (cb(x, y)) break;
         }
     } else {
         let ymin = x2 < x1 ? y2 : y1;
@@ -971,7 +971,7 @@ function rayTrace(x1, y1, x2, y2, cb) {
         let end = Math.min(gridWidth - 1, Math.max(x2, x1));
         for (let x = start, y = 0; x <= end && y >= 0 && y < gridHeight; x++) {
             y = Math.round(slope * (x - start)) + ymin;
-            cb(x, y);
+            if (cb(x, y)) break;
         }
     }
 };
