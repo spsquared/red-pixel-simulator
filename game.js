@@ -942,6 +942,39 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     }
     return false;
 };
+function rayTrace(x1, y1, x2, y2, cb) {
+    let slope = (y2 - y1) / (x2 - x1);
+    if (!isFinite(slope)) {
+        let start = Math.max(0, Math.min(y2, y1));
+        let end = Math.min(gridHeight - 1, Math.max(y2, y1));
+        for (let y = start; y <= end; y++) {
+            cb(x1, y);
+        }
+    } else if (slope == 0) {
+        let start = Math.max(0, Math.min(x2, x1));
+        let end = Math.min(gridWidth - 1, Math.max(x2, x1));
+        for (let x = start; x <= end; x++) {
+            cb(x, y1);
+        }
+    } else if (Math.abs(slope) > 1) {
+        slope = 1 / slope;
+        let xmin = y2 < y1 ? x2 : x1;
+        let start = Math.max(0, Math.min(y2, y1));
+        let end = Math.min(gridHeight - 1, Math.max(y2, y1));
+        for (let y = start, x = 0; y <= end && x >= 0 && x < gridWidth; y++) {
+            x = Math.round(slope * (y - start)) + xmin;
+            cb(x, y);
+        }
+    } else {
+        let ymin = x2 < x1 ? y2 : y1;
+        let start = Math.max(0, Math.min(x2, x1));
+        let end = Math.min(gridWidth - 1, Math.max(x2, x1));
+        for (let x = start, y = 0; x <= end && y >= 0 && y < gridHeight; x++) {
+            y = Math.round(slope * (x - start)) + ymin;
+            cb(x, y);
+        }
+    }
+};
 function possibleRotations(id) {
     return (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2) ? 2 : 4;
 };
@@ -1313,7 +1346,7 @@ function drawFrame() {
                 amount++;
                 if (grid[y][x] != curr || grid[y][x] != lastGrid[y][x] != redrawing) {
                     let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
-                    if (curr != pixNum.AIR && (forceRedraw || redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations))) numPixels[curr].rectangles.push([x - amount, y, amount, 1, redrawing]);
+                    if (curr != pixNum.AIR && (forceRedraw || redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations))) numPixels[pixelType.numId].rectangles.push([x - amount, y, amount, 1, redrawing]);
                     else if (curr == pixNum.AIR && (redrawing || forceRedraw)) clearPixels(x - amount, y, amount, 1, gridctx);
                     curr = grid[y][x];
                     redrawing = grid[y][x] != lastGrid[y][x];
@@ -1322,7 +1355,7 @@ function drawFrame() {
                 lastGrid[y][x] = grid[y][x];
             }
             let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
-            if (curr != pixNum.AIR && (forceRedraw || redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations))) numPixels[curr].rectangles.push([xmax - amount, y, amount + 1, 1, redrawing]);
+            if (curr != pixNum.AIR && (forceRedraw || redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations))) numPixels[pixelType.numId].rectangles.push([xmax - amount, y, amount + 1, 1, redrawing]);
             else if (curr == pixNum.AIR && (redrawing || forceRedraw)) clearPixels(xmax - amount, y, amount + 1, 1, gridctx);
         }
         for (let i in numPixels) {
@@ -1422,6 +1455,7 @@ function drawBrush() {
             ctx.strokeStyle = 'rgb(0, 0, 0)';
             ctx.setLineDash([drawScale / 2, drawScale / 2]);
             ctx.lineWidth = 2 * camera.scale;
+            ctx.lineCap = 'square';
             ctx.beginPath();
             ctx.strokeRect(x1 * drawScale - camera.x, y1 * drawScale - camera.y, (x2 - x1 + 1) * drawScale, (y2 - y1 + 1) * drawScale);
             ctx.stroke();
@@ -1792,23 +1826,8 @@ function brushActionLine(x1, y1, x2, y2, size, cb) {
             ymin: Math.max(0, Math.min(y1 - size + 1, gridHeight - 1)),
             ymax: Math.max(0, Math.min(y1 + size - 1, gridHeight - 1))
         });
-    } else if (Math.abs(slope) > 1) {
-        slope = 1 / slope;
-        let xmin = y2 < y1 ? x2 : x1;
-        let start = Math.min(y2, y1);
-        let end = Math.max(y2, y1);
-        for (let y = start; y <= end; y++) {
-            let x = Math.round(slope * (y - start)) + xmin;
-            cb(calcBrushRectCoordinates(x, y, size));
-        }
     } else {
-        let ymin = x2 < x1 ? y2 : y1;
-        let start = Math.min(x2, x1);
-        let end = Math.max(x2, x1);
-        for (let x = start; x <= end; x++) {
-            let y = Math.round(slope * (x - start)) + ymin;
-            cb(calcBrushRectCoordinates(x, y, size));
-        }
+        rayTrace(x1, y1, x2, y2, (x, y) => cb(calcBrushRectCoordinates(x, y, size)));
     }
 };
 function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brush.size, pxteam = PixSimAPI.team) {
@@ -1984,6 +2003,7 @@ PixSimAPI.onGameStart = () => {
         pixsimWaitLeaveGame.onclick = null;
         slowSimulation = true;
         simulationPaused = false;
+        ticks = 0;
         simulateSlowButton.checked = true;
         updateTimeControlButtons();
         levelDetails.style.display = 'none';

@@ -266,8 +266,8 @@
     margin: 0px 8px;
 }
 #pixsimMenuConnectingTip {
-    position: absolute;
-    bottom: 20vh;
+    position: relative;
+    top: 20vh;
     left: 5vw;
     width: 40vw;
     font-size: 2.5vh;
