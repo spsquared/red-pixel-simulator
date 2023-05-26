@@ -86,6 +86,7 @@ const fireCanvas = createCanvas2();
 const targetCanvas = createCanvas2();
 const placeableCanvas = createCanvas2();
 const noiseCanvas = createCanvas2();
+const teamsCanvas = createCanvas2();
 const bufferCanvas = createCanvas2();
 const ctx = canvas.getContext('2d');
 const gamectx = gameCanvas.getContext('2d');
@@ -97,6 +98,7 @@ const firectx = fireCanvas.getContext('2d');
 const targetctx = targetCanvas.getContext('2d');
 const placeablectx = placeableCanvas.getContext('2d');
 const noisectx = noiseCanvas.getContext('2d');
+const teamsctx = teamsCanvas.getContext('2d');
 const bufferctx = bufferCanvas.getContext('2d');
 function resetCanvases() {
     canvas.width = canvasResolution;
@@ -119,6 +121,8 @@ function resetCanvases() {
     placeableCanvas.height = canvasResolution;
     noiseCanvas.width = gridWidth;
     noiseCanvas.height = gridHeight;
+    teamsctx.width = canvasResolution;
+    teamsctx.height = canvasResolution;
     bufferCanvas.width = canvasResolution;
     bufferCanvas.height = canvasResolution;
     ctx.imageSmoothingEnabled = false;
@@ -141,6 +145,8 @@ function resetCanvases() {
     placeablectx.webkitImageSmoothingEnabled = false;
     noisectx.imageSmoothingEnabled = false;
     noisectx.webkitImageSmoothingEnabled = false;
+    teamsctx.imageSmoothingEnabled = false;
+    teamsctx.webkitImageSmoothingEnabled = false;
     bufferctx.imageSmoothingEnabled = false;
     bufferctx.webkitImageSmoothingEnabled = false;
     noisectx.clearRect(0, 0, canvasResolution, canvasResolution);
@@ -182,7 +188,6 @@ const musicGrid = [];
 const lastMusicGrid = [];
 const placeableGrid = [];
 const lastPlaceableGrid = [];
-const teamGrid = [];
 
 // camera and brush
 const brush = {
@@ -258,7 +263,6 @@ function createGrid(width = 100, height = 100) {
     lastMusicGrid.length = 0;
     placeableGrid.length = 0;
     lastPlaceableGrid.length = 0;
-    teamGrid.length = 0;
     noisectx.clearRect(0, 0, canvasResolution, canvasResolution);
     noisectx.fillStyle = 'rgb(0, 0, 0)';
     for (let i = 0; i < gridHeight; i++) {
@@ -274,7 +278,6 @@ function createGrid(width = 100, height = 100) {
         lastMusicGrid[i] = [];
         placeableGrid[i] = [];
         lastPlaceableGrid[i] = [];
-        teamGrid[i] = [];
         for (let j = 0; j < gridWidth; j++) {
             grid[i][j] = pixNum.AIR;
             lastGrid[i][j] = -1;
@@ -288,13 +291,13 @@ function createGrid(width = 100, height = 100) {
             lastMusicGrid[i][j] = 0;
             placeableGrid[i][j] = true;
             lastPlaceableGrid[i][j] = true;
-            teamGrid[i][j] = 0;
             noisectx.globalAlpha = constantNoise(j / 2, i / 2);
             noisectx.fillRect(j, i, 1, 1);
         }
     }
     gridWidthText.value = gridWidth;
     gridHeightText.value = gridHeight;
+    createPixSimGrid();
 };
 function loadSaveCode() {
     if (saveCode.length != 0) {
@@ -642,12 +645,16 @@ function move(x1, y1, x2, y2) {
     if (grid[y2][x2] == pixNum.DELETER) {
         nextGrid[y1][x1] = pixNum.AIR;
         fireGrid[y1][x1] = false;
+        teamGrid[y2][x2] = false;
     } else {
         nextGrid[y1][x1] = grid[y2][x2];
         nextGrid[y2][x2] = grid[y1][x1];
-        let fire = fireGrid[y1][x1]
+        let temp = fireGrid[y1][x1];
         fireGrid[y1][x1] = fireGrid[y2][x2];
-        fireGrid[y2][x2] = fire;
+        fireGrid[y2][x2] = temp;
+        temp = teamGrid[y1][x1];
+        teamGrid[y1][x1] = teamGrid[y2][x2];
+        teamGrid[y2][x2] = temp;
     }
 };
 function fall(x, y, xTravel, yTravel, isPassable = isPassableFluid) {
@@ -839,10 +846,12 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveX; i < x; i++) {
                     nextGrid[y][i] = grid[y][i + 1];
                     fireGrid[y][i] = fireGrid[y][i + 1];
+                    teamGrid[y][i] = teamGrid[y][i + 1];
                 }
                 if (movePusher) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
+                    teamGrid[y][x] = false;
                 }
                 return true;
             }
@@ -873,10 +882,12 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveY; i < y; i++) {
                     nextGrid[i][x] = grid[i + 1][x];
                     fireGrid[i][x] = fireGrid[i + 1][x];
+                    teamGrid[i][x] = teamGrid[i + 1][x];
                 }
                 if (movePusher) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
+                    teamGrid[y][x] = false;
                 }
                 return true;
             }
@@ -907,10 +918,12 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveX; i > x; i--) {
                     nextGrid[y][i] = grid[y][i - 1];
                     fireGrid[y][i] = fireGrid[y][i - 1];
+                    teamGrid[y][i] = teamGrid[y][i - 1];
                 }
                 if (movePusher) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
+                    teamGrid[y][x] = false;
                 }
                 return true;
             }
@@ -941,10 +954,12 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveY; i > y; i--) {
                     nextGrid[i][x] = grid[i - 1][x];
                     fireGrid[i][x] = fireGrid[i - 1][x];
+                    teamGrid[i][x] = teamGrid[i - 1][x];
                 }
                 if (movePusher) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
+                    teamGrid[y][x] = false;
                 }
                 return true;
             }
@@ -1116,6 +1131,7 @@ function explode(x1, y1, size, defer) {
     }
     nextGrid[y1][x1] = pixNum.AIR;
     grid[y1][x1] = pixNum.AIR;
+    teamGrid[y1][x1] = 0;
     let chained = 0;
     function destroy(x, y, power) {
         if (random() < (power / size) * ((20 - pixelAt(x, y).blastResistance) / (85 - power))) {
@@ -1129,14 +1145,17 @@ function explode(x1, y1, size, defer) {
                 if (grid[y][x] == pixNum.NUKE) {
                     pendingExplosions.push([x, y, 20]);
                     grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
                     chained++;
                 } else if (grid[y][x] == pixNum.HUGE_NUKE) {
                     pendingExplosions.push([x, y, 40]);
                     grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
                     chained++;
                 } else if (grid[y][x] == pixNum.VERY_HUGE_NUKE) {
                     pendingExplosions.push([x, y, 80]);
                     grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
                     chained++;
                 }
             }
@@ -1145,14 +1164,18 @@ function explode(x1, y1, size, defer) {
             } else if (grid[y][x] == pixNum.GUNPOWDER) {
                 pendingExplosions.push([x, y, 5]);
                 grid[y][x] = pixNum.AIR;
+                teamGrid[y][x] = 0;
             } else if (grid[y][x] == pixNum.C4) {
                 pendingExplosions.push([x, y, 15]);
                 grid[y][x] = pixNum.AIR;
+                teamGrid[y][x] = 0;
             } else if (grid[y][x] >= pixNum.FLAMETHROWER_LEFT && grid[y][x] <= pixNum.FLAMETHROWER_LEFT) {
                 pendingExplosions.push([x, y, 15]);
                 grid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
             } else if (random() < 1.2 - (power / size)) {
                 nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
             }
             return pixelAt(x, y).blastResistance / 40;
         }
@@ -1258,22 +1281,24 @@ function draw() {
     ctx.resetTransform();
     gamectx.resetTransform();
     gridctx.resetTransform();
+    gridoverctx.resetTransform();
     abovectx.resetTransform();
     monsterctx.resetTransform();
     firectx.resetTransform();
     targetctx.resetTransform();
     placeablectx.resetTransform();
-    gridoverctx.resetTransform();
+    teamsctx.resetTransform();
     bufferctx.resetTransform();
     ctx.globalAlpha = 1;
     gamectx.globalAlpha = 1;
     gridctx.globalAlpha = 1;
+    gridoverctx.globalAlpha = 1;
     abovectx.globalAlpha = 1;
     monsterctx.globalAlpha = 1;
     firectx.globalAlpha = 1;
     targetctx.globalAlpha = 1;
     placeablectx.globalAlpha = 1;
-    gridoverctx.globalAlpha = 1;
+    teamsctx.globalAlpha = 1;
     bufferctx.globalAlpha = 1;
     bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
     bufferctx.globalCompositeOperation = 'source-over';
@@ -1342,6 +1367,7 @@ function drawFrame() {
             gridctx.clearRect(0, 0, canvasResolution, canvasResolution);
             firectx.clearRect(0, 0, canvasResolution, canvasResolution);
             placeablectx.clearRect(0, 0, canvasResolution, canvasResolution);
+            teamsctx.clearRect(0, 0, canvasResolution, canvasResolution);
         }
         gridoverctx.clearRect(0, 0, canvasResolution, canvasResolution);
         abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
@@ -1794,7 +1820,7 @@ function updateMouseControls() {
                     }
                 }
                 for (let pixelType in modifiedPixelCounts) {
-                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id, );
+                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id,);
                 }
             } else if (brush.mouseButton == 1) {
                 if (holdingControl) {
@@ -1847,6 +1873,7 @@ function brushActionLine(x1, y1, x2, y2, size, cb) {
 function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brush.size, pxteam = PixSimAPI.team) {
     if ((!sandboxMode && !PixSimAPI.inGame && !inResetState) || (PixSimAPI.inGame && PixSimAPI.spectating)) return;
     const inventory = PixSimAPI.inGame ? (pxteam ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
+    const placeable = PixSimAPI.inGame ? (pxteam ? teamPlaceableGrids[1] : teamPlaceableGrids[0]) : placeableGrid;
     let modifiedPixelCounts = [];
     let clickPixelNum = pixels[placePixel].numId;
     let skipToEnd = false;
@@ -1874,13 +1901,13 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 });
             } else {
                 act(function (x, y) {
-                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && (!PixSimAPI.inGame || 2 - teamGrid[y][x] !== pxteam)) {
                         let pixel = pixelAt(x, y).id;
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
                         inventory[pixel]++;
                         modifiedPixelCounts[grid[y][x]] = true;
                         grid[y][x] = pixNum.AIR;
-                        if (fireGrid[y][x]) {
+                        if (fireGrid[y][x] && !PixSimAPI.inGame) {
                             inventory['fire']++;
                             modifiedPixelCounts[pixNum.FIRE] = true;
                             fireGrid[y][x] = false;
@@ -1889,6 +1916,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                             musicPixel(musicGrid[y][x], false);
                             musicGrid[y][x] = 0;
                         }
+                        teamGrid[y][x] = 0;
                     }
                 });
             }
@@ -1901,7 +1929,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 modifiedPixelCounts[clickPixelNum] = true;
                 if (inventory[placePixel] <= 0) skipToEnd = true;
                 else if (act(function (x, y) {
-                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && !fireGrid[y][x]) {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && !fireGrid[y][x]) {
                         fireGrid[y][x] = true;
                         inventory[placePixel]--;
                     }
@@ -1910,11 +1938,11 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
             }
         } else if (placePixel == 'placementRestriction') {
             if (sandboxMode) act(function (x, y) {
-                placeableGrid[y][x] = false;
+                placeable[y][x] = false;
             })
         } else if (placePixel == 'placementUnRestriction') {
             if (sandboxMode) act(function (x, y) {
-                placeableGrid[y][x] = true;
+                placeable[y][x] = true;
             })
         } else if (placePixel == 'monster') {
             if (sandboxMode) act(function (x, y) {
@@ -1938,7 +1966,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 modifiedPixelCounts[clickPixelNum] = true;
                 if (inventory[placePixel] <= 0) skipToEnd = true;
                 else if (act(function (x, y) {
-                    if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum) {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum && (!PixSimAPI.inGame || 2 - teamGrid[y][x] !== pxteam)) {
                         modifiedPixelCounts[grid[y][x]] = true;
                         let pixel = pixelAt(x, y).id;
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
@@ -1950,6 +1978,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                         }
                         inventory[placePixel]--;
                         if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
+                        teamGrid[y][x] = pxteam + 1;
                     }
                     return inventory[placePixel] <= 0;
                 })) skipToEnd = true;
@@ -1974,10 +2003,24 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
 };
 
 // PixSim API
-const teamPixelAmounts = [
-    {},
-    {}
-];
+const teamGrid = [];
+const teamPlaceableGrids = [[], []];
+function createPixSimGrid() {
+    teamGrid.length = 0;
+    teamPlaceableGrids[0].length = 0;
+    teamPlaceableGrids[1].length = 0;
+    for (let i = 0; i < gridHeight; i++) {
+        teamGrid[i] = [];
+        teamPlaceableGrids[0][i] = [];
+        teamPlaceableGrids[1][i] = [];
+        for (let j = 0; j < gridWidth; j++) {
+            teamGrid[i][j] = 0;
+            teamPlaceableGrids[0][i][j] = true;
+            teamPlaceableGrids[1][i][j] = true;
+        }
+    }
+};
+const teamPixelAmounts = [{}, {}];
 function resetPixSimPixelAmounts() {
     for (const id in pixels) {
         teamPixelAmounts[0][id] = 0;
@@ -2007,7 +2050,7 @@ PixSimAPI.onGameStart = () => {
     transitionToGame(async () => {
         resetPixSimPixelAmounts();
         if (PixSimAPI.isHost) {
-            createGrid(100, 100);
+            createGrid(300, 100);
             PixSimAPI.gridSize = { width: gridWidth, height: gridHeight };
         }
         pixsimMenu._open = false;

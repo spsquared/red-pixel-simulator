@@ -129,9 +129,7 @@ const pixels = {
                         updateTouchingPixel(j, i, pixNum.AIR, function (actionX2, actionY2) {
                             if (actionY2 <= i) canGrow = true;
                         });
-                        if (canGrow) {
-                            nextGrid[i][j] = pixNum.GRASS;
-                        }
+                        if (canGrow) nextGrid[i][j] = pixNum.GRASS;
                     }
                 }
             }
@@ -367,6 +365,7 @@ const pixels = {
             if (touchingLeaves < 4) {
                 if (random() < 0.01) {
                     nextGrid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
                 }
             }
         },
@@ -475,6 +474,7 @@ const pixels = {
             if (updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
                 if (!removedWater && validChangingPixel(actionX, actionY) && random() < 0.2) {
                     nextGrid[actionY][actionX] = pixNum.AIR;
+                    teamGrid[actionY][actionX] = 0;
                     removedWater = true;
                 }
             })) {
@@ -576,6 +576,9 @@ const pixels = {
                     if (canMoveTo(x, y - 1) && random() < 0.25) {
                         nextGrid[y][x] = pixNum.LAVA;
                         nextGrid[y - 1][x] = pixNum.STONE;
+                        let team = teamGrid[y][x];
+                        teamGrid[y][x] = teamGrid[y - 1][x];
+                        teamGrid[y - 1][x] = team;
                     }
                 }
             }
@@ -646,6 +649,7 @@ const pixels = {
                     if (random() < 0.8) nextGrid[y][x] = pixNum.STEAM;
                     else nextGrid[y][x] = pixNum.AIR;
                     nextGrid[actionY][actionX] = pixNum.STONE;
+                    teamGrid[y][x] = 0;
                     return true;
                 }
                 return false;
@@ -834,7 +838,10 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (random() < 0.005) {
                 if (random() < 0.5) nextGrid[y][x] = pixNum.WATER;
-                else nextGrid[y][x] = pixNum.AIR;
+                else {
+                    nextGrid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
+                }
                 return;
             }
             if (updateTouchingAnything(x, y, function (actionX, actionY) {
@@ -847,6 +854,7 @@ const pixels = {
                 } else if ((grid[actionY][actionX] == pixNum.ICE || grid[actionY][actionX] == pixNum.SNOW) && random() < 0.1) {
                     nextGrid[actionY][actionX] = pixNum.WATER;
                     nextGrid[y][x] = pixNum.WATER;
+                    teamGrid[y][x] = 0;
                     return true;
                 }
                 return false;
@@ -1048,24 +1056,14 @@ const pixels = {
                     }
                     if (validSlidingPositions.length > 0) {
                         let slidePosition = validSlidingPositions[Math.floor(random(0, validSlidingPositions.length))];
-                        if (validChangingPixel(x + slidePosition, y - 1)) {
-                            nextGrid[y][x] = grid[y - 1][x + slidePosition];
-                            nextGrid[y - 1][x + slidePosition] = pixNum.LAVA;
+                        if (validChangingPixel(x + slidePosition, y - 1) && canMoveTo(x + slidePosition, y - 1)) {
+                            move(x, y, x + slidePosition, y - 1);
                         }
                     }
                 }
             }
-            if (y > 0) {
-                if (random() < 0.5) {
-                    if (y == gridHeight - 1 || grid[y + 1][x] == pixNum.LAVA) {
-                        if (grid[y - 1][x] == pixNum.STONE) {
-                            if (canMoveTo(x, y - 1)) {
-                                nextGrid[y][x] = grid[y - 1][x];
-                                nextGrid[y - 1][x] = pixNum.LAVA;
-                            }
-                        }
-                    }
-                }
+            if (y > 0 && random() < 0.5 && (y == gridHeight - 1 || grid[y + 1][x] == pixNum.LAVA) && grid[y - 1][x] == pixNum.STONE && canMoveTo(x, y - 1)) {
+                move(x, y, x, y - 1);
             }
         },
         drawPreview: function (ctx) {
@@ -1143,13 +1141,16 @@ const pixels = {
             if (random() < flammability / 1200 && validChangingPixel(x, y) && !isLava) {
                 if (grid[y][x] >= pixNum.LASER_UP && grid[y][x] <= pixNum.LASER_RIGHT) {
                     nextGrid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
                     explode(x, y, 5, true);
                 } else if (grid[y][x] != pixNum.ASH && random() < 0.3) {
                     nextGrid[y][x] = pixNum.ASH;
                     monsterGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
                 } else {
                     nextGrid[y][x] = pixNum.AIR;
                     monsterGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
                 }
             }
             for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridHeight - 1); j++) {
@@ -1235,17 +1236,7 @@ const pixels = {
                 fillPixels(x, y, width, height, ctx);
             });
         },
-        update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (y > 0) {
-                if (grid[y - 1][x] == pixNum.LAVA) {
-                    if (canMoveTo(x, y - 1) && random() < 0.25) {
-                        nextGrid[y][x] = pixNum.LAVA;
-                        nextGrid[y - 1][x] = pixNum.CONCRETE_POWDER;
-                    }
-                }
-            }
-        },
+        update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(75, 75, 75)';
@@ -1333,9 +1324,9 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            let validPlant = updateTouchingPixel(x, y, pixNum.AIR) || updateTouchingPixel(x, y, pixNum.WATER);
-            if (!validPlant) {
+            if (!updateTouchingPixel(x, y, pixNum.AIR) && !updateTouchingPixel(x, y, pixNum.WATER)) {
                 nextGrid[y][x] = pixNum.WATER;
+                return;
             }
             updateTouchingPixel(x, y, pixNum.CONCRETE, function (actionX, actionY) {
                 nextGrid[y][x] = pixNum.WATER;
@@ -1386,6 +1377,8 @@ const pixels = {
             updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
                 nextGrid[y][x] = pixNum.AIR;
                 nextGrid[actionY][actionX] = pixNum.SPONGE;
+                teamGrid[y][x] = 0;
+                teamGrid[actionY][actionX] = 0;
             });
             if (y < gridHeight - 1) {
                 if (isPassableFluid(x, y + 1) && (grid[y + 1][x] != pixNum.LAVA || random() < 0.25) && canMoveTo(x, y + 1)) {
@@ -1428,6 +1421,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
                 nextGrid[y][x] = pixNum.WATER;
+                teamGrid[y][x] = 0;
             });
             updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
                 if (validChangingPixel(actionX, actionY) && random() < 0.125) {
@@ -1478,9 +1472,11 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
+                teamGrid[y][x] = 0;
                 explode(x, y, 5, true);
             });
             updateTouchingPixel(x, y, pixNum.SNOW, function (actionX, actionY) {
+                teamGrid[y][x] = 0;
                 explode(x, y, 6, true);
             });
             updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
@@ -1542,6 +1538,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
+                teamGrid[y][x] = 0;
                 explode(x, y, 7, true);
             });
             updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
@@ -1611,6 +1608,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
                 return;
             }
             push(x, y, 0);
@@ -1660,6 +1658,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
                 return;
             }
             push(x, y, 1);
@@ -1709,6 +1708,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
                 return;
             }
             push(x, y, 2);
@@ -1758,6 +1758,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
                 return;
             }
             push(x, y, 3);
@@ -1807,6 +1808,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
                 return;
             }
             if (push((x < gridWidth - 1 && pixelAt(x + 1, y).pushable) ? x + 1 : x, y, 0)) {
@@ -1859,6 +1861,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
                 return;
             }
             if (push(x, (y < gridHeight - 1 && pixelAt(x, y + 1).pushable) ? y + 1 : y, 1)) {
@@ -1911,6 +1914,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
                 return;
             }
             if (push((x > 0 && pixelAt(x - 1, y).pushable) ? x - 1 : x, y, 2)) {
@@ -1963,6 +1967,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
                 return;
             }
             if (push(x, (y > 0 && pixelAt(x, y - 1).pushable) ? y - 1 : y, 3)) {
@@ -2007,6 +2012,7 @@ const pixels = {
         update: function (x, y) {
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
+                teamGrid[y][x - 1] = teamGrid[y][x + 1];
             }
         },
         drawPreview: function (ctx) {
@@ -2059,6 +2065,7 @@ const pixels = {
         update: function (x, y) {
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
+                teamGrid[y - 1][x] = teamGrid[y + 1][x];
             }
         },
         drawPreview: function (ctx) {
@@ -2111,6 +2118,7 @@ const pixels = {
         update: function (x, y) {
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
+                teamGrid[y][x + 1] = teamGrid[y][x - 1];
             }
         },
         drawPreview: function (ctx) {
@@ -2163,6 +2171,7 @@ const pixels = {
         update: function (x, y) {
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
+                teamGrid[y + 1][x] = teamGrid[y - 1][x];
             }
         },
         drawPreview: function (ctx) {
@@ -2216,6 +2225,7 @@ const pixels = {
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && grid[y][x - 1] != pixNum.PUSH_CLONER_LEFT && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && canMoveTo(x - 1, y)) {
                 if (push(x, y, 0, false, true)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
+                    teamGrid[y][x - 1] = teamGrid[y][x + 1];
                 }
             }
         },
@@ -2274,6 +2284,7 @@ const pixels = {
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && grid[y - 1][x] != pixNum.PUSH_CLONER_UP && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && canMoveTo(x, y - 1)) {
                 if (push(x, y, 1, false, true)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
+                    teamGrid[y - 1][x] = teamGrid[y + 1][x];
                 }
             }
         },
@@ -2332,6 +2343,7 @@ const pixels = {
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && grid[y][x + 1] != pixNum.PUSH_CLONER_RIGHT && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && canMoveTo(x + 1, y)) {
                 if (push(x, y, 2, false, true)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
+                    teamGrid[y][x + 1] = teamGrid[y][x - 1];
                 }
             }
         },
@@ -2390,6 +2402,7 @@ const pixels = {
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && grid[y + 1][x] != pixNum.PUSH_CLONER_UP && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && canMoveTo(x, y + 1)) {
                 if (push(x, y, 3, false, true)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
+                    teamGrid[y + 1][x] = teamGrid[y - 1][x];
                 }
             }
         },
@@ -2447,6 +2460,7 @@ const pixels = {
         update: function (x, y) {
             if (x > 0 && x < gridWidth - 1) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
+                teamGrid[y][x - 1] = teamGrid[y][x + 1];
             }
         },
         drawPreview: function (ctx) {
@@ -2498,6 +2512,7 @@ const pixels = {
         update: function (x, y) {
             if (y > 0 && y < gridHeight - 1) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
+                teamGrid[y - 1][x] = teamGrid[y + 1][x];
             }
         },
         drawPreview: function (ctx) {
@@ -2551,6 +2566,7 @@ const pixels = {
         update: function (x, y) {
             if (x > 0 && x < gridWidth - 1) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
+                teamGrid[y][x + 1] = teamGrid[y][x - 1];
             }
         },
         drawPreview: function (ctx) {
@@ -2602,6 +2618,7 @@ const pixels = {
         update: function (x, y) {
             if (y > 0 && y < gridHeight - 1) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
+                teamGrid[y + 1][x] = teamGrid[y - 1][x];
             }
         },
         drawPreview: function (ctx) {
@@ -3143,11 +3160,18 @@ const pixels = {
                 if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
                     monsterGrid[last[3]][last[2]] = false;
                     nextFireGrid[last[3]][last[2]] = true;
+                    teamGrid[last[3]][last[2]] = 0;
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5, true);
-                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) {
+                        teamGrid[last[3]][last[2]] = 0;
+                        explode(last[2], last[3], 5, true);
+                    }
+                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) {
+                        nextGrid[last[3]][last[2]] = pixNum.AIR;
+                        teamGrid[last[3]][last[2]] = 0;
+                    }
                 } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
         },
@@ -3214,8 +3238,14 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5, true);
-                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) {
+                        teamGrid[last[3]][last[2]] = 0;
+                        explode(last[2], last[3], 5, true);
+                    }
+                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) {
+                        nextGrid[last[3]][last[2]] = pixNum.AIR;
+                        teamGrid[last[3]][last[2]] = 0;
+                    }
                 } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
         },
@@ -3282,8 +3312,14 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5, true);
-                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) {
+                        teamGrid[last[3]][last[2]] = 0;
+                        explode(last[2], last[3], 5, true);
+                    }
+                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) {
+                        nextGrid[last[3]][last[2]] = pixNum.AIR;
+                        teamGrid[last[3]][last[2]] = 0;
+                    }
                 } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
         },
@@ -3350,8 +3386,14 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5, true);
-                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) {
+                        teamGrid[last[3]][last[2]] = 0;
+                        explode(last[2], last[3], 5, true);
+                    }
+                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) {
+                        nextGrid[last[3]][last[2]] = pixNum.AIR;
+                        teamGrid[last[3]][last[2]] = 0;
+                    }
                 } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
         },
@@ -4430,8 +4472,10 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            let explosion = updateTouchingPixel(x, y, pixNum.GUNPOWDER) || updateTouchingPixel(x, y, pixNum.C4) || updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x];
-            if (explosion) explode(x, y, 5);
+            if (updateTouchingPixel(x, y, pixNum.GUNPOWDER) || updateTouchingPixel(x, y, pixNum.C4) || updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x]) {
+                teamGrid[y][x] = 0;
+                explode(x, y, 5);
+            }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -4490,9 +4534,10 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            let explosion = updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x];
-            if (explosion) explode(x, y, 5, true);
-            else fall(x, y, 1, 1, isPassableFluid);
+            if (updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x]) {
+                teamGrid[y][x] = 0;
+                explode(x, y, 5, true);
+            } else fall(x, y, 1, 1, isPassableFluid);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -4614,13 +4659,12 @@ const pixels = {
                 move(x, y, x, y + 1);
             }
             if (y < gridHeight - 1) {
-                if (isPassableFluid(x, y + 1) || grid[y + 1][x] == pixNum.NUKE) {
-                    explosion = false;
-                }
+                if (isPassableFluid(x, y + 1) || grid[y + 1][x] == pixNum.NUKE) explosion = false;
             } else {
                 explosion = true;
             }
             if (explosion && !diffused) {
+                teamGrid[y][x] = 0;
                 explode(x, y, 20);
             }
         },
@@ -4664,13 +4708,12 @@ const pixels = {
                 move(x, y, x, y + 1);
             }
             if (y < gridHeight - 1) {
-                if (isPassableFluid(x, y + 1) || grid[y + 1][x] == pixNum.HUGE_NUKE) {
-                    explosion = false;
-                }
+                if (isPassableFluid(x, y + 1) || grid[y + 1][x] == pixNum.HUGE_NUKE) explosion = false;
             } else {
                 explosion = true;
             }
             if (explosion && !diffused) {
+                teamGrid[y][x] = 0;
                 explode(x, y, 40);
             }
         },
@@ -4714,13 +4757,12 @@ const pixels = {
                 move(x, y, x, y + 1);
             }
             if (y < gridHeight - 1) {
-                if (isPassableFluid(x, y + 1) || grid[y + 1][x] == pixNum.VERY_HUGE_NUKE) {
-                    explosion = false;
-                }
+                if (isPassableFluid(x, y + 1) || grid[y + 1][x] == pixNum.VERY_HUGE_NUKE) explosion = false;
             } else {
                 explosion = true;
             }
             if (explosion && !diffused) {
+                teamGrid[y][x] = 0;
                 explode(x, y, 80);
             }
         },
@@ -5004,6 +5046,7 @@ const pixels = {
                 if (random() < 0.1) {
                     nextFireGrid[actionY][actionX] = true;
                 }
+                teamGrid[y][x] = Math.floor(Math.random() * 3);
                 move(Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridWidth - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridHeight - 1), Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridWidth - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridHeight - 1));
             };
             updateTouchingPixel(x, y, pixNum.AIR, chaos);
@@ -5011,11 +5054,16 @@ const pixels = {
             let path = getLaserPath(x, y, Math.floor(random() * 4));
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
-            if (random() < 0.5 - (pixelAt(last[2], last[3]).blastResistance / 100)) {
-                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
-                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
-                if (grid[last[3]][last[2]] < pixNum.LASER_LEFT || grid[last[3]][last[2]] > pixNum.LASER_DOWN) nextFireGrid[last[3]][last[2]] = true;
-            }
+            if (random() < pixelAt(last[2], last[3]).flammability / 100) {
+                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) {
+                    teamGrid[last[3]][last[2]] = 0;
+                    explode(last[2], last[3], 5, true);
+                }
+                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) {
+                    nextGrid[last[3]][last[2]] = pixNum.AIR;
+                    teamGrid[last[3]][last[2]] = 0;
+                }
+            } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -5220,18 +5268,24 @@ const pixels = {
                 grid[y][x] = pixNum.AIR;
                 monsterGrid[y][x] = false;
                 nextFireGrid[y][x] = false;
+                teamGrid[y][x] = 0;
             } else if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1) && !monsterGrid[y + 1][x]) {
                 if (grid[y + 1][x] == pixNum.DELETER) {
                     nextGrid[y][x] = pixNum.AIR;
                     monsterGrid[y][x] = false;
                     nextFireGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
                 } else {
                     nextGrid[y][x] = grid[y + 1][x];
                     nextGrid[y + 1][x] = grid[y][x];
                     monsterGrid[y + 1][x] = true;
                     monsterGrid[y][x] = false;
-                    nextFireGrid[y + 1][x] = fireGrid[y][x] || nextFireGrid[y + 1][x];
-                    nextFireGrid[y][x] = fireGrid[y + 1][x];
+                    let temp = fireGrid[y][x];
+                    fireGrid[y][x] = fireGrid[y + 1][x];
+                    fireGrid[y + 1][x] = temp;
+                    temp = teamGrid[y][x];
+                    teamGrid[y][x] = teamGrid[y + 1][x];
+                    teamGrid[y + 1][x] = temp;
                 }
             }
         },
@@ -5677,7 +5731,10 @@ const pixels = {
                 if (grid[actionY][actionX] >= pixNum.COLOR_RED && grid[actionY][actionX] <= pixNum.COLOR_BLACK && validChangingPixel(actionX, actionY)) {
                     teamPixelAmounts[0][numPixels[grid[actionY][actionX]].id]++;
                     nextGrid[actionY][actionX] = pixNum.AIR;
-                    if (random() < 0.1) nextGrid[y][x] = pixNum.AIR;
+                    if (random() < 0.1) {
+                        nextGrid[y][x] = pixNum.AIR;
+                        teamGrid[y][x] = 0;
+                    }
                 }
             });
         },
