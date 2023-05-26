@@ -310,8 +310,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(150, 100, 75)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    fillPixels(x + i, y, 1 / 2, height, ctx);
+                let end = x + width;
+                for (let i = x; i < end; i++) {
+                    fillPixels(i, y, 1 / 2, height, ctx);
                 }
             });
         },
@@ -619,23 +620,19 @@ const pixels = {
                 ctx.fillStyle = 'rgb(75, 50, 255)';
                 if (noAnimations) {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                        for (let i = 0; i < width; i++) {
-                            for (let j = 0; j < height; j++) {
-                                if (redrawing || forceRedraw) {
-                                    ctx.globalAlpha = constantNoise((x + i) / 4, (y + j) / 4) + 0.1;
-                                    fillPixels(x + i, y + j, 1, 1, ctx);
-                                }
-                            }
+                        if (redrawing || forceRedraw) {
+                            forEachPixel(x, y, width, height, (x2, y2) => {
+                                ctx.globalAlpha = constantNoise(x2 / 4, y2 / 4) + 0.1;
+                                fillPixels(x2, y2, 1, 1, ctx);
+                            });
                         }
                     });
                 } else {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                        for (let i = 0; i < width; i++) {
-                            for (let j = 0; j < height; j++) {
-                                ctx.globalAlpha = noise((x + i) / 4, (y + j) / 4, deltaTime / 10) + 0.1;
-                                fillPixels(x + i, y + j, 1, 1, ctx);
-                            }
-                        }
+                        forEachPixel(x, y, width, height, (x2, y2) => {
+                            ctx.globalAlpha = noise(x2 / 4, y2 / 4, deltaTime / 10) + 0.1;
+                            fillPixels(x2, y2, 1, 1, ctx);
+                        });
                     });
                 }
             }
@@ -695,23 +692,17 @@ const pixels = {
                 ctx.fillStyle = 'rgb(190, 200, 255)';
                 if (noAnimations) {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                        for (let i = 0; i < width; i++) {
-                            for (let j = 0; j < height; j++) {
-                                if (redrawing || forceRedraw) {
-                                    ctx.globalAlpha = constantNoise((x + i) / 2, (y + j) / 2);
-                                    fillPixels(x + i, y + j, 1, 1, ctx);
-                                }
-                            }
-                        }
+                        forEachPixel(x, y, width, height, (x2, y2) => {
+                            ctx.globalAlpha = constantNoise(x2 / 2, y2 / 2);
+                            fillPixels(x2, y2, 1, 1, ctx);
+                        });
                     });
                 } else {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                        for (let i = 0; i < width; i++) {
-                            for (let j = 0; j < height; j++) {
-                                ctx.globalAlpha = noise((x + i) / 2, (y + j) / 2, deltaTime / 300);
-                                fillPixels(x + i, y + j, 1, 1, ctx);
-                            }
-                        }
+                        forEachPixel(x, y, width, height, (x2, y2) => {
+                            ctx.globalAlpha = constantNoise(x2 / 2, y2 / 2, deltaTime / 300);
+                            fillPixels(x2, y2, 1, 1, ctx);
+                        });
                     });
                 }
             }
@@ -822,23 +813,19 @@ const pixels = {
                 ctx.fillStyle = 'rgb(200, 200, 200)';
                 if (noAnimations) {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                        for (let i = 0; i < width; i++) {
-                            for (let j = 0; j < height; j++) {
-                                if (redrawing || forceRedraw) {
-                                    ctx.globalAlpha = constantNoise((x + i) / 2, (y + j) / 2);
-                                    fillPixels(x + i, y + j, 1, 1, ctx);
-                                }
-                            }
+                        if (redrawing || forceRedraw) {
+                            forEachPixel(x, y, width, height, (x2, y2) => {
+                                ctx.globalAlpha = constantNoise(x2 / 2, y2 / 2);
+                                fillPixels(x2, y2, 1, 1, ctx);
+                            });
                         }
                     });
                 } else {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                        for (let i = 0; i < width; i++) {
-                            for (let j = 0; j < height; j++) {
-                                ctx.globalAlpha = noise((x + i) / 2, (y + j) / 2, deltaTime / 5);
-                                fillPixels(x + i, y + j, 1, 1, ctx);
-                            }
-                        }
+                        forEachPixel(x, y, width, height, (x2, y2) => {
+                            ctx.globalAlpha = noise(x2 / 2, y2 / 2, deltaTime / 5);
+                            fillPixels(x2, y2, 1, 1, ctx);
+                        });
                     });
                 }
             }
@@ -994,23 +981,19 @@ const pixels = {
                 ctx.fillStyle = 'rgb(255, 255, 0)';
                 if (noAnimations) {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                        for (let i = 0; i < width; i++) {
-                            for (let j = 0; j < height; j++) {
-                                if (redrawing || forceRedraw) {
-                                    ctx.globalAlpha = constantNoise((x + i) / 6, (y + j) / 6);
-                                    fillPixels(x + i, y + j, 1, 1, ctx);
-                                }
-                            }
+                        if (redrawing || forceRedraw) {
+                            forEachPixel(x, y, width, height, (x2, y2) => {
+                                ctx.globalAlpha = constantNoise(x2 / 6, y2 / 6);
+                                fillPixels(x2, y2, 1, 1, ctx);
+                            });
                         }
                     });
                 } else {
                     forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                        for (let i = 0; i < width; i++) {
-                            for (let j = 0; j < height; j++) {
-                                ctx.globalAlpha = noise((x + i) / 6, (y + j) / 6, deltaTime / 30);
-                                fillPixels(x + i, y + j, 1, 1, ctx);
-                            }
-                        }
+                        forEachPixel(x, y, width, height, (x2, y2) => {
+                            ctx.globalAlpha = noise(x2 / 6, y2 / 6, deltaTime / 30);
+                            fillPixels(x2, y2, 1, 1, ctx);
+                        });
                     });
                 }
             }
@@ -1160,7 +1143,7 @@ const pixels = {
             if (random() < flammability / 1200 && validChangingPixel(x, y) && !isLava) {
                 if (grid[y][x] >= pixNum.LASER_UP && grid[y][x] <= pixNum.LASER_RIGHT) {
                     nextGrid[y][x] = pixNum.AIR;
-                    explode(x, y, 5);
+                    explode(x, y, 5, true);
                 } else if (grid[y][x] != pixNum.ASH && random() < 0.3) {
                     nextGrid[y][x] = pixNum.ASH;
                     monsterGrid[y][x] = false;
@@ -1495,10 +1478,10 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
-                explode(x, y, 5);
+                explode(x, y, 5, true);
             });
             updateTouchingPixel(x, y, pixNum.SNOW, function (actionX, actionY) {
-                explode(x, y, 6);
+                explode(x, y, 6, true);
             });
             updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
                 if (validChangingPixel(actionX, actionY) && random() < 0.075) {
@@ -1559,7 +1542,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
-                explode(x, y, 7);
+                explode(x, y, 7, true);
             });
             updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
                 if (validChangingPixel(actionX, actionY) && random() < 0.075) {
@@ -1619,11 +1602,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(0, 125, 255)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -1670,11 +1651,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(0, 125, 255)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 3, y2, 1 / 3, 1 / 2, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -1721,11 +1700,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(0, 125, 255)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -1772,11 +1749,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(0, 125, 255)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 3, y2 + 1 / 2, 1 / 3, 1 / 2, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -1823,11 +1798,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(0, 125, 0)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -1877,11 +1850,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(0, 125, 0)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 3, y2, 1 / 3, 1 / 2, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -1931,11 +1902,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(0, 125, 0)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -1985,11 +1954,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(0, 125, 0)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 3, y2 + 1 / 2, 1 / 3, 1 / 2, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -2685,11 +2652,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(75, 255, 255)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -2733,11 +2698,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(75, 255, 255)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 3, y + j, 1 / 3, 1 / 2, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 3, y2, 1 / 3, 1 / 2, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -2781,11 +2744,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(75, 255, 255)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 2, y + j + 1 / 3, 1 / 2, 1 / 3, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -2829,11 +2790,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(75, 255, 255)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 3, y + j + 1 / 2, 1 / 3, 1 / 2, ctx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 3, y2 + 1 / 2, 1 / 3, 1 / 2, ctx);
+                });
             });
         },
         update: function (x, y) {
@@ -3025,8 +2984,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(200, 100, 0)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < height; i++) {
-                    fillPixels(x, y + i + 1 / 4, width, 1 / 2, ctx);
+                let end = y + height;
+                for (let i = y; i < end; i++) {
+                    fillPixels(x, i + 1 / 4, width, 1 / 2, ctx);
                 }
             });
         },
@@ -3067,8 +3027,9 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(200, 100, 0)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    fillPixels(x + i + 1 / 4, y, 1 / 2, height, ctx);
+                let end = x + width;
+                for (let i = x; i < end; i++) {
+                    fillPixels(i + 1 / 4, y, 1 / 2, height, ctx);
                 }
             });
         },
@@ -3160,11 +3121,9 @@ const pixels = {
                 let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
                 ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    for (let i = 0; i < width; i++) {
-                        for (let j = 0; j < height; j++) {
-                            fillPixels(x + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
-                        }
-                    }
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    });
                 });
             }
             if (avoidGrid) return;
@@ -3187,7 +3146,7 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5, true);
                     if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
@@ -3230,11 +3189,9 @@ const pixels = {
                 let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
                 ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    for (let i = 0; i < width; i++) {
-                        for (let j = 0; j < height; j++) {
-                            fillPixels(x + 1 / 3 + i, y + j, 1 / 3, 1 / 2, ctx);
-                        }
-                    }
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 + 1 / 3, y2, 1 / 3, 1 / 2, ctx);
+                    });
                 });
             }
             if (avoidGrid) return;
@@ -3257,7 +3214,7 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5, true);
                     if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
@@ -3300,11 +3257,9 @@ const pixels = {
                 let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
                 ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    for (let i = 0; i < width; i++) {
-                        for (let j = 0; j < height; j++) {
-                            fillPixels(x + 1 / 2 + i, y + 1 / 3 + j, 1 / 2, 1 / 3, ctx);
-                        }
-                    }
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 + 1 / 2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
+                    });
                 });
             }
             if (avoidGrid) return;
@@ -3327,7 +3282,7 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5, true);
                     if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
@@ -3370,11 +3325,9 @@ const pixels = {
                 let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
                 ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    for (let i = 0; i < width; i++) {
-                        for (let j = 0; j < height; j++) {
-                            fillPixels(x + 1 / 3 + i, y + 1 / 2 + j, 1 / 3, 1 / 2, ctx);
-                        }
-                    }
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 + 1 / 3, y2 + 1 / 2, 1 / 3, 1 / 2, ctx);
+                    });
                 });
             }
             if (avoidGrid) return;
@@ -3397,7 +3350,7 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5);
+                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) explode(last[2], last[3], 5, true);
                     if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) nextGrid[last[3]][last[2]] = pixNum.AIR;
                 } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
             }
@@ -3542,9 +3495,10 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(210, 210, 220)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    fillPixels(x + i, y, 1 / 4, height, ctx);
-                    fillPixels(x + i + 1 / 2, y, 1 / 4, height, ctx);
+                let end = x + width;
+                for (let i = x; i < end; i++) {
+                    fillPixels(i, y, 1 / 4, height, ctx);
+                    fillPixels(i + 1 / 2, y, 1 / 4, height, ctx);
                 }
             });
         },
@@ -4477,7 +4431,7 @@ const pixels = {
         },
         update: function (x, y) {
             let explosion = updateTouchingPixel(x, y, pixNum.GUNPOWDER) || updateTouchingPixel(x, y, pixNum.C4) || updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x];
-            if (explosion) explode(x, y, 5, 1);
+            if (explosion) explode(x, y, 5);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -4537,7 +4491,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let explosion = updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x];
-            if (explosion) explode(x, y, 5, 1);
+            if (explosion) explode(x, y, 5, true);
             else fall(x, y, 1, 1, isPassableFluid);
         },
         drawPreview: function (ctx) {
@@ -4606,11 +4560,13 @@ const pixels = {
             });
             ctx.fillStyle = 'rgb(225, 125, 0)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    fillPixels(x + i + 1 / 3, y, 1 / 3, height, ctx);
+                let end = y + height;
+                for (let i = y; i < end; i++) {
+                    fillPixels(x, i + 1 / 3, width, 1 / 3, ctx);
                 }
-                for (let i = 0; i < height; i++) {
-                    fillPixels(x, y + i + 1 / 3, width, 1 / 3, ctx);
+                end = x + width;
+                for (let i = x; i < end; i++) {
+                    fillPixels(i + 1 / 3, y, 1 / 3, height, ctx);
                 }
             });
         },
@@ -5093,16 +5049,16 @@ const pixels = {
         description: 'SPINNY CARRIER GO WEEEEEEEEEEEEEEEEEEEEEEEEE!!!!',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < height; j++) {
-                    ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    ctx.translate((x + 1 / 2) * gridScale, (y + 1 / 2) * gridScale);
                     let translateX = random(-10 * gridScale, 10 * gridScale);
                     let translateY = random(-10 * gridScale, 10 * gridScale);
                     ctx.translate(translateX, translateY);
                     let rotationAmount = Math.floor(random(0, 360));
                     ctx.rotate(rotationAmount);
-                }
-            }
+                });
+            });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -5119,7 +5075,7 @@ const pixels = {
         updateStage: -1,
         animatedNoise: false,
         animated: true,
-        alwaysRedraw: false,
+        alwaysRedraw: true,
         pickable: false,
         pixsimCompatible: false,
         id: 'spin',
@@ -5333,12 +5289,10 @@ const pixels = {
             abovectx.fillStyle = 'rgb(255, 180, 0)';
             let margin = (Math.sin(deltaTime * Math.PI / 120) + 1) / 4;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 5, y + j + 1 / 5, 3 / 5, 3 / 5, ctx);
-                        if (!noAnimations) fillPixels(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
-                    }
-                }
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 5, y2 + 1 / 5, 3 / 5, 3 / 5, ctx);
+                    if (!noAnimations) fillPixels(x2 - margin, y2 - margin, 1 + margin * 2, 1 + margin * 2, abovectx);
+                });
             });
         },
         update: function (x, y) { },
@@ -5433,28 +5387,25 @@ const pixels = {
             });
             ctx.fillStyle = noAnimations ? `hsl(0, 100%, 50%)` : `hsl(${(deltaTime * 2) % 360}, 100%, 50%)`;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                if (!noAnimations || redrawing || forceRedraw) for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + i + 1 / 4, y + j + 1 / 4, 1 / 2, 1 / 2, ctx);
-                    }
-                }
+                if (!noAnimations || redrawing || forceRedraw) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 4, y2 + 1 / 4, 1 / 2, 1 / 2, ctx);
+                });
             });
             if (!noAnimations) {
                 abovectx.globalAlpha = opacity * 0.5 * (1 - ((deltaTime % 60) / 60));
                 abovectx.fillStyle = `hsl(${(deltaTime * 2) % 360}, 100%, 50%)`;
                 let margin = ((deltaTime % 60) / 60);
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    for (let i = 0; i < width; i++) {
-                        for (let j = 0; j < height; j++) {
-                            fillPixels(x - margin + i, y - margin + j, 1 + margin * 2, 1 + margin * 2, abovectx);
-                        }
-                    }
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 - margin, y2 - margin, 1 + margin * 2, 1 + margin * 2, abovectx);
+                    });
                 });
             }
         },
         update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.125) {
+                if (validChangingPixel(actionX, actionY) && random() < 0.05) {
                     nextGrid[actionY][actionX] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
                 }
             });
@@ -5478,7 +5429,175 @@ const pixels = {
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
-        pickable: false,
+        pickable: true,
+        pixsimCompatible: true,
+        id: 'color_well',
+        numId: 0
+    },
+    passive_color_generator: {
+        name: 'Passive Color Generator',
+        description: 'An artificial portal to the internal machinery of the Simulator<br><i>Not as efficient as collecting from a well</i>',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (noAnimations && !forceRedraw) return;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = noAnimations ? `hsl(0, 80%, 75%)` : `hsl(${(deltaTime * 2) % 360}, 80%, 75%)`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 5, y2 + 1 / 5, 3 / 5, 3 / 5, ctx);
+                });
+            });
+            ctx.fillStyle = 'rgb(160, 160, 160)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) {
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 + 2 / 5, y2 + 1 / 5, 1 / 5, 3 / 5, ctx);
+                        fillPixels(x2 + 1 / 5, y2 + 2 / 5, 3 / 5, 1 / 5, ctx);
+                    });
+                }
+            });
+            if (!noAnimations) {
+                abovectx.globalAlpha = opacity * 0.3 * (1 - ((deltaTime % 60) / 60));
+                abovectx.fillStyle = `hsl(${(deltaTime * 2) % 360}, 100%, 50%)`;
+                let margin = ((deltaTime % 60) / 120);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 - margin, y2 - margin, 1 + margin * 2, 1 + margin * 2, abovectx);
+                    });
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
+                if (validChangingPixel(actionX, actionY) && random() < 0.04) {
+                    nextGrid[actionY][actionX] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
+
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'hsl(0, 80%, 75%)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = 'rgb(160, 160, 160)';
+            ctx.fillRect(20, 10, 10, 30);
+            ctx.fillRect(10, 20, 30, 10);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: 7,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimCompatible: true,
+        id: 'color_well',
+        numId: 0
+    },
+    active_color_generator: {
+        name: 'Active Color Generator',
+        description: 'An artificial portal to the internal machinery of the Simulator<br><i>Requires water to cool its more powerful singularity generator, <span style="color: red; font-weight: bold;">will blow up if it runs out of water!</span></i>',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (!noAnimations || forceRedraw) {
+                ctx.globalAlpha = opacity;
+                ctx.fillStyle = 'rgb(140, 140, 140)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    if (redrawing || forceRedraw) fillPixels(x, y, width, height, ctx);
+                });
+                ctx.fillStyle = noAnimations ? `hsl(0, 100%, 50%)` : `hsl(${(deltaTime * 2) % 360}, 100%, 50%)`;
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    if (!noAnimations || redrawing || forceRedraw) forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 + 1 / 5, y2 + 1 / 5, 3 / 5, 3 / 5, ctx);
+                    });
+                });
+                ctx.fillStyle = 'rgb(180, 180, 180)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    if (!noAnimations || redrawing || forceRedraw) {
+                        let end = y + height;
+                        for (let i = y; i < end; i++) {
+                            fillPixels(x, i + 2 / 5, width, 1 / 5, ctx);
+                        }
+                        end = x + width;
+                        for (let i = x; i < end; i++) {
+                            fillPixels(i + 2 / 5, y, 1 / 5, height, ctx);
+                        }
+                    }
+                });
+            }
+            if (!noAnimations) {
+                abovectx.globalAlpha = opacity * 0.5 * (1 - ((deltaTime % 60) / 60));
+                abovectx.fillStyle = `hsl(${(deltaTime * 2) % 360}, 100%, 50%)`;
+                let margin = ((deltaTime % 60) / 120);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 - margin, y2 - margin, 1 + margin * 2, 1 + margin * 2, abovectx);
+                    });
+                });
+            }
+            if (!avoidGrid) forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    let team = teamGrid[y][x] - 1;
+                    if (team == PixSimAPI.team && teamPixelAmounts[team] !== undefined) {
+                        if (teamPixelAmounts[team].water <= 0) {
+                            // oh noes
+                        } else if (teamPixelAmounts[team].water <= 20) {
+                            // small oh noes
+                        }
+                    }
+                });
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            let team = teamGrid[y][x] - 1;
+            if (teamPixelAmounts[team] !== undefined) {
+                if (teamPixelAmounts[teamGrid[y][x] - 1].water > 0) {
+                    updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
+                        if (validChangingPixel(actionX, actionY) && random() < 0.04) {
+                            nextGrid[actionY][actionX] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
+                        }
+                    });
+                    if (ticks % 10 == 0) teamPixelAmounts[teamGrid[y][x] - 1].water--;
+                } else if (random() < 0.03) {
+                    explode(x, y, 20, true)
+                };
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'hsl(0, 100%, 50%)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(20, 10, 10, 30);
+            ctx.fillRect(10, 20, 30, 10);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: 7,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: true,
+        pickable: true,
         pixsimCompatible: true,
         id: 'color_well',
         numId: 0
@@ -5497,7 +5616,7 @@ const pixels = {
     color_yellow: generateColorPixel({
         color: 'Yellow',
         rgb0: [255, 255, 50],
-        rgb1: [200, 200, 0]
+        rgb1: [230, 230, 0]
     }),
     color_lime: generateColorPixel({
         color: 'Lime',
@@ -5534,18 +5653,33 @@ const pixels = {
         rgb0: [80, 80, 80],
         rgb1: [0, 0, 0]
     }),
-    color_collector_a: {
-        name: 'Color Collector (team &alpha;)',
-        description: 'Collects colors for team &alpha;',
+    color_collector: {
+        name: 'Color Collector',
+        description: 'Collects colors for the team that placed it',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             if (noAnimations && !forceRedraw) return;
             ctx.globalAlpha = opacity;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
-            });
+            if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        imagePixels(x2, y2, 1, 1, this.prerenderedFrames[teamGrid[y2][x2]], ctx);
+                    });
+                });
+            }
         },
         update: function (x, y) {
-            // touching color pixels and collect
+            if (!validChangingPixel(x, y)) return;
+            updateTouchingAnything(x, y, (actionX, actionY) => {
+                if (grid[actionY][actionX] >= pixNum.COLOR_RED && grid[actionY][actionX] <= pixNum.COLOR_BLACK && validChangingPixel(actionX, actionY)) {
+                    teamPixelAmounts[0][numPixels[grid[actionY][actionX]].id]++;
+                    nextGrid[actionY][actionX] = pixNum.AIR;
+                    if (random() < 0.1) nextGrid[y][x] = pixNum.AIR;
+                }
+            });
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -5553,81 +5687,37 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             ctx.fillRect(10, 10, 30, 30);
-            ctx.fillStyle = '#FF0099';
+            ctx.fillStyle = '#FF0000';
             ctx.font = 'bold 30px Courier New, courier, monospace';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('α', 25, 25);
+            ctx.fillText('?', 25, 25);
         },
         prerender: function () {
             const { ctx, fillPixels, toImage } = new PreRenderer(120);
             ctx.fillStyle = 'rgb(80, 80, 80)';
             fillPixels(0, 0, 1, 1);
-            ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
-            ctx.fillStyle = '#FF0099';
             ctx.font = 'bold 75px Courier New, courier, monospace';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#FF0000';
+            ctx.fillText('?', 60, 60);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#FF0099';
             ctx.fillText('α', 60, 60);
             this.prerenderedFrames.push(toImage());
-        },
-        prerenderedFrames: [],
-        blastResistance: 20,
-        flammability: 0,
-        pushable: true,
-        cloneable: false,
-        rotateable: false,
-        group: 6,
-        updateStage: 7,
-        animatedNoise: false,
-        animated: true,
-        alwaysRedraw: false,
-        pickable: false,
-        pixsimCompatible: true,
-        id: 'color_collector_a',
-        numId: 0
-    },
-    color_collector_b: {
-        name: 'Color Collector (team &beta;)',
-        description: 'Collects colors for team &beta;',
-        draw: function (rectangles, opacity, ctx, avoidGrid) {
-            if (noAnimations && !forceRedraw) return;
-            ctx.globalAlpha = opacity;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
-            });
-        },
-        update: function (x, y) {
-            // touching color pixels and collect
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(80, 80, 80)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 0, 0)';
-            ctx.fillRect(10, 10, 30, 30);
-            ctx.fillStyle = '#3C70FF';
-            ctx.font = 'bold 30px Courier New, courier, monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('β', 25, 25);
-        },
-        prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(120);
-            ctx.fillStyle = 'rgb(80, 80, 80)';
-            fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             ctx.fillStyle = '#3C70FF';
-            ctx.font = 'bold 75px Courier New, courier, monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
             ctx.fillText('β', 60, 60);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
-        blastResistance: 20,
+        blastResistance: 19,
         flammability: 0,
         pushable: true,
         cloneable: false,
@@ -5637,9 +5727,9 @@ const pixels = {
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
-        pickable: false,
+        pickable: true,
         pixsimCompatible: true,
-        id: 'color_collector_b',
+        id: 'color_collector_a',
         numId: 0
     },
     remove: {

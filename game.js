@@ -182,6 +182,7 @@ const musicGrid = [];
 const lastMusicGrid = [];
 const placeableGrid = [];
 const lastPlaceableGrid = [];
+const teamGrid = [];
 
 // camera and brush
 const brush = {
@@ -257,6 +258,7 @@ function createGrid(width = 100, height = 100) {
     lastMusicGrid.length = 0;
     placeableGrid.length = 0;
     lastPlaceableGrid.length = 0;
+    teamGrid.length = 0;
     noisectx.clearRect(0, 0, canvasResolution, canvasResolution);
     noisectx.fillStyle = 'rgb(0, 0, 0)';
     for (let i = 0; i < gridHeight; i++) {
@@ -272,6 +274,7 @@ function createGrid(width = 100, height = 100) {
         lastMusicGrid[i] = [];
         placeableGrid[i] = [];
         lastPlaceableGrid[i] = [];
+        teamGrid[i] = [];
         for (let j = 0; j < gridWidth; j++) {
             grid[i][j] = pixNum.AIR;
             lastGrid[i][j] = -1;
@@ -285,6 +288,7 @@ function createGrid(width = 100, height = 100) {
             lastMusicGrid[i][j] = 0;
             placeableGrid[i][j] = true;
             lastPlaceableGrid[i][j] = true;
+            teamGrid[i][j] = 0;
             noisectx.globalAlpha = constantNoise(j / 2, i / 2);
             noisectx.fillRect(j, i, 1, 1);
         }
@@ -560,6 +564,13 @@ function forRectangles(rectangles, cb) {
         cb(...rect);
     }
 };
+function forEachPixel(x, y, width, height, cb) {
+    for (let i = 0; i < height; i++) {
+        for (let j = 0; j < width; j++) {
+            cb(x + j, y + i);
+        }
+    }
+};
 function fillPixels(x, y, width, height, ctx) {
     ctx.fillRect(x * drawScale - camera.x, y * drawScale - camera.y, width * drawScale, height * drawScale);
 };
@@ -580,8 +591,7 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
     ];
 };
 function updatePixel(x, y, i) {
-    let pixelType = numPixels[grid[y][x]];
-    pixelType !== undefined && pixelType.updateStage === i && pixelType.update(x, y);
+    grid[y][x] !== 0 && numPixels[grid[y][x]] !== undefined && numPixels[grid[y][x]].updateStage === i && numPixels[grid[y][x]].update(x, y);
 };
 function updateTouchingPixel(x, y, type, action) {
     if (typeof action == 'function') {
@@ -1099,7 +1109,11 @@ function drawLaserPath(path) {
         }
     }
 };
-function explode(x1, y1, size) {
+function explode(x1, y1, size, defer) {
+    if (defer) {
+        pendingExplosions.push(x1, y1, size);
+        return;
+    }
     nextGrid[y1][x1] = pixNum.AIR;
     grid[y1][x1] = pixNum.AIR;
     let chained = 0;
@@ -1596,11 +1610,11 @@ function updateTick() {
             /*
             update priority:
             -: fire
-            0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers
+            0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers, collectors
             1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers
             5: gravity solids, ice, rotators
             6: steam
-            7: water, lava, stone, leaves, pumps, lava generators, freezers
+            7: water, lava, stone, leaves, pumps, lava generators, freezers, wells
             8: lag, music pixels
             -: monsters
             */
@@ -1966,8 +1980,8 @@ const teamPixelAmounts = [
 ];
 function resetPixSimPixelAmounts() {
     for (const id in pixels) {
-        teamPixelAmounts[0][id] = -Infinity;
-        teamPixelAmounts[1][id] = -Infinity;
+        teamPixelAmounts[0][id] = 0;
+        teamPixelAmounts[1][id] = 0;
     }
     teamPixelAmounts[0]['air'] = Infinity;
     teamPixelAmounts[1]['air'] = Infinity;
@@ -2062,6 +2076,9 @@ PixSimAPI.onGameInput = (type, data, team) => {
             break;
     }
 };
+window.addEventListener('load', (e) => {
+    resetPixSimPixelAmounts();
+});
 
 // inputs
 window.addEventListener('DOMContentLoaded', (e) => {
