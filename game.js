@@ -1126,7 +1126,7 @@ function drawLaserPath(path) {
 };
 function explode(x1, y1, size, defer) {
     if (defer) {
-        pendingExplosions.push(x1, y1, size);
+        pendingExplosions.push([x1, y1, size]);
         return;
     }
     nextGrid[y1][x1] = pixNum.AIR;
