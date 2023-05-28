@@ -5707,6 +5707,11 @@ const pixels = {
         rgb0: [80, 80, 80],
         rgb1: [0, 0, 0]
     }),
+    color_brown: generateColorPixel({
+        color: 'Brown',
+        rgb0: [140, 80, 30],
+        rgb1: [100, 50, 10]
+    }),
     color_collector: {
         name: 'Color Collector',
         description: 'Collects colors for the team that placed it',
