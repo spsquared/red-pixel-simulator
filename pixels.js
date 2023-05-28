@@ -114,8 +114,8 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let dead = random() < 0.1;
-            if (dead) updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                if (actionY <= y) dead = false;
+            if (dead) updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                if (ay <= y) dead = false;
             });
             if (!dead) dead = updateTouchingPixel(x, y, pixNum.LAVA);
             if (dead) {
@@ -183,7 +183,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let touchingMud = 1;
-            updateTouchingPixel(x, y, pixNum.MUD, function (actionX, actionY) {
+            updateTouchingPixel(x, y, pixNum.MUD, function (ax, ay) {
                 touchingMud *= 2;
             });
             if (random() < 0.01 / touchingMud && !updateTouchingPixel(x, y, pixNum.WATER)) {
@@ -471,10 +471,10 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let removedWater = false;
-            if (updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
-                if (!removedWater && validChangingPixel(actionX, actionY) && random() < 0.2) {
-                    nextGrid[actionY][actionX] = pixNum.AIR;
-                    teamGrid[actionY][actionX] = 0;
+            if (updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
+                if (!removedWater && validChangingPixel(ax, ay) && random() < 0.2) {
+                    nextGrid[ay][ax] = pixNum.AIR;
+                    teamGrid[ay][ax] = 0;
                     removedWater = true;
                 }
             })) {
@@ -644,11 +644,11 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             fireGrid[y][x] = false;
             nextFireGrid[y][x] = false;
-            if (updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY)) {
+            if (updateTouchingPixel(x, y, pixNum.LAVA, function (ax, ay) {
+                if (validChangingPixel(ax, ay)) {
                     if (random() < 0.8) nextGrid[y][x] = pixNum.STEAM;
                     else nextGrid[y][x] = pixNum.AIR;
-                    nextGrid[actionY][actionX] = pixNum.STONE;
+                    nextGrid[ay][ax] = pixNum.STONE;
                     teamGrid[y][x] = 0;
                     return true;
                 }
@@ -713,15 +713,15 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
+            if (updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
                 if (random() < 0.001) {
                     nextGrid[y][x] = pixNum.WATER;
-                    if (random() < 0.95) nextGrid[actionY][actionX] = pixNum.ICE;
+                    if (random() < 0.95) nextGrid[ay][ax] = pixNum.ICE;
                     return true;
                 } else return false;
             })) return;
             let touchingIce = 10;
-            updateTouchingPixel(x, y, pixNum.ICE, function (actionX, actionY) {
+            updateTouchingPixel(x, y, pixNum.ICE, function (ax, ay) {
                 touchingIce *= 2;
             });
             if (random() < 0.001 / touchingIce) nextGrid[y][x] = pixNum.WATER;
@@ -844,15 +844,15 @@ const pixels = {
                 }
                 return;
             }
-            if (updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (grid[actionY][actionX] != pixNum.WATER && random() < pixelAt(actionX, actionY).flammability / 20) {
-                    nextFireGrid[actionY][actionX] = true;
+            if (updateTouchingAnything(x, y, function (ax, ay) {
+                if (grid[ay][ax] != pixNum.WATER && random() < pixelAt(ax, ay).flammability / 20) {
+                    nextFireGrid[ay][ax] = true;
                     if (random() < 0.8) {
                         nextGrid[y][x] = pixNum.WATER;
                         return true;
                     }
-                } else if ((grid[actionY][actionX] == pixNum.ICE || grid[actionY][actionX] == pixNum.SNOW) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.WATER;
+                } else if ((grid[ay][ax] == pixNum.ICE || grid[ay][ax] == pixNum.SNOW) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.WATER;
                     nextGrid[y][x] = pixNum.WATER;
                     teamGrid[y][x] = 0;
                     return true;
@@ -1009,28 +1009,28 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let cooldownSpeed = 2;
-            let act = (actionX, actionY) => {
-                if (grid[actionY][actionX] == pixNum.LAVA) {
+            let act = (ax, ay) => {
+                if (grid[ay][ax] == pixNum.LAVA) {
                     cooldownSpeed--;
-                } else if (grid[actionY][actionX] == pixNum.AIR) {
+                } else if (grid[ay][ax] == pixNum.AIR) {
                     cooldownSpeed++;
-                } else if (validChangingPixel(actionX, actionY)) {
-                    if (grid[actionY][actionX] == pixNum.LASER_SCATTERER) {
-                        if (random() < 0.1) nextGrid[actionY][actionX] = pixNum.SAND;
-                    } else if (grid[actionY][actionX] == pixNum.SAND) {
-                        if (random() < 0.01) nextGrid[actionY][actionX] = pixNum.GLASS;
-                    } else if (grid[actionY][actionX] == pixNum.GLASS) {
-                        if (random() < 0.01) nextGrid[actionY][actionX] = pixNum.SAND;
+                } else if (validChangingPixel(ax, ay)) {
+                    if (grid[ay][ax] == pixNum.LASER_SCATTERER) {
+                        if (random() < 0.1) nextGrid[ay][ax] = pixNum.SAND;
+                    } else if (grid[ay][ax] == pixNum.SAND) {
+                        if (random() < 0.01) nextGrid[ay][ax] = pixNum.GLASS;
+                    } else if (grid[ay][ax] == pixNum.GLASS) {
+                        if (random() < 0.01) nextGrid[ay][ax] = pixNum.SAND;
                     }
                 }
             };
             updateTouchingAnything(x, y, act);
             let meltAngle = Math.random() * Math.PI * 2;
             let travel = 0;
-            rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 15), Math.round(y + Math.sin(meltAngle) * 15), (actionX, actionY) => {
-                if (grid[actionY][actionX] == pixNum.SNOW || grid[actionY][actionX] == pixNum.ICE) {
-                    if (random() < (15 - travel) / 45) nextGrid[actionY][actionX] = pixNum.WATER;
-                } else if (grid[actionY][actionX] !== pixNum.AIR) return true;
+            rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 15), Math.round(y + Math.sin(meltAngle) * 15), (ax, ay) => {
+                if (grid[ay][ax] == pixNum.SNOW || grid[ay][ax] == pixNum.ICE) {
+                    if (random() < (15 - travel) / 45) nextGrid[ay][ax] = pixNum.WATER;
+                } else if (grid[ay][ax] !== pixNum.AIR) return true;
                 travel++;
             });
             if (random() < 0.0001 * cooldownSpeed) {
@@ -1123,7 +1123,7 @@ const pixels = {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
                 return;
             }
-            updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
+            updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
             });
             let aerated = updateTouchingPixel(x, y, pixNum.AIR);
@@ -1132,10 +1132,10 @@ const pixels = {
             }
             let meltAngle = Math.random() * Math.PI * 2;
             let travel = 0;
-            rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 10), Math.round(y + Math.sin(meltAngle) * 10), (actionX, actionY) => {
-                if (grid[actionY][actionX] == pixNum.SNOW || grid[actionY][actionX] == pixNum.ICE) {
-                    if (random() < (10 - travel) / 30) nextGrid[actionY][actionX] = pixNum.WATER;
-                } else if (grid[actionY][actionX] !== pixNum.AIR) return true;
+            rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 10), Math.round(y + Math.sin(meltAngle) * 10), (ax, ay) => {
+                if (grid[ay][ax] == pixNum.SNOW || grid[ay][ax] == pixNum.ICE) {
+                    if (random() < (10 - travel) / 30) nextGrid[ay][ax] = pixNum.WATER;
+                } else if (grid[ay][ax] !== pixNum.AIR) return true;
                 travel++;
             });
             if (random() < flammability / 1200 && validChangingPixel(x, y) && !isLava) {
@@ -1328,9 +1328,9 @@ const pixels = {
                 nextGrid[y][x] = pixNum.WATER;
                 return;
             }
-            updateTouchingPixel(x, y, pixNum.CONCRETE, function (actionX, actionY) {
+            updateTouchingPixel(x, y, pixNum.CONCRETE, function (ax, ay) {
                 nextGrid[y][x] = pixNum.WATER;
-                nextGrid[actionY][actionX] = pixNum.PLANT;
+                nextGrid[ay][ax] = pixNum.PLANT;
             });
             if (y < gridHeight - 1) {
                 if (isPassableFluid(x, y + 1)) {
@@ -1374,11 +1374,11 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
+            updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
                 nextGrid[y][x] = pixNum.AIR;
-                nextGrid[actionY][actionX] = pixNum.SPONGE;
+                nextGrid[ay][ax] = pixNum.SPONGE;
                 teamGrid[y][x] = 0;
-                teamGrid[actionY][actionX] = 0;
+                teamGrid[ay][ax] = 0;
             });
             if (y < gridHeight - 1) {
                 if (isPassableFluid(x, y + 1) && (grid[y + 1][x] != pixNum.LAVA || random() < 0.25) && canMoveTo(x, y + 1)) {
@@ -1419,13 +1419,13 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
+            updateTouchingPixel(x, y, pixNum.LAVA, function (ax, ay) {
                 nextGrid[y][x] = pixNum.WATER;
                 teamGrid[y][x] = 0;
             });
-            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.125) {
-                    nextGrid[actionY][actionX] = pixNum.WATER;
+            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.125) {
+                    nextGrid[ay][ax] = pixNum.WATER;
                 }
             });
         },
@@ -1471,27 +1471,27 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
+            updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
                 teamGrid[y][x] = 0;
                 explode(x, y, 5, true);
             });
-            updateTouchingPixel(x, y, pixNum.SNOW, function (actionX, actionY) {
+            updateTouchingPixel(x, y, pixNum.SNOW, function (ax, ay) {
                 teamGrid[y][x] = 0;
                 explode(x, y, 6, true);
             });
-            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.075) {
-                    nextGrid[actionY][actionX] = pixNum.LAVA;
+            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.075) {
+                    nextGrid[ay][ax] = pixNum.LAVA;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.STEAM, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.075) {
-                    nextGrid[actionY][actionX] = pixNum.LAVA;
+            updateTouchingPixel(x, y, pixNum.STEAM, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.075) {
+                    nextGrid[ay][ax] = pixNum.LAVA;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.STONE, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.075) {
-                    nextGrid[actionY][actionX] = pixNum.LAVA;
+            updateTouchingPixel(x, y, pixNum.STONE, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.075) {
+                    nextGrid[ay][ax] = pixNum.LAVA;
                 }
             });
         },
@@ -1537,18 +1537,18 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.LAVA, function (actionX, actionY) {
+            updateTouchingPixel(x, y, pixNum.LAVA, function (ax, ay) {
                 teamGrid[y][x] = 0;
                 explode(x, y, 7, true);
             });
-            updateTouchingPixel(x, y, pixNum.WATER, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.075) {
-                    nextGrid[actionY][actionX] = pixNum.ICE;
+            updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.075) {
+                    nextGrid[ay][ax] = pixNum.ICE;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.STEAM, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.WATER;
+            updateTouchingPixel(x, y, pixNum.STEAM, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.WATER;
                 }
             });
         },
@@ -2675,8 +2675,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (pixelAt(actionX, actionY).rotateable) rotatePixel(actionX, actionY);
+            updateTouchingAnything(x, y, function (ax, ay) {
+                if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
         drawPreview: function (ctx) {
@@ -2721,8 +2721,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (pixelAt(actionX, actionY).rotateable) rotatePixel(actionX, actionY);
+            updateTouchingAnything(x, y, function (ax, ay) {
+                if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
         drawPreview: function (ctx) {
@@ -2767,8 +2767,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (pixelAt(actionX, actionY).rotateable) rotatePixel(actionX, actionY);
+            updateTouchingAnything(x, y, function (ax, ay) {
+                if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
         drawPreview: function (ctx) {
@@ -2813,8 +2813,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (pixelAt(actionX, actionY).rotateable) rotatePixel(actionX, actionY);
+            updateTouchingAnything(x, y, function (ax, ay) {
+                if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
         drawPreview: function (ctx) {
@@ -2852,8 +2852,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (pixelAt(actionX, actionY).rotateable) rotatePixel(actionX, actionY);
+            updateTouchingAnything(x, y, function (ax, ay) {
+                if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
         drawPreview: function (ctx) {
@@ -2926,8 +2926,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (pixelAt(actionX, actionY).rotateable) rotatePixel(actionX, actionY);
+            updateTouchingAnything(x, y, function (ax, ay) {
+                if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
         drawPreview: function (ctx) {
@@ -4850,20 +4850,20 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.5) {
-                    nextGrid[actionY][actionX] = pixNum.LAG_SPIKE_GENERATOR;
+            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.5) {
+                    nextGrid[ay][ax] = pixNum.LAG_SPIKE_GENERATOR;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.025) {
-                    nextGrid[actionY][actionX] = pixNum.PUMP;
+                if (validChangingPixel(ax, ay) && random() < 0.025) {
+                    nextGrid[ay][ax] = pixNum.PUMP;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.025) {
-                    nextGrid[actionY][actionX] = pixNum.CLONER_DOWN;
+                if (validChangingPixel(ax, ay) && random() < 0.025) {
+                    nextGrid[ay][ax] = pixNum.CLONER_DOWN;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.LAG_SPIKE_GENERATOR, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.005) {
-                    nextGrid[actionY][actionX] = pixNum.NUKE;
+            updateTouchingPixel(x, y, pixNum.LAG_SPIKE_GENERATOR, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.005) {
+                    nextGrid[ay][ax] = pixNum.NUKE;
                 }
             });
         },
@@ -4961,90 +4961,90 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            function chaos(actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.2) {
-                    nextGrid[actionY][actionX] = pixNum.CORRUPTION;
+            function chaos(ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.2) {
+                    nextGrid[ay][ax] = pixNum.CORRUPTION;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.LAVA;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.LAVA;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.WATER;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.WATER;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.2) {
-                    nextGrid[actionY][actionX] = pixNum.MISSING;
+                if (validChangingPixel(ax, ay) && random() < 0.2) {
+                    nextGrid[ay][ax] = pixNum.MISSING;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.AIR;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.AIR;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.PUMP;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.PUMP;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.LAVA_GENERATOR;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.LAVA_GENERATOR;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.FREEZER;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.FREEZER;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.PUSH_CLONER_DOWN;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.PUSH_CLONER_DOWN;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.PUSH_CLONER_LEFT;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.PUSH_CLONER_LEFT;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.PUSH_CLONER_RIGHT;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.PUSH_CLONER_RIGHT;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.PUSH_CLONER_UP;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.PUSH_CLONER_UP;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.PISTON_LEFT;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.PISTON_LEFT;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.PISTON_RIGHT;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.PISTON_RIGHT;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.PISTON_UP;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.PISTON_UP;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.PISTON_DOWN;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.PISTON_DOWN;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.LASER_LEFT;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.LASER_LEFT;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.LASER_UP;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.LASER_UP;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.LASER_RIGHT;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.LASER_RIGHT;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.LASER_DOWN;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.LASER_DOWN;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.MIRROR_1;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.MIRROR_1;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.1) {
-                    nextGrid[actionY][actionX] = pixNum.MIRROR_2;
+                if (validChangingPixel(ax, ay) && random() < 0.1) {
+                    nextGrid[ay][ax] = pixNum.MIRROR_2;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.05) {
-                    nextGrid[actionY][actionX] = pixNum[`MUSIC_${Math.floor(random() * 86) + 1}`];
+                if (validChangingPixel(ax, ay) && random() < 0.05) {
+                    nextGrid[ay][ax] = pixNum[`MUSIC_${Math.floor(random() * 86) + 1}`];
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.05) {
-                    nextGrid[actionY][actionX] = pixNum.NUKE;
+                if (validChangingPixel(ax, ay) && random() < 0.05) {
+                    nextGrid[ay][ax] = pixNum.NUKE;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.02) {
-                    nextGrid[actionY][actionX] = pixNum.HUGE_NUKE;
+                if (validChangingPixel(ax, ay) && random() < 0.02) {
+                    nextGrid[ay][ax] = pixNum.HUGE_NUKE;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.01) {
-                    nextGrid[actionY][actionX] = pixNum.VERY_HUGE_NUKE;
+                if (validChangingPixel(ax, ay) && random() < 0.01) {
+                    nextGrid[ay][ax] = pixNum.VERY_HUGE_NUKE;
                 }
-                if (validChangingPixel(actionX, actionY) && random() < 0.001) {
-                    nextGrid[actionY][actionX] = pixNum.SPIN;
+                if (validChangingPixel(ax, ay) && random() < 0.001) {
+                    nextGrid[ay][ax] = pixNum.SPIN;
                 }
                 if (random() < 0.1) {
-                    nextFireGrid[actionY][actionX] = true;
+                    nextFireGrid[ay][ax] = true;
                 }
                 teamGrid[y][x] = Math.floor(Math.random() * 3);
                 move(Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridWidth - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridHeight - 1), Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridWidth - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridHeight - 1));
@@ -5458,9 +5458,9 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.05) {
-                    nextGrid[actionY][actionX] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
+            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.05) {
+                    nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
                 }
             });
         },
@@ -5526,9 +5526,9 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                if (validChangingPixel(actionX, actionY) && random() < 0.04) {
-                    nextGrid[actionY][actionX] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
+            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.04) {
+                    nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
 
                 }
             });
@@ -5618,9 +5618,9 @@ const pixels = {
             let team = teamGrid[y][x] - 1;
             if (teamPixelAmounts[team] !== undefined) {
                 if (teamPixelAmounts[teamGrid[y][x] - 1].water > 0) {
-                    updateTouchingPixel(x, y, pixNum.AIR, function (actionX, actionY) {
-                        if (validChangingPixel(actionX, actionY) && random() < 0.04) {
-                            nextGrid[actionY][actionX] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
+                    updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                        if (validChangingPixel(ax, ay) && random() < 0.04) {
+                            nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
                         }
                     });
                     if (ticks % 10 == 0) teamPixelAmounts[teamGrid[y][x] - 1].water--;
@@ -5727,10 +5727,10 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingAnything(x, y, (actionX, actionY) => {
-                if (grid[actionY][actionX] >= pixNum.COLOR_RED && grid[actionY][actionX] <= pixNum.COLOR_BLACK && validChangingPixel(actionX, actionY)) {
-                    teamPixelAmounts[0][numPixels[grid[actionY][actionX]].id]++;
-                    nextGrid[actionY][actionX] = pixNum.AIR;
+            updateTouchingAnything(x, y, (ax, ay) => {
+                if (grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BLACK && validChangingPixel(ax, ay)) {
+                    teamPixelAmounts[0][numPixels[grid[ay][ax]].id]++;
+                    nextGrid[ay][ax] = pixNum.AIR;
                     if (random() < 0.1) {
                         nextGrid[y][x] = pixNum.AIR;
                         teamGrid[y][x] = 0;
@@ -5978,8 +5978,8 @@ function generateMusicPixel(id, data) {
             }
         },
         update: function (x, y) {
-            if (updateTouchingAnything(x, y, function (actionX, actionY) {
-                if (grid[actionY][actionX] >= pixNum.MUSIC_1 && grid[actionY][actionX] <= pixNum.MUSIC_86) return false;
+            if (updateTouchingAnything(x, y, function (ax, ay) {
+                if (grid[ay][ax] >= pixNum.MUSIC_1 && grid[ay][ax] <= pixNum.MUSIC_86) return false;
                 return true;
             })) musicGrid[y][x] = id;
         },

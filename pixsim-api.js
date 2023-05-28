@@ -124,7 +124,6 @@ class PixSimAPI {
                 req.send();
             };
             sendHTTPRequest();
-            socket.connect();
             socket.once('connect', () => {
                 socket.once('requestClientInfo', async (key) => {
                     if (window.crypto.subtle !== undefined) {
@@ -271,10 +270,11 @@ class PixSimAPI {
             cb(this.#gridWidth, this.#gridHeight);
         });
     }
-    static sendTick(grid, booleanGrids, { tick, pixelAmounts }) {
-        if (!this.#inGame || !this.#gameRunning || !(grid instanceof Array) || grid.length == 0 || grid[0].length == 0 || !(booleanGrids instanceof Array) || typeof tick != 'number' || !(grid instanceof Array)) return;
+    static sendTick(grid, teamGrid, booleanGrids, { tick, pixelAmounts }) {
+        if (!this.#inGame || !this.#gameRunning || !(grid instanceof Array) || grid.length == 0 || grid[0].length == 0 || !(teamGrid instanceof Array) || teamGrid.length == 0 || teamGrid[0].length == 0 || !(booleanGrids instanceof Array) || typeof tick != 'number' || !(grid instanceof Array)) return;
         // simple compression algorithm that compresses well with large horizontal spans of the same pixel
         // not as good as png compression but png is very complex
+        // compress main grid into 16-bit chunks of 8-bit id and 8-bit length
         let compressedGrid = [];
         let curr = grid[0][0];
         let len = 0;
@@ -289,6 +289,22 @@ class PixSimAPI {
             }
         }
         compressedGrid.push(curr, len);
+        // compress team grid into 8-bit chunks of 2-bit id and 6-bit length
+        let compressedTeamGrid = [];
+        curr = teamGrid[0][0];
+        len = 0;
+        for (let i = 0; i < teamGrid.length; i++) {
+            for (let j = 0; j < teamGrid[i].length; j++) {
+                if (teamGrid[i][j] != curr || len == 63) {
+                    compressedTeamGrid.push(curr << 6 | len);
+                    curr = teamGrid[i][j];
+                    len = 0;
+                }
+                len++;
+            }
+        }
+        compressedTeamGrid.push(curr << 6 | len);
+        // compress boolean grid into 8-bit chunks of length and alternating states starting with false
         let compressedBooleanGrids = [];
         for (let boolGrid of booleanGrids) {
             if (boolGrid.length == 0 || boolGrid[0].length == 0) continue;
@@ -314,6 +330,7 @@ class PixSimAPI {
         }
         socket.emit('tick', {
             grid: new Uint8ClampedArray(compressedGrid),
+            teamGrid: new Uint8ClampedArray(compressedTeamGrid),
             booleanGrids: compressedBooleanGrids,
             data: {
                 tick: tick,
@@ -327,7 +344,7 @@ class PixSimAPI {
         socket.off('tick');
         socket.on('tick', (tick) => {
             if (!this.#inGame || !this.#gameRunning) return;
-            cb(new Uint8ClampedArray(tick.grid), tick.booleanGrids.map(g => new Uint8ClampedArray(g)), tick.data);
+            cb(new Uint8ClampedArray(tick.grid), new Uint8ClampedArray(tick.teamGrid), tick.booleanGrids.map(g => new Uint8ClampedArray(g)), tick.data);
         });
     }
     static sendInput(type, data) {
