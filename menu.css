@@ -143,9 +143,6 @@
 #volumeAdjustSlider::-webkit-slider-thumb:active {
     cursor: grabbing;
 }
-/* #volumeAdjustWrapper:hover {
-    max-width: 140px;
-} */
 #volumeAdjustWrapper:hover #volumeAdjustSlider {
     transform: none;
 }
