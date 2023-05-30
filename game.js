@@ -2110,6 +2110,7 @@ PixSimAPI.onGameStart = () => {
         slowSimulation = true;
         simulationPaused = false;
         ticks = 0;
+        backgroundColor = '#ffffff';
         simulateSlowButton.checked = true;
         updateTimeControlButtons();
         levelDetails.style.display = 'none';

@@ -288,6 +288,7 @@ sandboxButton.onclick = (e) => {
     gridHeightText.disabled = false;
     document.getElementById('premadeSaves').style.display = '';
     sandboxMode = true;
+    backgroundColor = '#ffffff';
     camera.scale = 1;
     camera.x = 0;
     camera.y = 0;
