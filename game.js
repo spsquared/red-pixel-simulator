@@ -819,6 +819,10 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     let moveX = -1;
     let moveY = -1;
     let lastCollapsible = -1;
+    let slimePushes = [];
+    if (grid[y][x] == pixNum.SLIME) updateTouchingAnything(x, y, (ax, ay) => {
+        if (validChangingPixel(ax, ay)) slimePushes.push([ax, ay, dir, true, ignorePistons]);
+    });
     switch (dir) {
         case 0:
             for (let i = x - 1; i >= 0; i--) {
@@ -829,10 +833,11 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     }
                     break;
                 }
-                if (grid[y][i] == pixNum.COLLAPSIBLE) {
-                    lastCollapsible = i;
-                }
-                if (!pixelAt(i, y).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_RIGHT || grid[y][i] == pixNum.STICKY_PISTON_RIGHT))) {
+                if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
+                if (grid[y][i] == pixNum.SLIME) updateTouchingAnything(i, y, (ax, ay) => {
+                    if (validChangingPixel(ax, ay)) slimePushes.push([ax, ay, dir, true, ignorePistons]);
+                });
+                if (!pixelAt(i, y).pushable || !validChangingPixel(i, y) || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_RIGHT || grid[y][i] == pixNum.STICKY_PISTON_RIGHT))) {
                     break;
                 }
             }
@@ -853,6 +858,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     fireGrid[y][x] = false;
                     teamGrid[y][x] = false;
                 }
+                for (let p of slimePushes) {
+                    push(...p);
+                }
                 return true;
             }
             return false;
@@ -865,10 +873,11 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     }
                     break;
                 }
-                if (grid[i][x] == pixNum.COLLAPSIBLE) {
-                    lastCollapsible = i;
-                }
-                if (!pixelAt(x, i).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_DOWN || grid[i][x] == pixNum.STICKY_PISTON_DOWN))) {
+                if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
+                if (grid[i][x] == pixNum.SLIME) updateTouchingAnything(x, i, (ax, ay) => {
+                    if (validChangingPixel(ax, ay)) slimePushes.push([ax, ay, dir, true, ignorePistons]);
+                });
+                if (!pixelAt(x, i).pushable || !validChangingPixel(x, i) ||(grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_DOWN || grid[i][x] == pixNum.STICKY_PISTON_DOWN))) {
                     break;
                 }
             }
@@ -889,6 +898,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     fireGrid[y][x] = false;
                     teamGrid[y][x] = false;
                 }
+                for (let p of slimePushes) {
+                    push(...p);
+                }
                 return true;
             }
             return false;
@@ -901,10 +913,11 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     }
                     break;
                 }
-                if (grid[y][i] == pixNum.COLLAPSIBLE) {
-                    lastCollapsible = i;
-                }
-                if (!pixelAt(i, y).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_LEFT || grid[y][i] == pixNum.STICKY_PISTON_LEFT))) {
+                if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
+                if (grid[y][i] == pixNum.SLIME) updateTouchingAnything(i, y, (ax, ay) => {
+                    if (validChangingPixel(ax, ay)) slimePushes.push([ax, ay, dir, true, ignorePistons]);
+                });
+                if (!pixelAt(i, y).pushable || !validChangingPixel(i, y) ||(grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_LEFT || grid[y][i] == pixNum.STICKY_PISTON_LEFT))) {
                     break;
                 }
             }
@@ -925,6 +938,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     fireGrid[y][x] = false;
                     teamGrid[y][x] = false;
                 }
+                for (let p of slimePushes) {
+                    push(...p);
+                }
                 return true;
             }
             return false;
@@ -937,10 +953,11 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     }
                     break;
                 }
-                if (grid[i][x] == pixNum.COLLAPSIBLE) {
-                    lastCollapsible = i;
-                }
-                if (!pixelAt(x, i).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_UP || grid[i][x] == pixNum.STICKY_PISTON_UP))) {
+                if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
+                if (grid[i][x] == pixNum.SLIME) updateTouchingAnything(x, i, (ax, ay) => {
+                    if (validChangingPixel(ax, ay)) slimePushes.push([ax, ay, dir, true, ignorePistons]);
+                });
+                if (!pixelAt(x, i).pushable || !validChangingPixel(x, i) ||(grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_UP || grid[i][x] == pixNum.STICKY_PISTON_UP))) {
                     break;
                 }
             }
@@ -960,6 +977,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
                     teamGrid[y][x] = false;
+                }
+                for (let p of slimePushes) {
+                    push(...p);
                 }
                 return true;
             }

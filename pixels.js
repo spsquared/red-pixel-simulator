@@ -3158,6 +3158,39 @@ const pixels = {
         id: 'collapsible',
         numId: 0
     },
+    slime: {
+        name: 'Slime',
+        description: 'Sticky green stuff',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(100, 255, 100)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 255, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 7,
+        flammability: 4,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 1,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimCompatible: false,
+        id: 'slime',
+        numId: 0
+    },
     laser_left: {
         name: 'L.A.S.E.R. (Left)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
