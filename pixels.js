@@ -5184,13 +5184,16 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             let team = teamGrid[y][x] - 1;
             if (teamPixelAmounts[team] !== undefined) {
-                if (teamPixelAmounts[teamGrid[y][x] - 1].water > 0) {
+                if (teamPixelAmounts[team].water > 0) {
                     updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
                         if (validChangingPixel(ax, ay) && random() < 0.04) {
-                            nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
+                            nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BROWN - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
                         }
                     });
-                    if (ticks % 10 == 0) teamPixelAmounts[teamGrid[y][x] - 1].water--;
+                    if (ticks % 10 == 0) {
+                        teamPixelAmounts[team].water--;
+                        if (team == PixSimAPI.team) updatePixelAmount('water', teamPixelAmounts[team]);
+                    }
                 } else if (random() < 0.03) {
                     explode(x, y, 20, true)
                 };

@@ -828,15 +828,19 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
         switch (dir) {
             case 0:
                 while (x < gridWidth - 1 && grid[y][x] == pixNum.SLIME) x++;
+                if (x < gridWidth && !pixelAt(x, y).pushable) x--;
                 break;
             case 1:
                 while (y < gridHeight - 1 && grid[y][x] == pixNum.SLIME) y++;
+                if (y < gridHeight && !pixelAt(x, y).pushable) y--;
                 break;
             case 2:
                 while (x > 0 && grid[y][x] == pixNum.SLIME) x--;
+                if (x >= 0 && !pixelAt(x, y).pushable) x++;
                 break;
             case 3:
                 while (y > 0 && grid[y][x] == pixNum.SLIME) y--;
+                if (y >= 0 && !pixelAt(x, y).pushable) y++;
                 break;
         }
     }
@@ -851,8 +855,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                y > 0 && grid[y - 1][i] == pixNum.SLIME && slimePushes.push([i, y - 1]);
-                y < gridHeight - 1 && grid[y + 1][i] == pixNum.SLIME && slimePushes.push([i, y + 1]);
+                y > 0 && !isAir(i, y - 1) && pixelAt(i, y - 1).pushable && slimePushes.push([i, y - 1]);
+                y < gridHeight - 1 && !isAir(i, y + 1) && pixelAt(i, y + 1).pushable && slimePushes.push([i, y + 1]);
                 if (!pixelAt(i, y).pushable || !validChangingPixel(i, y) || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_RIGHT || grid[y][i] == pixNum.STICKY_PISTON_RIGHT))) {
                     break;
                 }
@@ -890,8 +894,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                x > 0 && grid[i][x - 1] == pixNum.SLIME && slimePushes.push([x - 1, i]);
-                x < gridWidth - 1 && grid[i][x + 1] == pixNum.SLIME && slimePushes.push([x + 1, i]);
+                x > 0 && !isAir(x - 1, i) && pixelAt(x - 1, i).pushable && slimePushes.push([x - 1, i]);
+                x < gridHeight - 1 && !isAir(x + 1, i) && pixelAt(x + 1, i).pushable && slimePushes.push([x + 1, i]);
                 if (!pixelAt(x, i).pushable || !validChangingPixel(x, i) ||(grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_DOWN || grid[i][x] == pixNum.STICKY_PISTON_DOWN))) {
                     break;
                 }
@@ -929,8 +933,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                y > 0 && grid[y - 1][i] == pixNum.SLIME && slimePushes.push([i, y - 1]);
-                y < gridHeight - 1 && grid[y + 1][i] == pixNum.SLIME && slimePushes.push([i, y + 1]);
+                y > 0 && !isAir(i, y - 1) && pixelAt(i, y - 1).pushable && slimePushes.push([i, y - 1]);
+                y < gridHeight - 1 && !isAir(i, y + 1) && pixelAt(i, y + 1).pushable && slimePushes.push([i, y + 1]);
                 if (!pixelAt(i, y).pushable || !validChangingPixel(i, y) ||(grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_LEFT || grid[y][i] == pixNum.STICKY_PISTON_LEFT))) {
                     break;
                 }
@@ -968,8 +972,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                x > 0 && grid[i][x - 1] == pixNum.SLIME && slimePushes.push([x - 1, i]);
-                x < gridWidth - 1 && grid[i][x + 1] == pixNum.SLIME && slimePushes.push([x + 1, i]);
+                x > 0 && !isAir(x - 1, i) && pixelAt(x - 1, i).pushable && slimePushes.push([x - 1, i]);
+                x < gridHeight - 1 && !isAir(x + 1, i) && pixelAt(x + 1, i).pushable && slimePushes.push([x + 1, i]);
                 if (!pixelAt(x, i).pushable || !validChangingPixel(x, i) ||(grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_UP || grid[i][x] == pixNum.STICKY_PISTON_UP))) {
                     break;
                 }
@@ -1983,7 +1987,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 });
             } else {
                 act(function (x, y) {
-                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && (!PixSimAPI.inGame || 2 - teamGrid[y][x] !== pxteam)) {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN)))) {
                         let pixel = pixelAt(x, y).id;
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
                         inventory[pixel]++;
@@ -2048,7 +2052,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 modifiedPixelCounts[clickPixelNum] = true;
                 if (inventory[placePixel] <= 0) skipToEnd = true;
                 else if (act(function (x, y) {
-                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum && (!PixSimAPI.inGame || 2 - teamGrid[y][x] !== pxteam)) {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN)))) {
                         modifiedPixelCounts[grid[y][x]] = true;
                         let pixel = pixelAt(x, y).id;
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
