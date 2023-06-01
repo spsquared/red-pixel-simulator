@@ -825,8 +825,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             case 0:
                 for (let i = x + 1; i < gridWidth; i++) {
                     if (grid[y][i] != pixNum.SLIME) {
-                        if (!isAir(i, y)) x = i;
-                        else x = i - 1;
+                        x = i;
                         break;
                     }
                 }
@@ -834,8 +833,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             case 1:
                 for (let i = y + 1; i < gridHeight; i++) {
                     if (grid[i][x] != pixNum.SLIME) {
-                        if (!isAir(x, i)) y = i;
-                        else y = i - 1;
+                        y = i;
                         break;
                     }
                 }
@@ -843,8 +841,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             case 2:
                 for (let i = x - 1; i >= 0; i--) {
                     if (grid[y][i] != pixNum.SLIME) {
-                        if (!isAir(i, y)) x = i;
-                        else x = i + 1;
+                        x = i;
                         break;
                     }
                 }
@@ -852,8 +849,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             case 3:
                 for (let i = y - 1; i >= 0; i--) {
                     if (grid[i][x] != pixNum.SLIME) {
-                        if (!isAir(x, i)) y = i;
-                        else y = i + 1;
+                        y = i;
                         break;
                     }
                 }
