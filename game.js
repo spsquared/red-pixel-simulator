@@ -549,6 +549,9 @@ function PreRenderer(size = 60) {
         fillPixels: function (x, y, width, height) {
             rendctx.fillRect(x * size, y * size, width * size, height * size);
         },
+        clearPixels: function (x, y, width, height) {
+            rendctx.clearRect(x * size, y * size, width * size, height * size);
+        },
         toImage: function () {
             const img = new Image(size, size);
             img.src = rendCanvas.toDataURL('image/png');

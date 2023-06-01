@@ -1311,7 +1311,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(150, 100, 75)';
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(175, 125, 75)';
-            ctx.fillRect(50 / 6, 50 / 6, 100 / 3, 100 / 3);
+            ctx.fillRect(15 / 2, 15 / 2, 35, 35);
             ctx.fillStyle = 'rgb(150, 100, 75)';
             ctx.rotate(Math.PI / 4);
             ctx.fillRect(50 / Math.sqrt(2) - 5, -50 / Math.sqrt(2), 10, Math.sqrt(2) * 50);
@@ -1322,7 +1322,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(150, 100, 75)';
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(175, 125, 75)';
-            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            fillPixels(3 / 20, 3 / 20, 7 / 10, 7 / 10);
             ctx.fillStyle = 'rgb(150, 100, 75)';
             ctx.rotate(Math.PI / 4);
             fillPixels(1 / Math.sqrt(2) - 0.1, -1 / Math.sqrt(2), 0.2, Math.sqrt(2));
@@ -3124,7 +3124,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(250, 180, 0)';
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(200, 100, 0)';
-            ctx.fillRect(50 / 6, 50 / 6, 100 / 3, 100 / 3);
+            ctx.fillRect(15 / 2, 15 / 2, 35, 35);
             ctx.fillStyle = 'rgb(250, 180, 0)';
             ctx.rotate(Math.PI / 4);
             ctx.fillRect(0, -5, Math.sqrt(2) * 50, 10);
@@ -3135,7 +3135,7 @@ const pixels = {
             ctx.fillStyle = 'rgb(250, 180, 0)';
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(200, 100, 0)';
-            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            fillPixels(3 / 20, 3 / 20, 7 / 10, 7 / 10);
             ctx.fillStyle = 'rgb(250, 180, 0)';
             ctx.rotate(Math.PI / 4);
             fillPixels(0, -0.1, Math.sqrt(2), 0.2);
@@ -4795,14 +4795,13 @@ const pixels = {
             ctx.fillRect(37, 37, 8, 8);
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(60);
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(40);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             fillPixels(0, 0, 1, 1);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.rotate(-Math.PI / 4);
-            fillPixels(-0.1, 0, 0.2, 0.1);
-            fillPixels(-Math.sqrt(2) / 2, Math.sqrt(2) / 2 - 0.1, Math.sqrt(2), 0.2);
-            fillPixels(-0.1, Math.sqrt(2) - 0.1, 0.2, 0.1);
+            clearPixels(-0.1, 0, 0.2, 0.1);
+            clearPixels(-Math.sqrt(2) / 2, Math.sqrt(2) / 2 - 0.1, Math.sqrt(2), 0.2);
+            clearPixels(-0.1, Math.sqrt(2) - 0.1, 0.2, 0.1);
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },
