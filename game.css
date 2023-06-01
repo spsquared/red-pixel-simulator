@@ -115,7 +115,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, 62px);
     grid-template-rows: repeat(auto-fill, 62px);
-    padding-bottom: 2px;
+    padding-bottom: 3px;
     border-top: 2px solid black;
 }
 .pickerPixel {
