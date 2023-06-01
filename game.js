@@ -820,39 +820,20 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     let moveY = -1;
     let lastCollapsible = -1;
     let slimePushes = [];
+    if (!validChangingPixel(x, y)) return;
     if (grid[y][x] == pixNum.SLIME) {
         switch (dir) {
             case 0:
-                for (let i = x + 1; i < gridWidth; i++) {
-                    if (grid[y][i] != pixNum.SLIME) {
-                        x = i;
-                        break;
-                    }
-                }
+                while (x < gridWidth - 1 && grid[y][x] == pixNum.SLIME) x++;
                 break;
             case 1:
-                for (let i = y + 1; i < gridHeight; i++) {
-                    if (grid[i][x] != pixNum.SLIME) {
-                        y = i;
-                        break;
-                    }
-                }
+                while (y < gridHeight - 1 && grid[y][x] == pixNum.SLIME) y++;
                 break;
             case 2:
-                for (let i = x - 1; i >= 0; i--) {
-                    if (grid[y][i] != pixNum.SLIME) {
-                        x = i;
-                        break;
-                    }
-                }
+                while (x > 0 && grid[y][x] == pixNum.SLIME) x--;
                 break;
             case 3:
-                for (let i = y - 1; i >= 0; i--) {
-                    if (grid[i][x] != pixNum.SLIME) {
-                        y = i;
-                        break;
-                    }
-                }
+                while (y > 0 && grid[y][x] == pixNum.SLIME) y--;
                 break;
         }
     }
