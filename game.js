@@ -1577,10 +1577,8 @@ function drawBrush() {
             ctx.strokeStyle = 'rgb(0, 0, 0)';
             ctx.setLineDash([drawScale / 2, drawScale / 2]);
             ctx.lineWidth = 2 * camera.scale;
-            ctx.lineCap = 'square';
-            ctx.beginPath();
+            ctx.lineJoin = 'miter';
             ctx.strokeRect(x1 * drawScale - camera.x, y1 * drawScale - camera.y, (x2 - x1 + 1) * drawScale, (y2 - y1 + 1) * drawScale);
-            ctx.stroke();
         } else if (brush.lineMode && !brush.startsInRPE) {
             const clickPixelNum = (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
             bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
@@ -1594,10 +1592,9 @@ function drawBrush() {
             ctx.strokeStyle = 'rgb(255, 255, 255)';
             ctx.setLineDash([]);
             ctx.lineWidth = 2 * camera.scale;
+            ctx.lineJoin = 'miter';
             ctx.globalCompositeOperation = 'difference';
-            ctx.beginPath();
             ctx.strokeRect(rect.xmin * drawScale - camera.x, rect.ymin * drawScale - camera.y, (rect.xmax - rect.xmin + 1) * drawScale, (rect.ymax - rect.ymin + 1) * drawScale);
-            ctx.stroke();
             ctx.globalCompositeOperation = 'source-over';
         } else {
             let rect = calcBrushRectCoordinates(mXGrid, mYGrid)
@@ -1606,10 +1603,9 @@ function drawBrush() {
             ctx.strokeStyle = 'rgb(255, 255, 255)';
             ctx.setLineDash([]);
             ctx.lineWidth = 2 * camera.scale;
+            ctx.lineJoin = 'miter';
             ctx.globalCompositeOperation = 'difference';
-            ctx.beginPath();
             ctx.strokeRect(rect.xmin * drawScale - camera.x, rect.ymin * drawScale - camera.y, (rect.xmax - rect.xmin + 1) * drawScale, (rect.ymax - rect.ymin + 1) * drawScale);
-            ctx.stroke();
             ctx.globalCompositeOperation = 'source-over';
         }
     }
@@ -1625,9 +1621,8 @@ function drawBrush() {
         ctx.strokeStyle = 'rgb(0, 0, 0)';
         ctx.setLineDash([drawScale / 2, drawScale / 2]);
         ctx.lineWidth = 2 * camera.scale;
-        ctx.beginPath();
+        ctx.lineJoin = 'miter';
         ctx.strokeRect(xmin * drawScale - camera.x, ymin * drawScale - camera.y, (xmax - xmin + 1) * drawScale, (ymax - ymin + 1) * drawScale);
-        ctx.stroke();
     }
 };
 function updateCamera() {
@@ -1671,11 +1666,24 @@ function drawUI() {
         timingGradient.addColorStop(0.3, '#FF0');
         timingGradient.addColorStop(0.6, '#0F0');
         timingGradient.addColorStop(1, '#0F0');
-        ctx.fillStyle = timingGradient;
+        // ctx.fillStyle = timingGradient;
+        // for (let i = 0; i < timingList.length; i++) {
+        //     ctx.fillRect(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25), 3, 4);
+        //     ctx.fillRect(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25 - timingList[i][1] * 6.25), 3, 4);
+        // }
+        ctx.strokeStyle = timingGradient;
+        ctx.lineJoin = 'bevel';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, Math.max(141, 237 - timingList[0][0] * 6.25));
         for (let i = 0; i < timingList.length; i++) {
-            ctx.fillRect(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25), 3, 4);
-            ctx.fillRect(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25 - timingList[i][1] * 6.25), 3, 4);
+            ctx.lineTo(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25));
         }
+        ctx.moveTo(0, Math.max(141, 237 - timingList[0][1] * 6.25));
+        for (let i = 0; i < timingList.length; i++) {
+            ctx.lineTo(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25 - timingList[i][1] * 6.25));
+        }
+        ctx.stroke();
     }
     let fpsText = `FPS: ${frameList.length} ${debugInfo ? `(${frameTime.toFixed(1)}ms/${averageFrameTime.toFixed(1)}ms)` : ''}`;
     let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(1)}ms/${averageTickTime.toFixed(1)}ms)` : ''}`;
