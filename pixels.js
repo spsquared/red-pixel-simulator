@@ -5052,7 +5052,7 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimCompatible: true,
-        id: 'color_well',
+        id: 'generic_color_well',
         numId: 0
     },
     passive_color_generator: {
@@ -5094,9 +5094,8 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
-                if (validChangingPixel(ax, ay) && random() < 0.04) {
+                if (validChangingPixel(ax, ay) && random() < 0.02) {
                     nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
-
                 }
             });
         },
@@ -5124,7 +5123,7 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimCompatible: true,
-        id: 'color_well',
+        id: 'passive_color_generator',
         numId: 0
     },
     active_color_generator: {
@@ -5169,12 +5168,68 @@ const pixels = {
             }
             if (!avoidGrid) forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 forEachPixel(x, y, width, height, (x2, y2) => {
-                    let team = teamGrid[y][x] - 1;
+                    let team = teamGrid[y2][x2] - 1;
                     if (team == PixSimAPI.team && teamPixelAmounts[team] !== undefined) {
                         if (teamPixelAmounts[team].water <= 0) {
-                            // oh noes
-                        } else if (teamPixelAmounts[team].water <= 20) {
-                            // small oh noes
+                            abovectx.globalAlpha = opacity * (1 - ((deltaTime % 45) / 45));
+                            abovectx.fillStyle = 'rgb(255, 0, 0)';
+                            let margin = ((deltaTime % 45) / 5);
+                            abovectx.translate(x2 * drawScale - camera.x + 0.5 * drawScale, y2 * drawScale - camera.y + 0.4 * drawScale);
+                            abovectx.beginPath();
+                            abovectx.moveTo(margin * drawScale, 0);
+                            abovectx.arc(0, 0, margin * drawScale, 0, 2 * Math.PI);
+                            abovectx.fill();
+                            abovectx.globalAlpha = 1;
+                            abovectx.rotate(Math.random() * 0.4 - 0.2);
+                            let scale = (Math.random() * 0.5 + 2) * drawScale;
+                            abovectx.strokeStyle = 'rgb(255, 0, 0)';
+                            abovectx.fillStyle = 'rgb(255, 255, 0)';
+                            abovectx.lineJoin = 'bevel';
+                            abovectx.lineCap = 'butt';
+                            abovectx.lineWidth = 0.1 * scale;
+                            abovectx.beginPath();
+                            let hfrt3 = Math.sqrt(3)/2;
+                            abovectx.moveTo(-scale, hfrt3 * scale);
+                            abovectx.lineTo(scale, hfrt3 * scale);
+                            abovectx.lineTo(0, -hfrt3 * scale);
+                            abovectx.lineTo(-scale, hfrt3 * scale);
+                            abovectx.lineTo(0, hfrt3 * scale);
+                            abovectx.fill();
+                            abovectx.stroke();
+                            abovectx.lineWidth = 0.2 * scale;
+                            abovectx.beginPath();
+                            abovectx.moveTo(0, -0.4 * scale);
+                            abovectx.lineTo(0, 0.3 * scale);
+                            abovectx.moveTo(0, 0.5 * scale);
+                            abovectx.lineTo(0, 0.7 * scale);
+                            abovectx.stroke();
+                            abovectx.resetTransform();
+                        } else if (teamPixelAmounts[team].water <= 50) {
+                            abovectx.globalAlpha = Math.sin(deltaTime * Math.PI / 90) * 0.5 + 1;
+                            abovectx.translate(x2 * drawScale - camera.x + 0.5 * drawScale, y2 * drawScale - camera.y + 0.4 * drawScale);
+                            let scale = (Math.sin(deltaTime * Math.PI / 90) * 0.5 + 1.5) * drawScale;
+                            abovectx.strokeStyle = 'rgb(255, 0, 0)';
+                            abovectx.fillStyle = 'rgb(255, 255, 0)';
+                            abovectx.lineJoin = 'bevel';
+                            abovectx.lineCap = 'butt';
+                            abovectx.lineWidth = 0.05 * scale;
+                            abovectx.beginPath();
+                            let hfrt3 = Math.sqrt(3)/2;
+                            abovectx.moveTo(-scale * 0.5, hfrt3 * scale * 0.5);
+                            abovectx.lineTo(scale * 0.5, hfrt3 * scale * 0.5);
+                            abovectx.lineTo(0, -hfrt3 * scale * 0.5);
+                            abovectx.lineTo(-scale * 0.5, hfrt3 * scale * 0.5);
+                            abovectx.lineTo(0, hfrt3 * scale * 0.5);
+                            abovectx.fill();
+                            abovectx.stroke();
+                            abovectx.lineWidth = 0.1 * scale;
+                            abovectx.beginPath();
+                            abovectx.moveTo(0, -0.2 * scale);
+                            abovectx.lineTo(0, 0.15 * scale);
+                            abovectx.moveTo(0, 0.25 * scale);
+                            abovectx.lineTo(0, 0.35 * scale);
+                            abovectx.stroke();
+                            abovectx.resetTransform();
                         }
                     }
                 });
@@ -5223,7 +5278,7 @@ const pixels = {
         alwaysRedraw: true,
         pickable: true,
         pixsimCompatible: true,
-        id: 'color_well',
+        id: 'active_color_generator',
         numId: 0
     },
     color_red: generateColorPixel({
