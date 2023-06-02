@@ -597,7 +597,7 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
     ];
 };
 function updatePixel(x, y, i) {
-    grid[y][x] !== 0 && numPixels[grid[y][x]] !== undefined && numPixels[grid[y][x]].updateStage === i && numPixels[grid[y][x]].update(x, y);
+    grid[y][x] !== 0 && numPixels[grid[y][x]] !== undefined && numPixels[grid[y][x]].updateStage === i && randomSeed(ticks, x, y) && numPixels[grid[y][x]].update(x, y);
 };
 function updateTouchingPixel(x, y, type, action) {
     if (typeof action == 'function') {
@@ -1765,15 +1765,13 @@ function updateTick() {
                 if (ticks % 2 == 0) {
                     for (let y = 0; y < gridHeight; y++) {
                         for (let x = gridWidth - 1; x >= 0; x--) {
-                            randomSeed(ticks, x, y);
-                            updatePixel(x, y, updateStage);
+                            grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
                         }
                     }
                 } else {
                     for (let y = 0; y < gridHeight; y++) {
                         for (let x = 0; x < gridWidth; x++) {
-                            randomSeed(ticks, x, y);
-                            updatePixel(x, y, updateStage);
+                            grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
                         }
                     }
                 }
