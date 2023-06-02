@@ -1658,30 +1658,28 @@ function drawUI() {
         ctx.fillRect(5, 41, 300, 200);
         ctx.fillStyle = '#000';
         ctx.fillText('Last 10s:', 10, 42);
-        for (let i = 0; i < 100; i++) {
-            ctx.fillRect(5 + i * 3, 141 - fpsList[i], 3, fpsList[i]);
+        for (let i = 0; i < fpsList.length; i++) {
+            ctx.fillRect(5 + i * 3, 141 - Math.min(100, fpsList[i]), 3, Math.min(100,fpsList[i]));
         }
         let timingGradient = ctx.createLinearGradient(0, 141, 0, 241);
-        timingGradient.addColorStop(0, '#F00');
-        timingGradient.addColorStop(0.3, '#FF0');
-        timingGradient.addColorStop(0.6, '#0F0');
+        timingGradient.addColorStop(0, '#F0F');
+        timingGradient.addColorStop(0.1, '#F00');
+        timingGradient.addColorStop(0.25, '#F00');
+        timingGradient.addColorStop(0.4, '#FF0');
+        timingGradient.addColorStop(0.7, '#0F0');
         timingGradient.addColorStop(1, '#0F0');
-        // ctx.fillStyle = timingGradient;
-        // for (let i = 0; i < timingList.length; i++) {
-        //     ctx.fillRect(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25), 3, 4);
-        //     ctx.fillRect(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25 - timingList[i][1] * 6.25), 3, 4);
-        // }
         ctx.strokeStyle = timingGradient;
         ctx.lineJoin = 'bevel';
-        ctx.lineWidth = 1;
+        ctx.lineCap = 'butt';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(0, Math.max(141, 237 - timingList[0][0] * 6.25));
-        for (let i = 0; i < timingList.length; i++) {
-            ctx.lineTo(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25));
+        ctx.moveTo(5, Math.max(142, 240 - timingList[0][0] * 4.5));
+        for (let i = 1; i < timingList.length; i++) {
+            ctx.lineTo(5 + i * 3, Math.max(142, 240 - timingList[i][0] * 4.5));
         }
-        ctx.moveTo(0, Math.max(141, 237 - timingList[0][1] * 6.25));
-        for (let i = 0; i < timingList.length; i++) {
-            ctx.lineTo(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25 - timingList[i][1] * 6.25));
+        ctx.moveTo(5, Math.max(142, 240 - timingList[0][0] * 4.5 - timingList[0][1] * 4.5));
+        for (let i = 1; i < timingList.length; i++) {
+            ctx.lineTo(5 + i * 3, Math.max(142, 240 - timingList[i][0] * 4.5 - timingList[i][1] * 4.5));
         }
         ctx.stroke();
     }
@@ -1706,7 +1704,7 @@ function drawUI() {
         while (fpsList.length > 100) {
             fpsList.shift();
         }
-        while (timingList.length > 100) {
+        while (timingList.length > 101) {
             timingList.shift();
         }
     }
