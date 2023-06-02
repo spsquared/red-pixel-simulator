@@ -4996,6 +4996,40 @@ const pixels = {
         id: 'target',
         numId: 0
     },
+    pixelite_crystal: {
+        name: 'Rainbow Color Well',
+        description: 'A portal to the color vats hidden within the machinery of the Simulator',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            if (noAnimations && !forceRedraw) return;
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 19,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimCompatible: true,
+        id: 'pixelite_crystal',
+        numId: 0
+    },
     generic_color_well: {
         name: 'Rainbow Color Well',
         description: 'A portal to the color vats hidden within the machinery of the Simulator',

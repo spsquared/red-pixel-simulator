@@ -1302,6 +1302,7 @@ let fastSimulation = false;
 let runTicks = 0;
 const frameList = [];
 const fpsList = [];
+const timingList = [];
 const frameModulo = new Map(); // what do i name this??
 frameModulo.set(10, 0); // yes jank
 frameModulo.set(30, 0);
@@ -1659,12 +1660,22 @@ function drawUI() {
     if (debugInfo) {
         if (simulationPaused && fastSimulation) ctx.fillStyle = '#FFF';
         else ctx.fillStyle = '#0000004B';
-        ctx.fillRect(5, 41, 200, 100);
+        ctx.fillRect(5, 41, 300, 200);
         ctx.fillStyle = '#000';
+        ctx.fillText('Last 10s:', 10, 42);
         for (let i = 0; i < 100; i++) {
-            ctx.fillRect(5 + i * 2, 141 - fpsList[i], 2, fpsList[i]);
+            ctx.fillRect(5 + i * 3, 141 - fpsList[i], 3, fpsList[i]);
         }
-        ctx.fillText('Last 10 seconds:', 10, 42);
+        let timingGradient = ctx.createLinearGradient(0, 141, 0, 241);
+        timingGradient.addColorStop(0, '#F00');
+        timingGradient.addColorStop(0.3, '#FF0');
+        timingGradient.addColorStop(0.6, '#0F0');
+        timingGradient.addColorStop(1, '#0F0');
+        ctx.fillStyle = timingGradient;
+        for (let i = 0; i < timingList.length; i++) {
+            ctx.fillRect(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25), 3, 4);
+            ctx.fillRect(5 + i * 3, Math.max(141, 237 - timingList[i][0] * 6.25 - timingList[i][1] * 6.25), 3, 4);
+        }
     }
     let fpsText = `FPS: ${frameList.length} ${debugInfo ? `(${frameTime.toFixed(1)}ms/${averageFrameTime.toFixed(1)}ms)` : ''}`;
     let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(1)}ms/${averageTickTime.toFixed(1)}ms)` : ''}`;
@@ -1683,8 +1694,12 @@ function drawUI() {
     while (lastFpsList + 100 < performance.now()) {
         lastFpsList += 100;
         fpsList.push(frameList.length);
+        timingList.push([tickTime, frameTime]);
         while (fpsList.length > 100) {
-            fpsList.shift(1);
+            fpsList.shift();
+        }
+        while (timingList.length > 100) {
+            timingList.shift();
         }
     }
     ctx.textAlign = 'right';
@@ -1707,6 +1722,7 @@ function drawUI() {
         ctx.fillStyle = '#000';
         ctx.fillText('SLOWMODE', canvasResolution - 3, 64);
     }
+    if (PixSimAPI.inGame) drawPixSimUI();
 };
 function updateTick() {
     let tickStart = performance.now();
@@ -1736,7 +1752,7 @@ function updateTick() {
                     if (targetGrid[y][x] && grid[y][x] == pixNum.GOAL) fulfilledTargetCount++;
                 }
             }
-            let firePixelType = numPixels[pixNum.FIRE];
+            const firePixelType = numPixels[pixNum.FIRE];
             for (let y = 0; y < gridHeight; y++) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (fireGrid[y][x]) {
@@ -1784,7 +1800,7 @@ function updateTick() {
                     }
                 }
             }
-            let monsterPixelType = numPixels[pixNum.MONSTER];
+            const monsterPixelType = numPixels[pixNum.MONSTER];
             for (let y = gridHeight - 1; y >= 0; y--) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) monsterPixelType.update(x, y);
@@ -1797,6 +1813,7 @@ function updateTick() {
             let newMonsterCount = 0;
             let newFulfilledTargetCount = 0;
             let hasUnfulfilledTargets = false;
+            let pixeliteCounts = [0, 0];
             for (let y = 0; y < gridHeight; y++) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) newMonsterCount++;
@@ -1804,6 +1821,7 @@ function updateTick() {
                         if (grid[y][x] == pixNum.GOAL) newFulfilledTargetCount++;
                         else hasUnfulfilledTargets = true;
                     }
+                    if (grid[y][x] == pixNum.PIXELITE_CRYSTAL) pixeliteCounts[teamGrid[y][x] - 1]++;
                     if (musicGrid[y][x] != lastMusicGrid[y][x]) {
                         if (musicGrid[y][x] != 0) musicPixel(musicGrid[y][x], true);
                         else if (musicGrid[y][x] == 0) musicPixel(lastMusicGrid[y][x], false);
@@ -1829,7 +1847,8 @@ function updateTick() {
             placeableGrid
         ], {
             tick: ticks,
-            pixelAmounts: getPixSimPixelAmounts()
+            pixelAmounts: getPixSimPixelAmounts(),
+            pixeliteCounts: pixeliteCounts
         });
 
         lastTick = performance.now();
@@ -2105,6 +2124,7 @@ function createPixSimGrid() {
     }
 };
 const teamPixelAmounts = [{}, {}];
+const pixsimData = {};
 function resetPixSimPixelAmounts() {
     for (const id in pixels) {
         teamPixelAmounts[0][id] = 0;
@@ -2127,6 +2147,41 @@ function extractBooleanGrid(grid, compressed) {
         for (let j = 0; j < compressed[i]; j++, loc++) {
             grid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
         }
+    }
+};
+function drawPixSimUI() {
+    switch (PixSimAPI.gameModeData.id) {
+        case 'pixelcrash':
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = '#FF009955';
+            ctx.fillRect(canvasResolution / 4 - 3, canvasResolution - 26, canvasResolution / 4, 20);
+            ctx.fillStyle = '#3C70FF55';
+            ctx.fillRect(canvasResolution / 2 + 3, canvasResolution - 26, canvasResolution / 4, 20);
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#000000';
+            ctx.strokeRect(canvasResolution / 4 - 3, canvasResolution - 26, canvasResolution / 4, 20);
+            ctx.strokeRect(canvasResolution / 2 + 3, canvasResolution - 26, canvasResolution / 4, 20);
+            if (pixsimData.pixeliteCounts !== undefined) {
+                ctx.fillStyle = '#FF0099';
+                ctx.beginPath();
+                let width = (((canvasResolution / 4) - 4) * (pixsimData.pixeliteCounts[0] / 5));
+                ctx.moveTo(canvasResolution / 2 - 5, canvasResolution - 24);
+                ctx.lineTo(canvasResolution / 2 - 5, canvasResolution - 8);
+                ctx.lineTo(Math.max(canvasResolution / 4 - 1, canvasResolution / 2 - width - 10), canvasResolution - 8);
+                ctx.lineTo(canvasResolution / 2 - width - 5, canvasResolution - 24);
+                ctx.lineTo(canvasResolution / 2 - 5, canvasResolution - 24);
+                ctx.fill();
+                ctx.fillStyle = '#3C70FF';
+                ctx.beginPath();
+                width = (((canvasResolution / 4) - 4) * (pixsimData.pixeliteCounts[1] / 5));
+                ctx.moveTo(canvasResolution / 2 + 5, canvasResolution - 24);
+                ctx.lineTo(canvasResolution / 2 + 5, canvasResolution - 8);
+                ctx.lineTo(Math.min(canvasResolution * 3 / 4 + 1, canvasResolution / 2 + width + 10), canvasResolution - 8);
+                ctx.lineTo(canvasResolution / 2 + width + 5, canvasResolution - 24);
+                ctx.lineTo(canvasResolution / 2 + 5, canvasResolution - 24);
+                ctx.fill();
+            }
+            break;
     }
 };
 PixSimAPI.onGameStart = () => {
@@ -2195,16 +2250,16 @@ PixSimAPI.onGameTick = (compressedGrid, compressedTeamGrid, compressedBooleanGri
     extractBooleanGrid(placeableGrid, compressedBooleanGrids[3]);
     let teamPixelAmount1 = tickData.teamPixelAmounts[PixSimAPI.team];
     let teamPixelAmount2 = teamPixelAmounts[PixSimAPI.team];
-    let id;
     if (teamPixelAmount1 !== undefined) {
         for (let n in teamPixelAmount1) {
-            id = (numPixels[n] ?? numPixels[pixNum.MISSING]).id;
+            let id = (numPixels[n] ?? numPixels[pixNum.MISSING]).id;
             if (teamPixelAmount1[n] !== teamPixelAmount2[id]) {
                 teamPixelAmount2[id] = teamPixelAmount1[n] === '-i' ? -Infinity : (teamPixelAmount1[n] === 'i' ? Infinity : teamPixelAmount1[n]);
                 updatePixelAmount(id, teamPixelAmount2);
             }
         }
     }
+    pixsimData.pixeliteCounts = tickData.pixeliteCounts;
 };
 PixSimAPI.onGameInput = (type, data, team) => {
     switch (type) {

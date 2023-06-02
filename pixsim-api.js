@@ -270,7 +270,7 @@ class PixSimAPI {
             cb(this.#gridWidth, this.#gridHeight);
         });
     }
-    static sendTick(grid, teamGrid, booleanGrids, { tick, pixelAmounts }) {
+    static sendTick(grid, teamGrid, booleanGrids, { tick, pixelAmounts, pixeliteCounts }) {
         if (!this.#inGame || !this.#gameRunning || !(grid instanceof Array) || grid.length == 0 || grid[0].length == 0 || !(teamGrid instanceof Array) || teamGrid.length == 0 || teamGrid[0].length == 0 || !(booleanGrids instanceof Array) || typeof tick != 'number' || !(grid instanceof Array)) return;
         // simple compression algorithm that compresses well with large horizontal spans of the same pixel
         // not as good as png compression but png is very complex
@@ -334,7 +334,8 @@ class PixSimAPI {
             booleanGrids: compressedBooleanGrids,
             data: {
                 tick: tick,
-                teamPixelAmounts: pixelAmounts
+                teamPixelAmounts: pixelAmounts,
+                pixelitePixelCount: pixeliteCounts
             },
             origin: 'rps'
         });
