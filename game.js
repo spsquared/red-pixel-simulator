@@ -1,5 +1,5 @@
 window.addEventListener('error', (e) => {
-    modal('An error occured:', `<span style="color: red;">${e.message}<br>${e.filename} ${e.lineno}:${e.colno}</span>`, false);
+    modal('An error occured:', `<span style="color: red;">${e.message}<br/>${e.filename} ${e.lineno}:${e.colno}</span>`, false);
 });
 // Do not question why a lot of this code is written in procedural practices
 // RPS used to be a Khan Academy project so a lot of the code is written in procedural style
@@ -1390,10 +1390,11 @@ function drawFrame() {
     ctx.clearRect(0, 0, canvasResolution, canvasResolution);
     if (!fastSimulation || deltaTime % 10 == 0) {
         // set up draw
-        gamectx.fillStyle = backgroundColor + (255 - fadeEffect).toString(16);
+        gamectx.globalAlpha = (255 - fadeEffect) / 255;
+        gamectx.fillStyle = backgroundColor;
         gamectx.fillRect(0, 0, canvasResolution, canvasResolution);
         if (forceRedraw) {
-            gamectx.fillStyle = backgroundColor;
+            gamectx.globalAlpha = 1;
             gamectx.fillRect(0, 0, canvasResolution, canvasResolution);
             gridctx.clearRect(0, 0, canvasResolution, canvasResolution);
             firectx.clearRect(0, 0, canvasResolution, canvasResolution);
@@ -1402,6 +1403,7 @@ function drawFrame() {
         gridoverctx.clearRect(0, 0, canvasResolution, canvasResolution);
         teamsctx.clearRect(0, 0, canvasResolution, canvasResolution);
         abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
+        gamectx.globalAlpha = 1;
         for (let i in numPixels) {
             numPixels[i].rectangles.length = 0;
         }
@@ -1776,18 +1778,66 @@ function updateTick() {
                 explode(...explosion);
             }
             for (let updateStage = 0; updateStage <= 8; updateStage++) {
-                if (ticks % 2 == 0) {
-                    for (let y = 0; y < gridHeight; y++) {
-                        for (let x = gridWidth - 1; x >= 0; x--) {
-                            grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
+                switch (updateStage) {
+                    case 1:
+                        if (ticks % 2 == 0) {
+                            for (let y = gridHeight - 1; y >= 0; y--) {
+                                for (let x = gridWidth - 1; x >= 0; x--) {
+                                    grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
+                                }
+                            }
+                        } else {
+                            for (let y = gridHeight - 1; y >= 0; y--) {
+                                for (let x = 0; x < gridWidth; x++) {
+                                    grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
+                                }
+                            }
                         }
-                    }
-                } else {
-                    for (let y = 0; y < gridHeight; y++) {
-                        for (let x = 0; x < gridWidth; x++) {
-                            grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
+                        break;
+                    case 2:
+                        if (ticks % 2 == 0) {
+                            for (let y = 0; y < gridHeight; y++) {
+                                for (let x = gridWidth - 1; x >= 0; x--) {
+                                    grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
+                                }
+                            }
+                        } else {
+                            for (let y = 0; y < gridHeight; y++) {
+                                for (let x = 0; x < gridWidth; x++) {
+                                    grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
+                                }
+                            }
                         }
-                    }
+                        break;
+                    case 3:
+                        for (let y = 0; y < gridHeight; y++) {
+                            for (let x = gridWidth - 1; x >= 0; x--) {
+                                grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
+                            }
+                        }
+                        break;
+                    case 4:
+                        for (let y = 0; y < gridHeight; y++) {
+                            for (let x = 0; x < gridWidth; x++) {
+                                grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
+                            }
+                        }
+                        break;
+                    default:
+                        if (ticks % 2 == 0) {
+                            for (let y = 0; y < gridHeight; y++) {
+                                for (let x = gridWidth - 1; x >= 0; x--) {
+                                    grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
+                                }
+                            }
+                        } else {
+                            for (let y = 0; y < gridHeight; y++) {
+                                for (let x = 0; x < gridWidth; x++) {
+                                    grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
+                                }
+                            }
+                        }
+                        break;
                 }
                 for (let y = 0; y < gridHeight; y++) {
                     for (let x = 0; x < gridWidth; x++) {
