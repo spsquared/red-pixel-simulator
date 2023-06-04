@@ -482,7 +482,6 @@ pixsimJoinGameCodeJoin.onclick = (e) => {
 };
 function refreshGameList(games) {
     let scrollPos = pixsimJoinList.scrollTop;
-    pixsimJoinList.innerHTML = '';
     function type(t) {
         switch (t) {
             case 'vaultwars':
@@ -493,29 +492,63 @@ function refreshGameList(games) {
                 return 'Unknown';
         }
     };
+    if (pixsimJoinList.children[0].tagName == 'SPAN') pixsimJoinList.children[0].remove();
+    let existingIndex = 0;
     for (let game of games) {
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('joinTile');
-        const codeText = document.createElement('div');
-        codeText.classList.add('joinTileCode');
-        codeText.innerText = game.code;
-        wrapper.appendChild(codeText);
-        const sub1 = document.createElement('div');
-        sub1.classList.add('joinTileSub1');
-        sub1.innerText = `${game.open ? 'Running' : 'Open'} ❖ ${type(game.type)} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`;
-        wrapper.appendChild(sub1);
-        const sub2 = document.createElement('div');
-        sub2.classList.add('joinTileSub2');
-        sub2.innerText = `${game.teamSize}v${game.teamSize} ❖ ${game.allowsSpectators ? 'Spectators allowed' : 'Spectators not allowed'}`;
-        wrapper.appendChild(sub2);
-        wrapper.onclick = (e) => {
-            PixSimAPI.joinGame(game.code).then(handleJoinGame);
-            clickSound();
-        };
-        pixsimJoinList.appendChild(wrapper);
+        if (existingIndex < pixsimJoinList.children.length) {
+            const wrapper = pixsimJoinList.children[existingIndex];
+            const codeText = wrapper.children[0];
+            glitchTextTransition(codeText.innerText, game.code, (text) => {
+                codeText.innerText = text;
+            }, 100);
+            const sub1 = wrapper.children[1];
+            glitchTextTransition(sub1.innerText, `${game.open ? 'Running' : 'Open'} ❖ ${type(game.type)} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
+                sub1.innerText = text;
+            }, 100);
+            const sub2 = wrapper.children[2];
+            glitchTextTransition(sub2.innerText, `${game.teamSize}v${game.teamSize} ❖ ${game.allowsSpectators ? 'Spectators allowed' : 'Spectators not allowed'}`, (text) => {
+                sub2.innerText = text;
+            }, 100);
+            wrapper.onclick = (e) => {
+                PixSimAPI.joinGame(game.code).then(handleJoinGame);
+                clickSound();
+            };
+            existingIndex++;
+        } else {
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('joinTile');
+            const codeText = document.createElement('div');
+            codeText.classList.add('joinTileCode');
+            flipTextTransition('', game.code, (text) => {
+                codeText.innerText = text;
+            }, 100);
+            wrapper.appendChild(codeText);
+            const sub1 = document.createElement('div');
+            sub1.classList.add('joinTileSub1');
+            flipTextTransition('', `${game.open ? 'Running' : 'Open'} ❖ ${type(game.type)} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
+                sub1.innerText = text;
+            }, 100);
+            wrapper.appendChild(sub1);
+            const sub2 = document.createElement('div');
+            sub2.classList.add('joinTileSub2');
+            flipTextTransition('', `${game.teamSize}v${game.teamSize} ❖ ${game.allowsSpectators ? 'Spectators allowed' : 'Spectators not allowed'}`, (text) => {
+                sub2.innerText = text;
+            }, 100);
+            wrapper.appendChild(sub2);
+            wrapper.onclick = (e) => {
+                PixSimAPI.joinGame(game.code).then(handleJoinGame);
+                clickSound();
+            };
+            pixsimJoinList.appendChild(wrapper);
+        }
+    }
+    if (games.length < pixsimJoinList.children.length) {
+        for (let i = pixsimJoinList.children.length - 1; i >= games.length; i--) {
+            pixsimJoinList.children[i].remove();
+        }
     }
     if (games.length == 0) {
-        pixsimJoinList.innerHTML = '<span style="font-size: 18px; margin-top: 8px;">No open games!</span><span style="margin-bottom: 8px;">Check back later, or host a game yourself.</span>';
+        pixsimJoinList.innerHTML = '<span><span style="font-size: 18px; margin-top: 8px;">No open games!</span><br><span style="margin-bottom: 8px;">Check back later, or host a game yourself.</span></span>';
     }
     pixsimJoinList.scrollTop = scrollPos;
 };

@@ -1,5 +1,5 @@
 window.addEventListener('error', (e) => {
-    modal('An error occured:', `<span style="color: red;">${e.message}<br/>${e.filename} ${e.lineno}:${e.colno}</span>`, false);
+    modal('An error occured:', `<span style="color: red;">${e.message}<br>${e.filename} ${e.lineno}:${e.colno}</span>`, false);
 });
 // Do not question why a lot of this code is written in procedural practices
 // RPS used to be a Khan Academy project so a lot of the code is written in procedural style
@@ -60,6 +60,68 @@ function modal(title, subtitle, confirmation) {
             }
         });
     });
+};
+
+// text transitions (with the only generator functions for a while)
+function flipTextTransition(from, to, update, speed, block = 1) {
+    let gen = flipTextTransitionGenerator(from, to, block);
+    let animate = setInterval(() => {
+        let next = gen.next();
+        if (next.done) clearInterval(animate);
+        else update(next.value);
+    }, 1000 / speed);
+    return function stop() { clearInterval(animate) };
+};
+function* flipTextTransitionGenerator(from, to, block) {
+    let i = 0;
+    let addSpaces = to.length < from.length;
+    while (true) {
+        let text = to.substring(0, i);
+        if (addSpaces && i >= to.length) {
+            for (let j = to.length; j < i; j++) {
+                text += '⠀';
+            }
+        }
+        text += from.substring(i);
+        i += block;
+        if (i >= to.length + block && (!addSpaces || i >= from.length + block)) {
+            yield to;
+            break;
+        }
+        yield text;
+    }
+};
+function glitchTextTransition(from, to, update, speed, block = 1, glitchLength = 5) {
+    let gen = glitchTextTransitionGenerator(from, to, block, glitchLength);
+    let animate = setInterval(() => {
+        let next = gen.next();
+        if (next.done) clearInterval(animate);
+        else update(next.value);
+    }, 1000 / speed);
+    return function stop() { clearInterval(animate) };
+};
+function* glitchTextTransitionGenerator(from, to, block, glitchLength) {
+    let i = 0;
+    let addSpaces = to.length < from.length;
+    let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-=!@#$%^&*()_+`~[]\\{}|;\':",./?';
+    while (true) {
+        let text = to.substring(0, i - glitchLength);
+        if (addSpaces && i >= to.length) {
+            for (let j = to.length; j < i - glitchLength; j++) {
+                text += '⠀';
+            }
+        }
+        for (let j = Math.max(0, i - glitchLength); j < Math.min(i, Math.max(from.length, to.length)); j++) {
+            text += letters.charAt(~~(Math.random() * letters.length));
+        }
+        text += from.substring(i);
+        i += block;
+        if (i >= to.length + block + glitchLength && (!addSpaces || i >= from.length + block + glitchLength)) {
+            yield to;
+            break;
+        }
+        yield text;
+    }
 };
 
 // canvas
@@ -1653,7 +1715,7 @@ function drawUI() {
         ctx.fillStyle = '#000';
         ctx.fillText('Last 10s:', 10, 42);
         for (let i = 0; i < fpsList.length; i++) {
-            ctx.fillRect(5 + i * 3, 141 - Math.min(100, fpsList[i]), 3, Math.min(100,fpsList[i]));
+            ctx.fillRect(5 + i * 3, 141 - Math.min(100, fpsList[i]), 3, Math.min(100, fpsList[i]));
         }
         let timingGradient = ctx.createLinearGradient(0, 141, 0, 241);
         timingGradient.addColorStop(0, '#F0F');
@@ -2270,6 +2332,7 @@ PixSimAPI.onGameStart = () => {
         gridHeightText.disabled = true;
         document.getElementById('premadeSaves').style.display = 'none';
         resetPixelAmounts();
+        // animate the camera and useless glitch text thing
     });
 };
 PixSimAPI.onNewGridSize = createGrid;
