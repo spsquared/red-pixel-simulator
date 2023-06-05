@@ -2037,6 +2037,15 @@ function updateMouseControls() {
                 for (let pixelType in modifiedPixelCounts) {
                     if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id,);
                 }
+                if (!sandboxMode && !PixSimAPI.inGame) {
+                    saveCode = generateSaveCode();
+                    window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compressToBase64(JSON.stringify({
+                        code: saveCode,
+                        pixels: getPixelAmounts(),
+                        completed: currentPuzzleCompleted
+                    })));
+                    saveCodeText.value = saveCode;
+                }
             } else if (brush.mouseButton == 1) {
                 if (holdingControl) {
                     camera.x = Math.max(0, Math.min(camera.x + prevMX - mX, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
