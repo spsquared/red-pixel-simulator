@@ -79,7 +79,7 @@ function* flipTextTransitionGenerator(from, to, block) {
         let text = to.substring(0, i);
         if (addSpaces && i >= to.length) {
             for (let j = to.length; j < i; j++) {
-                text += '⠀';
+                text += ' ';
             }
         }
         text += from.substring(i);
@@ -91,8 +91,8 @@ function* flipTextTransitionGenerator(from, to, block) {
         yield text;
     }
 };
-function glitchTextTransition(from, to, update, speed, block = 1, glitchLength = 5) {
-    let gen = glitchTextTransitionGenerator(from, to, block, glitchLength);
+function glitchTextTransition(from, to, update, speed, block = 1, glitchLength = 5, advanceMod = 1) {
+    let gen = glitchTextTransitionGenerator(from, to, block, glitchLength, advanceMod);
     let animate = setInterval(() => {
         let next = gen.next();
         if (next.done) clearInterval(animate);
@@ -100,27 +100,29 @@ function glitchTextTransition(from, to, update, speed, block = 1, glitchLength =
     }, 1000 / speed);
     return function stop() { clearInterval(animate) };
 };
-function* glitchTextTransitionGenerator(from, to, block, glitchLength) {
+function* glitchTextTransitionGenerator(from, to, block, glitchLength, advanceMod) {
     let i = 0;
     let addSpaces = to.length < from.length;
     let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-=!@#$%^&*()_+`~[]\\{}|;\':",./?';
+    let a = 0;
     while (true) {
         let text = to.substring(0, i - glitchLength);
         if (addSpaces && i >= to.length) {
             for (let j = to.length; j < i - glitchLength; j++) {
-                text += '⠀';
+                text += ' ';
             }
         }
         for (let j = Math.max(0, i - glitchLength); j < Math.min(i, Math.max(from.length, to.length)); j++) {
             text += letters.charAt(~~(Math.random() * letters.length));
         }
         text += from.substring(i);
-        i += block;
+        if (a % advanceMod == 0) i += block;
         if (i >= to.length + block + glitchLength && (!addSpaces || i >= from.length + block + glitchLength)) {
             yield to;
             break;
         }
         yield text;
+        a++;
     }
 };
 

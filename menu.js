@@ -266,6 +266,7 @@ const levelSelectBody = document.getElementById('levelSelectBody');
 const pixsimMenu = document.getElementById('pixsimMenu');
 const pixsimMenuClose = document.getElementById('pixsimMenuClose');
 const pixsimMenuConnecting = document.getElementById('pixsimMenuConnecting');
+const pixsimMenuConnectingText = document.getElementById('pixsimMenuConnectingText');
 const pixsimMenuConnectingTip = document.getElementById('pixsimMenuConnectingTip');
 const pixsimMenuContents = document.getElementById('pixsimMenuContents');
 sandboxButton.onclick = (e) => {
@@ -310,10 +311,20 @@ multiplayerButton.onclick = (e) => {
     pixsimMenuConnectingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
     pixsimMenuContents.style.transform = '';
     pixsimMenu.style.transform = 'translateY(100vh)';
+    glitchTextTransition(pixsimMenuConnectingText.innerText, 'Connecting to PixSim API...', (text) => {
+        pixsimMenuConnectingText.innerText = text;
+    }, 50, 1, 40, 2);
+    let glitch = setInterval(() => {
+        glitchTextTransition(pixsimMenuConnectingText.innerText, 'Connecting to PixSim API...', (text) => {
+            pixsimMenuConnectingText.innerText = text;
+        }, 50, 1, 40, 2);
+    }, 5000);
     PixSimAPI.connect().then(() => {
+        clearInterval(glitch);
         pixsimMenuConnecting.style.opacity = 0;
         pixsimMenuConnecting.style.pointerEvents = 'none';
     }, (err) => {
+        clearInterval(glitch);
         modal('Could not connect to PixSim API:', `<span style="color: red;">${err.message}</span>`).then(() => pixsimMenuClose.click());
     });
 };
@@ -498,21 +509,23 @@ function refreshGameList(games) {
         if (existingIndex < pixsimJoinList.children.length) {
             const wrapper = pixsimJoinList.children[existingIndex];
             const codeText = wrapper.children[0];
-            glitchTextTransition(codeText.innerText, game.code, (text) => {
-                codeText.innerText = text;
-            }, 100);
-            const sub1 = wrapper.children[1];
-            glitchTextTransition(sub1.innerText, `${game.open ? 'Running' : 'Open'} ❖ ${type(game.type)} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
-                sub1.innerText = text;
-            }, 100);
-            const sub2 = wrapper.children[2];
-            glitchTextTransition(sub2.innerText, `${game.teamSize}v${game.teamSize} ❖ ${game.allowsSpectators ? 'Spectators allowed' : 'Spectators not allowed'}`, (text) => {
-                sub2.innerText = text;
-            }, 100);
-            wrapper.onclick = (e) => {
-                PixSimAPI.joinGame(game.code).then(handleJoinGame);
-                clickSound();
-            };
+            if (codeText.innerText != game.code) {
+                glitchTextTransition(codeText.innerText, game.code, (text) => {
+                    codeText.innerText = text;
+                }, 100);
+                const sub1 = wrapper.children[1];
+                glitchTextTransition(sub1.innerText, `${game.open ? 'Running' : 'Open'} ❖ ${type(game.type)} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
+                    sub1.innerText = text;
+                }, 100);
+                const sub2 = wrapper.children[2];
+                glitchTextTransition(sub2.innerText, `${game.teamSize}v${game.teamSize} ❖ ${game.allowsSpectators ? 'Spectators allowed' : 'Spectators not allowed'}`, (text) => {
+                    sub2.innerText = text;
+                }, 100);
+                wrapper.onclick = (e) => {
+                    PixSimAPI.joinGame(game.code).then(handleJoinGame);
+                    clickSound();
+                };
+            }
             existingIndex++;
         } else {
             const wrapper = document.createElement('div');

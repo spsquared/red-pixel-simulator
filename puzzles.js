@@ -378,7 +378,7 @@ function loadPuzzle(section, level) {
         currentPuzzleLevel = parseInt(level);
         const puzzle = puzzles[section].levels[level];
         currentPuzzleId = puzzle.id;
-        glitchTextTransition(levelName.innerText, `${parseInt(section) + 1}-${parseInt(level) + 1} ${puzzle.name}`, (text) => {
+        glitchTextTransition('', `${parseInt(section) + 1}-${parseInt(level) + 1} ${puzzle.name}`, (text) => {
             levelName.innerText = text;
         }, 100);
         levelDescription.innerHTML = puzzle.description;
