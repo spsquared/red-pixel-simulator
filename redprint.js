@@ -19,6 +19,7 @@ function rpResetCanvases() {
     rpDCtx.mozImageSmoothingEnabled = false;
 };
 rpCanvas.addEventListener('contextmenu', e => e.preventDefault());
+rpCanvas.addEventListener('wheel', e => e.preventDefault());
 
 // grid
 let rpGridWidth = 0;
