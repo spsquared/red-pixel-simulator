@@ -59,6 +59,8 @@ function resetCanvases() {
     placeableCanvas.height = canvasResolution;
     noiseCanvas.width = gridWidth;
     noiseCanvas.height = gridHeight;
+    noiseBufferCanvas.width = canvasResolution;
+    noiseBufferCanvas.height = canvasResolution;
     teamsctx.width = canvasResolution;
     teamsctx.height = canvasResolution;
     bufferCanvas.width = canvasResolution;
@@ -83,6 +85,8 @@ function resetCanvases() {
     placeablectx.webkitImageSmoothingEnabled = false;
     noisectx.imageSmoothingEnabled = false;
     noisectx.webkitImageSmoothingEnabled = false;
+    noisebufferctx.imageSmoothingEnabled = false;
+    noisebufferctx.webkitImageSmoothingEnabled = false;
     teamsctx.imageSmoothingEnabled = false;
     teamsctx.webkitImageSmoothingEnabled = false;
     bufferctx.imageSmoothingEnabled = false;
@@ -94,6 +98,7 @@ function resetCanvases() {
             noisectx.fillRect(j, i, 1, 1);
         }
     }
+    forceRedraw = true;
     ctx.textRendering = 'optimizeSpeed';
     rpResetCanvases();
 };
@@ -1272,11 +1277,11 @@ function draw() {
     bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
     bufferctx.globalCompositeOperation = 'source-over';
 
-    // mouse controls
-    updateBrush();
-
     // frame
     drawFrame();
+
+    // mouse controls
+    updateBrush();
 
     // update camera
     updateCamera();
