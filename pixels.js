@@ -4992,14 +4992,13 @@ const pixels = {
         numId: 0
     },
     pixelite_crystal: {
-        name: 'Rainbow Color Well',
-        description: 'A portal to the color vats hidden within the machinery of the Simulator',
+        name: 'Pixelite Crystal',
+        description: 'i guess this is a crystal with a conic gradient',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             if (noAnimations && !forceRedraw) return;
             ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(0, 0, 0)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                fillPixels(x, y, width, height, ctx);
+                if (!noAnimations || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 16) % 8], ctx);
             });
         },
         update: function (x, y) { },
@@ -5008,7 +5007,19 @@ const pixels = {
             ctx.fillStyle = 'rgb(0, 0, 0)';
             ctx.fillRect(0, 0, 50, 50);
         },
-        prerender: function () { },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(30);
+            let gradient = ctx.createConicGradient(0, 100, 100);
+            ctx.fillStyle = 'rgb(0, 200, 255)';
+            this.prerenderedFrames.push(toImage());
+            this.prerenderedFrames.push(toImage());
+            this.prerenderedFrames.push(toImage());
+            this.prerenderedFrames.push(toImage());
+            this.prerenderedFrames.push(toImage());
+            this.prerenderedFrames.push(toImage());
+            this.prerenderedFrames.push(toImage());
+            this.prerenderedFrames.push(toImage());
+        },
         prerenderedFrames: [],
         blastResistance: 19,
         flammability: 0,
@@ -5281,13 +5292,13 @@ const pixels = {
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillStyle = 'rgb(140, 140, 140)';
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'hsl(0, 100%, 50%)';
             ctx.fillRect(10, 10, 30, 30);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            ctx.fillRect(20, 10, 10, 30);
-            ctx.fillRect(10, 20, 30, 10);
+            ctx.fillStyle = 'rgb(180, 180, 180)';
+            ctx.fillRect(20, 0, 10, 50);
+            ctx.fillRect(0, 20, 50, 10);
         },
         prerender: function () { },
         prerenderedFrames: [],

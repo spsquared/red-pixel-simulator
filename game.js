@@ -478,7 +478,7 @@ function getDistance(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 };
 
-// pixel utilities
+// shared pixel functions
 function PreRenderer(size = 60) {
     const rendCanvas = document.createElement('canvas');
     rendCanvas.width = size;
@@ -808,7 +808,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             if (moveX !== -1) {
                 for (let i = moveX; i < x; i++) {
-                    if (!canMoveTo(i + 1, y)) return false;
+                    if (!canMoveTo(i, y)) return false;
                 }
                 for (let i = moveX; i < x; i++) {
                     nextGrid[y][i] = grid[y][i + 1];
@@ -845,7 +845,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             if (moveY !== -1) {
                 for (let i = moveY; i < y; i++) {
-                    if (!canMoveTo(x, i + 1)) return false;
+                    if (!canMoveTo(x, i)) return false;
                 }
                 for (let i = moveY; i < y; i++) {
                     nextGrid[i][x] = grid[i + 1][x];
@@ -882,7 +882,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             if (moveX != -1) {
                 for (let i = moveX; i > x; i--) {
-                    if (!canMoveTo(i - 1, y)) return false;
+                    if (!canMoveTo(i, y)) return false;
                 }
                 for (let i = moveX; i > x; i--) {
                     nextGrid[y][i] = grid[y][i - 1];
@@ -919,7 +919,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             if (moveY !== -1) {
                 for (let i = moveY; i > y; i--) {
-                    if (!canMoveTo(x, i - 1)) return false;
+                    if (!canMoveTo(x, i)) return false;
                 }
                 for (let i = moveY; i > y; i--) {
                     nextGrid[i][x] = grid[i - 1][x];
@@ -1276,6 +1276,7 @@ function draw() {
     bufferctx.globalAlpha = 1;
     bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
     bufferctx.globalCompositeOperation = 'source-over';
+    ctx.setLineDash([]);
 
     // frame
     drawFrame();
@@ -1623,6 +1624,7 @@ function drawUI() {
         ctx.lineJoin = 'bevel';
         ctx.lineCap = 'butt';
         ctx.lineWidth = 2;
+        ctx.setLineDash([]);
         ctx.beginPath();
         ctx.moveTo(5, Math.max(142, 240 - timingList[0][0] * 4.5));
         for (let i = 1; i < timingList.length; i++) {
