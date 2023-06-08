@@ -1847,9 +1847,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push((x < gridWidth - 1 && pixelAt(x + 1, y).pushable) ? x + 1 : x, y, 0)) {
-                if (y > 0 && !isAir(x, y - 1) && grid[y - 1][x] != pixNum.STICKY_PISTON_LEFT && pixelAt(x, y - 1).pushable) push(x, y - 1, 0);
-                if (y < gridHeight - 1 && !isAir(x, y + 1) && grid[y + 1][x] != pixNum.STICKY_PISTON_LEFT && pixelAt(x, y + 1).pushable) push(x, y + 1, 0);
+            if (push((x < gridWidth - 1 && pixelAt(x + 1, y).pushable && !((grid[y][x + 1] == pixNum.GOAL && targetGrid[y][x + 1]))) ? x + 1 : x, y, 0)) {
+                if (y > 0 && !isAir(x, y - 1) && grid[y - 1][x] != pixNum.STICKY_PISTON_LEFT && pixelAt(x, y - 1).pushable && !((grid[y - 1][x] == pixNum.GOAL && targetGrid[y - 1][x]))) push(x, y - 1, 0);
+                if (y < gridHeight - 1 && !isAir(x, y + 1) && grid[y + 1][x] != pixNum.STICKY_PISTON_LEFT && pixelAt(x, y + 1).pushable && !((grid[y + 1][x] == pixNum.GOAL && targetGrid[y + 1][x]))) push(x, y + 1, 0);
             }
         },
         drawPreview: function (ctx) {
@@ -1900,9 +1900,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push(x, (y < gridHeight - 1 && pixelAt(x, y + 1).pushable) ? y + 1 : y, 1)) {
-                if (x > 0 && !isAir(x - 1, y) && grid[y][x - 1] != pixNum.STICKY_PISTON_UP && pixelAt(x - 1, y).pushable) push(x - 1, y, 1);
-                if (x < gridWidth - 1 && !isAir(x + 1, y) && grid[y][x + 1] != pixNum.STICKY_PISTON_UP && pixelAt(x + 1, y).pushable) push(x + 1, y, 1);
+            if (push(x, (y < gridHeight - 1 && pixelAt(x, y + 1).pushable && !((grid[y + 1][x] == pixNum.GOAL && targetGrid[y + 1][x]))) ? y + 1 : y, 1)) {
+                if (x > 0 && !isAir(x - 1, y) && grid[y][x - 1] != pixNum.STICKY_PISTON_UP && pixelAt(x - 1, y).pushable && !((grid[y][x - 1] == pixNum.GOAL && targetGrid[y][x - 1]))) push(x - 1, y, 1);
+                if (x < gridWidth - 1 && !isAir(x + 1, y) && grid[y][x + 1] != pixNum.STICKY_PISTON_UP && pixelAt(x + 1, y).pushable && !((grid[y][x + 1] == pixNum.GOAL && targetGrid[y][x + 1]))) push(x + 1, y, 1);
             }
         },
         drawPreview: function (ctx) {
@@ -1953,9 +1953,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push((x > 0 && pixelAt(x - 1, y).pushable) ? x - 1 : x, y, 2)) {
-                if (y > 0 && !isAir(x, y - 1) && grid[y - 1][x] != pixNum.STICKY_PISTON_RIGHT && pixelAt(x, y - 1).pushable) push(x, y - 1, 2);
-                if (y < gridHeight - 1 && !isAir(x, y + 1) && grid[y + 1][x] != pixNum.STICKY_PISTON_RIGHT && pixelAt(x, y + 1).pushable) push(x, y + 1, 2);
+            if (push((x > 0 && pixelAt(x - 1, y).pushable && !((grid[y][x - 1] == pixNum.GOAL && targetGrid[y][x - 1]))) ? x - 1 : x, y, 2)) {
+                if (y > 0 && !isAir(x, y - 1) && grid[y - 1][x] != pixNum.STICKY_PISTON_RIGHT && pixelAt(x, y - 1).pushable && !((grid[y - 1][x] == pixNum.GOAL && targetGrid[y - 1][x]))) push(x, y - 1, 2);
+                if (y < gridHeight - 1 && !isAir(x, y + 1) && grid[y + 1][x] != pixNum.STICKY_PISTON_RIGHT && pixelAt(x, y + 1).pushable && !((grid[y + 1][x] == pixNum.GOAL && targetGrid[y + 1][x]))) push(x, y + 1, 2);
             }
         },
         drawPreview: function (ctx) {
@@ -2006,9 +2006,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push(x, (y > 0 && pixelAt(x, y - 1).pushable) ? y - 1 : y, 3)) {
-                if (x > 0 && !isAir(x - 1, y) && grid[y][x - 1] != pixNum.STICKY_PISTON_DOWN && pixelAt(x - 1, y).pushable) push(x - 1, y, 3);
-                if (x < gridWidth - 1 && !isAir(x + 1, y) && grid[y][x + 1] != pixNum.STICKY_PISTON_DOWN && pixelAt(x + 1, y).pushable) push(x + 1, y, 3);
+            if (push(x, (y > 0 && pixelAt(x, y - 1).pushable && !((grid[y - 1][x] == pixNum.GOAL && targetGrid[y - 1][x]))) ? y - 1 : y, 3)) {
+                if (x > 0 && !isAir(x - 1, y) && grid[y][x - 1] != pixNum.STICKY_PISTON_DOWN && pixelAt(x - 1, y).pushable && !((grid[y][x - 1] == pixNum.GOAL && targetGrid[y][x - 1]))) push(x - 1, y, 3);
+                if (x < gridWidth - 1 && !isAir(x + 1, y) && grid[y][x + 1] != pixNum.STICKY_PISTON_DOWN && pixelAt(x + 1, y).pushable && !((grid[y][x + 1] == pixNum.GOAL && targetGrid[y][x + 1]))) push(x + 1, y, 3);
             }
         },
         drawPreview: function (ctx) {
