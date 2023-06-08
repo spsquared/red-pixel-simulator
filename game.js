@@ -162,6 +162,7 @@ const camera = {
     x: 0,
     y: 0,
     scale: 1,
+    shakeScale: 0,
     mUp: false,
     mDown: false,
     mLeft: false,
@@ -1226,6 +1227,7 @@ function explode(x1, y1, size, defer) {
             }
         }
     }
+    camera.shakeScale += size / (1 + camera.shakeScale * 0.5);
 };
 
 // draw and update
@@ -1236,6 +1238,7 @@ let simulationPaused = true;
 let slowSimulation = false;
 let fastSimulation = false;
 let runTicks = 0;
+let fps = 60;
 const frameList = [];
 const fpsList = [];
 const timingList = [];
@@ -1248,6 +1251,13 @@ let frameTime = 0;
 let tickTime = 0;
 let averageFrameTime = 0;
 let averageTickTime = 0;
+const timingGradient = ctx.createLinearGradient(0, 141, 0, 241);
+timingGradient.addColorStop(0, '#F0F');
+timingGradient.addColorStop(0.1, '#F00');
+timingGradient.addColorStop(0.25, '#F00');
+timingGradient.addColorStop(0.4, '#FF0');
+timingGradient.addColorStop(0.7, '#0F0');
+timingGradient.addColorStop(1, '#0F0');
 function draw() {
     if (inMenuScreen) return;
 
@@ -1278,50 +1288,17 @@ function draw() {
     bufferctx.globalCompositeOperation = 'source-over';
     ctx.setLineDash([]);
 
-    // frame
     drawFrame();
-
-    // mouse controls
     updateBrush();
-
-    // update camera
     updateCamera();
-
-    // simulate pixels
     updateTick();
 
-    // fps
     let now = performance.now();
     while (frameList[0] + 1000 < now) {
         frameList.shift();
     }
-
-    // ui
     drawUI();
 
-    // totally nothing
-    if (horribleLagMode) {
-        let iterations = 0;
-        for (let ny = 0; ny < gridHeight * 2; ny++) {
-            for (let nx = 0; nx < gridWidth * 2; nx++) {
-                ctx.fillStyle = `rgba(${Math.random() * 64}, ${Math.random() * 64}, ${Math.random() * 64}, ${Math.random() * 0.2})`;
-                ctx.fillRect(nx * gridScale / 2, ny * gridScale / 2, gridScale / 2, gridScale / 2);
-            }
-        }
-        function fry() {
-            const uri = canvas.toDataURL('image/jpeg', 0.05 + Math.random() * 0.1);
-            const img = new Image();
-            img.onload = () => {
-                ctx.clearRect(0, 0, canvasResolution, canvasResolution);
-                ctx.drawImage(img, 0, 0);
-                if (++iterations < 5) fry();
-            }
-            img.src = uri;
-        };
-        fry();
-    }
-
-    // set up for next frame
     prevMXGrid = mXGrid;
     prevMYGrid = mYGrid;
     prevMX = mX;
@@ -1332,7 +1309,7 @@ function draw() {
 function drawFrame() {
     let frameStart = performance.now();
     ctx.clearRect(0, 0, canvasResolution, canvasResolution);
-    if (!fastSimulation || deltaTime % 10 == 0) {
+    if (!fastSimulation || frameModulo.get(10) >= 10) {
         // set up draw
         gamectx.globalAlpha = (255 - fadeEffect) / 255;
         gamectx.fillStyle = backgroundColor;
@@ -1449,7 +1426,12 @@ function drawFrame() {
 
         forceRedraw = false;
     }
-    ctx.drawImage(gameCanvas, 0, 0);
+    if (enableCameraShake) {
+        let dshake = Math.round(2 * camera.shakeScale);
+        ctx.drawImage(gameCanvas, -Math.round(Math.random()*dshake), -Math.round(Math.random()*dshake), canvasResolution + dshake, canvasResolution + dshake);
+    } else {
+        ctx.drawImage(gameCanvas, 0, 0);
+    }
     if (inResetState || sandboxMode || PixSimAPI.inGame) ctx.drawImage(placeableCanvas, 0, 0);
 
     drawBrush();
@@ -1593,6 +1575,7 @@ function updateCamera() {
             camera.x = Math.max(0, Math.min(camera.x + 20, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
             forceRedraw = true;
         }
+        camera.shakeScale *= 0.8;
         if (forceRedraw) {
             mXGrid = Math.floor((mX + camera.x) * screenScale);
             mYGrid = Math.floor((mY + camera.y) * screenScale);
@@ -1606,20 +1589,12 @@ function drawUI() {
     ctx.textAlign = 'left';
     if (debugInfo) {
         if (simulationPaused && fastSimulation) ctx.fillStyle = '#FFF';
-        else ctx.fillStyle = '#0000004B';
+        else ctx.fillStyle = '#7F7F7F7F';
         ctx.fillRect(5, 41, 300, 200);
         ctx.fillStyle = '#000';
-        ctx.fillText('Last 10s:', 10, 42);
         for (let i = 0; i < fpsList.length; i++) {
             ctx.fillRect(5 + i * 3, 141 - Math.min(100, fpsList[i]), 3, Math.min(100, fpsList[i]));
         }
-        let timingGradient = ctx.createLinearGradient(0, 141, 0, 241);
-        timingGradient.addColorStop(0, '#F0F');
-        timingGradient.addColorStop(0.1, '#F00');
-        timingGradient.addColorStop(0.25, '#F00');
-        timingGradient.addColorStop(0.4, '#FF0');
-        timingGradient.addColorStop(0.7, '#0F0');
-        timingGradient.addColorStop(1, '#0F0');
         ctx.strokeStyle = timingGradient;
         ctx.lineJoin = 'bevel';
         ctx.lineCap = 'butt';
@@ -1635,6 +1610,23 @@ function drawUI() {
             ctx.lineTo(5 + i * 3, Math.max(142, 240 - timingList[i][0] * 4.5 - timingList[i][1] * 4.5));
         }
         ctx.stroke();
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(8, 176);
+        ctx.lineTo(302, 176);
+        ctx.stroke();
+        ctx.fillText('FPS (10s)', 10, 42);
+        ctx.fillText('Timings (10s)', 10, 142);
+        // oops deprecated features
+        let heapUsed = Math.round(performance.memory.usedJSHeapSize / 1048576 * 100) / 100;
+        let heapAvailable = Math.round(performance.memory.jsHeapSizeLimit / 1048576 * 100) / 100;
+        let heapText = `Heap: ${heapUsed}/${heapAvailable}MB (${Math.round(heapUsed / heapAvailable * 100)}%)`;
+        ctx.fillStyle = '#FFF5';
+        ctx.fillRect(1, 241, ctx.measureText(heapText) + 4, 20);
+        ctx.fillStyle = '#000';
+        ctx.fillText(heapText, 3, 242);
     }
     let fpsText = `FPS: ${frameList.length} ${debugInfo ? `(${frameTime.toFixed(1)}ms/${averageFrameTime.toFixed(1)}ms)` : ''}`;
     let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(1)}ms/${averageTickTime.toFixed(1)}ms)` : ''}`;
@@ -1855,7 +1847,8 @@ function updateTick() {
         ], {
             tick: ticks,
             pixelAmounts: getPixSimPixelAmounts(),
-            pixeliteCounts: pixeliteCounts
+            pixeliteCounts: pixeliteCounts,
+            cameraShake: camera.shakeScale
         });
 
         lastTick = performance.now();
@@ -1870,7 +1863,7 @@ async function startDrawLoop() {
         await new Promise((resolve, reject) => {
             window.requestAnimationFrame(() => {
                 draw();
-                setTimeout(resolve, ~~(1000 / 60 - (performance.now() - start) - 0.5));
+                setTimeout(resolve, ~~(1000 / fps - (performance.now() - start) - 0.5));
             });
         });
     }
@@ -2277,6 +2270,7 @@ PixSimAPI.onGameTick = (compressedGrid, compressedTeamGrid, compressedBooleanGri
         }
     }
     pixsimData.pixeliteCounts = tickData.pixeliteCounts;
+    camera.shakeScale = tickData.cameraShake
 };
 PixSimAPI.onGameInput = (type, data, team) => {
     switch (type) {
@@ -2745,15 +2739,16 @@ gridHeightText.oninput = (e) => {
 
 // settings
 let backgroundColor = '#ffffff';
-let noNoise = window.localStorage.getItem('noNoise') == '1';
-let noAnimations = window.localStorage.getItem('noAnimations') == '1';
+let noNoise = window.localStorage.getItem('noNoise') === '1';
+let noAnimations = window.localStorage.getItem('noAnimations') === '1';
 let maxLaserDepth = 512;
 let fadeEffect = parseInt(window.localStorage.getItem('noNoise') ?? 127);
+let enableCameraShake = (window.localStorage.getItem('cameraShake') ?? '1') === '1';
 let debugInfo = false;
-let horribleLagMode = false;
 const noNoiseButton = document.getElementById('noNoise');
 const noAnimationsButton = document.getElementById('noAnimation');
 const fadeEffectButton = document.getElementById('fadeEffect');
+const cameraShakeButton = document.getElementById('cameraShake');
 noNoiseButton.onclick = (e) => {
     noNoise = !noNoise;
     if (!noNoise) noNoiseButton.style.backgroundColor = 'lime';
@@ -2774,6 +2769,13 @@ fadeEffectButton.onclick = (e) => {
     else fadeEffectButton.style.backgroundColor = 'red';
     window.localStorage.setItem('fadeEffect', fadeEffect);
 };
+cameraShakeButton.onclick = (e) => {
+    enableCameraShake = !enableCameraShake;
+    if (enableCameraShake) cameraShakeButton.style.backgroundColor = 'lime';
+    else cameraShakeButton.style.backgroundColor = 'red';
+    forceRedraw = true;
+    window.localStorage.setItem('cameraShake', enableCameraShake ? 1 : 0);
+};
 window.addEventListener('load', () => {
     if (!noNoise) noNoiseButton.style.backgroundColor = 'lime';
     else noNoiseButton.style.backgroundColor = 'red';
@@ -2781,6 +2783,8 @@ window.addEventListener('load', () => {
     else noAnimationsButton.style.backgroundColor = 'red';
     if (fadeEffect) fadeEffectButton.style.backgroundColor = 'lime';
     else fadeEffectButton.style.backgroundColor = 'red';
+    if (enableCameraShake) cameraShakeButton.style.backgroundColor = 'lime';
+    else cameraShakeButton.style.backgroundColor = 'red';
 });
 document.getElementById('changeResolution').onclick = (e) => {
     let newRes = window.prompt('Enter new resolution: ', canvasResolution);

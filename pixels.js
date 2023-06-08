@@ -746,13 +746,13 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
-                if (random() < 0.001) {
-                    nextGrid[y][x] = pixNum.WATER;
-                    if (random() < 0.95) nextGrid[ay][ax] = pixNum.ICE;
-                    return true;
-                } else return false;
-            })) return;
+            // if (updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
+            //     if (random() < 0.001) {
+            //         nextGrid[y][x] = pixNum.WATER;
+            //         if (random() < 0.95) nextGrid[ay][ax] = pixNum.ICE;
+            //         return true;
+            //     } else return false;
+            // })) return;
             let touchingIce = 10;
             updateTouchingPixel(x, y, pixNum.ICE, function (ax, ay) {
                 touchingIce *= 2;
@@ -1508,6 +1508,10 @@ const pixels = {
                 explode(x, y, 5, true);
             });
             updateTouchingPixel(x, y, pixNum.SNOW, function (ax, ay) {
+                teamGrid[y][x] = 0;
+                explode(x, y, 6, true);
+            });
+            updateTouchingPixel(x, y, pixNum.ICE, function (ax, ay) {
                 teamGrid[y][x] = 0;
                 explode(x, y, 6, true);
             });

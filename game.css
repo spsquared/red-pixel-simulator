@@ -242,12 +242,12 @@
     height: 40px;
     font-size: 14px;
 }
-#noNoise, #noAnimation, #fadeEffect, #changeResolution {
+#noNoise, #noAnimation, #fadeEffect, #cameraShake, #changeResolution {
     margin-left: unset;
     font-size: 12px;
     border-width: 3px;
 }
-#noNoise, #noAnimation {
+#noNoise, #noAnimation, #cameraShake {
     background-color: lime;
 }
 #fadeEffect {

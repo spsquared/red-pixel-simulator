@@ -91,7 +91,8 @@ const loadingTips = [
     'All of <span style="color: #FF0000;">Red Pixel Simulator</span> (including music!) is made by SP and SP^2!',
     'Use the RedPrint Editor to save contraptions you use a lot.',
     'Some levels are very RNG-based; messing around randomly usually works in those levels',
-    'There exists a few pixels that are not in the Pixel Picker...'
+    'There exists a few pixels that are not in the Pixel Picker...',
+    '"Rafting Revisited" originally started as a play on how <span style="color: #0099FF;">Blue Pixel Simulator!</span> got multiple rafting puzzles as a "lazy workaround".'
 ];
 const loadingTip = document.getElementById('loadingTip');
 function setTransitionTimeout(cb, ms) {
