@@ -162,7 +162,7 @@ const camera = {
     x: 0,
     y: 0,
     scale: 1,
-    shakeScale: 0,
+    shakeIntensity: 0,
     mUp: false,
     mDown: false,
     mLeft: false,
