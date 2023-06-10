@@ -327,6 +327,8 @@ function rpDrawBrush() {
 function startRPDrawLoop() {
     let loop = setInterval(() => {
         window.requestAnimationFrame(() => {
+            const rect = rpCanvas.getBoundingClientRect();
+            if (rect.top > window.innerHeight || rect.bottom < 0) return;
             let cameraTemp = {
                 x: camera.x,
                 y: camera.y,

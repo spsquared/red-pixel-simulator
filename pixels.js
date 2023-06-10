@@ -571,16 +571,8 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (y > 0) {
-                if (grid[y - 1][x] == pixNum.LAVA) {
-                    if (canMoveTo(x, y - 1) && random() < 0.25) {
-                        nextGrid[y][x] = pixNum.LAVA;
-                        nextGrid[y - 1][x] = pixNum.STONE;
-                        let team = teamGrid[y][x];
-                        teamGrid[y][x] = teamGrid[y - 1][x];
-                        teamGrid[y - 1][x] = team;
-                    }
-                }
+            if (y > 0 && grid[y - 1][x] == pixNum.LAVA && canMoveTo(x, y - 1) && random() < 0.25) {
+                move(x, y - 1, x, y);
             }
         },
         drawPreview: function (ctx) {

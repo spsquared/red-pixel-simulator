@@ -1227,7 +1227,7 @@ function explode(x1, y1, size, defer) {
             }
         }
     }
-    camera.shakeScale += size / (1 + camera.shakeScale * 0.5);
+    camera.shakeIntensity += size / (1 + camera.shakeIntensity * 0.5);
 };
 
 // draw and update
@@ -1294,7 +1294,7 @@ function draw() {
     updateTick();
 
     let now = performance.now();
-    while (frameList[0] + 1000 < now) {
+    while (frameList[0] + 1000 <= now) {
         frameList.shift();
     }
     drawUI();
@@ -1426,9 +1426,11 @@ function drawFrame() {
 
         forceRedraw = false;
     }
-    if (enableCameraShake) {
-        let dshake = Math.round(2 * camera.shakeScale);
-        ctx.drawImage(gameCanvas, -Math.round(Math.random()*dshake), -Math.round(Math.random()*dshake), canvasResolution + dshake, canvasResolution + dshake);
+    if (enableCameraShake && Math.round(camera.shakeIntensity) > 0) {
+        let shakeX = Math.round(Math.random() * (2 * camera.shakeIntensity) - camera.shakeIntensity);
+        let shakeY = Math.round(Math.random() * (2 * camera.shakeIntensity) - camera.shakeIntensity);
+        let shakeSizeIncrease = Math.max(Math.abs(shakeX), Math.abs(shakeY));
+        ctx.drawImage(gameCanvas, Math.min(shakeX, 0), Math.min(shakeY, 0), canvasResolution + shakeSizeIncrease, canvasResolution + shakeSizeIncrease);
     } else {
         ctx.drawImage(gameCanvas, 0, 0);
     }
@@ -1575,7 +1577,7 @@ function updateCamera() {
             camera.x = Math.max(0, Math.min(camera.x + 20, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
             forceRedraw = true;
         }
-        camera.shakeScale *= 0.8;
+        camera.shakeIntensity *= 0.9;
         if (forceRedraw) {
             mXGrid = Math.floor((mX + camera.x) * screenScale);
             mYGrid = Math.floor((mY + camera.y) * screenScale);
@@ -1601,13 +1603,14 @@ function drawUI() {
         ctx.lineWidth = 2;
         ctx.setLineDash([]);
         ctx.beginPath();
-        ctx.moveTo(5, Math.max(142, 240 - timingList[0][0] * 4.5));
+        let timingRatio = fps * 0.075;
+        ctx.moveTo(5, Math.max(142, 240 - timingList[0][0] * timingRatio));
         for (let i = 1; i < timingList.length; i++) {
-            ctx.lineTo(5 + i * 3, Math.max(142, 240 - timingList[i][0] * 4.5));
+            ctx.lineTo(5 + i * 3, Math.max(142, 240 - timingList[i][0] * timingRatio));
         }
-        ctx.moveTo(5, Math.max(142, 240 - timingList[0][0] * 4.5 - timingList[0][1] * 4.5));
+        ctx.moveTo(5, Math.max(142, 240 - timingList[0][0] * timingRatio - timingList[0][1] * timingRatio));
         for (let i = 1; i < timingList.length; i++) {
-            ctx.lineTo(5 + i * 3, Math.max(142, 240 - timingList[i][0] * 4.5 - timingList[i][1] * 4.5));
+            ctx.lineTo(5 + i * 3, Math.max(142, 240 - timingList[i][0] * timingRatio - timingList[i][1] * timingRatio));
         }
         ctx.stroke();
         ctx.strokeStyle = '#555';
@@ -1848,7 +1851,7 @@ function updateTick() {
             tick: ticks,
             pixelAmounts: getPixSimPixelAmounts(),
             pixeliteCounts: pixeliteCounts,
-            cameraShake: camera.shakeScale
+            cameraShake: camera.shakeIntensity
         });
 
         lastTick = performance.now();
@@ -1863,7 +1866,7 @@ async function startDrawLoop() {
         await new Promise((resolve, reject) => {
             window.requestAnimationFrame(() => {
                 draw();
-                setTimeout(resolve, ~~(1000 / fps - (performance.now() - start) - 0.5));
+                setTimeout(resolve, ~~(1000 / fps - (performance.now() - start) - 1));
             });
         });
     }
@@ -2270,7 +2273,7 @@ PixSimAPI.onGameTick = (compressedGrid, compressedTeamGrid, compressedBooleanGri
         }
     }
     pixsimData.pixeliteCounts = tickData.pixeliteCounts;
-    camera.shakeScale = tickData.cameraShake
+    camera.shakeIntensity = tickData.cameraShake
 };
 PixSimAPI.onGameInput = (type, data, team) => {
     switch (type) {
