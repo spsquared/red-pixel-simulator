@@ -88,7 +88,7 @@ const loadingTips = [
     'Don\'t place the corrupted pixels!',
     'Reading the descriptions of pixels in the Pixel Picker can give some helpful information.',
     'You can design and submit a puzzle on the <a href="https://discord.pixelsimulator.repl.co" target="_blank">Pixel Simulator discord</a>!',
-    'All of <span style="color: #FF0000;">Red Pixel Simulator</span> (including music!) is made by SP and SP^2!',
+    'All of Pixel Simulator (including music!) is made by SP, SP^2, and Erik!',
     'Use the RedPrint Editor to save contraptions you use a lot.',
     'Some levels are very RNG-based; messing around randomly usually works in those levels',
     'There exists a few pixels that are not in the Pixel Picker...',

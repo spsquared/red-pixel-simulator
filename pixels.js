@@ -3489,6 +3489,7 @@ const pixels = {
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                redrawing && clearPixels(x, y, width, height, ctx);
                 imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
             });
         },
@@ -3504,10 +3505,14 @@ const pixels = {
             ctx.fillRect(28, 38, 10, 10);
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(25);
-            ctx.fillStyle = 'rgb(240, 240, 245)';
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(25);
+            ctx.fillStyle = 'rgba(180, 180, 210, 0.3)';
             fillPixels(0, 0, 1, 1);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            clearPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
+            clearPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
+            clearPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
+            clearPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
             fillPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
             fillPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
             fillPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
@@ -3536,6 +3541,7 @@ const pixels = {
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                redrawing && clearPixels(x, y, width, height, ctx);
                 imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
             });
         },
@@ -3556,10 +3562,14 @@ const pixels = {
             ctx.fillRect(0, 0, 5, 50);
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(150);
-            ctx.fillStyle = 'rgb(240, 240, 245)';
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(150);
+            ctx.fillStyle = 'rgba(180, 180, 210, 0.3)';
             fillPixels(0, 0, 1, 1);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            clearPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
+            clearPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
+            clearPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
+            clearPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
             fillPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
             fillPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
             fillPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
@@ -3633,11 +3643,11 @@ const pixels = {
     },
     mirror_1: {
         name: 'Mirror',
-        description: 'Be careful around lasers, as it will redirect those to who knows where',
+        description: 'Be careful with it around lasers, as they\'ll bounce right off of it',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                clearPixels(x, y, width, height, ctx);
+                redrawing && clearPixels(x, y, width, height, ctx);
                 imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
             });
         },
@@ -3647,11 +3657,9 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(220, 220, 220)';
-            ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillRect(25 / 3, 25, 50 / 3, 50 / 3);
-            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillRect(25, 25 / 3, 50 / 3, 50 / 3);
-            ctx.fillRect(100 / 3, 0, 50 / 3, 50 / 3);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillRect(50 / Math.sqrt(2) - 7.5, -50 / Math.sqrt(2), 15, Math.sqrt(2) * 50);
+            ctx.resetTransform();
             ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 25 / 3, 25 / 3);
             ctx.fillRect(125 / 3, 0, 25 / 3, 25 / 3);
@@ -3663,13 +3671,11 @@ const pixels = {
             ctx.fillRect(5 / 3, 0, 5, 50);
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(60);
-            ctx.fillStyle = 'rgb(220, 220, 220)';
-            fillPixels(0, 2 / 3, 1 / 3, 1 / 3);
-            fillPixels(1 / 6, 1 / 2, 1 / 3, 1 / 3);
-            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
-            fillPixels(1 / 2, 1 / 6, 1 / 3, 1 / 3);
-            fillPixels(2 / 3, 0, 1 / 3, 1 / 3);
+            const { ctx, fillPixels, toImage } = new PreRenderer(90);
+            ctx.fillStyle = 'rgba(200, 200, 200, 0.6)';
+            ctx.rotate(Math.PI / 4);
+            fillPixels(1 / Math.sqrt(2) - 0.15, -1 / Math.sqrt(2), 0.3, Math.sqrt(2));
+            ctx.resetTransform();
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixels(0, 0, 1 / 6, 1 / 6);
             fillPixels(5 / 6, 0, 1 / 6, 1 / 6);
@@ -3700,11 +3706,11 @@ const pixels = {
     },
     mirror_2: {
         name: 'Mirror',
-        description: 'Be careful around lasers, as it will redirect those to who knows where',
+        description: 'Be careful with it around lasers, as they\'ll bounce right off of it',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                clearPixels(x, y, width, height, ctx);
+                redrawing && clearPixels(x, y, width, height, ctx);
                 imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
             });
         },
@@ -3714,11 +3720,9 @@ const pixels = {
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(220, 220, 220)';
-            ctx.fillRect(0, 0, 50 / 3, 50 / 3);
-            ctx.fillRect(25 / 3, 25 / 3, 50 / 3, 50 / 3);
-            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillRect(25, 25, 50 / 3, 50 / 3);
-            ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillRect(0, -7.5, Math.sqrt(2) * 50, 15);
+            ctx.resetTransform();
             ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 25 / 3, 25 / 3);
             ctx.fillRect(125 / 3, 0, 25 / 3, 25 / 3);
@@ -3730,13 +3734,11 @@ const pixels = {
             ctx.fillRect(5 / 3, 0, 5, 50);
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(60);
-            ctx.fillStyle = 'rgb(220, 220, 220)';
-            fillPixels(0, 0, 1 / 3, 1 / 3);
-            fillPixels(1 / 6, 1 / 6, 1 / 3, 1 / 3);
-            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
-            fillPixels(1 / 2, 1 / 2, 1 / 3, 1 / 3);
-            fillPixels(2 / 3, 2 / 3, 1 / 3, 1 / 3);
+            const { ctx, fillPixels, toImage } = new PreRenderer(90);
+            ctx.fillStyle = 'rgba(200, 200, 200, 0.6)';
+            ctx.rotate(Math.PI / 4);
+            fillPixels(0, -0.15, Math.sqrt(2), 0.3);
+            ctx.resetTransform();
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixels(0, 0, 1 / 6, 1 / 6);
             fillPixels(5 / 6, 0, 1 / 6, 1 / 6);
@@ -4963,12 +4965,10 @@ const pixels = {
             ctx.fillRect(10, 10, 30, 30);
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(5);
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(5);
             ctx.fillStyle = 'rgb(0, 200, 255)';
-            fillPixels(0, 0, 1, 1 / 5);
-            fillPixels(0, 0, 1 / 5, 1);
-            fillPixels(0, 4 / 5, 1, 1 / 5);
-            fillPixels(4 / 5, 0, 1 / 5, 1);
+            fillPixels(0, 0, 1, 1);
+            clearPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
@@ -4989,32 +4989,78 @@ const pixels = {
     },
     pixelite_crystal: {
         name: 'Pixelite Crystal',
-        description: 'i guess this is a crystal with a conic gradient',
+        description: 'Destroy it to win Pixelite Crash! (totally not a Corsair LL120 with some Noctua Chromax things)',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             if (noAnimations && !forceRedraw) return;
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                if (!noAnimations || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 16) % 8], ctx);
+                if (!noAnimations || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 4) % 24], ctx);
             });
         },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillStyle = 'rgb(200, 200, 200)';
             ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.beginPath();
+            ctx.moveTo(14, 0);
+            ctx.lineTo(36, 0);
+            ctx.lineTo(50, 14);
+            ctx.lineTo(50, 36);
+            ctx.lineTo(36, 50);
+            ctx.lineTo(14, 50);
+            ctx.lineTo(0, 36);
+            ctx.lineTo(0, 14);
+            ctx.lineTo(14, 0);
+            ctx.fill();
+            ctx.fillRect(3, 3, 3, 3);
+            ctx.fillRect(44, 3, 3, 3);
+            ctx.fillRect(44, 44, 3, 3);
+            ctx.fillRect(3, 44, 3, 3);
+            let gradient = ctx.createConicGradient(0, 25, 25);
+            for (let i = 0; i <= 18; i++) {
+                gradient.addColorStop(i / 18, `hsl(${i * 20}, 80%, 50%)`);
+            }
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(25, 25, 22, 0, 2 * Math.PI);
+            ctx.fill();
         },
         prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(30);
-            let gradient = ctx.createConicGradient(0, 100, 100);
-            ctx.fillStyle = 'rgb(0, 200, 255)';
-            this.prerenderedFrames.push(toImage());
-            this.prerenderedFrames.push(toImage());
-            this.prerenderedFrames.push(toImage());
-            this.prerenderedFrames.push(toImage());
-            this.prerenderedFrames.push(toImage());
-            this.prerenderedFrames.push(toImage());
-            this.prerenderedFrames.push(toImage());
-            this.prerenderedFrames.push(toImage());
+            const { ctx, fillPixels, toImage } = new PreRenderer(90);
+            let addRender = (angle) => {
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                fillPixels(0, 0, 1, 1);
+                ctx.fillStyle = 'rgb(0, 0, 0)';
+                ctx.beginPath();
+                ctx.moveTo(25, 0);
+                ctx.lineTo(65, 0);
+                ctx.lineTo(90, 25);
+                ctx.lineTo(90, 65);
+                ctx.lineTo(65, 90);
+                ctx.lineTo(25, 90);
+                ctx.lineTo(0, 65);
+                ctx.lineTo(0, 25);
+                ctx.lineTo(25, 0);
+                ctx.fill();
+                ctx.fillRect(5, 5, 5, 5);
+                ctx.fillRect(80, 5, 5, 5);
+                ctx.fillRect(80, 80, 5, 5);
+                ctx.fillRect(5, 80, 5, 5);
+                let gradient = ctx.createConicGradient(angle, 45, 45);
+                for (let i = 0; i <= 18; i++) {
+                    gradient.addColorStop(i / 18, `hsl(${i * 20}, 80%, 50%)`);
+                }
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(45, 45, 40, 0, 2 * Math.PI);
+                ctx.fill();
+                this.prerenderedFrames.push(toImage());
+            };
+            for (let i = 0; i < 24; i++) {
+                addRender(Math.PI * i / 12);
+            }
         },
         prerenderedFrames: [],
         blastResistance: 19,
@@ -5237,7 +5283,7 @@ const pixels = {
                             abovectx.stroke();
                             abovectx.resetTransform();
                         } else if (teamPixelAmounts[team].water <= 50) {
-                            abovectx.globalAlpha = Math.sin(deltaTime * Math.PI / 90) * 0.5 + 1;
+                            abovectx.globalAlpha = Math.min(1, Math.sin(deltaTime * Math.PI / 90) * 0.5 + 1);
                             abovectx.translate(x2 * drawScale - camera.x + 0.5 * drawScale, y2 * drawScale - camera.y + 0.4 * drawScale);
                             let scale = (Math.sin(deltaTime * Math.PI / 90) * 0.5 + 1.5) * drawScale;
                             abovectx.strokeStyle = 'rgb(255, 0, 0)';

@@ -110,6 +110,7 @@ const gridWidthText = document.getElementById('gridWidth');
 const gridHeightText = document.getElementById('gridHeight');
 canvasContainer.addEventListener('contextmenu', e => e.preventDefault());
 pixelPicker.addEventListener('contextmenu', e => e.preventDefault());
+pixelPicker.addEventListener('wheel', (e) => { if (e.deltaY >= 0 && Math.ceil(pixelPicker.scrollTop + pixelPicker.clientHeight) >= pixelPicker.scrollHeight) e.preventDefault(); });
 canvas.addEventListener('wheel', e => e.preventDefault());
 
 // grid
@@ -1815,7 +1816,8 @@ function updateTick() {
             let newMonsterCount = 0;
             let newFulfilledTargetCount = 0;
             let hasUnfulfilledTargets = false;
-            let pixeliteCounts = [0, 0];
+            pixsimData.pixeliteCounts[0] = 0;
+            pixsimData.pixeliteCounts[1] = 0;
             for (let y = 0; y < gridHeight; y++) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) newMonsterCount++;
@@ -1823,7 +1825,7 @@ function updateTick() {
                         if (grid[y][x] == pixNum.GOAL) newFulfilledTargetCount++;
                         else hasUnfulfilledTargets = true;
                     }
-                    if (grid[y][x] == pixNum.PIXELITE_CRYSTAL) pixeliteCounts[teamGrid[y][x] - 1]++;
+                    if (grid[y][x] == pixNum.PIXELITE_CRYSTAL) pixsimData.pixeliteCounts[teamGrid[y][x] - 1]++;
                     if (musicGrid[y][x] != lastMusicGrid[y][x]) {
                         if (musicGrid[y][x] != 0) musicPixel(musicGrid[y][x], true);
                         else if (musicGrid[y][x] == 0) musicPixel(lastMusicGrid[y][x], false);
@@ -1838,21 +1840,27 @@ function updateTick() {
                 triggerWin();
                 break;
             }
+            inResetState = false;
         }
-        inResetState = false;
 
         // send tick
-        if (PixSimAPI.inGame && PixSimAPI.gameRunning) PixSimAPI.sendTick(grid, teamGrid, [
-            fireGrid,
-            monsterGrid,
-            targetGrid,
-            placeableGrid
-        ], {
-            tick: ticks,
-            pixelAmounts: getPixSimPixelAmounts(),
-            pixeliteCounts: pixeliteCounts,
-            cameraShake: camera.shakeIntensity
-        });
+        if (PixSimAPI.inGame && PixSimAPI.gameRunning) {
+            for (let y = 0; y < gridHeight; y++) {
+                for (let x = 0; x < gridWidth; x++) {
+                }
+            }
+            PixSimAPI.sendTick(grid, teamGrid, [
+                fireGrid,
+                monsterGrid,
+                targetGrid,
+                placeableGrid
+            ], {
+                tick: ticks,
+                pixelAmounts: getPixSimPixelAmounts(),
+                pixeliteCounts: pixsimData.pixeliteCounts,
+                cameraShake: camera.shakeIntensity
+            });
+        }
 
         lastTick = performance.now();
     }
@@ -2136,7 +2144,9 @@ function createPixSimGrid() {
     }
 };
 const teamPixelAmounts = [{}, {}];
-const pixsimData = {};
+const pixsimData = {
+    pixeliteCounts: [0, 0]
+};
 function resetPixSimPixelAmounts() {
     for (const id in pixels) {
         teamPixelAmounts[0][id] = 0;
@@ -2173,26 +2183,24 @@ function drawPixSimUI() {
             ctx.strokeStyle = '#000000';
             ctx.strokeRect(canvasResolution / 4 - 3, canvasResolution - 26, canvasResolution / 4, 20);
             ctx.strokeRect(canvasResolution / 2 + 3, canvasResolution - 26, canvasResolution / 4, 20);
-            if (pixsimData.pixeliteCounts !== undefined) {
-                ctx.fillStyle = '#FF0099';
-                ctx.beginPath();
-                let width = (((canvasResolution / 4) - 4) * (pixsimData.pixeliteCounts[0] / 5));
-                ctx.moveTo(canvasResolution / 2 - 5, canvasResolution - 24);
-                ctx.lineTo(canvasResolution / 2 - 5, canvasResolution - 8);
-                ctx.lineTo(Math.max(canvasResolution / 4 - 1, canvasResolution / 2 - width - 10), canvasResolution - 8);
-                ctx.lineTo(canvasResolution / 2 - width - 5, canvasResolution - 24);
-                ctx.lineTo(canvasResolution / 2 - 5, canvasResolution - 24);
-                ctx.fill();
-                ctx.fillStyle = '#3C70FF';
-                ctx.beginPath();
-                width = (((canvasResolution / 4) - 4) * (pixsimData.pixeliteCounts[1] / 5));
-                ctx.moveTo(canvasResolution / 2 + 5, canvasResolution - 24);
-                ctx.lineTo(canvasResolution / 2 + 5, canvasResolution - 8);
-                ctx.lineTo(Math.min(canvasResolution * 3 / 4 + 1, canvasResolution / 2 + width + 10), canvasResolution - 8);
-                ctx.lineTo(canvasResolution / 2 + width + 5, canvasResolution - 24);
-                ctx.lineTo(canvasResolution / 2 + 5, canvasResolution - 24);
-                ctx.fill();
-            }
+            ctx.fillStyle = '#FF0099';
+            ctx.beginPath();
+            let width = (((canvasResolution / 4) - 4) * (pixsimData.pixeliteCounts[0] / 5));
+            ctx.moveTo(canvasResolution / 2 - 5, canvasResolution - 24);
+            ctx.lineTo(canvasResolution / 2 - 5, canvasResolution - 8);
+            ctx.lineTo(Math.max(canvasResolution / 4 - 1, canvasResolution / 2 - width - 10), canvasResolution - 8);
+            ctx.lineTo(canvasResolution / 2 - width - 5, canvasResolution - 24);
+            ctx.lineTo(canvasResolution / 2 - 5, canvasResolution - 24);
+            ctx.fill();
+            ctx.fillStyle = '#3C70FF';
+            ctx.beginPath();
+            width = (((canvasResolution / 4) - 4) * (pixsimData.pixeliteCounts[1] / 5));
+            ctx.moveTo(canvasResolution / 2 + 5, canvasResolution - 24);
+            ctx.lineTo(canvasResolution / 2 + 5, canvasResolution - 8);
+            ctx.lineTo(Math.min(canvasResolution * 3 / 4 + 1, canvasResolution / 2 + width + 10), canvasResolution - 8);
+            ctx.lineTo(canvasResolution / 2 + width + 5, canvasResolution - 24);
+            ctx.lineTo(canvasResolution / 2 + 5, canvasResolution - 24);
+            ctx.fill();
             break;
     }
 };
@@ -2479,7 +2487,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         if ((key != 'i' || !e.shiftKey || !e.ctrlKey) && key != 'f11' && key != '=' && key != '-') e.preventDefault();
     };
     document.onkeyup = (e) => {
-        if (e.target.matches('#saveCode') || !acceptInputs || inWinScreen || inMenuScreen) return;
+        if (e.target.matches('input') || e.target.matches('textarea') || !acceptInputs || inWinScreen || inMenuScreen) return;
         const key = e.key.toLowerCase();
         if (key == 'w') {
             camera.mUp = false;
@@ -2495,31 +2503,31 @@ window.addEventListener('DOMContentLoaded', (e) => {
             holdingControl = false;
         } else if (key == 'alt') {
             holdingAlt = false;
-        } else if (!e.target.matches('input') && !e.target.matches('textarea') && acceptInputs && !inWinScreen && !inMenuScreen) {
-            if (key == 'z' && e.altKey) {
-                debugInfo = !debugInfo;
+        } else if (key == 'z' && e.altKey) {
+            debugInfo = !debugInfo;
+            clickSound();
+        } else if (key == 'p') {
+            if (!PixSimAPI.inGame) {
+                simulationPaused = !simulationPaused;
+                fastSimulation = false;
+                updateTimeControlButtons();
                 clickSound();
-            } else if (key == 'p') {
-                if (!PixSimAPI.inGame) {
-                    simulationPaused = !simulationPaused;
-                    fastSimulation = false;
-                    updateTimeControlButtons();
-                    clickSound();
-                }
-            } else if (key == '[' && mouseOver) {
-                scaleCamera(0.5);
-                mXGrid = Math.floor((mX + camera.x) * screenScale);
-                mYGrid = Math.floor((mY + camera.y) * screenScale);
-                mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
-            } else if (key == ']' && mouseOver) {
-                scaleCamera(2);
-                mXGrid = Math.floor((mX + camera.x) * screenScale);
-                mYGrid = Math.floor((mY + camera.y) * screenScale);
-                mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
-            } else if (key == 'escape') {
-                brush.isSelection = false;
-                selection.show = false;
             }
+        } else if (key == '[' && mouseOver) {
+            scaleCamera(0.5);
+            mXGrid = Math.floor((mX + camera.x) * screenScale);
+            mYGrid = Math.floor((mY + camera.y) * screenScale);
+            mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
+        } else if (key == ']' && mouseOver) {
+            scaleCamera(2);
+            mXGrid = Math.floor((mX + camera.x) * screenScale);
+            mYGrid = Math.floor((mY + camera.y) * screenScale);
+            mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
+        } else if (key == 'escape') {
+            brush.isSelection = false;
+            selection.show = false;
+        } else if (key == 'r') {
+            sidebar.scrollTo({ top: 0, behavior: 'smooth' });
         }
         e.preventDefault();
     };

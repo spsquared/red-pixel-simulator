@@ -64,7 +64,7 @@
 #pixelPicker {
     width: unset;
     display: grid;
-    max-height: 70vh;
+    max-height: 60vh;
     overflow-y: auto;
     border: 2px solid black;
     border-bottom: none;
@@ -204,9 +204,8 @@
 #saveCode {
     margin-top: 10px;
     width: calc(100% - 8px);
-    min-height: 150px;
-    max-height: 500px;
-    resize: vertical;
+    height: 150px;
+    resize: none;
     word-wrap: break-word;
     word-break: break-all;
     font-family: 'Source Code Pro', Courier, monospace;
