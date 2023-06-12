@@ -1,7 +1,7 @@
-const apiURI = 'https://api.pixelsimulator.repl.co';
-// const apiURI = 'http://localhost:5000';
+const apiURI = 'https://api.pixelsimulator.repl.co/pixsim-api';
+// const apiURI = 'http://localhost:5000/pixsim-api';
 const socket = io(apiURI, {
-    path: '/pixsim-api/socket/',
+    path: '/socket/',
     autoConnect: false,
     reconnection: false
 });
