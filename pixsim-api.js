@@ -1,7 +1,7 @@
-const apiURI = 'https://api.pixelsimulator.repl.co/pixsim-api';
-// const apiURI = 'http://localhost:5000/pixsim-api';
+// const apiURI = 'https://api.pixelsimulator.repl.co/pixsim-api';
+const apiURI = 'http://localhost:5000/';
 const socket = io(apiURI, {
-    path: '/socket/',
+    path: '/pixsim-api/socket/',
     autoConnect: false,
     reconnection: false
 });
@@ -99,7 +99,7 @@ class PixSimAPI {
         await new Promise((resolve, reject) => {
             function sendHTTPRequest() {
                 const req = new XMLHttpRequest();
-                req.open('GET', apiURI + '/status');
+                req.open('GET', apiURI + '/pixsim-api/status');
                 req.onload = (res) => {
                     if (req.status != 200) {
                         req.onerror();
