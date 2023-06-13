@@ -183,7 +183,7 @@ const puzzles = [
             {
                 name: 'Breaking Thermodynamics',
                 description: `Instead of breaking the game, in this puzzle you'll be <h>breaking the laws of thermodynamics!</h> The pixels with blue and yellow arrows are <h>copiers</h>, and they... copy. These pixels here are special copiers called <h>cloners</h>; they are like copiers, but they can <h>push pixels</h> to make space for the mass it creates in violation of the laws of thermodynamics.<br><br><h><i>Some pixels are not cloneable, for example, goal pixels.</i></h>`,
-                saveCode: '32;0000;wall-33:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-34:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-33:;400:;aa:2:1e:2:ea:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:21:;141:5:b:5:b:5:b:5:1cd:2:1e:4:1c:4:1b:5:1b:6:38:;400:',
+                saveCode: '32-32;0000;wall-33:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-34:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-33:;400:;e7:2:1e:2:ad:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:21:;141:5:b:5:b:5:b:5:1cd:2:1e:4:1c:4:1b:5:1b:6:38:;400:',
                 backgroundColor: '#ffffff',
                 inventory: {
                     concrete: 3,
@@ -193,7 +193,7 @@ const puzzles = [
                     push_cloner_down: 3,
                     slider_horizontal: 3
                 },
-                id: '3901eb61-fc2d-4ed7-b785-9a22bd33c0c3'
+                id: 'f25ad0d1-6cda-4113-a42f-95a886ecf81e'
             },
             {
                 name: 'Targets',
@@ -233,12 +233,12 @@ const puzzles = [
             {
                 name: 'Placement Test',
                 description: `You have very limited options in terms of placement locations here. <h>Choose carefully!</h>`,
-                saveCode: '40;0000;wall-41:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-11:wall-15:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-24:wall:air-6:wall-2:air-6:wall:air-24:wall:air-6:wall-2:air-6:wall:air-24:wall:air-6:wall-2:air-6:wall-8:air:goal:air-15:wall:air:goal:air-4:wall-2:air-31:wall:air-6:wall-2:air-28:wall-4:air-6:wall-2:air-18:wall:air-3:wall:air-15:wall-2:air-22:wall:air-15:wall-2:air-21:laser_right:wall:air-15:wall-2:air-22:wall:air-15:wall-2:air-22:wall:air-15:wall-2:air:wall:air-10:goal:air-9:wall:air-15:wall-2:air:wall:air-20:wall:air-15:wall-15:air-9:wall:air-15:wall-2:air-2:concrete:air:concrete:air-7:wood:air-9:wall:air-15:wall-2:air-12:wood:air-9:wall:air-15:wall-2:air-12:wood:air-9:wall:air-15:wall-2:air-12:wood:air-9:wall:air-15:wall-2:air-7:wall-7:gunpowder:air-7:wall:air:goal:air-13:wall-2:air-13:wall:air-8:wall:air-15:wall-2:air-13:wall:air-8:wall-9:air-7:wall-2:air-8:goal:air-4:wall:air-24:wall-2:air-13:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-41:;640:;3e:1:27:1:12:2:26:2:86:1:4:1:d:2:3c:3:22:1:21:1:6:2:4:1:1a:1:27:1:7:1:2e:1:1f:1:31:1:a:2:26:2:7b:2:1e:1:6:1:1:1:1f:1:17:1:f:1:17:1:27:1:17:2:e:2:26:1:2a:1:21:1:7:1:8:1:15:1:28:1:19:2:c:1:3:1:15:1:1c:1:c:1:1b:1:13:1:28:1:62:1:2f:;c3:1:ec:1:2b9:1:19c:1:38:;149:1:34:1:1df:1:14:1:1ac:1:11f:',
+                saveCode: '40-40;0000;wall-41:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-11:wall-15:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-6:wall:air-24:wall-2:air-6:wall:air-24:wall:air-6:wall-2:air-6:wall:air-24:wall:air-6:wall-2:air-6:wall:air-24:wall:air-6:wall-2:air-6:wall-8:air:goal:air-15:wall:air:goal:air-4:wall-2:air-31:wall:air-6:wall-2:air-28:wall-4:air-6:wall-2:air-18:wall:air-3:wall:air-15:wall-2:air-22:wall:air-15:wall-2:air-21:laser_right:wall:air-15:wall-2:air-22:wall:air-15:wall-2:air-22:wall:air-15:wall-2:air:wall:air-10:goal:air-9:wall:air-15:wall-2:air:wall:air-20:wall:air-15:wall-15:air-9:wall:air-15:wall-2:air-2:concrete:air:concrete:air-7:wood:air-9:wall:air-15:wall-2:air-12:wood:air-9:wall:air-15:wall-2:air-12:wood:air-9:wall:air-15:wall-2:air-12:wood:air-9:wall:air-15:wall-2:air-7:wall-7:gunpowder:air-7:wall:air:goal:air-13:wall-2:air-13:wall:air-8:wall:air-15:wall-2:air-13:wall:air-8:wall-9:air-7:wall-2:air-8:goal:air-4:wall:air-24:wall-2:air-13:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-2:air-10:wall:air-2:wall:air-24:wall-41:;640:;29:2:13:1:12:2:13:1:c2:1:4:1:d:2:3c:3:22:1:21:1:6:2:4:1:1a:1:27:1:7:1:2e:1:1f:1:31:1:a:2:26:2:7b:2:1e:1:6:1:21:1:5:1:11:1:f:1:17:1:27:1:17:2:e:2:26:1:2a:1:21:1:7:1:8:1:15:1:28:1:18:1:1:1:c:1:3:1:16:1:1b:1:c:1:19:1:1:1:13:1:28:1:62:1:2f:;c3:1:ec:1:2b9:1:19c:1:38:;149:1:34:1:1df:1:14:1:1ac:1:11f:',
                 backgroundColor: '#ffffff',
                 inventory: {
                     wall: 1,
-                    dirt: 1,
-                    concrete: 2,
+                    dirt: 2,
+                    concrete: 3,
                     push_cloner_left: 2,
                     push_cloner_up: 3,
                     push_cloner_right: 1,
@@ -251,11 +251,11 @@ const puzzles = [
                     rotator_up: 3,
                     rotator_down: 1,
                     rotator_clockwise: 1,
-                    rotator_counterclockwise: 2,
+                    rotator_counterclockwise: 1,
                     slider_horizontal: 7,
-                    slider_vertical: 7
+                    slider_vertical: 8
                 },
-                id: '2c364258-5dbd-4351-bae3-14c003310d7e'
+                id: 'b5c42f2a-fae1-4795-a77f-a4c4a15bc538'
             },
             {
                 name: 'Danger Zone',
