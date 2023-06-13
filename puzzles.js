@@ -270,14 +270,14 @@ const puzzles = [
                     piston_up: 17,
                     piston_right: 2,
                     rotator_left: 6,
-                    rotator_down: 3,
+                    rotator_down: 4,
                     rotator_clockwise: 1,
                     rotator_counterclockwise: 5,
-                    slider_horizontal: 6,
-                    slider_vertical: 7,
+                    slider_horizontal: 8,
+                    slider_vertical: 8,
                     collapsible: 6
                 },
-                id: '4b796ce7-7a21-4f7b-8157-07387222b741'
+                id: '07b13db3-090e-44ff-96b9-5829bfc4569d'
             },
             {
                 name: 'Laser Pointers but Stronger',
