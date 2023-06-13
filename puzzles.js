@@ -417,6 +417,7 @@ function loadPuzzle(section, level) {
         }
         pixelAmounts['air'] = Infinity;
         updatePixelAmount('air', pixelAmounts, false, false);
+        camera.shakeIntensity = 0;
         camera.scale = 1;
         camera.x = 0;
         camera.y = 0;

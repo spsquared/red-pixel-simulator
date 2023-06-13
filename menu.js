@@ -291,6 +291,7 @@ sandboxButton.onclick = (e) => {
     document.getElementById('premadeSaves').style.display = '';
     sandboxMode = true;
     backgroundColor = '#ffffff';
+    camera.shakeIntensity = 0;
     camera.scale = 1;
     camera.x = 0;
     camera.y = 0;
