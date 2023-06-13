@@ -1735,45 +1735,29 @@ function updateTick() {
             for (let updateStage = 0; updateStage <= 8; updateStage++) {
                 switch (updateStage) {
                     case 1:
-                        if (ticks % 2 == 0) {
-                            for (let y = gridHeight - 1; y >= 0; y--) {
-                                for (let x = gridWidth - 1; x >= 0; x--) {
-                                    grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
-                                }
-                            }
-                        } else {
-                            for (let y = gridHeight - 1; y >= 0; y--) {
-                                for (let x = 0; x < gridWidth; x++) {
-                                    grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
-                                }
+                        for (let y = 0; y < gridHeight; y++) {
+                            for (let x = 0; x < gridWidth; x++) {
+                                grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
                             }
                         }
                         break;
                     case 2:
-                        if (ticks % 2 == 0) {
-                            for (let y = 0; y < gridHeight; y++) {
-                                for (let x = gridWidth - 1; x >= 0; x--) {
-                                    grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
-                                }
-                            }
-                        } else {
-                            for (let y = 0; y < gridHeight; y++) {
-                                for (let x = 0; x < gridWidth; x++) {
-                                    grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
-                                }
+                        for (let y = gridHeight - 1; y >= 0; y--) {
+                            for (let x = 0; x < gridWidth; x++) {
+                                grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
                             }
                         }
                         break;
                     case 3:
                         for (let y = 0; y < gridHeight; y++) {
-                            for (let x = gridWidth - 1; x >= 0; x--) {
+                            for (let x = 0; x < gridWidth; x++) {
                                 grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
                             }
                         }
                         break;
                     case 4:
                         for (let y = 0; y < gridHeight; y++) {
-                            for (let x = 0; x < gridWidth; x++) {
+                            for (let x = gridWidth - 1; x >= 0; x--) {
                                 grid[y][x] !== pixNum.AIR && updatePixel(x, y, updateStage);
                             }
                         }

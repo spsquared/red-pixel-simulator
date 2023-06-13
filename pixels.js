@@ -2250,7 +2250,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && grid[y][x - 1] != pixNum.PUSH_CLONER_LEFT && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && canMoveTo(x - 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && canMoveTo(x - 1, y)) {
                 if (push(x, y, 0, false, true)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
                     teamGrid[y][x - 1] = teamGrid[y][x + 1];
@@ -2309,7 +2309,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && grid[y - 1][x] != pixNum.PUSH_CLONER_UP && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && canMoveTo(x, y - 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && canMoveTo(x, y - 1)) {
                 if (push(x, y, 1, false, true)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
                     teamGrid[y - 1][x] = teamGrid[y + 1][x];
@@ -2368,7 +2368,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && grid[y][x + 1] != pixNum.PUSH_CLONER_RIGHT && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && canMoveTo(x + 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && canMoveTo(x + 1, y)) {
                 if (push(x, y, 2, false, true)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
                     teamGrid[y][x + 1] = teamGrid[y][x - 1];
@@ -2427,7 +2427,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && grid[y + 1][x] != pixNum.PUSH_CLONER_UP && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && canMoveTo(x, y + 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && canMoveTo(x, y + 1)) {
                 if (push(x, y, 3, false, true)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
                     teamGrid[y + 1][x] = teamGrid[y - 1][x];
@@ -4458,11 +4458,12 @@ const pixels = {
         name: '�',
         description: '<span style="color: red">�</span>',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                ctx.globalAlpha = opacity;
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
                         for (let k = 0; k < random(0, 1); k++) {
+                            camera.shakeIntensity += 0.1;
                             let rotationAmount = Math.floor(random(0, 360));
                             ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
                             let translateX = random(-10 * gridScale, 10 * gridScale);
@@ -4692,47 +4693,6 @@ const pixels = {
         pickable: false,
         pixsimCompatible: false,
         id: 'spin',
-        numId: 0
-    },
-    rickastley: {
-        name: 'Rick Astley',
-        description: 'Never gonna give you up<br>Never gonna let you down<br>Never gonna run around and desert you<br>Never gonna make you cry<br>Never gonna say goodbye<br>Never gonna tell a lie and hurt you',
-        draw: function (rectangles, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            let scale = gridScale * camera.scale;
-            if (this.prerenderedFrames[0]) ctx.drawImage(this.prerenderedFrames[0], x * scale - camera.x, y * scale - camera.y, width * scale, height * scale, x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
-        },
-        update: function (x, y) {
-            if (window.rickastley) return;
-            musicPixel(87, true);
-            window.rickastley = true;
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-        },
-        prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(canvasResolution);
-            let rickastley = new Image();
-            rickastley.src = './assets/rickastley.png';
-            rickastley.onload = (e) => {
-                ctx.drawImage(rickastley, 0, 0, canvasResolution, canvasResolution);
-                this.prerenderedFrames.push(toImage());
-            };
-        },
-        prerenderedFrames: [],
-        blastResistance: Infinity,
-        flammability: -Infinity,
-        pushable: false,
-        cloneable: false,
-        rotateable: false,
-        group: 3,
-        updateStage: 0,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: false,
-        pixsimCompatible: false,
-        id: 'rickastley',
         numId: 0
     },
     placementUnRestriction: {
@@ -6071,6 +6031,49 @@ const pixels = {
         color: 'rgb(150, 150, 150)',
         text: 'TZ'
     }),
+    rickastley: {
+        name: 'Rick Astley',
+        description: 'Never gonna give you up<br>Never gonna let you down<br>Never gonna run around and desert you<br>Never gonna make you cry<br>Never gonna say goodbye<br>Never gonna tell a lie and hurt you',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            let scale = gridScale * camera.scale;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (this.prerenderedFrames[0]) ctx.drawImage(this.prerenderedFrames[0], x * scale - camera.x, y * scale - camera.y, width * scale, height * scale, x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
+            });
+        },
+        update: function (x, y) {
+            if (window.rickastley) return;
+            musicPixel(87, true);
+            window.rickastley = true;
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(canvasResolution);
+            let rickastley = new Image();
+            rickastley.src = './assets/rickastley.png';
+            rickastley.onload = (e) => {
+                ctx.drawImage(rickastley, 0, 0, canvasResolution, canvasResolution);
+                this.prerenderedFrames.push(toImage());
+            };
+        },
+        prerenderedFrames: [],
+        blastResistance: Infinity,
+        flammability: -Infinity,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: -1,
+        updateStage: 0,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: false,
+        pixsimCompatible: false,
+        id: 'rickastley',
+        numId: 0
+    },
     red: {
         name: 'Red Pixel',
         description: 'Mise en abyme',
