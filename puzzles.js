@@ -360,6 +360,7 @@ function triggerWin() {
         hide();
         saveCode = saveCodeText.value.replace('\n', '');
         loadSaveCode();
+        camera.shakeIntensity = 0;
         inResetState = true;
     };
     winMenu.onclick = (e) => {

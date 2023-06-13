@@ -1578,12 +1578,12 @@ function updateCamera() {
             camera.x = Math.max(0, Math.min(camera.x + 20, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
             forceRedraw = true;
         }
-        camera.shakeIntensity *= 0.9;
         if (forceRedraw) {
             mXGrid = Math.floor((mX + camera.x) * screenScale);
             mYGrid = Math.floor((mY + camera.y) * screenScale);
         }
     }
+    camera.shakeIntensity *= 0.9;
 };
 function drawUI() {
     ctx.fillStyle = '#000';
