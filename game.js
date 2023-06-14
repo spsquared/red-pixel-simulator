@@ -117,7 +117,7 @@ canvas.addEventListener('wheel', e => e.preventDefault());
 let sandboxMode = true;
 let gridWidth = 100;
 let gridHeight = 100;
-let saveCode = '100;air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser-6:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:nuke-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-16:wall:rotator_right:piston_left:air:rotator_left:nuke_diffuser:cloner_down-4:nuke_diffuser:rotator_right:piston_left:air-70:rotator_left:air-2000:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
+let saveCode = '100;0;air-23:wall:rotator_right:wall:air-72:wall:rotator_left:air-24:sticky_piston_right:air-99:slime:air-94:slime-6:air-94:slime:nuke_diffuser-4:slime:air-94:slime:nuke-4:slime:air-94:slime:cloner_down-4:slime:air-1875:nuke_diffuser-20:air-80:{air:pump:}9|air:{nuke_diffuser:air-99:}2|nuke_diffuser:air-83:wall-13:air-3:nuke_diffuser:air-83:wall:lava_generator-11:wall:air-3:nuke_diffuser:{air-83:wall:air-11:wall:air-3:nuke_diffuser:}5|{air-83:wall:air-11:wall:air-4:}7|air-83:{wall:air-99:}52|';
 let gridScale = canvasResolution / Math.min(gridWidth, gridHeight);
 let canvasSize = Math.min(window.innerWidth, window.innerHeight) - 21;
 let canvasScale = canvasResolution / canvasSize;
@@ -1137,6 +1137,8 @@ function explode(x1, y1, size, defer) {
             }
             if (grid[y][x] == pixNum.WATER) {
                 if (random() < (power * power / size) * 0.2) nextGrid[y][x] = pixNum.STEAM;
+            } else if (grid[y][x] == pixNum.STEAM) {
+                if (random() < (power * power / size) * 0.8) nextGrid[y][x] = pixNum.STEAM;
             } else if (grid[y][x] == pixNum.GUNPOWDER) {
                 pendingExplosions.push([x, y, 5]);
                 grid[y][x] = pixNum.AIR;
@@ -1626,10 +1628,10 @@ function drawUI() {
         ctx.fillText('Timings (10s)', 10, 142);
         // oops deprecated features
         let heapUsed = Math.round(performance.memory.usedJSHeapSize / 1048576 * 100) / 100;
-        let heapAvailable = Math.round(performance.memory.jsHeapSizeLimit / 1048576 * 100) / 100;
-        let heapText = `Heap: ${heapUsed}/${heapAvailable}MB (${Math.round(heapUsed / heapAvailable * 100)}%)`;
+        let heapAvailable = Math.round(performance.memory.totalJSHeapSize / 1048576 * 100) / 100;
+        let heapText = `Heap: ${heapUsed}/${heapAvailable}MB (${Math.round(heapUsed / heapAvailable * 1000) / 10}%)`;
         ctx.fillStyle = '#FFF5';
-        ctx.fillRect(1, 241, ctx.measureText(heapText) + 4, 20);
+        ctx.fillRect(1, 241, ctx.measureText(heapText).width + 4, 20);
         ctx.fillStyle = '#000';
         ctx.fillText(heapText, 3, 242);
     }
