@@ -770,29 +770,30 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     let lastCollapsible = -1;
     let slimePushes = [];
     if (!validChangingPixel(x, y)) return;
-    if (grid[y][x] == pixNum.SLIME) {
+    let startsSlime = grid[y][x] == pixNum.SLIME;
+    if (startsSlime) {
         switch (dir) {
             case 0:
                 while (x < gridWidth - 1 && grid[y][x] == pixNum.SLIME) x++;
-                if (x < gridWidth && !pixelAt(x, y).pushable) x--;
+                if (isAir(x, y) || !pixelAt(x, y).pushable) x--;
                 break;
             case 1:
                 while (y < gridHeight - 1 && grid[y][x] == pixNum.SLIME) y++;
-                if (y < gridHeight && !pixelAt(x, y).pushable) y--;
+                if (isAir(x, y) || !pixelAt(x, y).pushable) y--;
                 break;
             case 2:
                 while (x > 0 && grid[y][x] == pixNum.SLIME) x--;
-                if (x >= 0 && !pixelAt(x, y).pushable) x++;
+                if (isAir(x, y) || !pixelAt(x, y).pushable) x++;
                 break;
             case 3:
                 while (y > 0 && grid[y][x] == pixNum.SLIME) y--;
-                if (y >= 0 && !pixelAt(x, y).pushable) y++;
+                if (isAir(x, y) || !pixelAt(x, y).pushable) y++;
                 break;
         }
     }
     switch (dir) {
         case 0:
-            for (let i = x - 1; i >= 0; i--) {
+            for (let i = x - !startsSlime; i >= 0; i--) {
                 if (isAir(i, y)) {
                     moveX = i;
                     if (grid[y][i] == pixNum.DELETER) moveX++;
@@ -820,7 +821,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (movePusher) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
-                    teamGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
                 }
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
@@ -829,7 +830,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             return false;
         case 1:
-            for (let i = y - 1; i >= 0; i--) {
+            for (let i = y - !startsSlime; i >= 0; i--) {
                 if (isAir(x, i)) {
                     moveY = i;
                     if (grid[i][x] == pixNum.DELETER) moveY++;
@@ -857,7 +858,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (movePusher) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
-                    teamGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
                 }
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
@@ -866,7 +867,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             return false;
         case 2:
-            for (let i = x + 1; i < gridWidth; i++) {
+            for (let i = x + !startsSlime; i < gridWidth; i++) {
                 if (isAir(i, y)) {
                     moveX = i;
                     if (grid[y][i] == pixNum.DELETER) moveX--;
@@ -894,7 +895,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (movePusher) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
-                    teamGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
                 }
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
@@ -903,7 +904,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             return false;
         case 3:
-            for (let i = y + 1; i < gridHeight; i++) {
+            for (let i = y + !startsSlime; i < gridHeight; i++) {
                 if (isAir(x, i)) {
                     moveY = i;
                     if (grid[i][x] == pixNum.DELETER) moveY--;
@@ -931,7 +932,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (movePusher) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
-                    teamGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
                 }
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
