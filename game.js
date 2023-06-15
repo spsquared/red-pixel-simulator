@@ -486,7 +486,6 @@ function PreRenderer(size = 60) {
     rendCanvas.width = size;
     rendCanvas.height = size;
     const rendctx = rendCanvas.getContext('2d');
-    rendCanvas.style.imageRendering = 'pixelated';
     rendctx.imageSmoothingEnabled = false;
     rendctx.webkitImageSmoothingEnabled = false;
     rendctx.mozImageSmoothingEnabled = false;
@@ -1392,12 +1391,8 @@ function drawFrame() {
         drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
         drawBooleanGrid(monsterGrid, monsterGrid, pixNum.MONSTER, monsterctx);
         drawBooleanGrid(targetGrid, targetGrid, pixNum.TARGET, targetctx);
-        if (!PixSimAPI.inGame) {
-            drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
-        } else {
-            // placeable grid doesn't change anyways, just need to figure out how to not lag
-            // maybe use a clipping thing like rick astley pixel?
-        }
+        if (!PixSimAPI.inGame) drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
+        else drawBooleanGrid(PixSimAPI.team ? teamPlaceableGrids[1] : teamPlaceableGrids[0], lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         if (drawTeamGrid) {
             teamsctx.globalCompositeOperation = 'source-over';
             if (noNoise) teamsctx.globalAlpha = 0.5;
