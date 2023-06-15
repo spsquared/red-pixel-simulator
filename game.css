@@ -159,6 +159,13 @@
     margin-right: 8px;
     text-align: justify;
 }
+#pixelPickerTooltip {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    opacity: 0;
+    pointer-events: none;
+}
 
 #gameControls {
     width: 100%;

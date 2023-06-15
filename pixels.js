@@ -4697,7 +4697,7 @@ const pixels = {
     },
     placementUnRestriction: {
         name: 'Allow Placement',
-        description: 'Remove placement restrictions in puzzles',
+        description: 'Allow modification of a region within puzzles and multiplayer',
         draw: function (rectangles, opacity, ctx, avoidGrid) { },
         update: function (x, y) { },
         drawPreview: function (ctx) {
@@ -4726,11 +4726,15 @@ const pixels = {
     },
     placementRestriction: {
         name: 'Prevent Placement',
-        description: 'Prevents players from placing pixels in puzzles',
+        description: 'Restrict modification of a region in puzzles and multiplayer',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity * 0.2;
+            let scale = gridScale * camera.scale;
+            // could add a buffer area around the edges and actually snap the canvas to the nearest pixel
+            // also scale the canvas correctly
+            // could eliminate the trippy illusion when the camera moves while preserving performance
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                ctx.drawImage(this.prerenderedFrames[0], x * scale - camera.x, y * scale - camera.y, width * scale, height * scale, x * scale - camera.x, y * scale - camera.y, width * scale, height * scale);
             });
         },
         update: function (x, y) { },
@@ -4752,13 +4756,14 @@ const pixels = {
             ctx.fillRect(37, 37, 8, 8);
         },
         prerender: function () {
-            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(40);
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(canvasResolution);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             fillPixels(0, 0, 1, 1);
             ctx.rotate(-Math.PI / 4);
-            clearPixels(-0.1, 0, 0.2, 0.1);
-            clearPixels(-Math.sqrt(2) / 2, Math.sqrt(2) / 2 - 0.1, Math.sqrt(2), 0.2);
-            clearPixels(-0.1, Math.sqrt(2) - 0.1, 0.2, 0.1);
+            let rt2 = Math.sqrt(2);
+            for (let i = 0; i <= 50; i++) {
+                ctx.clearRect(-rt2 * canvasResolution / 2, ((i / 25) * rt2 * canvasResolution / 2) - 3, rt2 * canvasResolution, 6);
+            }
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },
@@ -5454,6 +5459,93 @@ const pixels = {
         pickable: true,
         pixsimPickable: true,
         id: 'color_collector_a',
+        numId: 0
+    },
+    teamNone: {
+        name: 'Remove Team Marker',
+        description: 'Removes team markers from a region',
+        draw: function (rectangles, opacity, ctx, avoidGrid) { },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(5, 5, 40, 40);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        id: 'teamNone',
+        numId: 0
+    },
+    teamAlpha: {
+        name: 'Team α Marker',
+        description: 'Marks a region to be owned by team α',
+        draw: function (rectangles, opacity, ctx, avoidGrid) { },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = '#FF0099';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(5, 5, 40, 40);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        id: 'teamAlpha',
+        numId: 0
+    },
+    teamBeta: {
+        name: 'Team β Marker',
+        description: 'Marks a region to be owned by team β',
+        draw: function (rectangles, opacity, ctx, avoidGrid) { },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = '#3C70FF';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(5, 5, 40, 40);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        id: 'teamBeta',
         numId: 0
     },
     remove: {

@@ -38,33 +38,11 @@ const noisectx = noiseCanvas.getContext('2d');
 const noisebufferctx = noiseBufferCanvas.getContext('2d');
 const teamsctx = teamsCanvas.getContext('2d');
 const bufferctx = bufferCanvas.getContext('2d');
+canvas.width = canvasResolution;
+canvas.height = canvasResolution;
+gameCanvas.width = canvasResolution;
+gameCanvas.height = canvasResolution;
 function resetCanvases() {
-    canvas.width = canvasResolution;
-    canvas.height = canvasResolution;
-    gameCanvas.width = canvasResolution;
-    gameCanvas.height = canvasResolution;
-    gridCanvas.width = canvasResolution;
-    gridCanvas.height = canvasResolution;
-    gridOverlayCanvas.width = canvasResolution;
-    gridOverlayCanvas.height = canvasResolution;
-    aboveCanvas.width = canvasResolution;
-    aboveCanvas.height = canvasResolution;
-    monsterCanvas.width = canvasResolution;
-    monsterCanvas.height = canvasResolution;
-    fireCanvas.width = canvasResolution;
-    fireCanvas.height = canvasResolution;
-    targetCanvas.width = canvasResolution;
-    targetCanvas.height = canvasResolution;
-    placeableCanvas.width = canvasResolution;
-    placeableCanvas.height = canvasResolution;
-    noiseCanvas.width = gridWidth;
-    noiseCanvas.height = gridHeight;
-    noiseBufferCanvas.width = canvasResolution;
-    noiseBufferCanvas.height = canvasResolution;
-    teamsctx.width = canvasResolution;
-    teamsctx.height = canvasResolution;
-    bufferCanvas.width = canvasResolution;
-    bufferCanvas.height = canvasResolution;
     ctx.imageSmoothingEnabled = false;
     ctx.webkitImageSmoothingEnabled = false;
     gamectx.imageSmoothingEnabled = false;
@@ -507,9 +485,6 @@ function PreRenderer(size = 60) {
 function drawPixels(type, rectangles, opacity, ctx, avoidGrid = false) {
     (numPixels[type] ?? numPixels[pixNum.MISSING]).draw(rectangles, opacity, ctx, avoidGrid);
 };
-function clearPixels(x, y, width, height, ctx) {
-    ctx.clearRect(x * drawScale - camera.x, y * drawScale - camera.y, width * drawScale, height * drawScale);
-};
 function forRectangles(rectangles, cb) {
     for (let rect of rectangles) {
         cb(...rect);
@@ -524,6 +499,9 @@ function forEachPixel(x, y, width, height, cb) {
 };
 function fillPixels(x, y, width, height, ctx) {
     ctx.fillRect(x * drawScale - camera.x, y * drawScale - camera.y, width * drawScale, height * drawScale);
+};
+function clearPixels(x, y, width, height, ctx) {
+    ctx.clearRect(x * drawScale - camera.x, y * drawScale - camera.y, width * drawScale, height * drawScale);
 };
 function imagePixels(x, y, width, height, source, ctx) {
     for (let i = y; i < y + height; i++) {
@@ -1261,6 +1239,7 @@ timingGradient.addColorStop(0.25, '#F00');
 timingGradient.addColorStop(0.4, '#FF0');
 timingGradient.addColorStop(0.7, '#0F0');
 timingGradient.addColorStop(1, '#0F0');
+let forceDrawTeamGrid = false;
 function draw() {
     if (inMenuScreen) return;
 
@@ -1322,6 +1301,7 @@ function drawFrame() {
             gamectx.fillRect(0, 0, canvasResolution, canvasResolution);
             gridctx.clearRect(0, 0, canvasResolution, canvasResolution);
             firectx.clearRect(0, 0, canvasResolution, canvasResolution);
+            teamsctx.clearRect(0, 0, canvasResolution, canvasResolution);
             placeablectx.clearRect(0, 0, canvasResolution, canvasResolution);
             if (!noNoise) {
                 noisebufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
@@ -1329,22 +1309,20 @@ function drawFrame() {
             }
         }
         gridoverctx.clearRect(0, 0, canvasResolution, canvasResolution);
-        teamsctx.clearRect(0, 0, canvasResolution, canvasResolution);
         abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
         for (let i in numPixels) {
             numPixels[i].rectangles.length = 0;
         }
 
         // get rectangles to draw
-        let drawTeamGrid = PixSimAPI.inGame;
-        let teamPixelRects = [[], []];
+        let drawTeamGrid = PixSimAPI.inGame || forceDrawTeamGrid;
         let xmin = Math.max(0, Math.floor(camera.x * screenScale) - 1);
         let xmax = Math.min(gridWidth - 1, Math.floor((camera.x + canvasResolution) * screenScale) + 1);
         let ymin = Math.max(0, Math.floor(camera.y * screenScale) - 1);
         let ymax = Math.min(gridHeight - 1, Math.floor((camera.y + canvasResolution) * screenScale) + 1);
         for (let y = ymin; y <= ymax; y++) {
-            let curr = pixNum.AIR;
-            let redrawing = grid[y][0] != lastGrid[y][0];
+            let curr = grid[y][xmin];
+            let redrawing = grid[y][xmin] != lastGrid[y][xmin];
             let amount = 0;
             for (let x = xmin; x <= xmax; x++) {
                 amount++;
@@ -1352,22 +1330,8 @@ function drawFrame() {
                     let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
                     if (curr != pixNum.AIR && (forceRedraw || redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations))) {
                         numPixels[pixelType.numId].rectangles.push([x - amount, y, amount, 1, redrawing]);
-                        if (drawTeamGrid) {
-                            let tcurr = teamGrid[y][x - amount];
-                            let tamount = 0;
-                            for (let x2 = x - amount; x2 < x; x2++) {
-                                tamount++;
-                                if (teamGrid[y][x2] != tcurr) {
-                                    tcurr > 0 && teamPixelRects[tcurr - 1].push([x2 - tamount, y, tamount, 1]);
-                                    tcurr = teamGrid[y][x2];
-                                    tamount = 0;
-                                }
-                            }
-                            tcurr > 0 && teamPixelRects[tcurr - 1].push([x - tamount, y, tamount, 1]);
-                        }
-                    } else if (curr == pixNum.AIR && (redrawing || forceRedraw)) {
+                    } else if (curr == pixNum.AIR && (forceRedraw || redrawing)) {
                         clearPixels(x - amount, y, amount, 1, gridctx);
-                        drawTeamGrid && clearPixels(x - amount, y, amount, 1, teamsctx);
                     }
                     curr = grid[y][x];
                     redrawing = grid[y][x] != lastGrid[y][x];
@@ -1378,9 +1342,38 @@ function drawFrame() {
             let pixelType = numPixels[curr] ?? numPixels[pixNum.MISSING];
             if (curr != pixNum.AIR && (forceRedraw || redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations))) {
                 numPixels[pixelType.numId].rectangles.push([xmax - amount, y, amount + 1, 1, redrawing]);
-            } else if (curr == pixNum.AIR && (redrawing || forceRedraw)) {
+            } else if (curr == pixNum.AIR && (forceRedraw || redrawing)) {
                 clearPixels(xmax - amount, y, amount + 1, 1, gridctx);
-                drawTeamGrid && clearPixels(xmax - amount, y, amount + 1, 1, teamsctx);
+            }
+        }
+        let teamPixelRects = [[], []];
+        if (drawTeamGrid) {
+            teamsctx.globalCompositeOperation = 'source-over';
+            teamsctx.globalAlpha = 1;
+            teamsctx.fillStyle = '#FFFF00'
+            for (let y = ymin; y <= ymax; y++) {
+                let curr = teamGrid[y][xmin];
+                let redrawing = teamGrid[y][xmin] != lastTeamGrid[y][xmin];
+                let amount = 0;
+                for (let x = xmin; x <= xmax; x++) {
+                    amount++;
+                    if (teamGrid[y][x] != curr || (teamGrid[y][x] != lastTeamGrid[y][x]) != redrawing) {
+                        if (curr > 0 && (forceRedraw || redrawing)) {
+                            teamPixelRects[curr - 1].push([x - amount, y, amount, 1]);
+                        } else if (curr == 0 && (forceRedraw || redrawing)) {
+                            clearPixels(x - amount, y, amount, 1, teamsctx);
+                        }
+                        curr = teamGrid[y][x];
+                        redrawing = teamGrid[y][x] != lastTeamGrid[y][x];
+                        amount = 0;
+                    }
+                    lastTeamGrid[y][x] = teamGrid[y][x];
+                }
+                if (curr > 0 && (forceRedraw || redrawing)) {
+                    teamPixelRects[curr - 1].push([xmax - amount, y, amount + 1, 1]);
+                } else if (curr == 0 && (forceRedraw || redrawing)) {
+                    clearPixels(xmax - amount, y, amount + 1, 1, teamsctx);
+                }
             }
         }
 
@@ -1421,12 +1414,12 @@ function drawFrame() {
             gridoverctx.globalCompositeOperation = 'source-over';
         }
         gridctx.drawImage(gridOverlayCanvas, 0, 0);
-        gridctx.drawImage(teamsCanvas, 0, 0);
         gamectx.drawImage(gridCanvas, 0, 0);
         gamectx.drawImage(monsterCanvas, 0, 0);
         gamectx.drawImage(aboveCanvas, 0, 0);
         gamectx.drawImage(targetCanvas, 0, 0);
         gamectx.drawImage(fireCanvas, 0, 0);
+        gamectx.drawImage(teamsCanvas, 0, 0);
 
         forceRedraw = false;
     }
@@ -2050,11 +2043,23 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
         } else if (placePixel == 'placementRestriction') {
             if (sandboxMode) act(function (x, y) {
                 placeable[y][x] = false;
-            })
+            });
+        } else if (placePixel == 'teamNone') {
+            if (sandboxMode) act(function (x, y) {
+                teamGrid[y][x] = 0;
+            });
+        } else if (placePixel == 'teamAlpha') {
+            if (sandboxMode) act(function (x, y) {
+                teamGrid[y][x] = 1;
+            });
+        } else if (placePixel == 'teamBeta') {
+            if (sandboxMode) act(function (x, y) {
+                teamGrid[y][x] = 2;
+            });
         } else if (placePixel == 'placementUnRestriction') {
             if (sandboxMode) act(function (x, y) {
                 placeable[y][x] = true;
-            })
+            });
         } else if (placePixel == 'monster') {
             if (sandboxMode) act(function (x, y) {
                 monsterGrid[y][x] = true;
@@ -2115,17 +2120,21 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
 
 // PixSim multiplayer addons
 const teamGrid = [];
+const lastTeamGrid = [];
 const teamPlaceableGrids = [[], []];
 function createPixSimGrid() {
     teamGrid.length = 0;
+    lastTeamGrid.length = 0;
     teamPlaceableGrids[0].length = 0;
     teamPlaceableGrids[1].length = 0;
     for (let i = 0; i < gridHeight; i++) {
         teamGrid[i] = [];
+        lastTeamGrid[i] = [];
         teamPlaceableGrids[0][i] = [];
         teamPlaceableGrids[1][i] = [];
         for (let j = 0; j < gridWidth; j++) {
             teamGrid[i][j] = 0;
+            lastTeamGrid[i][j] = 0;
             teamPlaceableGrids[0][i][j] = true;
             teamPlaceableGrids[1][i][j] = true;
         }
