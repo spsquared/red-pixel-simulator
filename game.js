@@ -1392,7 +1392,12 @@ function drawFrame() {
         drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
         drawBooleanGrid(monsterGrid, monsterGrid, pixNum.MONSTER, monsterctx);
         drawBooleanGrid(targetGrid, targetGrid, pixNum.TARGET, targetctx);
-        drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
+        if (!PixSimAPI.inGame) {
+            drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
+        } else {
+            // placeable grid doesn't change anyways, just need to figure out how to not lag
+            // maybe use a clipping thing like rick astley pixel?
+        }
         if (drawTeamGrid) {
             teamsctx.globalCompositeOperation = 'source-over';
             if (noNoise) teamsctx.globalAlpha = 0.5;
@@ -1840,7 +1845,8 @@ function updateTick() {
                 fireGrid,
                 monsterGrid,
                 targetGrid,
-                placeableGrid
+                teamPlaceableGrids[0],
+                teamPlaceableGrids[1]
             ], {
                 tick: ticks,
                 pixelAmounts: getPixSimPixelAmounts(),
@@ -2255,7 +2261,8 @@ PixSimAPI.onGameTick = (compressedGrid, compressedTeamGrid, compressedBooleanGri
     extractBooleanGrid(fireGrid, compressedBooleanGrids[0]);
     extractBooleanGrid(monsterGrid, compressedBooleanGrids[1]);
     extractBooleanGrid(targetGrid, compressedBooleanGrids[2]);
-    extractBooleanGrid(placeableGrid, compressedBooleanGrids[3]);
+    extractBooleanGrid(teamPlaceableGrids[0], compressedBooleanGrids[3]);
+    extractBooleanGrid(teamPlaceableGrids[1], compressedBooleanGrids[4]);
     let teamPixelAmount1 = tickData.teamPixelAmounts[PixSimAPI.team];
     let teamPixelAmount2 = teamPixelAmounts[PixSimAPI.team];
     if (teamPixelAmount1 !== undefined) {

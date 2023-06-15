@@ -22,7 +22,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'air',
         numId: 0
     },
@@ -55,7 +55,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'wall',
         numId: 0
     },
@@ -97,7 +97,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'dirt',
         numId: 0
     },
@@ -155,7 +155,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'grass',
         numId: 0
     },
@@ -210,7 +210,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'mud',
         numId: 0
     },
@@ -246,7 +246,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'sand',
         numId: 0
     },
@@ -293,7 +293,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'gravel',
         numId: 0
     },
@@ -335,7 +335,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'wood',
         numId: 0
     },
@@ -387,7 +387,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'leaves',
         numId: 0
     },
@@ -443,7 +443,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'moss',
         numId: 0
     },
@@ -501,7 +501,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'ash',
         numId: 0
     },
@@ -555,7 +555,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'wet_ash',
         numId: 0
     },
@@ -593,7 +593,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'stone',
         numId: 0
     },
@@ -626,7 +626,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'basalt',
         numId: 0
     },
@@ -699,7 +699,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'water',
         numId: 0
     },
@@ -769,7 +769,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'ice',
         numId: 0
     },
@@ -820,7 +820,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'snow',
         numId: 0
     },
@@ -992,7 +992,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'steam',
         numId: 0
     },
@@ -1109,7 +1109,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'lava',
         numId: 0
     },
@@ -1206,7 +1206,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'fire',
         numId: 0
     },
@@ -1246,7 +1246,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'concrete_powder',
         numId: 0
     },
@@ -1279,7 +1279,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'concrete',
         numId: 0
     },
@@ -1332,7 +1332,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'crate',
         numId: 0
     },
@@ -1382,7 +1382,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'plant',
         numId: 0
     },
@@ -1428,7 +1428,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'sponge',
         numId: 0
     },
@@ -1480,7 +1480,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'pump',
         numId: 0
     },
@@ -1550,7 +1550,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'lava_generator',
         numId: 0
     },
@@ -1607,7 +1607,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'freezer',
         numId: 0
     },
@@ -1662,7 +1662,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'piston_left',
         numId: 0
     },
@@ -1712,7 +1712,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'piston_up',
         numId: 0
     },
@@ -1762,7 +1762,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'piston_right',
         numId: 0
     },
@@ -1812,7 +1812,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'piston_down',
         numId: 0
     },
@@ -1865,7 +1865,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'sticky_piston_left',
         numId: 0
     },
@@ -1918,7 +1918,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'sticky_piston_up',
         numId: 0
     },
@@ -1971,7 +1971,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'sticky_piston_right',
         numId: 0
     },
@@ -2024,7 +2024,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'sticky_piston_down',
         numId: 0
     },
@@ -2077,7 +2077,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'cloner_left',
         numId: 0
     },
@@ -2130,7 +2130,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'cloner_up',
         numId: 0
     },
@@ -2183,7 +2183,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'cloner_right',
         numId: 0
     },
@@ -2236,7 +2236,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'cloner_down',
         numId: 0
     },
@@ -2295,7 +2295,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'push_cloner_left',
         numId: 0
     },
@@ -2354,7 +2354,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'push_cloner_up',
         numId: 0
     },
@@ -2413,7 +2413,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'push_cloner_right',
         numId: 0
     },
@@ -2472,7 +2472,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'push_cloner_down',
         numId: 0
     },
@@ -2524,7 +2524,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: false,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'super_cloner_left',
         numId: 0
     },
@@ -2578,7 +2578,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: false,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'super_cloner_up',
         numId: 0
     },
@@ -2630,7 +2630,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: false,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'super_cloner_right',
         numId: 0
     },
@@ -2682,7 +2682,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: false,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'super_cloner_down',
         numId: 0
     },
@@ -2728,7 +2728,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'rotator_left',
         numId: 0
     },
@@ -2774,7 +2774,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'rotator_up',
         numId: 0
     },
@@ -2820,7 +2820,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'rotator_right',
         numId: 0
     },
@@ -2866,7 +2866,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'rotator_down',
         numId: 0
     },
@@ -2940,7 +2940,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'rotator_clockwise',
         numId: 0
     },
@@ -3014,7 +3014,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'rotator_counterclockwise',
         numId: 0
     },
@@ -3057,7 +3057,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'slider_horizontal',
         numId: 0
     },
@@ -3100,7 +3100,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'slider_vertical',
         numId: 0
     },
@@ -3149,7 +3149,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'collapsible',
         numId: 0
     },
@@ -3182,7 +3182,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'slime',
         numId: 0
     },
@@ -3257,7 +3257,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: true,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'laser_left',
         numId: 0
     },
@@ -3331,7 +3331,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: true,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'laser_up',
         numId: 0
     },
@@ -3405,7 +3405,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: true,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'laser_right',
         numId: 0
     },
@@ -3479,7 +3479,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: true,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'laser_down',
         numId: 0
     },
@@ -3531,7 +3531,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'glass',
         numId: 0
     },
@@ -3593,7 +3593,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'reinforced_glass',
         numId: 0
     },
@@ -3637,7 +3637,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'laser_scatterer',
         numId: 0
     },
@@ -3700,7 +3700,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'mirror_1',
         numId: 0
     },
@@ -3763,7 +3763,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'mirror_2',
         numId: 0
     },
@@ -3828,7 +3828,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'flamethrower_left',
         numId: 0
     },
@@ -3893,7 +3893,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'flamethrower_up',
         numId: 0
     },
@@ -3958,7 +3958,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'flamethrower_right',
         numId: 0
     },
@@ -4023,7 +4023,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'flamethrower_down',
         numId: 0
     },
@@ -4072,7 +4072,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'detonator',
         numId: 0
     },
@@ -4122,7 +4122,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'gunpowder',
         numId: 0
     },
@@ -4155,7 +4155,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'c4',
         numId: 0
     },
@@ -4202,7 +4202,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'nuke_diffuser',
         numId: 0
     },
@@ -4251,7 +4251,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'nuke',
         numId: 0
     },
@@ -4300,7 +4300,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'huge_nuke',
         numId: 0
     },
@@ -4349,7 +4349,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'very_huge_nuke',
         numId: 0
     },
@@ -4394,7 +4394,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'deleter',
         numId: 0
     },
@@ -4450,7 +4450,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: true,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'lag_spike_generator',
         numId: 0
     },
@@ -4654,7 +4654,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: true,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'corruption',
         numId: 0
     },
@@ -4691,7 +4691,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: true,
         pickable: false,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'spin',
         numId: 0
     },
@@ -4720,7 +4720,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'placementUnRestriction',
         numId: 0
     },
@@ -4774,7 +4774,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'placementRestriction',
         numId: 0
     },
@@ -4848,7 +4848,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'monster',
         numId: 0
     },
@@ -4893,7 +4893,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'goal',
         numId: 0
     },
@@ -4943,7 +4943,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'target',
         numId: 0
     },
@@ -5034,7 +5034,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: false,
         id: 'pixelite_crystal',
         numId: 0
     },
@@ -5092,7 +5092,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: false,
         id: 'generic_color_well',
         numId: 0
     },
@@ -5162,7 +5162,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'passive_color_generator',
         numId: 0
     },
@@ -5315,7 +5315,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: true,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'active_color_generator',
         numId: 0
     },
@@ -5452,7 +5452,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'color_collector_a',
         numId: 0
     },
@@ -5485,7 +5485,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: false,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'remove',
         numId: 0
     },
@@ -5529,7 +5529,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: false,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: 'missing',
         numId: 0
     },
@@ -6070,7 +6070,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: false,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'rickastley',
         numId: 0
     },
@@ -6105,7 +6105,7 @@ const pixels = {
         animated: false,
         alwaysRedraw: false,
         pickable: false,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: 'red',
         numId: 0
     }
@@ -6136,13 +6136,13 @@ function updatePixelAmount(id, inventory = pixelAmounts, hideEmpty = false, forc
             pixelSelectors[id].parentGroup.children[0]._refresh();
         } else {
             pixelSelectors[id].count.innerText = inventory[id] == Infinity ? '∞' : inventory[id] == -Infinity ? 0 : inventory[id];
-            if (inventory[id] <= 0 || (PixSimAPI.gameRunning && !pixels[id].pixsimCompatible)) {
+            if (inventory[id] <= 0 || (PixSimAPI.gameRunning && !pixels[id].pixsimPickable)) {
                 pixelSelectors[id].box.classList.add('pickerNoPixels');
-                if (forceShow && !(PixSimAPI.inGame && !pixels[id].pixsimCompatible)) {
+                if (forceShow && !(PixSimAPI.inGame && !pixels[id].pixsimPickable)) {
                     pixelSelectors[id].box.style.display = '';
                     pixelSelectors[id].parentGroup.style.display = '';
                     pixelSelectors[id].parentGroup.children[0]._refresh();
-                } else if (hideEmpty || (PixSimAPI.inGame && !pixels[id].pixsimCompatible)) {
+                } else if (hideEmpty || (PixSimAPI.inGame && !pixels[id].pixsimPickable)) {
                     pixelSelectors[id].box.style.display = 'none';
                 }
             } else {
@@ -6238,7 +6238,7 @@ function generateMusicPixel(id, data) {
         animated: true,
         alwaysRedraw: true,
         pickable: true,
-        pixsimCompatible: false,
+        pixsimPickable: false,
         id: `music_${id}`,
         numId: 0
     }
@@ -6274,7 +6274,7 @@ function generateColorPixel(data) {
         animated: true,
         alwaysRedraw: false,
         pickable: false,
-        pixsimCompatible: true,
+        pixsimPickable: true,
         id: `color_${data.color.toLowerCase()}`,
         numId: 0
     };
@@ -6296,7 +6296,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     const ctx2 = canvas2.getContext('2d');
     canvas2.width = 50;
     canvas2.height = 50;
-    const groupNames = ['General', 'Mechanical', 'Lasers', 'Destruction', 'Music', 'Puzzle Construction', 'Multiplayer Construction'];
+    const groupNames = ['General', 'Mechanical', 'Lasers', 'Destruction', 'Music', 'Puzzles', 'Multiplayer'];
     for (const id in pixels) {
         const pixel = pixels[id];
         pixel.prerender();
