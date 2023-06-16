@@ -444,7 +444,7 @@ function loadStoredSave() {
 window.addEventListener('load', (e) => {
     loadStoredSave();
 
-    if (window.requestIdleCallback) {
+    if (typeof window.requestIdleCallback == 'function') {
         setInterval(() => {
             window.requestIdleCallback(() => {
                 if (sandboxMode) {
@@ -2574,8 +2574,26 @@ window.addEventListener('DOMContentLoaded', (e) => {
         if (holdingControl) { e.preventDefault(); }
     }, { passive: false });
     hasFocus = false;
-    setInterval(() => {
-        window.requestIdleCallback(() => {
+    if (typeof window.requestIdleCallback == 'function') {
+        setInterval(() => {
+            window.requestIdleCallback(() => {
+                if (hasFocus && !document.hasFocus()) {
+                    camera.mUp = false;
+                    camera.mDown = false;
+                    camera.mLeft = false;
+                    camera.mRight = false;
+                    holdingControl = false;
+                    holdingAlt = false;
+                    removing = false;
+                    brush.lineMode = false;
+                    brush.mouseButtonStack.length = 0;
+                    brush.mouseButton = -1;
+                }
+                hasFocus = document.hasFocus();
+            }, { timeout: 40 });
+        }, 50);
+    } else {
+        setInterval(() => {
             if (hasFocus && !document.hasFocus()) {
                 camera.mUp = false;
                 camera.mDown = false;
@@ -2589,8 +2607,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 brush.mouseButton = -1;
             }
             hasFocus = document.hasFocus();
-        }, { timeout: 50 });
-    }, 50);
+        }, 50);
+    }
 });
 
 // game control buttons
