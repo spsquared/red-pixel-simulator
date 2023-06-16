@@ -1367,6 +1367,7 @@ function drawFrame() {
                     amount++;
                     if (teamGrid[y][x] != curr || (teamGrid[y][x] != lastTeamGrid[y][x]) != redrawing) {
                         if (curr > 0 && (forceRedraw || redrawing)) {
+                            clearPixels(x - amount, y, amount, 1, teamsctx);
                             teamPixelRects[curr - 1].push([x - amount, y, amount, 1]);
                         } else if (curr == 0 && (forceRedraw || redrawing)) {
                             clearPixels(x - amount, y, amount, 1, teamsctx);
@@ -1378,6 +1379,7 @@ function drawFrame() {
                     lastTeamGrid[y][x] = teamGrid[y][x];
                 }
                 if (curr > 0 && (forceRedraw || redrawing)) {
+                    clearPixels(xmax - amount, y, amount + 1, 1, teamsctx);
                     teamPixelRects[curr - 1].push([xmax - amount, y, amount + 1, 1]);
                 } else if (curr == 0 && (forceRedraw || redrawing)) {
                     clearPixels(xmax - amount, y, amount + 1, 1, teamsctx);

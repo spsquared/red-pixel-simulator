@@ -2250,7 +2250,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && canMoveTo(x - 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && grid[y][x - 1] != pixNum.DELETER && canMoveTo(x - 1, y)) {
                 if (push(x, y, 0, false, true)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
                     teamGrid[y][x - 1] = teamGrid[y][x + 1];
@@ -2309,7 +2309,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && canMoveTo(x, y - 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && grid[y - 1][x] != pixNum.DELETER && canMoveTo(x, y - 1)) {
                 if (push(x, y, 1, false, true)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
                     teamGrid[y - 1][x] = teamGrid[y + 1][x];
@@ -2368,7 +2368,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && canMoveTo(x + 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && grid[y][x + 1] != pixNum.DELETER && canMoveTo(x + 1, y)) {
                 if (push(x, y, 2, false, true)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
                     teamGrid[y][x + 1] = teamGrid[y][x - 1];
@@ -2427,7 +2427,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && canMoveTo(x, y + 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && grid[y + 1][x] != pixNum.DELETER && canMoveTo(x, y + 1)) {
                 if (push(x, y, 3, false, true)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
                     teamGrid[y + 1][x] = teamGrid[y - 1][x];
@@ -4357,20 +4357,17 @@ const pixels = {
         name: 'Deleter',
         description: 'undefined',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
-            if (noAnimations && !forceRedraw) return;
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(100, 100, 100)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                fillPixels(x, y, width, height, ctx);
+                if (!noAnimations || redrawing || forceRedraw) fillPixels(x, y, width, height, ctx);
             });
             let color = noAnimations ? [200, 0, 255] : colorAnimate(200, 0, 255, 255, 0, 255, 96);
             ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        fillPixels(x + 1 / 4 + i, y + 1 / 4 + j, 1 / 2, 1 / 2, ctx);
-                    }
-                }
+                if (!noAnimations || redrawing || forceRedraw) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 4, y2 + 1 / 4, 1 / 2, 1 / 2, ctx);
+                });
             });
         },
         update: function (x, y) { },
@@ -4956,7 +4953,6 @@ const pixels = {
         name: 'Pixelite Crystal',
         description: 'Destroy it to win Pixelite Crash! (totally not a Corsair LL120 with some Noctua Chromax things)',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
-            if (noAnimations && !forceRedraw) return;
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 if (!noAnimations || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 4) % 24], ctx);
