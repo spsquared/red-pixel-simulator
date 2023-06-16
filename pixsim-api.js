@@ -13,8 +13,20 @@ let pingReceived = true;
 let jitter = 0;
 const highPingWarning = document.getElementById('highPing');
 const highPingWarningPing = document.getElementById('highPingDisplay');
-setInterval(() => {
-    window.requestIdleCallback(() => {
+if (typeof window.requestIdleCallback == 'function') {
+    setInterval(() => {
+        window.requestIdleCallback(() => {
+            if (pingReceived && socket.connected) {
+                pingSend = performance.now();
+                socket.emit('ping');
+                pingReceived = false;
+            } else if (!socket.connected) {
+                highPingWarning.style.display = '';
+            }
+        }, { timeout: 500 });
+    }, 1000);
+} else {
+    setInterval(() => {
         if (pingReceived && socket.connected) {
             pingSend = performance.now();
             socket.emit('ping');
@@ -22,8 +34,8 @@ setInterval(() => {
         } else if (!socket.connected) {
             highPingWarning.style.display = '';
         }
-    }, { timeout: 500 });
-}, 1000);
+    }, 1000);
+}
 socket.on('pong', () => {
     let prevPing = ping;
     ping = performance.now() - pingSend;
