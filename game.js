@@ -444,13 +444,21 @@ function loadStoredSave() {
 window.addEventListener('load', (e) => {
     loadStoredSave();
 
-    setInterval(() => {
-        window.requestIdleCallback(() => {
+    if (window.requestIdleCallback) {
+        setInterval(() => {
+            window.requestIdleCallback(() => {
+                if (sandboxMode) {
+                    window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
+                }
+            }, { timeout: 5000 });
+        }, 30000);
+    } else {
+        setInterval(() => {
             if (sandboxMode) {
                 window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
             }
-        }, { timeout: 5000 });
-    }, 30000);
+        }, 30000);
+    }
 });
 
 // utilities
