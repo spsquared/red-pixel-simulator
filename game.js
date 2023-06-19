@@ -522,9 +522,9 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
     let multiplier1 = (Math.sin(deltaTime * Math.PI / p) + 1) / 2;
     let multiplier2 = (Math.sin((deltaTime + p) * Math.PI / p) + 1) / 2;
     return [
-        (r1 * multiplier1) + (r2 * multiplier2),
-        (g1 * multiplier1) + (g2 * multiplier2),
-        (b1 * multiplier1) + (b2 * multiplier2),
+        Math.round((r1 * multiplier1) + (r2 * multiplier2)),
+        Math.round((g1 * multiplier1) + (g2 * multiplier2)),
+        Math.round((b1 * multiplier1) + (b2 * multiplier2)),
     ];
 };
 function updatePixel(x, y, i) {
@@ -1331,7 +1331,7 @@ function drawFrame() {
         for (let y = ymin; y <= ymax; y++) {
             let curr = grid[y][xmin];
             let redrawing = grid[y][xmin] != lastGrid[y][xmin];
-            let amount = 0;
+            let amount = -1;
             for (let x = xmin; x <= xmax; x++) {
                 amount++;
                 if (grid[y][x] != curr || (grid[y][x] != lastGrid[y][x]) != redrawing) {
@@ -1362,7 +1362,7 @@ function drawFrame() {
             for (let y = ymin; y <= ymax; y++) {
                 let curr = teamGrid[y][xmin];
                 let redrawing = teamGrid[y][xmin] != lastTeamGrid[y][xmin];
-                let amount = 0;
+                let amount = -1;
                 for (let x = xmin; x <= xmax; x++) {
                     amount++;
                     if (teamGrid[y][x] != curr || (teamGrid[y][x] != lastTeamGrid[y][x]) != redrawing) {
@@ -2015,7 +2015,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 });
             } else {
                 act(function (x, y) {
-                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN)))) {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN) && (grid[y][x] < pixNum.GENERIC_COLOR_WELL || grid[y][x] > pixNum.GENERIC_COLOR_WELL)))) {
                         let pixel = pixelAt(x, y).id;
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
                         inventory[pixel]++;
@@ -2172,10 +2172,44 @@ function getPixSimPixelAmounts() {
     });
 };
 function extractBooleanGrid(grid, compressed) {
+    // behold - pointlessly one-lined code!
     for (let i = 0, loc = 0, pixel = false; i < compressed.length; i++, pixel = !pixel) {
         for (let j = 0; j < compressed[i]; j++, loc++) {
             grid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
         }
+    }
+};
+function generateTeamCode() {
+    let code = '';
+    let len = 0;
+    let curr = teamGrid[0][0];
+    for (let i = 0; i < teamGrid.length; i++) {
+        for (let j = 0; j < teamGrid[i].length; j++) {
+            if (teamGrid[i][j] != curr) {
+                code += curr + '-' + len.toString(16) + ':';
+                curr = teamGrid[i][j];
+                len = 0;
+            }
+            len++;
+        }
+    }
+    code += curr + '-' + len.toString(16) + ':';
+    return code;
+};
+function loadTeamCode(code) {
+    let loc = 0;
+    let i = 0;
+    while (i < code.length) {
+        let next = code.indexOf(':', i);
+        if (next == -1) break;
+        let tokens = code.substring(i, next).split('-');
+        if (tokens.length != 2) break;
+        let team = parseInt(tokens[0]);
+        let run = parseInt(tokens[1], 16);
+        for (let j = 0; j < run; j++, loc++) {
+            teamGrid[~~(loc / gridWidth)][loc % gridWidth] = team;
+        }
+        i = next + 1;
     }
 };
 function drawPixSimUI() {
@@ -2829,6 +2863,18 @@ document.getElementById('changeResolution').onclick = (e) => {
         window.localStorage.setItem('resolution', newRes);
         window.location.reload();
     }
+};
+window.animateBackgroundColor = () => {
+    window.animateBackgroundColor = null;
+    let t = 0;
+    setInterval(() => {
+        let gradient = ctx.createLinearGradient(0, 0, canvasResolution, canvasResolution);
+        for (let i = 0; i < 360; i += 10) {
+            gradient.addColorStop(((i + t) % 360) / 360, `hsl(${i}, 80%, 50%)`);
+        }
+        backgroundColor = gradient;
+        t += 4;
+    }, 50);
 };
 
 // to menu

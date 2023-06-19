@@ -5077,7 +5077,11 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 0, 0)';
+            let gradient = ctx.createLinearGradient(25 / 2, 25 / 2, 75 / 2, 75 / 2);
+            for (let i = 0; i <= 360; i += 6) {
+                gradient.addColorStop(i / 360, `hsl(${i}, 100%, 50%)`);
+            }
+            ctx.fillStyle = gradient;
             ctx.fillRect(25 / 2, 25 / 2, 25, 25);
         },
         prerender: function () { },
@@ -5095,6 +5099,192 @@ const pixels = {
         pickable: true,
         pixsimPickable: false,
         id: 'generic_color_well',
+        numId: 0
+    },
+    warm_color_well: {
+        name: 'Warm Color Well',
+        description: 'A portal to the warmer color vats hidden within the machinery of the Simulator',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = noAnimations ? `hsl(60, 100%, 50%)` : `hsl(${Math.round(((Math.sin(deltaTime * Math.PI / 60) + 6) % 6) * 60)}, 100%, 50%)`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 4, y2 + 1 / 4, 1 / 2, 1 / 2, ctx);
+                });
+            });
+            if (!noAnimations) {
+                abovectx.globalAlpha = opacity * 0.5 * (1 - ((deltaTime % 60) / 60));
+                abovectx.fillStyle = noAnimations ? `hsl(60, 100%, 50%)` : `hsl(${Math.round(((Math.sin(deltaTime * Math.PI / 60) + 6) % 6) * 60)}, 100%, 50%)`;
+                let margin = ((deltaTime % 60) / 60);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 - margin, y2 - margin, 1 + margin * 2, 1 + margin * 2, abovectx);
+                    });
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.05) {
+                    let pix = Math.floor(Math.random() * (pixNum.COLOR_LIME - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
+                    nextGrid[ay][ax] = pix == pixNum.COLOR_LIME ? pixNum.COLOR_VIOLET : pix;
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            let gradient = ctx.createLinearGradient(25 / 2, 25 / 2, 75 / 2, 75 / 2);
+            gradient.addColorStop(0, 'rgb(255, 0, 255)');
+            gradient.addColorStop(0.5, 'rgb(255, 0, 0)');
+            gradient.addColorStop(1, 'rgb(255, 255, 0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(25 / 2, 25 / 2, 25, 25);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: 7,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        id: 'warm_color_well',
+        numId: 0
+    },
+    cool_color_well: {
+        name: 'Cool Color Well',
+        description: 'A portal to the cooler color vats hidden within the machinery of the Simulator',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = noAnimations ? `hsl(240, 100%, 50%)` : `hsl(${Math.round((Math.sin(deltaTime * Math.PI / 60) + 3) * 60)}, 100%, 50%)`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 4, y2 + 1 / 4, 1 / 2, 1 / 2, ctx);
+                });
+            });
+            if (!noAnimations) {
+                abovectx.globalAlpha = opacity * 0.5 * (1 - ((deltaTime % 60) / 60));
+                abovectx.fillStyle = noAnimations ? `hsl(240, 100%, 50%)` : `hsl(${Math.round((Math.sin(deltaTime * Math.PI / 60) + 3) * 60)}, 100%, 50%)`;
+                let margin = ((deltaTime % 60) / 60);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 - margin, y2 - margin, 1 + margin * 2, 1 + margin * 2, abovectx);
+                    });
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.05) {
+                    nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLUE - pixNum.COLOR_LIME + 1)) + pixNum.COLOR_LIME;
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            let gradient = ctx.createLinearGradient(25 / 2, 25 / 2, 75 / 2, 75 / 2);
+            gradient.addColorStop(0, 'rgb(0, 255, 0)');
+            gradient.addColorStop(0.5, 'rgb(0, 255, 255)');
+            gradient.addColorStop(1, 'rgb(0, 0, 255)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(25 / 2, 25 / 2, 25, 25);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: 7,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        id: 'cool_color_well',
+        numId: 0
+    },
+    monochrome_color_well: {
+        name: 'Monochrome Color Well',
+        description: 'A portal to the colorless vats hidden within the machinery of the Simulator (only monochrome black though)',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = noAnimations ? `hsl(0, 0%, 50%)` : `hsl(0, 0%, ${Math.round(Math.sin(deltaTime * Math.PI / 60) * 50 + 50)}%)`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 4, y2 + 1 / 4, 1 / 2, 1 / 2, ctx);
+                });
+            });
+            if (!noAnimations) {
+                abovectx.globalAlpha = opacity * 0.5 * (1 - ((deltaTime % 60) / 60));
+                abovectx.fillStyle = noAnimations ? `hsl(0, 0%, 50%)` : `hsl(0, 0%, ${Math.round(Math.sin(deltaTime * Math.PI / 60) * 50 + 50)}%)`;
+                let margin = ((deltaTime % 60) / 60);
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        fillPixels(x2 - margin, y2 - margin, 1 + margin * 2, 1 + margin * 2, abovectx);
+                    });
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                if (validChangingPixel(ax, ay) && random() < 0.05) {
+                    nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_GREY + 1)) + pixNum.COLOR_GREY;
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            let gradient = ctx.createLinearGradient(25 / 2, 25 / 2, 75 / 2, 75 / 2);
+            gradient.addColorStop(0, 'hsl(0, 100%, 100%)');
+            gradient.addColorStop(1, 'hsl(0, 100%, 0%)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(25 / 2, 25 / 2, 25, 25);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: 7,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        id: 'monochrome_color_well',
         numId: 0
     },
     passive_color_generator: {
@@ -5460,7 +5650,13 @@ const pixels = {
     teamNone: {
         name: 'Remove Team Marker',
         description: 'Removes team markers from a region',
-        draw: function (rectangles, opacity, ctx, avoidGrid) { },
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity * 0.5;
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -5489,7 +5685,13 @@ const pixels = {
     teamAlpha: {
         name: 'Team α Marker',
         description: 'Marks a region to be owned by team α',
-        draw: function (rectangles, opacity, ctx, avoidGrid) { },
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity * 0.5;
+            ctx.fillStyle = '#FF0099';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -5518,7 +5720,13 @@ const pixels = {
     teamBeta: {
         name: 'Team β Marker',
         description: 'Marks a region to be owned by team β',
-        draw: function (rectangles, opacity, ctx, avoidGrid) { },
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity * 0.5;
+            ctx.fillStyle = '#3C70FF';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -6261,15 +6469,13 @@ function generateMusicPixel(id, data) {
                 });
             } else {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    for (let y1 = Math.max(y, 0); y1 < Math.min(y + height, gridHeight); y1++) {
-                        for (let x1 = Math.max(x, 0); x1 < Math.min(x + width, gridWidth); x1++) {
-                            if (lastMusicGrid[y1][x1] != musicGrid[y1][x1] || forceRedraw || redrawing) {
-                                if (musicGrid[y1][x1] == -1) musicGrid[y1][x1] = 0;
-                                if (musicGrid[y1][x1]) imagePixels(x1, y1, 1, 1, this.prerenderedFrames[1], ctx);
-                                else imagePixels(x1, y1, 1, 1, this.prerenderedFrames[0], ctx);
-                            }
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        if (lastMusicGrid[y2][x2] != musicGrid[y2][x2] || redrawing || forceRedraw) {
+                            if (musicGrid[y2][x2] == -1) musicGrid[y2][x2] = 0;
+                            if (musicGrid[y2][x2]) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                            else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
                         }
-                    }
+                    });
                 });
             }
         },
