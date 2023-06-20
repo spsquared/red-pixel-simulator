@@ -70,6 +70,7 @@ class PixSimAPI {
     static #gameMode = 0;
     static #teamSize = 1;
     static #team = 0;
+    static #teams = {};
     static #gameModes = [
         {
             name: 'Pixelite Crash',
@@ -91,6 +92,7 @@ class PixSimAPI {
         this.onUpdateTeamList = () => { };
         this.onGameModeChange = () => { };
         this.onGameStart = () => { };
+        this.onGameEnd = () => { };
         this.onGameKicked = () => { };
         this.onGameClosed = () => { };
         this.onNewGridSize = () => { };
@@ -220,12 +222,21 @@ class PixSimAPI {
         if (this.#inGame && !this.#gameRunning) socket.emit('startGame');
     }
 
+    static async getMap() {
+        // request list of maps for game mode and pick one to load
+        // allows player-decided map loading in the future
+        return await new Promise(async (resolve, reject) => {
+            const maplist = await this.#httpGET('/pixsim-api/mapslist/' + this.#gameModes[this.#gameMode]);
+        });
+    }
+
     static set onUpdateTeamList(cb) {
         if (typeof cb != 'function') return;
         socket.off('updateTeamLists');
         socket.on('updateTeamLists', (teams) => {
-            this.#teamSize = teams.teamSize;
-            cb(teams);
+            this.#teams = teams;
+            this.#teamSize = this.teams.teamSize;
+            cb(this.teams);
         });
     }
     static set onGameModeChange(cb) {
@@ -245,6 +256,14 @@ class PixSimAPI {
             this.#gameRunning = true;
             await cb();
             socket.emit('ready');
+        });
+    }
+    static set onGameEnd(cb) {
+        if (typeof cb != 'function') return;
+        socket.off('gameEnd');
+        socket.on('gameEnd', async (winner) => {
+            this.#gameRunning = false;
+            cb(winner);
         });
     }
     static set onGameKicked(cb) {
@@ -444,6 +463,13 @@ class PixSimAPI {
     static get team() {
         return this.#team;
     }
+    static get teams() {
+        return {
+            teamA: this.#teams.teamA,
+            teamB: this.#teams.teamB,
+            teamSize: this.#teams.teamSize
+        };
+    }
     static get gameMode() {
         return this.#gameMode;
     }
@@ -489,5 +515,23 @@ class PixSimAPI {
             this.#userCache.set(username, userData);
             return userData;
         }
+    }
+
+    static async #httpGET(path) {
+        return await new Promise((resolve, reject) => {
+            const req = new XMLHttpRequest();
+            req.open('GET', apiURI + path);
+            req.onload = (res) => {
+                if (req.status != 200) {
+                    req.onerror();
+                    return;
+                }
+                resolve(req.response);
+            };
+            req.onerror = (err) => {
+                reject(new Error(`${err}: ${req.response}`));
+            };
+            req.send();
+        });
     }
 };

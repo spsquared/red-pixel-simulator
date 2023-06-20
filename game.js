@@ -221,6 +221,7 @@ function createGrid(width = 100, height = 100) {
     }
     gridWidthText.value = gridWidth;
     gridHeightText.value = gridHeight;
+    PixSimAPI.gridSize = { width: gridWidth, height: gridHeight };
     createPixSimGrid();
 };
 function loadSaveCode() {
@@ -1278,8 +1279,8 @@ function draw() {
     bufferctx.globalCompositeOperation = 'source-over';
     ctx.setLineDash([]);
 
-    drawFrame();
     updateBrush();
+    drawFrame();
     updateCamera();
     updateTick();
 
@@ -2250,8 +2251,9 @@ PixSimAPI.onGameStart = () => {
     transitionToGame(async () => {
         resetPixSimPixelAmounts();
         if (PixSimAPI.isHost) {
-            createGrid(300, 100);
-            PixSimAPI.gridSize = { width: gridWidth, height: gridHeight };
+            // idk request a map or something
+            // const map = await PixSimAPI.getMap();
+            createGrid(300, 100)
         }
         pixsimMenu._open = false;
         pixsimMenu.style.transform = '';
@@ -2285,6 +2287,10 @@ PixSimAPI.onGameStart = () => {
         resetPixelAmounts();
         // animate the camera and useless glitch text thing
     });
+};
+PixSimAPI.onGameEnd = (winner) => {
+    // win screen like level win screen but more graphics (color of winning team as accent)
+    // option to go back to lobby or quit to menu
 };
 PixSimAPI.onNewGridSize = createGrid;
 PixSimAPI.onGameTick = (compressedGrid, compressedTeamGrid, compressedBooleanGrids, tickData) => {

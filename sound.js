@@ -43,7 +43,11 @@ function playMusic(id) {
 function stopAllMusic() {
     for (const music of activeMusic) {
         music.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
-        setTimeout(() => music.source.stop(), 1000);
+        setTimeout(() => {
+            music.source.stop();
+            music.source.disconnect();
+            music.gain.disconnect();
+        }, 1000);
     }
 };
 function toggleMusic() {
@@ -77,6 +81,7 @@ async function addMusicPixelSound(id) {
             preloadQueue.unshift(audioContext.createBufferSource());
             preloadQueue[0].buffer = buf;
             preloadQueue[0].connect(globalVolume);
+            preloadQueue[0].onended = preloadQueue[0].disconnect;
         }
         musicPixelSounds.set(id, function play() {
             preloadQueue.shift().start();
@@ -84,6 +89,7 @@ async function addMusicPixelSound(id) {
             nextSource.buffer = buf;
             nextSource.connect(globalVolume);
             preloadQueue.push(nextSource);
+            nextSource.onended = nextSource.disconnect;
         });
     });
 };
@@ -135,12 +141,14 @@ function createSoundQueue(buf, funcName) {
     preloadQueue.push(audioContext.createBufferSource());
     preloadQueue[0].buffer = buf;
     preloadQueue[0].connect(globalVolume);
+    preloadQueue[0].onended = preloadQueue[0].disconnect;
     window[funcName] = () => {
         preloadQueue.shift().start();
         const nextSource = audioContext.createBufferSource();
         nextSource.buffer = buf;
         nextSource.connect(globalVolume);
         preloadQueue.push(nextSource);
+        nextSource.onended = nextSource.disconnect;
     };
 };
 window.addEventListener('load', (e) => {
