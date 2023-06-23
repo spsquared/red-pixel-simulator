@@ -199,7 +199,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 2,
+        blastResistance: 4,
         flammability: 1,
         pushable: true,
         cloneable: true,
@@ -282,7 +282,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 5,
+        blastResistance: 6,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -432,7 +432,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 4,
+        blastResistance: 2,
         flammability: 15,
         pushable: true,
         cloneable: true,
@@ -738,13 +738,6 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            // if (updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
-            //     if (random() < 0.001) {
-            //         nextGrid[y][x] = pixNum.WATER;
-            //         if (random() < 0.95) nextGrid[ay][ax] = pixNum.ICE;
-            //         return true;
-            //     } else return false;
-            // })) return;
             let touchingIce = 10;
             updateTouchingPixel(x, y, pixNum.ICE, function (ax, ay) {
                 touchingIce *= 2;
@@ -758,7 +751,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 3,
+        blastResistance: 1,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -809,7 +802,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 15,
+        blastResistance: 1,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -1281,6 +1274,115 @@ const pixels = {
         pickable: true,
         pixsimPickable: false,
         id: 'concrete',
+        numId: 0
+    },
+    stone_bricks: {
+        name: 'Stone Bricks',
+        description: 'Simple bricks made of cut stone',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1)) {
+                if ((grid[y][x - 1] == pixNum.STONE_BRICKS && grid[y + 1][x - 1] == pixNum.STONE_BRICKS) || (grid[y][x + 1] == pixNum.STONE_BRICKS && grid[y + 1][x + 1] == pixNum.STONE_BRICKS)) return;
+                move(x, y, x, y + 1);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(110, 110, 110)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(120, 120, 120)';
+            ctx.fillRect(0, 150 / 8, 50, 25 / 4);
+            ctx.fillRect(0, 350 / 8, 50, 25 / 4);
+            ctx.fillRect(150 / 4, 0, 25 / 4, 150 / 8);
+            ctx.fillRect(25 / 2, 25, 25 / 4, 150 / 8);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(8);
+            ctx.fillStyle = 'rgb(110, 110, 110)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(120, 120, 120)';
+            fillPixels(0, 3 / 8, 1, 1 / 8);
+            fillPixels(0, 7 / 8, 1, 1 / 8);
+            fillPixels(3 / 4, 0, 1 / 8, 3 / 8);
+            fillPixels(1 / 4, 1 / 2, 1 / 8, 3 / 8);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 14,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 0,
+        updateStage: 5,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        id: 'stone_bricks',
+        numId: 0
+    },
+    bricks: {
+        name: 'Bricks',
+        description: 'Hard rectangular clay',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1)) {
+                if ((grid[y][x - 1] == pixNum.BRICKS && grid[y + 1][x - 1] == pixNum.BRICKS)
+                        || (grid[y][x + 1] == pixNum.BRICKS && grid[y + 1][x + 1] == pixNum.BRICKS)
+                        || (grid[y][x - 1] == pixNum.BRICKS && grid[y][x - 2] == pixNum.BRICKS && grid[y + 1][x - 2] == pixNum.BRICKS)
+                        || (grid[y][x + 1] == pixNum.BRICKS && grid[y][x + 2] == pixNum.BRICKS && grid[y + 1][x + 2] == pixNum.BRICKS)) return;
+                move(x, y, x, y + 1);
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(180, 75, 60)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(215, 200, 200)';
+            ctx.fillRect(0, 150 / 8, 50, 25 / 4);
+            ctx.fillRect(0, 350 / 8, 50, 25 / 4);
+            ctx.fillRect(150 / 4, 0, 25 / 4, 150 / 8);
+            ctx.fillRect(25 / 2, 25, 25 / 4, 150 / 8);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(8);
+            ctx.fillStyle = 'rgb(180, 75, 60)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(215, 200, 200)';
+            fillPixels(0, 3 / 8, 1, 1 / 8);
+            fillPixels(0, 7 / 8, 1, 1 / 8);
+            fillPixels(3 / 4, 0, 1 / 8, 3 / 8);
+            fillPixels(1 / 4, 1 / 2, 1 / 8, 3 / 8);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 15,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 0,
+        updateStage: 5,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        id: 'bricks',
         numId: 0
     },
     crate: {
@@ -1854,7 +1956,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 10,
+        blastResistance: 11,
         flammability: 6,
         pushable: true,
         cloneable: true,
@@ -1907,7 +2009,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 10,
+        blastResistance: 11,
         flammability: 6,
         pushable: true,
         cloneable: true,
@@ -1960,7 +2062,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 10,
+        blastResistance: 11,
         flammability: 6,
         pushable: true,
         cloneable: true,
@@ -2013,7 +2115,7 @@ const pixels = {
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 10,
+        blastResistance: 11,
         flammability: 6,
         pushable: true,
         cloneable: true,
@@ -3583,7 +3685,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
-        blastResistance: 8,
+        blastResistance: 7,
         flammability: 0,
         pushable: false,
         cloneable: true,
@@ -3817,7 +3919,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
-        blastResistance: 10,
+        blastResistance: 8,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -3882,7 +3984,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
-        blastResistance: 10,
+        blastResistance: 8,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -3947,7 +4049,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
-        blastResistance: 10,
+        blastResistance: 8,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -4012,7 +4114,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         prerenderedFrames: [],
-        blastResistance: 10,
+        blastResistance: 8,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -5761,39 +5863,6 @@ const pixels = {
         id: 'teamBeta',
         numId: 0
     },
-    remove: {
-        name: 'Remove (brush only)',
-        description: 'For removing pixels from the grid',
-        draw: function (rectangles, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(255, 0, 0)';
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                fillPixels(x, y, width, height, ctx);
-            });
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 0, 0)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        prerenderedFrames: [],
-        blastResistance: 0,
-        flammability: 0,
-        pushable: false,
-        cloneable: false,
-        rotateable: false,
-        group: -1,
-        updateStage: -1,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: false,
-        pixsimPickable: false,
-        id: 'remove',
-        numId: 0
-    },
     missing: {
         name: 'Missing Pixel',
         description: 'Check your save code, it probably has pixels that don\'t exist in it',
@@ -6336,6 +6405,39 @@ const pixels = {
         color: 'rgb(150, 150, 150)',
         text: 'TZ'
     }),
+    remove: {
+        name: 'Remove (brush only)',
+        description: 'For removing pixels from the grid',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: -1,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: false,
+        pixsimPickable: false,
+        id: 'remove',
+        numId: 0
+    },
     rickastley: {
         name: 'Rick Astley',
         description: 'Never gonna give you up<br>Never gonna let you down<br>Never gonna run around and desert you<br>Never gonna make you cry<br>Never gonna say goodbye<br>Never gonna tell a lie and hurt you',

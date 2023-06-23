@@ -2149,6 +2149,7 @@ function createPixSimGrid() {
 };
 const teamPixelAmounts = [{}, {}];
 const pixsimData = {
+    gameStart: 0,
     pixeliteCounts: [0, 0]
 };
 function resetPixSimPixelAmounts() {
@@ -2252,6 +2253,7 @@ PixSimAPI.onGameStart = () => {
             const map = await PixSimAPI.getMap();
             // map object contains save code, placeable code, team code, and starting materials
             // load the placeable codes and team code separately
+            pixsimData.gameStart = Date.now(); // game timer
         }
         pixsimMenu._open = false;
         pixsimMenu.style.transform = '';
