@@ -1138,7 +1138,8 @@ function explode(x1, y1, size, defer) {
                 grid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
             } else if (random() < 1.2 - (power / size)) {
-                nextGrid[y][x] = pixNum.ASH;
+                if (grid[y][x] == pixNum.STONE || grid[y][x] == pixNum.BASALT || grid[y][x] == pixNum.CONCRETE || grid[y][x] == pixNum.STONE_BRICKS || grid[y][x] == pixNum.BRICKS) nextGrid[y][x] = pixNum.GRAVEL;
+                else nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
             }
             return pixelAt(x, y).blastResistance / 40;
