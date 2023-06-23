@@ -588,7 +588,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -1141,7 +1141,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            let flammability = pixelAt(x, y).flammability;
+            let flammability = monsterGrid[y][x] ? numPixels[pixNum.MONSTER].flammability : pixelAt(x, y).flammability;
             let isLava = grid[y][x] == pixNum.LAVA;
             if (flammability == 0 && !isLava && (grid[y][x] != pixNum.AIR || random() < 0.3)) {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
@@ -1180,7 +1180,7 @@ const pixels = {
             for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridHeight - 1); j++) {
                 for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridWidth - 1); i++) {
                     if (nextFireGrid[j][i] != -1 || (i == x && j == y)) continue;
-                    let flammability = pixelAt(i, j).flammability;
+                    let flammability = monsterGrid[j][i] ? numPixels[pixNum.MONSTER].flammability : pixelAt(i, j).flammability;
                     if (random() < flammability / (aerated ? 20 : 60) + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0) - (aerated ? 0 : 0.2)) nextFireGrid[j][i] = true;
                     if (grid[j][i] == pixNum.WATER && random() < 0.05) nextGrid[j][i] = pixNum.STEAM;
                     if (grid[j][i] == pixNum.ICE && random() < 0.1) nextGrid[j][i] = pixNum.WATER;
@@ -1616,6 +1616,7 @@ const pixels = {
     // ████████████████████    ██████    ██    ██████    ██    ██  ██  ██  ██    ████████████████████
     // ██          ████████    ██        ██        ██    ██    ██  ██  ██████    ████████          ██
     // ██          ████████    ██      ██████  ██████    ██    ██████  ██  ██    ████████          ██
+    // it would be better to have a separate rotation grid but I've inherited this pit and dug it too deep to get out now
     piston_left: {
         name: 'Pusher (Left)',
         description: 'Pushes pixels in its path',
@@ -4987,6 +4988,10 @@ const pixels = {
             ctx.beginPath();
             ctx.arc(25, 25, 22, 0, 2 * Math.PI);
             ctx.fill();
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.beginPath();
+            ctx.arc(25, 25, 8, 0, 2 * Math.PI);
+            ctx.fill();
         },
         prerender: function () {
             const { ctx, fillPixels, toImage } = new PreRenderer(90);
@@ -5016,6 +5021,10 @@ const pixels = {
                 ctx.fillStyle = gradient;
                 ctx.beginPath();
                 ctx.arc(45, 45, 40, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.fillStyle = 'rgb(0, 0, 0)';
+                ctx.beginPath();
+                ctx.arc(45, 45, 15, 0, 2 * Math.PI);
                 ctx.fill();
                 this.prerenderedFrames.push(toImage());
             };

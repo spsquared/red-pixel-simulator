@@ -21,11 +21,11 @@ musicVolume.connect(globalVolume);
 const musicBuffers = new Map();
 const activeMusic = [];
 function playMusic(id) {
-    stopAllMusic();
     if (musicBuffers.has(id)) {
         const gain = audioContext.createGain();
         const source = audioContext.createBufferSource();
         activeMusic.push({
+            id: id,
             source: source,
             gain: gain
         });
@@ -40,6 +40,17 @@ function playMusic(id) {
     }
     return false;
 };
+function stopMusic(id) {
+    const music = activeMusic.find(n => n.id === id);
+    if (music !== undefined) {
+        music.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
+        setTimeout(() => {
+            music.source.stop();
+            music.source.disconnect();
+            music.gain.disconnect();
+        }, 1000);
+    }
+};
 function stopAllMusic() {
     for (const music of activeMusic) {
         music.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
@@ -49,6 +60,7 @@ function stopAllMusic() {
             music.gain.disconnect();
         }, 1000);
     }
+    activeMusic.length = 0;
 };
 function toggleMusic() {
     musicMuted = !musicMuted;

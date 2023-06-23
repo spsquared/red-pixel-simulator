@@ -1698,46 +1698,42 @@ function updateTick() {
             0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers, collectors
             1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers
             5: gravity solids, ice, rotators
-            6: steam
-            7: water, lava, stone, leaves, pumps, lava generators, freezers, wells
+            6: steam, stone
+            7: water, lava, leaves, pumps, lava generators, freezers, wells
             8: lag, music pixels
             -: monsters
             */
             let monsterCount = 0;
             let fulfilledTargetCount = 0;
-            for (let y = 0; y < gridHeight; y++) {
-                for (let x = 0; x < gridWidth; x++) {
-                    if (monsterGrid[y][x]) {
-                        grid[y][x] = pixNum.MONSTER;
-                        monsterCount++;
-                    }
-                    if (targetGrid[y][x] && grid[y][x] == pixNum.GOAL) fulfilledTargetCount++;
-                }
-            }
             const firePixelType = numPixels[pixNum.FIRE];
             for (let y = 0; y < gridHeight; y++) {
                 for (let x = 0; x < gridWidth; x++) {
+                    if (monsterGrid[y][x]) monsterCount++;
+                    if (targetGrid[y][x] && grid[y][x] == pixNum.GOAL) fulfilledTargetCount++;
                     if (fireGrid[y][x]) {
                         randomSeed(ticks, x, y);
                         firePixelType.update(x, y);
                     }
                 }
             }
-            for (let y = 0; y < gridHeight; y++) {
-                for (let x = 0; x < gridWidth; x++) {
-                    if (grid[y][x] == pixNum.MONSTER) grid[y][x] = pixNum.AIR;
-                    if (nextFireGrid[y][x] !== -1) {
-                        fireGrid[y][x] = nextFireGrid[y][x];
-                        nextFireGrid[y][x] = -1;
-                    }
-                    lastMusicGrid[y][x] = musicGrid[y][x];
-                    musicGrid[y][x] = 0;
-                }
-            }
             let currentExplosions = pendingExplosions;
             pendingExplosions = [];
             for (let explosion of currentExplosions) {
                 explode(...explosion);
+            }
+            for (let y = 0; y < gridHeight; y++) {
+                for (let x = 0; x < gridWidth; x++) {
+                    if (nextFireGrid[y][x] !== -1) {
+                        fireGrid[y][x] = nextFireGrid[y][x];
+                        nextFireGrid[y][x] = -1;
+                    }
+                    if (nextGrid[y][x] !== -1) {
+                        grid[y][x] = nextGrid[y][x];
+                        nextGrid[y][x] = -1;
+                    }
+                    lastMusicGrid[y][x] = musicGrid[y][x];
+                    musicGrid[y][x] = 0;
+                }
             }
             for (let updateStage = 0; updateStage <= 8; updateStage++) {
                 switch (updateStage) {
@@ -1798,10 +1794,6 @@ function updateTick() {
             for (let y = gridHeight - 1; y >= 0; y--) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) monsterPixelType.update(x, y);
-                    if (nextFireGrid[y][x] !== -1) {
-                        fireGrid[y][x] = nextFireGrid[y][x];
-                        nextFireGrid[y][x] = -1;
-                    }
                 }
             }
             let newMonsterCount = 0;
@@ -1812,6 +1804,10 @@ function updateTick() {
             for (let y = 0; y < gridHeight; y++) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) newMonsterCount++;
+                    if (nextFireGrid[y][x] !== -1) {
+                        fireGrid[y][x] = nextFireGrid[y][x];
+                        nextFireGrid[y][x] = -1;
+                    }
                     if (targetGrid[y][x]) {
                         if (grid[y][x] == pixNum.GOAL) newFulfilledTargetCount++;
                         else hasUnfulfilledTargets = true;
@@ -2251,9 +2247,11 @@ PixSimAPI.onGameStart = () => {
     transitionToGame(async () => {
         resetPixSimPixelAmounts();
         if (PixSimAPI.isHost) {
-            // idk request a map or something
             // const map = await PixSimAPI.getMap();
             createGrid(300, 100)
+            const map = await PixSimAPI.getMap();
+            // map object contains save code, placeable code, team code, and starting materials
+            // load the placeable codes and team code separately
         }
         pixsimMenu._open = false;
         pixsimMenu.style.transform = '';
@@ -2329,7 +2327,7 @@ PixSimAPI.onGameTick = (compressedGrid, compressedTeamGrid, compressedBooleanGri
         }
     }
     pixsimData.pixeliteCounts = tickData.pixeliteCounts;
-    camera.shakeIntensity = tickData.cameraShake
+    camera.shakeIntensity = tickData.cameraShake;
 };
 PixSimAPI.onGameInput = (type, data, team) => {
     switch (type) {
