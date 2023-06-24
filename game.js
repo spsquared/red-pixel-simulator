@@ -1708,7 +1708,7 @@ function updateTick() {
             1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers
             5: gravity solids, ice, rotators
             6: steam, stone
-            7: water, lava, leaves, pumps, lava generators, freezers, wells
+            7: water, lava, leaves, pumps, lava generators, freezers, wells, color wells, color generators, color collectors
             8: lag, music pixels
             -: monsters
             */

@@ -5592,7 +5592,7 @@ const pixels = {
     },
     active_color_generator: {
         name: 'Active Color Generator',
-        description: 'An artificial portal to the internal machinery of the Simulator<br><i>Requires water to cool its more powerful singularity generator, <span style="color: red; font-weight: bold;">will blow up if it runs out of water!</span></i>',
+        description: 'An artificial portal to the internal machinery of the Simulator<br><i>Requires water to cool its more powerful singularity generator; <span style="color: red; font-weight: bold;">will blow up if it runs out of water!</span></i>',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(140, 140, 140)';
@@ -5643,7 +5643,7 @@ const pixels = {
                             abovectx.fill();
                             abovectx.globalAlpha = 1;
                             abovectx.rotate(Math.random() * 0.4 - 0.2);
-                            let scale = (Math.random() * 0.5 + 2) * drawScale;
+                            let scale = (Math.random() + 3) * drawScale;
                             abovectx.strokeStyle = 'rgb(255, 0, 0)';
                             abovectx.fillStyle = 'rgb(255, 255, 0)';
                             abovectx.lineJoin = 'bevel';
@@ -5669,7 +5669,7 @@ const pixels = {
                         } else if (teamPixelAmounts[team].water <= 50) {
                             abovectx.globalAlpha = Math.min(1, Math.sin(deltaTime * Math.PI / 90) * 0.5 + 1);
                             abovectx.translate(x2 * drawScale - camera.x + 0.5 * drawScale, y2 * drawScale - camera.y + 0.4 * drawScale);
-                            let scale = (Math.sin(deltaTime * Math.PI / 90) * 0.5 + 1.5) * drawScale;
+                            let scale = (Math.sin(deltaTime * Math.PI / 90) * 1.5 + 3) * drawScale;
                             abovectx.strokeStyle = 'rgb(255, 0, 0)';
                             abovectx.fillStyle = 'rgb(255, 255, 0)';
                             abovectx.lineJoin = 'bevel';
@@ -5819,10 +5819,10 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             updateTouchingAnything(x, y, (ax, ay) => {
-                if (grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BLACK && validChangingPixel(ax, ay)) {
+                if (grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN && validChangingPixel(ax, ay)) {
                     teamPixelAmounts[0][numPixels[grid[ay][ax]].id]++;
                     nextGrid[ay][ax] = pixNum.AIR;
-                    if (random() < 0.1) {
+                    if (random() < 0.02) {
                         nextGrid[y][x] = pixNum.AIR;
                         teamGrid[y][x] = 0;
                     }
