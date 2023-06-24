@@ -114,7 +114,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let dead = random() < 0.1;
-            if (dead) updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+            if (dead) updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (ay <= y) dead = false;
             });
             if (!dead) dead = updateTouchingPixel(x, y, pixNum.LAVA);
@@ -182,13 +182,18 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            let touchingMud = 1;
-            updateTouchingPixel(x, y, pixNum.MUD, function (ax, ay) {
-                touchingMud *= 2;
-            });
-            if (random() < 0.01 / touchingMud && !updateTouchingPixel(x, y, pixNum.WATER)) {
-                nextGrid[y][x] = pixNum.DIRT;
-                return;
+            if (!updateTouchingPixel(x, y, pixNum.WATER)) {
+                let touchingWetStuff = 1;
+                updateTouchingPixel(x, y, pixNum.SILT, (ax, ay) => {
+                    touchingWetStuff *= 2;
+                });
+                updateTouchingPixel(x, y, pixNum.MUD, (ax, ay) => {
+                    touchingWetStuff *= 2;
+                });
+                if (random() < 0.01 / touchingWetStuff) {
+                    nextGrid[y][x] = pixNum.DIRT;
+                    return;
+                }
             }
             fall(x, y, 3, 1);
         },
@@ -295,6 +300,109 @@ const pixels = {
         pickable: true,
         pixsimPickable: true,
         id: 'gravel',
+        numId: 0
+    },
+    clay: {
+        name: 'Clay',
+        description: 'Slightly impure clay that has a red tint',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(160, 80, 50)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.WATER) && random() < 0.2) {
+                nextGrid[y][x] = pixNum.SILT;
+                return;
+            }
+            fall(x, y, 1, 2);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(160, 80, 50)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 7,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 0,
+        updateStage: 5,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'clay',
+        numId: 0
+    },
+    silt: {
+        name: 'Silt',
+        description: 'Clay-rich saturated sediment',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = 'rgb(190, 130, 100)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+            } else {
+                ctx.fillStyle = 'rgb(160, 100, 90)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                gridoverctx.fillStyle = 'rgb(240, 160, 110)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, gridoverctx);
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (!updateTouchingPixel(x, y, pixNum.WATER)) {
+                let touchingWetStuff = 1;
+                updateTouchingPixel(x, y, pixNum.SILT, (ax, ay) => {
+                    touchingWetStuff *= 2;
+                });
+                updateTouchingPixel(x, y, pixNum.MUD, (ax, ay) => {
+                    touchingWetStuff *= 2;
+                });
+                if (random() < 0.002 / touchingWetStuff) {
+                    nextGrid[y][x] = pixNum.CLAY;
+                    return;
+                }
+            }
+            updateTouchingPixel(x, y, pixNum.CLAY, (ax, ay) => {
+                if (validChangingPixel(ax, ay) && random() < 0.0001) nextGrid[ay][ax] = pixNum.SILT;
+            });
+            flow(x, y, isPassableFluid);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(190, 130, 100)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 7,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 0,
+        updateStage: 5,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'silt',
         numId: 0
     },
     wood: {
@@ -471,7 +579,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let removedWater = false;
-            if (updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
+            if (updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 if (!removedWater && validChangingPixel(ax, ay) && random() < 0.2) {
                     nextGrid[ay][ax] = pixNum.AIR;
                     teamGrid[ay][ax] = 0;
@@ -669,7 +777,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             fireGrid[y][x] = false;
             nextFireGrid[y][x] = false;
-            if (updateTouchingPixel(x, y, pixNum.LAVA, function (ax, ay) {
+            if (updateTouchingPixel(x, y, pixNum.LAVA, (ax, ay) => {
                 if (validChangingPixel(ax, ay)) {
                     if (random() < 0.8) nextGrid[y][x] = pixNum.STEAM;
                     else nextGrid[y][x] = pixNum.AIR;
@@ -739,7 +847,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let touchingIce = 10;
-            updateTouchingPixel(x, y, pixNum.ICE, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.ICE, (ax, ay) => {
                 touchingIce *= 2;
             });
             if (random() < 0.001 / touchingIce) nextGrid[y][x] = pixNum.WATER;
@@ -862,7 +970,7 @@ const pixels = {
                 }
                 return;
             }
-            if (updateTouchingAnything(x, y, function (ax, ay) {
+            if (updateTouchingAnything(x, y, (ax, ay) => {
                 if (grid[ay][ax] != pixNum.WATER && random() < pixelAt(ax, ay).flammability / 20) {
                     nextFireGrid[ay][ax] = true;
                     if (random() < 0.8) {
@@ -1047,7 +1155,14 @@ const pixels = {
             let travel = 0;
             rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 15), Math.round(y + Math.sin(meltAngle) * 15), (ax, ay) => {
                 if (grid[ay][ax] == pixNum.SNOW || grid[ay][ax] == pixNum.ICE) {
-                    if (random() < (15 - travel) / 45) nextGrid[ay][ax] = pixNum.WATER;
+                    if (random() < (15 - travel) / 20) nextGrid[ay][ax] = pixNum.WATER;
+                } else if (grid[ay][ax] == pixNum.SILT) {
+                    if (random() < (10 - travel) / 16) nextGrid[ay][ax] = pixNum.CLAY;
+                } else if (grid[ay][ax] == pixNum.CLAY) {
+                    if (random() < (10 - travel) / 32) nextGrid[ay][ax] = pixNum.BRICKS;
+                    return true;
+                } else if (grid[ay][ax] == pixNum.MUD) {
+                    if (random() < (10 - travel) / 16) nextGrid[ay][ax] = pixNum.DIRT;
                 } else if (grid[ay][ax] !== pixNum.AIR) return true;
                 travel++;
             });
@@ -1140,7 +1255,7 @@ const pixels = {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
                 return;
             }
-            updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
             });
             let aerated = updateTouchingPixel(x, y, pixNum.AIR);
@@ -1152,6 +1267,13 @@ const pixels = {
             rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 10), Math.round(y + Math.sin(meltAngle) * 10), (ax, ay) => {
                 if (grid[ay][ax] == pixNum.SNOW || grid[ay][ax] == pixNum.ICE) {
                     if (random() < (10 - travel) / 30) nextGrid[ay][ax] = pixNum.WATER;
+                } else if (grid[ay][ax] == pixNum.SILT) {
+                    if (random() < (10 - travel) / 20) nextGrid[ay][ax] = pixNum.CLAY;
+                } else if (grid[ay][ax] == pixNum.CLAY) {
+                    if (random() < (10 - travel) / 30) nextGrid[ay][ax] = pixNum.BRICKS;
+                    return true;
+                } else if (grid[ay][ax] == pixNum.MUD) {
+                    if (random() < (10 - travel) / 20) nextGrid[ay][ax] = pixNum.DIRT;
                 } else if (grid[ay][ax] !== pixNum.AIR) return true;
                 travel++;
             });
@@ -1454,7 +1576,7 @@ const pixels = {
                 nextGrid[y][x] = pixNum.WATER;
                 return;
             }
-            updateTouchingPixel(x, y, pixNum.CONCRETE, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.CONCRETE, (ax, ay) => {
                 nextGrid[y][x] = pixNum.WATER;
                 nextGrid[ay][ax] = pixNum.PLANT;
             });
@@ -1500,7 +1622,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 nextGrid[y][x] = pixNum.AIR;
                 nextGrid[ay][ax] = pixNum.SPONGE;
                 teamGrid[y][x] = 0;
@@ -1545,11 +1667,11 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.LAVA, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.LAVA, (ax, ay) => {
                 nextGrid[y][x] = pixNum.WATER;
                 teamGrid[y][x] = 0;
             });
-            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.125) {
                     nextGrid[ay][ax] = pixNum.WATER;
                 }
@@ -1597,29 +1719,29 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 teamGrid[y][x] = 0;
                 explode(x, y, 5, true);
             });
-            updateTouchingPixel(x, y, pixNum.SNOW, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.SNOW, (ax, ay) => {
                 teamGrid[y][x] = 0;
                 explode(x, y, 6, true);
             });
-            updateTouchingPixel(x, y, pixNum.ICE, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.ICE, (ax, ay) => {
                 teamGrid[y][x] = 0;
                 explode(x, y, 6, true);
             });
-            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.075) {
                     nextGrid[ay][ax] = pixNum.LAVA;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.STEAM, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.STEAM, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.075) {
                     nextGrid[ay][ax] = pixNum.LAVA;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.STONE, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.STONE, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.075) {
                     nextGrid[ay][ax] = pixNum.LAVA;
                 }
@@ -1667,16 +1789,16 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.LAVA, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.LAVA, (ax, ay) => {
                 teamGrid[y][x] = 0;
                 explode(x, y, 7, true);
             });
-            updateTouchingPixel(x, y, pixNum.WATER, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.075) {
                     nextGrid[ay][ax] = pixNum.ICE;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.STEAM, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.STEAM, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.1) {
                     nextGrid[ay][ax] = pixNum.WATER;
                 }
@@ -2806,7 +2928,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (ax, ay) {
+            updateTouchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -2852,7 +2974,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (ax, ay) {
+            updateTouchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -2898,7 +3020,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (ax, ay) {
+            updateTouchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -2944,7 +3066,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (ax, ay) {
+            updateTouchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -2983,7 +3105,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (ax, ay) {
+            updateTouchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -3057,7 +3179,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, function (ax, ay) {
+            updateTouchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -4515,7 +4637,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.5) {
                     nextGrid[ay][ax] = pixNum.LAG_SPIKE_GENERATOR;
                 }
@@ -4526,7 +4648,7 @@ const pixels = {
                     nextGrid[ay][ax] = pixNum.CLONER_DOWN;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.LAG_SPIKE_GENERATOR, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.LAG_SPIKE_GENERATOR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.005) {
                     nextGrid[ay][ax] = pixNum.NUKE;
                 }
@@ -5178,7 +5300,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
                     nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
                 }
@@ -5240,7 +5362,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
                     let pix = Math.floor(Math.random() * (pixNum.COLOR_LIME - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
                     nextGrid[ay][ax] = pix == pixNum.COLOR_LIME ? pixNum.COLOR_VIOLET : pix;
@@ -5303,7 +5425,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
                     nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLUE - pixNum.COLOR_LIME + 1)) + pixNum.COLOR_LIME;
                 }
@@ -5365,7 +5487,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
                     nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_GREY + 1)) + pixNum.COLOR_GREY;
                 }
@@ -5435,7 +5557,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.02) {
                     nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
                 }
@@ -5580,7 +5702,7 @@ const pixels = {
             let team = teamGrid[y][x] - 1;
             if (teamPixelAmounts[team] !== undefined) {
                 if (teamPixelAmounts[team].water > 0) {
-                    updateTouchingPixel(x, y, pixNum.AIR, function (ax, ay) {
+                    updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                         if (validChangingPixel(ax, ay) && random() < 0.04) {
                             nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BROWN - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
                         }
@@ -6591,7 +6713,7 @@ function generateMusicPixel(id, data) {
             }
         },
         update: function (x, y) {
-            if (updateTouchingAnything(x, y, function (ax, ay) {
+            if (updateTouchingAnything(x, y, (ax, ay) => {
                 if (grid[ay][ax] >= pixNum.MUSIC_1 && grid[ay][ax] <= pixNum.MUSIC_86) return false;
                 return true;
             })) musicGrid[y][x] = id;

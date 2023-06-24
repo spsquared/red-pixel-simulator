@@ -1358,9 +1358,6 @@ function drawFrame() {
         }
         let teamPixelRects = [[], []];
         if (drawTeamGrid) {
-            teamsctx.globalCompositeOperation = 'source-over';
-            teamsctx.globalAlpha = 1;
-            teamsctx.fillStyle = '#FFFF00'
             for (let y = ymin; y <= ymax; y++) {
                 let curr = teamGrid[y][xmin];
                 let redrawing = teamGrid[y][xmin] != lastTeamGrid[y][xmin];
@@ -1398,33 +1395,44 @@ function drawFrame() {
         drawBooleanGrid(targetGrid, targetGrid, pixNum.TARGET, targetctx);
         if (!PixSimAPI.inGame) drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         else drawBooleanGrid(PixSimAPI.team ? teamPlaceableGrids[1] : teamPlaceableGrids[0], lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
-        if (drawTeamGrid) {
-            teamsctx.globalCompositeOperation = 'source-over';
-            if (noNoise) teamsctx.globalAlpha = 0.5;
-            teamsctx.fillStyle = '#FF0099';
-            forRectangles(teamPixelRects[0], (x, y, width, height) => {
-                fillPixels(x, y, width, height, teamsctx);
-            });
-            teamsctx.fillStyle = '#3C70FF';
-            forRectangles(teamPixelRects[1], (x, y, width, height) => {
-                fillPixels(x, y, width, height, teamsctx);
-            });
-            if (!noNoise) {
-                teamsctx.globalCompositeOperation = 'destination-in';
-                teamsctx.globalAlpha = 0.5;
-                teamsctx.drawImage(noiseBufferCanvas, 0, 0);
-            }
-        }
-
-        // copy layers
-        ctx.globalAlpha = 1;
-        gamectx.globalAlpha = 1;
         if (!noNoise) {
             gridoverctx.globalAlpha = 1;
             gridoverctx.globalCompositeOperation = 'destination-in';
             gridoverctx.drawImage(noiseBufferCanvas, 0, 0);
             gridoverctx.globalCompositeOperation = 'source-over';
         }
+        if (drawTeamGrid) {
+            if (noNoise) {
+                teamsctx.globalAlpha = 0.5;
+                teamsctx.fillStyle = '#FF0099';
+                forRectangles(teamPixelRects[0], (x, y, width, height) => {
+                    fillPixels(x, y, width, height, teamsctx);
+                });
+                teamsctx.fillStyle = '#3C70FF';
+                forRectangles(teamPixelRects[1], (x, y, width, height) => {
+                    fillPixels(x, y, width, height, teamsctx);
+                });
+            } else {
+                bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
+                bufferctx.globalAlpha = 1;
+                bufferctx.fillStyle = '#FF0099';
+                forRectangles(teamPixelRects[0], (x, y, width, height) => {
+                    fillPixels(x, y, width, height, bufferctx);
+                });
+                bufferctx.fillStyle = '#3C70FF';
+                forRectangles(teamPixelRects[1], (x, y, width, height) => {
+                    fillPixels(x, y, width, height, bufferctx);
+                });
+                bufferctx.globalCompositeOperation = 'destination-in';
+                bufferctx.globalAlpha = 0.7;
+                bufferctx.drawImage(noiseBufferCanvas, 0, 0);
+            }
+            teamsctx.drawImage(bufferCanvas, 0, 0);
+        }
+
+        // copy layers
+        ctx.globalAlpha = 1;
+        gamectx.globalAlpha = 1;
         gridctx.drawImage(gridOverlayCanvas, 0, 0);
         gamectx.drawImage(gridCanvas, 0, 0);
         gamectx.drawImage(monsterCanvas, 0, 0);
