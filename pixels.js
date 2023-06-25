@@ -1464,9 +1464,9 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (y < gridHeight - 1 && isPassableFluid(x, y + 1)) {
                 if ((grid[y][x - 1] == pixNum.BRICKS && grid[y + 1][x - 1] == pixNum.BRICKS)
-                        || (grid[y][x + 1] == pixNum.BRICKS && grid[y + 1][x + 1] == pixNum.BRICKS)
-                        || (grid[y][x - 1] == pixNum.BRICKS && grid[y][x - 2] == pixNum.BRICKS && grid[y + 1][x - 2] == pixNum.BRICKS)
-                        || (grid[y][x + 1] == pixNum.BRICKS && grid[y][x + 2] == pixNum.BRICKS && grid[y + 1][x + 2] == pixNum.BRICKS)) return;
+                    || (grid[y][x + 1] == pixNum.BRICKS && grid[y + 1][x + 1] == pixNum.BRICKS)
+                    || (grid[y][x - 1] == pixNum.BRICKS && grid[y][x - 2] == pixNum.BRICKS && grid[y + 1][x - 2] == pixNum.BRICKS)
+                    || (grid[y][x + 1] == pixNum.BRICKS && grid[y][x + 2] == pixNum.BRICKS && grid[y + 1][x + 2] == pixNum.BRICKS)) return;
                 move(x, y, x, y + 1);
             }
         },
@@ -4915,6 +4915,118 @@ const pixels = {
         pickable: false,
         pixsimPickable: false,
         id: 'spin',
+        numId: 0
+    },
+    pink_sand: {
+        name: 'Pink Sand',
+        description: 'Weird pink powdery stuff that falls<br><i>Made with <a href="https://todepond.gitbook.io/spacetode/" target=_blank>SpaceTode</a></i>',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'hotpink';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.SAND)) {
+                explode(x, y, 80, true);
+                return;
+            }
+            for (const rule of this.processedRules) {
+                if (rule.predicates.every(p => x + p[0] >= 0 && x + p[0] < gridWidth && y + p[1] >= 0 && y + p[1] < gridHeight && p[2](x + p[0], y + p[1]))) {
+                    rule.results.forEach(r => x + r[0] >= 0 && x + r[0] < gridWidth && y + r[1] >= 0 && y + r[1] < gridHeight && r[2](x + r[0], y + r[1]));
+                    return;
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'hotpink';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () {
+            // SpaceTode I guess (no im not implementing the whole thing) (some of it has been edited, the "." now means any fluid)
+            let mapPredicate = (char) => {
+                switch (char) {
+                    case '@':
+                        return () => true;
+                    case '_':
+                        return (x, y) => grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.DELETER;
+                    case '.':
+                        return isPassableFluid;
+                    case '#':
+                        return (x, y) => !isAir(x, y);
+                    case '$':
+                        return (x, y) => grid[y][x] == this.numId;
+                    default:
+                        throw new Error('Unknown Red SpaceTode predicate "' + char + '"');
+                }
+            };
+            let mapResult = (char) => {
+                switch (char) {
+                    case '@':
+                        return (x, y) => nextGrid[y][x] = this.numId;
+                    case '_':
+                        return (x, y) => nextGrid[y][x] = pixNum.AIR;
+                    case '.':
+                        return () => {};
+                    default:
+                        throw new Error('Unknown Red SpaceTode result "' + char + '"');
+                }
+            };
+            parseRules: for (const rule of this.rules) {
+                const layers = rule.split('\n').slice(1);
+                if (!layers[0].includes(' => ')) continue;
+                let splitLoc = layers[0].indexOf(' => ');
+                let centerX = -1;
+                let centerY = -1;
+                for (let i in layers) {
+                    layers[i] = [layers[i].substring(0, splitLoc), layers[i].substring(splitLoc + 4)];
+                    if (layers[i][0].includes('@')) {
+                        if (centerX != -1) continue parseRules;
+                        centerX = layers[i][0].indexOf('@');
+                        centerY = parseInt(i); // CURSE YOU STRING INDICES
+                    }
+                }
+                if (centerX == -1) continue;
+                const processedRule = {
+                    predicates: [],
+                    results: []
+                };
+                for (let y in layers) {
+                    for (let x in layers[y][0]) {
+                        processedRule.predicates.push([parseInt(x) - centerX, parseInt(y) - centerY, mapPredicate(layers[y][0][x])]);
+                    }
+                    for (let x in layers[y][1]) {
+                        processedRule.results.push([parseInt(x) - centerX, parseInt(y) - centerY, mapResult(layers[y][1][x])]);
+                    }
+                }
+                this.processedRules.push(processedRule);
+            }
+        },
+        rules: [`
+@ => _
+_    @`, `
+@_ => _.
+#_    .@`, `
+_@ => ._
+_#    @.`],
+        processedRules: [],
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 3,
+        updateStage: 5,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'sand',
         numId: 0
     },
     placementUnRestriction: {
