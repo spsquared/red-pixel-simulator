@@ -4917,6 +4917,78 @@ const pixels = {
         id: 'spin',
         numId: 0
     },
+    life: {
+        name: 'Conway\'s Game of Life',
+        description: 'Might as well rename the game to "Life Pixel Simulator"',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = backgroundColor;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+            ctx.globalCompositeOperation = 'difference';
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+            ctx.globalCompositeOperation = 'source-over';
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (grid[y][x] == pixNum.LIFE) {
+                nextGrid[y][x] = pixNum.LIFE;
+                let neighbors = 0;
+                let ym = Math.min(gridHeight - 1, y + 1);
+                let xm = Math.min(gridWidth - 1, x + 1);
+                for (let y2 = Math.max(0, y - 1); y2 <= ym; y2++) {
+                    for (let x2 = Math.max(0, x - 1); x2 <= xm; x2++) {
+                        if (x2 == x && y2 == y) continue;
+                        if (grid[y2][x2] == pixNum.LIFE) {
+                            neighbors++;
+                        } else if (grid[y2][x2] == pixNum.AIR && validChangingPixel(x2, y2)) {
+                            this.update(x2, y2);
+                        }
+                    }
+                }
+                if (neighbors < 2 || neighbors > 3) nextGrid[y][x] = pixNum.AIR;
+            } else {
+                nextGrid[y][x] = pixNum.AIR;
+                let neighbors = 0;
+                let ym = Math.min(gridHeight - 1, y + 1);
+                let xm = Math.min(gridWidth - 1, x + 1);
+                for (let y2 = Math.max(0, y - 1); y2 <= ym; y2++) {
+                    for (let x2 = Math.max(0, x - 1); x2 <= xm; x2++) {
+                        if (x2 == x && y2 == y) continue;
+                        if (grid[y2][x2] == pixNum.LIFE) {
+                            neighbors++;
+                        }
+                    }
+                }
+                if (neighbors == 3) nextGrid[y][x] = pixNum.LIFE;
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 8,
+        flammability: 17,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 3,
+        updateStage: 8,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        id: 'life',
+        numId: 0
+    },
     pink_sand: {
         name: 'Pink Sand',
         description: 'Weird pink powdery stuff that falls<br><i>Made with <a href="https://todepond.gitbook.io/spacetode/" target=_blank>SpaceTode</a></i>',
