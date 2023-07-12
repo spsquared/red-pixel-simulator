@@ -267,6 +267,8 @@ window.addEventListener('load', (e) => {
     addMusicPixelSound(85);
     addMusicPixelSound(86);
     addMusicPixelSound(87);
+    addMusicPixelSound(88);
+    addMusicPixelSound(89);
     if (musicMuted) {
         musicVolume.gain.setValueAtTime(0, audioContext.currentTime);
         musicMuteButton.style.backgroundImage = 'url(/assets/volumeMute.svg)';

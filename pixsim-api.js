@@ -467,6 +467,7 @@ class PixSimAPI {
         return {
             teamA: this.#teams.teamA,
             teamB: this.#teams.teamB,
+            spectators: this.#teams.spectators,
             teamSize: this.#teams.teamSize
         };
     }

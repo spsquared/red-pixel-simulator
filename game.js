@@ -2583,7 +2583,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         } else if (key == 'escape') {
             brush.isSelection = false;
             selection.show = false;
-        } else if (key == 'r') {
+        } else if (key == 'r' && e.ctrlKey) {
             sidebar.scrollTo({ top: 0, behavior: 'smooth' });
         }
         e.preventDefault();

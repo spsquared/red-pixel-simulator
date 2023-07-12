@@ -4991,7 +4991,7 @@ const pixels = {
     },
     pink_sand: {
         name: 'Pink Sand',
-        description: 'Weird pink powdery stuff that falls<br><i>Made with <a href="https://todepond.gitbook.io/spacetode/" target=_blank>SpaceTode</a></i>',
+        description: 'Weird pink powdery stuff that falls up<br><i>Made with <a href="https://todepond.gitbook.io/spacetode/" target=_blank>SpaceTode</a></i>',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'hotpink';
@@ -5021,6 +5021,8 @@ const pixels = {
             // SpaceTode I guess (no im not implementing the whole thing) (some of it has been edited, the "." now means any fluid)
             let mapPredicate = (char) => {
                 switch (char) {
+                    case ' ':
+                        return () => true;
                     case '@':
                         return () => true;
                     case '_':
@@ -5041,6 +5043,8 @@ const pixels = {
                         return (x, y) => nextGrid[y][x] = this.numId;
                     case '_':
                         return (x, y) => nextGrid[y][x] = pixNum.AIR;
+                    case ' ':
+                        return () => {};
                     case '.':
                         return () => {};
                     default:
@@ -5078,12 +5082,12 @@ const pixels = {
             }
         },
         rules: [`
-@ => _
-_    @`, `
-@_ => _.
-#_    .@`, `
-_@ => ._
-_#    @.`],
+_ => @
+@    _`, `
+#_ => .@
+@_    _.`, `
+_# => @.
+_@    ._`],
         processedRules: [],
         prerenderedFrames: [],
         blastResistance: 5,
@@ -5759,7 +5763,7 @@ _#    @.`],
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 20,
+        blastResistance: 19,
         flammability: 0,
         pushable: false,
         cloneable: false,
@@ -5912,7 +5916,7 @@ _#    @.`],
         },
         prerender: function () { },
         prerenderedFrames: [],
-        blastResistance: 20,
+        blastResistance: 19,
         flammability: 0,
         pushable: false,
         cloneable: false,
@@ -6711,6 +6715,18 @@ _#    @.`],
         color: 'rgb(150, 150, 150)',
         text: 'TZ'
     }),
+    music_87: generateMusicPixel(87, {
+        name: 'Synth Kick',
+        description: 'Makes funny kick drum sound that hurts your ears',
+        color: 'rgb(150, 150, 150)',
+        text: 'K'
+    }),
+    music_88: generateMusicPixel(88, {
+        name: 'Synth Snare',
+        description: 'Makes funny snare drum sound that hurts your ears',
+        color: 'rgb(150, 150, 150)',
+        text: 'Sn'
+    }),
     remove: {
         name: 'Remove (brush only)',
         description: 'For removing pixels from the grid',
@@ -6756,7 +6772,7 @@ _#    @.`],
         },
         update: function (x, y) {
             if (window.rickastley) return;
-            musicPixel(87, true);
+            musicPixel(89, true);
             window.rickastley = true;
         },
         drawPreview: function (ctx) {
