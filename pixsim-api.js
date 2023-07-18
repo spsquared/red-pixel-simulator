@@ -1,5 +1,5 @@
-const apiURI = 'https://api.pixelsimulator.repl.co';
-// const apiURI = 'http://localhost:5000';
+// const apiURI = 'https://api.pixelsimulator.repl.co';
+const apiURI = 'http://localhost:5000';
 const socket = io(apiURI, {
     path: '/pixsim-api/game/',
     autoConnect: false,
@@ -226,7 +226,7 @@ class PixSimAPI {
         // request list of maps for game mode and pick one to load
         // allows player-decided map loading in the future
         return await new Promise(async (resolve, reject) => {
-            const maplist = await this.#httpGET('/pixsim-api/mapslist/' + this.#gameModes[this.#gameMode]);
+            const maplist = await this.#httpGET('/pixsim-api/mapslist/' + this.#gameModes[this.#gameMode].id);
         });
     }
 
@@ -305,25 +305,10 @@ class PixSimAPI {
         if (!this.#inGame || !this.#gameRunning || !(grid instanceof Array) || grid.length == 0 || grid[0].length == 0 || !(teamGrid instanceof Array) || teamGrid.length == 0 || teamGrid[0].length == 0 || !(booleanGrids instanceof Array) || typeof tick != 'number' || !(grid instanceof Array)) return;
         // simple compression algorithm that compresses well with large horizontal spans of the same pixel
         // not as good as png compression but png is very complex
-        // compress main grid into 16-bit chunks of 8-bit id and 8-bit length
-        let compressedGrid = [];
-        let curr = grid[0][0];
-        let len = 0;
-        for (let i = 0; i < grid.length; i++) {
-            for (let j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] != curr || len == 255) {
-                    compressedGrid.push(curr, len);
-                    curr = grid[i][j];
-                    len = 0;
-                }
-                len++;
-            }
-        }
-        compressedGrid.push(curr, len);
         // compress team grid into 8-bit chunks of 2-bit id and 6-bit length
+        let compressedGrid = this.compressGrid(grid);
         let compressedTeamGrid = [];
-        curr = teamGrid[0][0];
-        len = 0;
+        let curr = teamGrid[0][0], len = 0;
         for (let i = 0; i < teamGrid.length; i++) {
             for (let j = 0; j < teamGrid[i].length; j++) {
                 if (teamGrid[i][j] != curr || len == 63) {
@@ -366,7 +351,7 @@ class PixSimAPI {
             data: {
                 tick: tick,
                 teamPixelAmounts: pixelAmounts,
-                pixelitePixelCount: pixeliteCounts
+                pixeliteCounts: pixeliteCounts
             },
             origin: 'rps'
         });
@@ -378,6 +363,57 @@ class PixSimAPI {
             if (!this.#inGame || !this.#gameRunning) return;
             cb(new Uint8ClampedArray(tick.grid), new Uint8ClampedArray(tick.teamGrid), tick.booleanGrids.map(g => new Uint8ClampedArray(g)), tick.data);
         });
+    }
+    static compressGrid(grid) {
+        let curr = grid[0][0];
+        let len = 0;
+        let queue = [];
+        for (let i = 0; i < grid.length; i++) {
+            for (let j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] != curr || len == 255) {
+                    queue.push([len == 1, curr, len]);
+                    curr = grid[i][j];
+                    len = 0;
+                }
+                len++;
+            }
+        }
+        if (len != 0) queue.push([len == 1, curr, len]);
+        let compressed = [];
+        for (let i = 0; i < queue.length; i += 8) {
+            let header = 0;
+            let end = i + 8;
+            for (let j = i; j < end; j++) {
+                header = (header << 1) | (queue[j] ?? [])[0];
+            }
+            compressed.push(header);
+            for (let j = i; j < end; j++) {
+                if (queue[j] === undefined) compressed.push(255);
+                else if (queue[j][0]) compressed.push(queue[j][1]);
+                else compressed.push(queue[j][1], queue[j][2]);
+            }
+        }
+        return compressed;
+    }
+    static decompressGrid(compressed, grid) {
+        let loc = 0, header, pixel, run; // probably useless to define outside of loop
+        for (let i = 0; i < compressed.length && ~~(loc / this.#gridWidth) < grid.length;) {
+            header = compressed[i++];
+            for (let j = 0; j < 8 && ~~(loc / this.#gridWidth) < grid.length; j++) {
+                // probably better to use a stack but the compressor is already coded
+                if (header & 0b10000000) {
+                    grid[~~(loc / this.#gridWidth)][loc % this.#gridWidth] = compressed[i++];
+                    loc++;
+                } else {
+                    pixel = compressed[i++];
+                    run = compressed[i++];
+                    for (let k = 0; k < run && ~~(loc / this.#gridWidth) < grid.length; k++, loc++) {
+                        grid[~~(loc / this.#gridWidth)][loc % this.#gridWidth] = pixel;
+                    }
+                }
+                header <<= 1;
+            }
+        }
     }
     static sendInput(type, data) {
         if (typeof type != 'number' || typeof data != 'object' || data == null) return;
@@ -529,8 +565,9 @@ class PixSimAPI {
                 }
                 resolve(req.response);
             };
-            req.onerror = (err) => {
-                reject(new Error(`${err}: ${req.response}`));
+            req.onerror = () => {
+                modal('An HTTP error occured:', `GET ${path}<br>${req.status} - ${req.statusText}`, false);
+                reject(new Error(req.status));
             };
             req.send();
         });

@@ -1403,7 +1403,7 @@ function drawFrame() {
         }
         if (drawTeamGrid) {
             if (noNoise) {
-                teamsctx.globalAlpha = 0.5;
+                teamsctx.globalAlpha = 0.3;
                 teamsctx.fillStyle = '#FF0099';
                 forRectangles(teamPixelRects[0], (x, y, width, height) => {
                     fillPixels(x, y, width, height, teamsctx);
@@ -1424,7 +1424,7 @@ function drawFrame() {
                     fillPixels(x, y, width, height, bufferctx);
                 });
                 bufferctx.globalCompositeOperation = 'destination-in';
-                bufferctx.globalAlpha = 0.7;
+                bufferctx.globalAlpha = 0.5;
                 bufferctx.drawImage(noiseBufferCanvas, 0, 0);
             }
             teamsctx.drawImage(bufferCanvas, 0, 0);
@@ -2259,7 +2259,7 @@ PixSimAPI.onGameStart = () => {
         if (PixSimAPI.isHost) {
             // const map = await PixSimAPI.getMap();
             createGrid(300, 100)
-            const map = await PixSimAPI.getMap();
+            // const map = await PixSimAPI.getMap();
             // map object contains save code, placeable code, team code, and starting materials
             // load the placeable codes and team code separately
             pixsimData.gameStart = Date.now(); // game timer
@@ -2305,15 +2305,8 @@ PixSimAPI.onNewGridSize = createGrid;
 PixSimAPI.onGameTick = (compressedGrid, compressedTeamGrid, compressedBooleanGrids, tickData) => {
     // sync to framerate to reduce tearing (probably not necessary)?
     ticks = tickData.tick;
-    let loc = 0, pixel, run;
-    for (let i = 0; i < compressedGrid.length; i += 2) {
-        pixel = compressedGrid[i];
-        run = compressedGrid[i + 1];
-        for (let j = 0; j < run; j++, loc++) {
-            grid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
-        }
-    }
-    loc = 0;
+    PixSimAPI.decompressGrid(compressedGrid, grid);
+    let loc = 0, state, run;
     for (let i = 0; i < compressedTeamGrid.length; i++) {
         state = compressedTeamGrid[i] >> 6;
         run = compressedTeamGrid[i] & 63;
