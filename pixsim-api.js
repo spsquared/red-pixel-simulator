@@ -1,5 +1,5 @@
-// const apiURI = 'https://api.pixelsimulator.repl.co';
-const apiURI = 'http://localhost:5000';
+const apiURI = 'https://api.pixelsimulator.repl.co';
+// const apiURI = 'http://localhost:5000';
 const socket = io(apiURI, {
     path: '/pixsim-api/game/',
     autoConnect: false,
@@ -396,8 +396,8 @@ class PixSimAPI {
         return compressed;
     }
     static decompressGrid(compressed, grid) {
-        let loc = 0, header, pixel, run; // probably useless to define outside of loop
-        for (let i = 0; i < compressed.length && ~~(loc / this.#gridWidth) < grid.length;) {
+        let i = 0, loc = 0, header, pixel, run; // probably useless to define outside of loop
+        while (i < compressed.length && ~~(loc / this.#gridWidth) < grid.length) {
             header = compressed[i++];
             for (let j = 0; j < 8 && ~~(loc / this.#gridWidth) < grid.length; j++) {
                 // probably better to use a stack but the compressor is already coded
