@@ -184,10 +184,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (!updateTouchingPixel(x, y, pixNum.WATER)) {
                 let touchingWetStuff = 1;
-                updateTouchingPixel(x, y, pixNum.SILT, (ax, ay) => {
-                    touchingWetStuff *= 2;
-                });
-                updateTouchingPixel(x, y, pixNum.MUD, (ax, ay) => {
+                updateTouchingPixel(x, y, [pixNum.SILT, pixNum.MUD], (ax, ay) => {
                     touchingWetStuff *= 2;
                 });
                 if (random() < 0.01 / touchingWetStuff) {
@@ -367,10 +364,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (!updateTouchingPixel(x, y, pixNum.WATER)) {
                 let touchingWetStuff = 1;
-                updateTouchingPixel(x, y, pixNum.SILT, (ax, ay) => {
-                    touchingWetStuff *= 2;
-                });
-                updateTouchingPixel(x, y, pixNum.MUD, (ax, ay) => {
+                updateTouchingPixel(x, y, [pixNum.SILT, pixNum.MUD], (ax, ay) => {
                     touchingWetStuff *= 2;
                 });
                 if (random() < 0.002 / touchingWetStuff) {
@@ -4262,7 +4256,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.GUNPOWDER) || updateTouchingPixel(x, y, pixNum.C4) || updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x]) {
+            if (updateTouchingPixel(x, y, [pixNum.GUNPOWDER, pixNum.C4, pixNum.LAVA]) || fireGrid[y][x]) {
                 teamGrid[y][x] = 0;
                 explode(x, y, 5);
             }
@@ -4887,7 +4881,7 @@ const pixels = {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 forEachPixel(x, y, width, height, (x2, y2) => {
-                    ctx.translate((x + 1 / 2) * gridScale, (y + 1 / 2) * gridScale);
+                    ctx.translate((x2 + 1 / 2) * gridScale, (y2 + 1 / 2) * gridScale);
                     let translateX = random(-10 * gridScale, 10 * gridScale);
                     let translateY = random(-10 * gridScale, 10 * gridScale);
                     ctx.translate(translateX, translateY);
@@ -6903,9 +6897,9 @@ function generateMusicPixel(id, data) {
             } else {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     forEachPixel(x, y, width, height, (x2, y2) => {
-                        if (lastMusicGrid[y2][x2] != musicGrid[y2][x2] || redrawing || forceRedraw) {
-                            if (musicGrid[y2][x2] == -1) musicGrid[y2][x2] = 0;
-                            if (musicGrid[y2][x2]) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                        if (lastAuxGrid[y2][x2] != auxGrid[y2][x2] || redrawing || forceRedraw) {
+                            if (auxGrid[y2][x2] == -1) auxGrid[y2][x2] = 0;
+                            if (auxGrid[y2][x2]) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
                             else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
                         }
                     });
@@ -6916,7 +6910,7 @@ function generateMusicPixel(id, data) {
             if (updateTouchingAnything(x, y, (ax, ay) => {
                 if (grid[ay][ax] >= pixNum.MUSIC_1 && grid[ay][ax] <= pixNum.MUSIC_86) return false;
                 return true;
-            })) musicGrid[y][x] = id;
+            })) auxGrid[y][x] = id;
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);

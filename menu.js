@@ -1,5 +1,3 @@
-let inMenuScreen = true;
-
 const menuScreen = document.getElementById('menuScreen');
 const titleContainer = document.getElementById('titleContainer');
 const t_redpixel = document.getElementById('t_redpixel');

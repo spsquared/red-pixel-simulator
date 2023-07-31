@@ -5,6 +5,9 @@ window.addEventListener('error', (e) => {
 // RPS used to be a Khan Academy project so a lot of the code is written in procedural style
 // changing that now is too time-consuming and so it will probably never happen all at once
 
+// variables used elsewhere
+inMenuScreen = true;
+
 // modal
 const modalContainer = document.getElementById('modalContainer');
 const modalBody = document.getElementById('modal');

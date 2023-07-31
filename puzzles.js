@@ -119,6 +119,235 @@ const puzzles = [
         ]
     },
     {
+        name: 'Square Caves',
+        levels: [
+            {
+                name: 'Down in the Mines',
+                description: `<i>[music]</i> Oh wait, we're lost. Oh wow, these red things are everywhere. Better get rid of those before they destroy this place, too. That suspiciously conveniently C-4 and gunpowder will probably help.`,
+                saveCode: '50-50;0000;stone-9:air-5:stone-6:dirt-30:stone-9:air-5:stone-16:dirt-11:stone-3:dirt-6:stone-9:air-5:stone-32:dirt-4:stone-9:air-5:stone-45:air-5:stone-4:air-22:stone-19:air-5:stone-4:air:gunpowder-4:air-17:stone-19:air-5:stone-4:gunpowder-5:air-17:stone-19:air-5:stone-9:air-2:wood:dirt-5:wood:air-2:wood-2:stone-7:water-3:stone-13:air-5:stone-9:air-2:wood:dirt-5:wood:air-3:stone-6:water-7:stone-11:air-5:stone-9:air-2:wood:dirt-5:wood:air-3:stone-5:sand:water-2:sand-5:stone-11:air-5:stone-9:air-2:stone-7:air-3:stone-6:sand-3:stone-15:air-5:stone-9:air-2:stone-7:air-3:stone-5:wood-4:stone-15:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-26:wood:air-2:wood:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-3:air-2:stone-10:air-5:stone-26:air-4:stone:air-4:stone-6:air-45:stone-5:air-14:dirt-2:air-29:stone-5:air-12:dirt-5:air-28:stone-5:air-11:dirt-7:air-27:stone-5:air-11:wood-7:air-27:stone-8:wood-2:air-4:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-20:wood:air-5:stone-24:air-16:wood:gunpowder-7:wood:air-8:c4-3:concrete:air-3:stone-10:air-14:wood:air:wood:gunpowder-6:wood-2:air-8:c4-3:concrete:stone:air-2:stone-10:air-3:wood-3:stone-19:air-2:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-18:air-10:stone-17:air-5:stone-18:air-10:stone-17:air-5:stone-19:lava-7:stone-10:;9c4:;8:1:4ba:2:d:6:2c:6:2c:6:2c:6:2c:6:1f0:6:2c:6:1fc:;338:1:248:1:21:1:2:1:1:1:1ab:1:24:1:31:1:a:1:15:1:1f7:;9c4:',
+                backgroundColor: '#adadad',
+                inventory: {
+                    sand: 1,
+                    wood: 5,
+                    water: 3,
+                    gunpowder: 5
+                },
+                id: '4cfe615f-9d76-4d07-a60d-5ce7f571ab1e'
+            },
+            {
+                name: 'Maitian, is the Moon Big?',
+                description: `Well, we'll never know down here. It's not like <span style="color: red;">Red Pixel Simulator</span> has a moon anyways...<br><br>What we do know is that this cave is big, and there's definitely more monsters down here. Try not to die! Toodledoo... or... something.`,
+                saveCode: '50-50;0000;basalt-11:wood:air:wood:stone:basalt-10:stone-11:gravel-6:stone-8:basalt-11:wood:air:wood:basalt-15:stone-7:gravel-6:stone-12:basalt-7:wood:air:wood:basalt-20:stone-2:gravel-5:stone:basalt-7:stone-8:basalt-4:wood:air:wood:basalt-2:stone-6:basalt-28:stone-11:wood:air:wood:stone-12:basalt-24:air-4:stone-7:wood:air:wood:stone-13:basalt-23:air-6:stone-5:wood:air:wood:stone-3:wood:air-6:stone-6:basalt-12:stone-3:basalt-5:gravel-3:wood:air-7:wood:air:wood:air-3:wood:air-6:wood:stone-25:gravel-3:wood:air-13:wood:air-6:wood:air-2:stone-18:air-2:stone-3:gravel-3:wood:air-13:wood:air-6:wood:air-2:stone-18:air-2:stone-3:gravel-3:wood:air-20:wood:air-3:stone-17:air-2:stone-3:gravel-3:wood-2:air-19:wood:air-6:stone-14:air-2:stone-3:gravel-3:wood:air:wood:air-26:stone-13:air-2:stone-3:gravel-2:stone-5:air-26:wood:air-16:stone-9:air-24:wood:air-10:gunpowder-4:air-2:stone-11:wood-4:air-15:wood-6:stone-25:air-4:wood:air-21:stone-24:air-4:wood:air-23:stone-22:air-29:stone-21:air-29:stone-15:air-35:stone-12:air-40:stone-9:air-42:stone-7:air-46:stone-4:air-46:stone-4:air-46:wood:stone-3:air-46:wood:stone-3:air-46:wood:stone-3:air-46:wood:air:stone-2:air-46:wood:air-49:wood:air-4:gunpowder:air-42:wood-6:gunpowder-3:air-43:wood:air-3:stone-3:gunpowder:air-2:gunpowder:air-39:wood:air-3:stone-8:air-38:wood:air-3:stone-7:air-39:wood:air-3:stone-6:air-23:stone:air-16:wood:air-3:stone-6:air-22:wood:stone-2:air-15:wood:air-3:stone-6:air-19:wood:air:wood:stone-4:air-14:wood:air-3:stone-6:air-13:wood:air-2:wood-5:stone-6:air-13:wood:air-3:stone-6:air-11:wood-6:stone-6:basalt-4:air-10:stone-13:air-7:wood:air:wood-2:air:stone-10:basalt-5:lava-7:basalt-8:stone-2:air-11:wood-5:stone-10:basalt-24:air-7:stone-12:basalt-31:air-7:stone-12:basalt-31:stone-13:gravel-5:stone:basalt-31:stone-13:gravel-7:basalt-2:gravel-7:basalt-21:stone-11:gravel-19:basalt-20:stone-9:gravel-22:basalt-19:stone-9:gravel-22:basalt-19:;9c4:;c:1:31:1:31:1:89:3:2f:3:7a:2:12:2:1c:2:12:2:1c:2:12:2:1c:2:12:2:1c:2:12:2:3a0:6:2c:6:2c:6:2c:6:2c:6:64:f:24:e:25:d:25:a:39:7:2b:7:2b:7:125:;25f:1:31:1:37:1:12:1:1:1:329:1:6e:1:34c:;9c4:',
+                backgroundColor: '#adadad',
+                inventory: {
+                    sand: 3,
+                    wood: 7,
+                    leaves: 7,
+                    moss: 1,
+                    water: 2,
+                    lava: 1
+                },
+                id: 'b4a9c1d2-9e7e-4294-a58e-d9a874f1195d'
+            },
+            {
+                name: 'Lake Cavein??',
+                description: `Whatever floats your fboat! 0.1 + 0.2 = 0.30000000000000004<br><br>Anyways, you better watch out for caveins, there's a lot of gravel and loose stones around here.`,
+                saveCode: '100-100;0000;stone-596:air-4:stone-43:air-24:stone-23:air-10:stone-37:air-36:stone-13:air-14:stone-29:air-71:stone-29:air-68:stone-32:air-59:stone-41:air-58:stone-42:air-57:stone-43:air-60:stone-11:air-9:stone-20:air-60:stone-11:air-14:stone-6:air-69:stone-11:air-89:stone-11:air-89:stone-11:air-91:stone-9:air-3:stone-2:air-87:stone-18:air-14:stone-5:air-63:stone-37:air-64:stone-36:air-71:stone-29:air-71:stone-29:air-71:stone-29:gravel:air-70:stone-2:air-4:stone-23:gravel-4:air-73:stone-23:gravel-5:air-63:stone-3:air-6:stone-23:gravel-7:air-53:stone-11:air-7:stone-3:gravel-5:stone-16:gravel-6:air-52:stone-11:gravel-4:air-4:gravel-9:stone-18:gravel-3:air-50:stone-12:gravel-24:stone-13:gravel-3:air-26:crate-5:air-17:stone-12:gravel-25:stone-13:gravel-2:stone:water-40:gravel:stone-18:gravel-25:stone-16:water-39:stone-9:gravel-5:stone-6:gravel-25:stone-17:water-38:stone-8:gravel-12:stone:gravel-24:stone-17:water-37:gravel:stone-4:gravel-16:stone-3:gravel-22:stone-16:gravel:water-36:gravel-2:stone-4:gravel-16:stone-7:gravel-18:stone-17:gravel-2:water-31:gravel-4:stone-5:gravel-16:stone-9:gravel-15:stone-20:gravel-29:stone:gravel:stone-9:gravel-16:stone-8:gravel-14:stone-27:gravel-4:stone-4:gravel-12:stone-15:gravel-15:stone-9:gravel-14:stone-62:gravel-15:stone-5:gravel-17:stone-63:gravel-15:stone-4:gravel-15:stone-34:air-6:stone-29:gravel-12:stone-4:gravel-15:stone-34:air-6:stone-29:gravel-7:stone-9:wood-15:stone-34:air-6:stone-42:air-400:gravel-4:air-87:gravel:air-8:gravel-5:air-85:gravel-3:air-7:gravel-8:air-81:gravel-5:air-6:stone:gravel-8:stone-12:air-5:stone:gravel-5:stone-44:air-8:stone-16:gravel-9:stone-12:air-5:stone-50:air-8:stone-16:gravel-9:stone-12:air-5:stone-50:air-8:stone-16:gravel-11:stone-10:air-5:stone-50:air-8:stone-16:gravel-11:stone-10:air-5:stone-50:air-8:stone-16:gravel-5:stone-16:air-5:stone-50:air-8:stone-16:gravel-3:stone-18:air-5:stone-50:air-8:stone-37:air-5:stone-50:air-8:stone-37:air-5:stone-36:air-38:stone-21:air-6:stone-35:air-38:stone-21:air-6:stone-35:air-38:stone-21:air-6:stone-35:air-38:stone-9:air-21:stone-32:air-38:stone-9:air-21:stone-32:air-38:stone-9:air-21:stone-32:air-38:stone-9:air-21:stone-3:gravel-5:stone-24:air-5:gravel-2:stone-4:air-3:stone-20:air-4:stone-9:air-21:gravel-9:stone-22:gravel:air-3:gravel-2:stone-6:air-3:stone-20:air-4:stone-9:air-20:gravel-10:stone-23:gravel-4:stone-7:air-3:stone-20:air-4:stone-9:air-19:gravel-11:stone-34:air-3:stone-45:gravel-19:stone-33:air-3:stone-44:gravel-20:stone-33:air-3:stone-42:gravel-26:stone-29:air-3:stone-42:gravel-29:stone-26:air-3:stone-42:gravel-29:stone-26:air-3:stone-43:gravel-28:stone-26:air-3:stone-44:gravel-27:stone-26:air-3:stone-49:gravel-11:stone-3:gravel-8:stone-26:air-3:stone-63:gravel-5:stone-29:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-73:gravel-7:stone-2:gravel-4:stone-11:air-3:stone-72:gravel-14:stone-11:air-3:stone-71:gravel-15:stone-11:air-3:stone-68:gravel-16:stone-13:air-3:stone-67:gravel-15:stone-15:air-3:stone-67:gravel-12:stone-18:air-3:stone-68:gravel-7:stone-22:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-97:air-3:stone-94:air-12:stone-88:air-12:stone-88:air-12:stone-18:;2710:;254:4:5a:a:59:b:59:b:59:8:20f:5:5f:5:5f:5:5f:5:5f:2:1:2:329:33:31:33:31:33:31:32:34:30:428:6:5e:6:5e:6:2a:15:1f:6:1a:25:1f:6:1a:25:1f:6:1a:25:1f:6:1a:10:4:11:1f:6:1a:7:1:8:5:10:1f:6:1a:6:3:7:8:d:1f:6:1a:5:5:6:4c:8:5c:8:5c:8:5c:8:5c:8:10dc:;786:1:411:1:63:2:e6f:1:83:1:12:1:6:1:49:1:1:1:10:1:1:1:1:1:2:2:b9f:;2710:',
+                backgroundColor: '#adadad',
+                inventory: {
+                    wood: 8,
+                    concrete: 8,
+                    fire: 4,
+                    detonator: 1,
+                    gunpowder: 4,
+                    c4: 4,
+                },
+                id: '3f7d186d-d245-47f3-8cec-489de1159498'
+            },
+            {
+                name: 'Hidden Diamonds?',
+                description: `I've been foolin' you the whole time, because... I've been hiding my diamonds... OVER... HERE!!! Wait, there are no diamonds in this game.<br><br>Though, those monsters seem to be hidden pretty well. Where are they? Hold up, you can see everything here anyways. What?`,
+                saveCode: '50-50;0000;stone-166:air-6:stone-43:air-8:stone-41:air-14:stone-5:air-5:stone-26:air-27:stone-9:basalt-10:stone-3:air-32:stone-5:basalt-12:stone:air-32:wood-2:air-3:basalt-13:air-37:basalt-16:air-34:basalt-17:air-30:stone-3:basalt-20:air-10:basalt-11:air-2:basalt-4:stone-3:basalt-41:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air:basalt-47:stone-2:air:stone-8:basalt-37:stone-13:basalt-35:stone-15:basalt-20:air-5:basalt-10:stone-15:air-2:basalt-12:air-12:basalt-8:stone-5:air-34:crate:air-2:basalt-7:stone-6:air-11:water-27:basalt-4:gravel-3:stone-5:air-5:gunpowder-4:air-2:water-2:gravel-4:water-16:gravel-4:stone-3:gravel-5:stone-16:gravel-34:stone-6:basalt-9:stone:gravel-34:stone-5:basalt-11:gravel-31:stone-6:basalt-2:air-3:basalt-8:stone-11:gravel-18:stone-2:air-19:stone-12:gravel-8:stone-10:air-5:gunpowder-2:c4:air-6:c4-2:air-4:stone-15:gravel-3:stone-11:c4-2:air-3:c4-5:air-5:c4-3:air:c4-2:stone-29:c4-2:air-3:crate-5:air-4:c4-7:stone-29:basalt-2:water-9:basalt-3:c4-7:basalt-10:stone-19:basalt-35:stone-14:basalt-39:stone-5:basalt-128:;9c4:;a6:6:2b:8:29:e:5:5:1a:1b:16:20:12:20:2:3:d:25:10:22:11:1e:17:a:74e:;689:1:48:1:2c:1:fd:1:65:2:2a:1:134:;9c4:',
+                backgroundColor: '#adadad',
+                inventory: {
+                    dirt: 2,
+                    sand: 5,
+                    wood: 10,
+                    stone: 10,
+                    water: 3,
+                    lava: 1,
+                    concrete_powder: 8,
+                    detonator: 1,
+                    gunpowder: 5,
+                    c4: 5
+                },
+                id: '405353d3-cac4-4d8d-95c3-c01bd6826019'
+            },
+            {
+                name: 'Creeper!?!?',
+                description: `No, I'm not finishing the joke.<br><br>Why don't you just finish the level instead? I've given you some pushers to help you.`,
+                saveCode: '',
+                backgroundColor: '#adadad',
+                inventory: {
+
+                },
+                id: 'buh444'
+            }
+        ]
+    },
+    {
+        name: 'Rafting Revisited',
+        levels: [
+            {
+                name: 'Rafting 2: Electric Boogaloo (Déjà vu?)',
+                description: `Huh, how did we even get to this river? Oh! Monsters! Quick, find a way to wash them off before they leave! <i>Why does it feel like we've done this before?</i>`,
+                saveCode: '50-50;0000;air-1900:sand-2:air-48:sand-5:air-40:gravel-5:sand-7:air-13:wood-8:air-15:gravel-7:stone-4:sand-4:water-13:wood-6:water-15:gravel-5:stone-9:gravel-3:water-31:gravel-5:stone-13:gravel-5:water-25:gravel-4:stone-18:gravel-7:water-6:gravel-18:stone-21:gravel-16:stone-43:gravel-3:stone-176:;9c4:;0:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:24:e:4d3:1:;7b4:2:1:1:20c:;9c4:',
+                backgroundColor: '#e0f0ff',
+                inventory: {
+                    sand: 10,
+                    concrete_powder: 2,
+                    crate: 8
+                },
+                id: '6e7b58c7-9a0e-4dd5-a359-ab5450178965'
+            },
+            {
+                name: 'White Water Rafting',
+                description: `Watch out for rocks! Wait, that's a raft. How did they make a raft out of rocks?`,
+                saveCode: '50-50;0000;air-1907:stone-5:air-33:crate:air-10:stone:air-3:gunpowder:air:stone:air-28:crate:air-2:wood-3:air-9:stone-7:air-12:crate-3:air-9:stone:air-3:wood-3:air-2:gravel-2:air-2:water-3:stone:water-32:stone-2:water:gravel:water-3:gravel-2:stone-4:water-4:stone:water-7:stone:gravel:water-2:stone:water-9:stone:water-10:stone-2:gravel:stone-2:gravel-3:stone-5:water:gravel:water:stone-2:gravel-2:water-5:stone-3:gravel:stone-2:gravel-3:water-4:stone-2:water:stone:water:gravel-2:water:gravel-4:stone-20:gravel:water:gravel-3:stone-6:gravel-4:water-2:stone-5:gravel-2:stone:gravel-3:stone:gravel:stone-21:gravel:stone:gravel:stone-9:gravel-3:stone-228:;9c4:;10b:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:3b6:;7a7:1:1:1:21a:;9c4:',
+                backgroundColor: '#c7e5f4',
+                inventory: {
+                    sand: 2,
+                    moss: 3,
+                    concrete_powder: 6,
+                    concrete: 3,
+                    crate: 8
+                },
+                id: '51c7bb61-4226-48de-9095-3d03506ee03c'
+            },
+            {
+                name: 'Canoeing',
+                description: `I wouldn't call that a canoe, but.... The monsters have built a huge canoe to protect themselves! Unfortunately, <i>it's made of wood</i>. Silly monsters.`,
+                saveCode: '50-50;0000;air-1908:wood-6:air-43:wood:air-6:wood:air-40:wood-3:air-6:wood-3:air-33:water-5:wood-2:air-8:wood-2:water-39:wood-10:water-84:gravel-2:water-48:gravel-3:water-47:stone:gravel-4:water-45:stone:gravel-11:water-35:gravel-3:stone-4:gravel-12:water-26:gravel-8:stone-11:gravel-39:;9c4:;303:1d:15:1d:15:1d:303:1d:15:1d:15:1d:2bc:;7d9:1:3:1:2b:4:1:2:1b4:;9c4:',
+                backgroundColor: '#afd9e9',
+                inventory: {
+                    lava: 12,
+                    concrete_powder: 6,
+                    concrete: 10
+                },
+                id: '0da30021-7356-436f-aaec-3f364fdfd758'
+            },
+            {
+                name: 'Canyon Rafting',
+                description: `This is a big canyon! But the monsters are smarter than they let on, they've built a roof over their raft to protect themselves from falling stuff.`,
+                saveCode: '50-50;0000;air-406:leaves-4:air-36:leaves-3:air-6:leaves-2:wood:leaves-3:air-29:leaves-3:air-2:leaves-2:wood:leaves-4:air-5:wood:leaves:air-30:leaves-2:wood:leaves-2:air-3:wood:air-2:wood:leaves-2:air-4:wood:air-33:wood:air-6:wood:air:wood:leaves-2:air-3:wood:air-33:wood:air-7:wood:air:wood:air-5:wood:air-33:wood:air-7:wood:air:grass-10:air-25:wood-4:grass-11:dirt-11:air-27:wood:dirt-11:stone-11:air-27:stone-23:air-26:stone-24:air-26:stone-24:air-26:stone-24:air-26:stone-24:air-26:stone-24:air-26:stone-24:air-26:stone-13:basalt-11:air-26:basalt-24:air-26:basalt-13:stone-11:air-26:stone-24:air-26:stone-13:basalt-12:air-25:basalt-13:stone-12:air-25:stone-25:air-25:stone-25:air-25:stone-13:basalt-12:air-25:basalt-25:air-25:basalt-25:air-25:basalt-25:air-25:basalt-26:air-24:basalt-26:air-24:basalt-26:air-24:basalt-26:air-11:gunpowder:air-12:basalt-26:air-10:crate-5:air-9:basalt-26:water-23:basalt-28:water-21:basalt-29:water-21:basalt-30:water-19:gravel:basalt-30:water-17:gravel-3:basalt-30:water-16:basalt-34:gravel-3:water-11:basalt-121:;9c4:;1e5:4:2e:4:2e:4:2e:4:2e:4:51e:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:;784:1:33:1:20b:;9c4:',
+                backgroundColor: '#96cede',
+                inventory: {
+                    gravel: 8,
+                    wood: 4,
+                    lava: 1,
+                    sponge: 1,
+                    detonator: 1,
+                    gunpowder: 5,
+                    c4: 5
+                },
+                id: '86f12e16-2bd8-4d2d-a787-b2c12e4e4b1a'
+            },
+            {
+                name: 'Tropical Rafting',
+                description: `If this isn't the Amazon and it's definitely not the Sahara, and we just passed through a massive canyon, where are we? Speaking of Sahara, you should - MONSTER! KILL IT! <h>AAAAAAAAAAAAAAAAAAAAAA!!!</h>`,
+                saveCode: '50-50;0000;air-500:leaves-6:air-44:leaves-7:air-43:wood:leaves:wood:leaves-5:air-42:wood:leaves-2:wood:leaves-4:air-42:wood-3:leaves-4:air-43:wood:leaves-4:air-45:wood:leaves-2:air-47:wood:leaves-3:air-46:wood:air:leaves-2:air-46:wood-2:leaves:air-47:wood:leaves:air-48:wood:air-2:leaves-5:air-42:wood:air:leaves-2:wood-3:leaves-2:air-41:wood:leaves-2:wood:leaves-5:air-34:leaves-5:air-2:wood:leaves-3:wood:leaves-3:air-34:leaves-8:wood:air:leaves:wood:leaves:air-36:leaves-2:wood:leaves-6:wood:air:wood:leaves:air-37:leaves-2:wood:leaves-3:wood:leaves-2:wood-2:air-39:leaves-3:wood:leaves-2:wood:leaves-2:wood-2:air-39:leaves-4:wood:leaves:wood:leaves-2:wood:air-43:leaves:wood:leaves:wood:air-2:wood:air-44:leaves:wood:air-3:wood:air-45:wood:air-3:wood:air-45:wood:air-3:wood:air-46:wood:air-2:wood:air-46:wood:air-2:wood:air:leaves-6:air-39:wood:air-2:wood:leaves-2:wood:leaves-4:air-39:wood:air-2:wood:leaves-2:wood:leaves:wood:leaves-2:air-15:glass-4:air-14:leaves-3:air-3:wood:air-2:wood:leaves:wood:leaves-2:wood:air:moss:air-14:glass:air-4:glass:air-13:leaves:wood:leaves-2:air:wood:air:leaves-2:wood:air-2:wood:air:wood:moss:stone:moss:air-13:glass:air-4:glass:air-14:leaves:wood:leaves:air:wood:leaves-2:wood:dirt:grass-2:dirt:grass:dirt-4:grass:moss:air-11:crate-6:air-13:grass:dirt-3:grass:dirt-15:mud:water-27:mud:grass:dirt-21:mud-3:water-21:mud-3:dirt-26:mud-3:water-15:mud-3:dirt-32:mud-4:water-8:mud-3:dirt-39:mud-8:dirt-220:;9c4:;57a:9:28:a:28:a:28:a:28:a:1e:5:5:a:1e:5:5:a:1e:5:5:1:6:3:1e:5:c:3:1e:5:c:3:2f:3:30:2:21b:;7b5:4:20b:;9c4:',
+                backgroundColor: '#7dc3d3',
+                inventory: {
+                    sand: 5,
+                    lava: 4,
+                    concrete_powder: 10,
+                    concrete: 20,
+                    crate: 10,
+                    sponge: 1,
+                    pump: 1
+                },
+                id: '2951e639-97bb-41dd-bbc8-5a9ed635090e'
+            },
+            {
+                name: 'Explosive Rafting',
+                description: `Is it even proper to call <i>that</i> a raft? Is that explosives I see?<br><br><i>Level credits: Billiam</i>`,
+                saveCode: '50-50;0000;air-1039:wood:air-49:wood:air-49:wood:air-49:wood:air-49:wood:air-6:wood:air-42:wood:air-6:wood:air-42:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-12:wood:air-5:wood:air-16:wood:air-6:wood:air-4:wood-6:concrete-7:wood-10:air-8:wood-3:air-4:wood:air-6:wood:air-3:wood:air-5:glass:concrete-7:air-2:wood:air-5:wood:air-11:wood-23:concrete-7:air-2:wood:air-5:wood:air-14:wood:gunpowder-10:c4-8:wood:concrete-7:air-2:wood:air-5:wood:air-15:wood:gunpowder-8:c4-8:wood:air:concrete-7:water-2:wood:water-5:wood:water-16:wood-2:gunpowder-4:c4-8:wood-2:water-2:concrete-7:sand-2:wood:water-5:wood:water-18:wood-12:water-4:concrete-7:sand-2:wood:sand-2:water-3:wood:water-34:concrete-7:sand-2:wood:sand-3:water-2:wood:water-34:concrete-7:sand-2:wood:sand-5:wood:sand:water-33:concrete-7:sand-2:wood:sand-5:wood:sand-3:water-31:concrete-7:sand-2:wood:sand-5:wood:sand-5:water-29:;9c4:;44c:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:9:1:5:1:1:247:;27:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:ce:1:87:1:232:1:1d:1:36:1:3:1:2:1:3:1:5:2:1f5:;9c4:',
+                backgroundColor: '#65b7c7',
+                inventory: {
+                    grass: 5,
+                    wood: 20,
+                    lava: 5,
+                    concrete_powder: 6,
+                    concrete: 10
+                },
+                id: 'ee55c18e-0f5a-4d21-8ffe-b279fde1a880'
+            },
+            {
+                name: 'Frozen Lake Rafting',
+                description: `What? How did we even get on this high-altitude frozen lake? Oh no, your water pixels froze and your lava's gone cold! What are we supposed to do now? Hope the monsters fall through thin ice? Wait, why did you bring flamethrowers?`,
+                saveCode: '50-50;0000;air-2039:crate-5:air-6:ice-81:water-12:ice-7:water:ice-11:water-8:ice-4:water-326:;9c4:;0:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:1d9:;7c6:2:1fc:;9c4:',
+                backgroundColor: '#4cacbc',
+                inventory: {
+                    concrete: 11,
+                    flamethrower_down: 5
+                },
+                id: '4a2c21a2-f473-443c-a970-8b3d94e0ee56'
+            },
+            {
+                name: 'Mountain Rafting', // earthen fortress? i am bad at poem
+                description: `<i>Who guards this fortress of earth and stone?<br>What treasure lies deep unfound within?</i><br><br>Maybe some Ialite; if you know, you know. I like to say I like poetry. I was't supposed to say that part! AUHGSLAGUHD MONSTER!`,
+                saveCode: '50-50;0000;air-550:grass-3:air-47:stone-3:air-47:stone-3:air-47:stone-4:air-46:stone-4:air-46:stone-4:air-46:stone-4:air-46:stone-4:air-46:stone-5:air-45:stone-5:air-45:stone-5:air-45:stone-5:air-45:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:grass:air-43:stone-7:air-43:stone-7:grass:air-42:stone-2:color_violet:stone-5:air-42:color_violet:stone-7:grass:air-41:stone-3:color_violet:stone-5:grass:air-40:stone-9:dirt:grass-6:air-34:stone-10:dirt-6:grass:air-33:stone-17:air-16:gunpowder:air-16:stone-17:air-13:crate-3:wood-2:air-15:stone-17:water-33:stone-17:water-33:stone-17:water-33:basalt-4:stone-14:water-32:basalt-8:stone-12:water-27:stone-3:basalt-16:stone-34:basalt-150:;9c4:;12c:3:2f:3:2f:3:2f:3:2f:3:387:b:27:b:27:b:28:a:28:a:29:9:29:9:2a:8:2b:7:31:1:279:;78b:2:30:2:205:;9c4:',
+                backgroundColor: '#33a1b1',
+                inventory: {
+                    sand: 1,
+                    gravel: 2,
+                    moss: 1,
+                    water: 2,
+                    ice: 2,
+                    lava: 1,
+                    concrete_powder: 1,
+                    concrete: 40,
+                    sponge: 1
+                },
+                id: '485e8eb6-ec91-44a3-9df9-b0718191c248'
+            },
+            {
+                name: 'Flower Meadow Rafting',
+                description: `That's strange; I don't see any flowers. But I <i>do</i> see monsters. Why are they trying to raft here?`,
+                saveCode: '50-50;0000;air-1600:leaves-3:air-47:leaves-4:air-46:leaves:wood:leaves-2:air-46:leaves:wood:leaves-2:air-47:wood:air-49:wood:air-49:wood:air-49:wood:air-49:wood:air-23:crate-5:air-20:grass:dirt:grass-23:dirt-5:grass-20:dirt-400:;9c4:;190:17:9:29:9:29:9:12:79e:;7b8:3:209:;9c4:',
+                backgroundColor: '#1b95a6',
+                inventory: {
+                    water: 6,
+                    concrete: 50,
+                    freezer: 6, // refrigerator: 1
+                    piston_right: 1,
+                    rotator_counterclockwise: 2,
+                    flamethrower_up: 1
+                },
+                id: '5eef19d7-265d-43fa-85dc-f5832ca0ca3c'
+            },
+            {
+                name: 'Sunset Rose Rafting',
+                description: `That's a cool sunset. It's not the best looking scenery to be in, but at least this river isn't radiator fluid.`,
+                saveCode: '',
+                backgroundColor: new Function('let fn = ' + function () {
+                    let a = ctx.createLinearGradient(0, 0, 0, canvasResolution);
+                    a.addColorStop(0, '#028a9b');
+                    a.addColorStop(0.3, '#bfa194');
+                    a.addColorStop(0.6, '#f8cf9b');
+                    a.addColorStop(0.75, '#f8a147');
+                    a.addColorStop(0.8, '#de5a5a');
+                    a.addColorStop(0.85, '#bf3f76');
+                    a.addColorStop(1, '#bf3f76');
+                    return a;
+                }.toString() + '; return fn()')(),
+                inventory: {
+                },
+                id: 'guh'
+            },
+        ]
+    },
+    {
         name: 'Pixel Machines',
         levels: [
             {
