@@ -1866,6 +1866,7 @@ function updateTick() {
     averageTickTime = 0.95 * averageTickTime + 0.05 * tickTime;
 };
 async function startDrawLoop() {
+    window.startDrawLoop = undefined;
     let start;
     while (true) {
         start = performance.now();

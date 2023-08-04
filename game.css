@@ -42,7 +42,7 @@
 }
 
 #levelName {
-    height: 30px;
+    min-height: 30px;
     border: 2px solid black;
     padding: 8px 8px;
     margin-top: 8px;
