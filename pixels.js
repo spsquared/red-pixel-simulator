@@ -4614,6 +4614,116 @@ const pixels = {
         id: 'deleter',
         numId: 0
     },
+    spongy_rice: {
+        name: 'Spongy Rice',
+        description: 'The solution to world hunger! Expands 4852x from just a drop of water!<br><i>(SPAARK is not responsible for any Spongy Rice-related injuries or deaths)</i>',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = 'rgb(240, 240, 230)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+            } else {
+                ctx.fillStyle = 'rgb(230, 230, 230)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                gridoverctx.fillStyle = 'rgb(245, 245, 220)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, gridoverctx);
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, [pixNum.MUD, pixNum.SILT, pixNum.WET_ASH, pixNum.WATER, pixNum.ICE, pixNum.SNOW, pixNum.STEAM, pixNum.PUMP, pixNum.FREEZER])) {
+                // lazy code moment
+                // probably will replace with better ellipse drawing algorithm that can do rotated ellipses
+                draw_ellipse((x, y) => {
+                    if (y >= 0 && y < gridHeight && x >= 0 && x < gridWidth) nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
+                }, x, y, Math.floor(Math.random() * 20), Math.floor(Math.random() * 20));
+                // floodfill moment
+                let visited = new Set();
+                function positionHash(x, y) {
+                    return y * gridWidth + x;
+                };
+                function badFloodfill(x, y) {
+                    visited.add(positionHash(x, y));
+                    if (nextGrid[y][x] == pixNum.EXPANDED_SPONGY_RICE) return;
+                    nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
+                    if (x > 0 && !visited.has(positionHash(x - 1, y))) badFloodfill(x - 1, y);
+                    if (y > 0 && !visited.has(positionHash(x, y - 1))) badFloodfill(x, y - 1);
+                    if (x < gridWidth - 1 && !visited.has(positionHash(x + 1, y))) badFloodfill(x + 1, y);
+                    if (y < gridHeight - 1 && !visited.has(positionHash(x, y + 1))) badFloodfill(x, y + 1);
+                };
+                badFloodfill(x, y);
+            } else fall(x, y, 1, 1, isPassableFluid);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(240, 240, 230)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 3,
+        updateStage: 0,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        id: 'spongy_rice',
+        numId: 0
+    },
+    expanded_spongy_rice: {
+        name: 'Expanded Spongy Rice',
+        description: 'The solution to world hunger! Expands 4852x from just a drop of water!<br><i>(SPAARK is not responsible for any Spongy Rice-related injuries or deaths)</i>',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = 'rgb(240, 240, 230)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+            } else {
+                ctx.fillStyle = 'rgb(230, 230, 230)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+                gridoverctx.fillStyle = 'rgb(245, 245, 220)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, gridoverctx);
+                });
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 3,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: false,
+        pixsimPickable: false,
+        id: 'expanded_spongy_rice',
+        numId: 0
+    },
     lag_spike_generator: {
         name: 'lag_spike_generator',
         description: 'Not that laggy',
@@ -5038,9 +5148,9 @@ const pixels = {
                     case '_':
                         return (x, y) => nextGrid[y][x] = pixNum.AIR;
                     case ' ':
-                        return () => {};
+                        return () => { };
                     case '.':
-                        return () => {};
+                        return () => { };
                     default:
                         throw new Error('Unknown Red SpaceTode result "' + char + '"');
                 }
