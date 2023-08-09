@@ -2257,6 +2257,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
                 teamGrid[y][x - 1] = teamGrid[y][x + 1];
@@ -2268,7 +2269,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 6, 50 / 4, 50 / 6, 25);
         },
@@ -2278,7 +2279,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
             fillPixels(1 / 6, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
@@ -2310,6 +2311,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
                 teamGrid[y - 1][x] = teamGrid[y + 1][x];
@@ -2331,7 +2333,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
             fillPixels(1 / 4, 1 / 6, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
@@ -2363,6 +2365,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
                 teamGrid[y][x + 1] = teamGrid[y][x - 1];
@@ -2374,7 +2377,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(200 / 6, 50 / 4, 50 / 6, 25);
         },
@@ -2384,7 +2387,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
             fillPixels(2 / 3, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
@@ -2416,6 +2419,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
                 teamGrid[y + 1][x] = teamGrid[y - 1][x];
@@ -2427,7 +2431,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 4, 200 / 6, 25, 50 / 6);
         },
@@ -2437,7 +2441,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
             fillPixels(1 / 4, 2 / 3, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
@@ -2469,6 +2473,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).pushable && pixelAt(x + 1, y).cloneable && grid[y][x - 1] != pixNum.DELETER && canMoveTo(x - 1, y)) {
                 if (push(x, y, 0, false, true)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
@@ -2482,7 +2487,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 6, 50 / 4, 50 / 6, 25);
             ctx.fillStyle = 'rgb(255, 255, 0)';
@@ -2494,7 +2499,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
             fillPixels(1 / 6, 1 / 4, 1 / 6, 1 / 2);
             ctx.fillStyle = 'rgb(255, 255, 0)';
@@ -2528,6 +2533,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).pushable && pixelAt(x, y + 1).cloneable && grid[y - 1][x] != pixNum.DELETER && canMoveTo(x, y - 1)) {
                 if (push(x, y, 1, false, true)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
@@ -2541,7 +2547,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 4, 50 / 6, 25, 50 / 6);
             ctx.fillStyle = 'rgb(255, 255, 0)';
@@ -2553,7 +2559,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
             fillPixels(1 / 4, 1 / 6, 1 / 2, 1 / 6);
             ctx.fillStyle = 'rgb(255, 255, 0)';
@@ -2587,6 +2593,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).pushable && pixelAt(x - 1, y).cloneable && grid[y][x + 1] != pixNum.DELETER && canMoveTo(x + 1, y)) {
                 if (push(x, y, 2, false, true)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
@@ -2600,7 +2607,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(200 / 6, 50 / 4, 50 / 6, 25);
             ctx.fillStyle = 'rgb(255, 255, 0)';
@@ -2612,7 +2619,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
             fillPixels(2 / 3, 1 / 4, 1 / 6, 1 / 2);
             ctx.fillStyle = 'rgb(255, 255, 0)';
@@ -2646,6 +2653,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).pushable && pixelAt(x, y - 1).cloneable && grid[y + 1][x] != pixNum.DELETER && canMoveTo(x, y + 1)) {
                 if (push(x, y, 3, false, true)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
@@ -2659,7 +2667,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 4, 200 / 6, 25, 50 / 6);
             ctx.fillStyle = 'rgb(255, 255, 0)';
@@ -2671,7 +2679,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
             fillPixels(1 / 4, 2 / 3, 1 / 2, 1 / 6);
             ctx.fillStyle = 'rgb(255, 255, 0)';
@@ -2716,7 +2724,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
@@ -2725,7 +2733,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
             fillPixels(1 / 6, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
@@ -2768,7 +2776,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
         },
         prerender: function () {
@@ -2777,7 +2785,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
             fillPixels(1 / 4, 1 / 6, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
@@ -2822,7 +2830,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
@@ -2831,7 +2839,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(0, 1 / 3, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(2 / 3, 1 / 3, 1 / 3, 1 / 3);
             fillPixels(2 / 3, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
@@ -2874,7 +2882,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
@@ -2883,7 +2891,7 @@ const pixels = {
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(0, 125, 255)';
             fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
-            ctx.fillStyle = 'rgb(125, 255, 75)';;
+            ctx.fillStyle = 'rgb(125, 255, 75)';
             fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
             fillPixels(1 / 4, 2 / 3, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
@@ -3370,6 +3378,55 @@ const pixels = {
         pickable: true,
         pixsimPickable: true,
         id: 'collapsible',
+        numId: 0
+    },
+    cloner_deactivator: {
+        name: 'Cloner Deactivator',
+        description: 'Deactivates cloners and copiers that are touching it',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(220, 0, 0)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50);
+            ctx.fillRect(25 / 3, 25 / 3, 100 / 3, 100 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(6);
+            ctx.fillStyle = 'rgb(220, 0, 0)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 1 / 3, 1, 1 / 3);
+            fillPixels(1 / 3, 0, 1 / 3, 1);
+            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+        },
+        prerenderedFrames: [],
+        blastResistance: 2,
+        flammability: 15,
+        pushable: true,
+        cloneable: false,
+        rotateable: false,
+        group: 1,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'cloner_deactivator',
         numId: 0
     },
     slime: {
@@ -7007,9 +7064,9 @@ function generateMusicPixel(id, data) {
             } else {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     forEachPixel(x, y, width, height, (x2, y2) => {
-                        if (lastAuxGrid[y2][x2] != auxGrid[y2][x2] || redrawing || forceRedraw) {
-                            if (auxGrid[y2][x2] == -1) auxGrid[y2][x2] = 0;
-                            if (auxGrid[y2][x2]) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                        if (lastMusicGrid[y2][x2] != musicGrid[y2][x2] || redrawing || forceRedraw) {
+                            if (musicGrid[y2][x2] == -1) musicGrid[y2][x2] = 0;
+                            if (musicGrid[y2][x2]) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
                             else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
                         }
                     });
@@ -7020,7 +7077,7 @@ function generateMusicPixel(id, data) {
             if (updateTouchingAnything(x, y, (ax, ay) => {
                 if (grid[ay][ax] >= pixNum.MUSIC_1 && grid[ay][ax] <= pixNum.MUSIC_86) return false;
                 return true;
-            })) auxGrid[y][x] = id;
+            })) musicGrid[y][x] = id;
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);

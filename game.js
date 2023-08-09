@@ -107,8 +107,8 @@ const lastFireGrid = [];
 const nextFireGrid = [];
 const monsterGrid = [];
 const targetGrid = [];
-const auxGrid = [];
-const lastAuxGrid = [];
+const musicGrid = [];
+const lastMusicGrid = [];
 const placeableGrid = [];
 const lastPlaceableGrid = [];
 
@@ -183,8 +183,8 @@ function createGrid(width = 100, height = 100) {
     nextFireGrid.length = 0;
     monsterGrid.length = 0;
     targetGrid.length = 0;
-    auxGrid.length = 0;
-    lastAuxGrid.length = 0;
+    musicGrid.length = 0;
+    lastMusicGrid.length = 0;
     placeableGrid.length = 0;
     lastPlaceableGrid.length = 0;
     noisectx.clearRect(0, 0, canvasResolution, canvasResolution);
@@ -198,8 +198,8 @@ function createGrid(width = 100, height = 100) {
         nextFireGrid[i] = [];
         monsterGrid[i] = [];
         targetGrid[i] = [];
-        auxGrid[i] = [];
-        lastAuxGrid[i] = [];
+        musicGrid[i] = [];
+        lastMusicGrid[i] = [];
         placeableGrid[i] = [];
         lastPlaceableGrid[i] = [];
         for (let j = 0; j < gridWidth; j++) {
@@ -211,8 +211,8 @@ function createGrid(width = 100, height = 100) {
             nextFireGrid[i][j] = -1;
             monsterGrid[i][j] = false;
             targetGrid[i][j] = false;
-            auxGrid[i][j] = 0;
-            lastAuxGrid[i][j] = 0;
+            musicGrid[i][j] = 0;
+            lastMusicGrid[i][j] = 0;
             placeableGrid[i][j] = true;
             lastPlaceableGrid[i][j] = true;
             noisectx.globalAlpha = constantNoise(j / 2, i / 2);
@@ -1741,8 +1741,8 @@ function updateTick() {
                         grid[y][x] = nextGrid[y][x];
                         nextGrid[y][x] = -1;
                     }
-                    lastAuxGrid[y][x] = auxGrid[y][x];
-                    auxGrid[y][x] = 0;
+                    lastMusicGrid[y][x] = musicGrid[y][x];
+                    musicGrid[y][x] = 0;
                 }
             }
             for (let updateStage = 0; updateStage <= 8; updateStage++) {
@@ -1823,9 +1823,9 @@ function updateTick() {
                         else hasUnfulfilledTargets = true;
                     }
                     if (grid[y][x] == pixNum.PIXELITE_CRYSTAL) pixsimData.pixeliteCounts[teamGrid[y][x] - 1]++;
-                    if (auxGrid[y][x] != lastAuxGrid[y][x]) {
-                        if (auxGrid[y][x] != 0) musicPixel(auxGrid[y][x], true);
-                        else if (auxGrid[y][x] == 0) musicPixel(lastAuxGrid[y][x], false);
+                    if (musicGrid[y][x] != lastMusicGrid[y][x]) {
+                        if (musicGrid[y][x] != 0) musicPixel(musicGrid[y][x], true);
+                        else if (musicGrid[y][x] == 0) musicPixel(lastMusicGrid[y][x], false);
                     }
                 }
             }
@@ -1923,11 +1923,11 @@ function updateBrush() {
                                     inventory[pid]--;
                                 }
                                 grid[y + offsetY][x + offsetX] = selection.grid[y][x];
-                                if (auxGrid[y + offsetY][x + offsetX]) {
-                                    musicPixel(auxGrid[y + offsetY][x + offsetX], false);
-                                    auxGrid[y + offsetY][x + offsetX] = -1;
+                                if (musicGrid[y + offsetY][x + offsetX]) {
+                                    musicPixel(musicGrid[y + offsetY][x + offsetX], false);
+                                    musicGrid[y + offsetY][x + offsetX] = -1;
                                 }
-                                if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_86) auxGrid[y + offsetY][x + offsetX] = -1;
+                                if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_86) musicGrid[y + offsetY][x + offsetX] = -1;
                             }
                         }
                     }
@@ -2016,9 +2016,9 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                     fireGrid[y][x] = false;
                     monsterGrid[y][x] = false;
                     targetGrid[y][x] = false;
-                    if (auxGrid[y][x]) {
-                        musicPixel(auxGrid[y][x], false);
-                        auxGrid[y][x] = 0;
+                    if (musicGrid[y][x]) {
+                        musicPixel(musicGrid[y][x], false);
+                        musicGrid[y][x] = 0;
                     }
                 });
             } else {
@@ -2034,9 +2034,9 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                             modifiedPixelCounts[pixNum.FIRE] = true;
                             fireGrid[y][x] = false;
                         }
-                        if (auxGrid[y][x]) {
-                            musicPixel(auxGrid[y][x], false);
-                            auxGrid[y][x] = 0;
+                        if (musicGrid[y][x]) {
+                            musicPixel(musicGrid[y][x], false);
+                            musicGrid[y][x] = 0;
                         }
                         teamGrid[y][x] = 0;
                     }
@@ -2090,11 +2090,11 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
             if (sandboxMode) {
                 act(function (x, y) {
                     grid[y][x] = clickPixelNum;
-                    if (auxGrid[y][x]) {
-                        musicPixel(auxGrid[y][x], false);
-                        auxGrid[y][x] = -1;
+                    if (musicGrid[y][x]) {
+                        musicPixel(musicGrid[y][x], false);
+                        musicGrid[y][x] = -1;
                     }
-                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) auxGrid[y][x] = -1;
+                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
                 });
             } else {
                 modifiedPixelCounts[clickPixelNum] = true;
@@ -2106,12 +2106,12 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
                         inventory[pixel]++;
                         grid[y][x] = clickPixelNum;
-                        if (auxGrid[y][x]) {
-                            musicPixel(auxGrid[y][x], false);
-                            auxGrid[y][x] = -1;
+                        if (musicGrid[y][x]) {
+                            musicPixel(musicGrid[y][x], false);
+                            musicGrid[y][x] = -1;
                         }
                         inventory[placePixel]--;
-                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) auxGrid[y][x] = -1;
+                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
                         teamGrid[y][x] = pxteam + 1;
                     }
                     return inventory[placePixel] <= 0;
@@ -2403,18 +2403,18 @@ window.addEventListener('DOMContentLoaded', (e) => {
                         if (sandboxMode) {
                             selection.grid[y - ymin][x - xmin] = grid[y][x];
                             grid[y][x] = pixNum.AIR;
-                            if (auxGrid[y][x]) {
-                                musicPixel(auxGrid[y][x], false);
-                                auxGrid[y][x] = 0;
+                            if (musicGrid[y][x]) {
+                                musicPixel(musicGrid[y][x], false);
+                                musicGrid[y][x] = 0;
                             }
                         } else if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
                             selection.grid[y - ymin][x - xmin] = grid[y][x];
                             inventory[pixelAt(x, y).id]++;
                             modifiedPixelCounts[grid[y][x]] = true;
                             grid[y][x] = pixNum.AIR;
-                            if (auxGrid[y][x]) {
-                                musicPixel(auxGrid[y][x], false);
-                                auxGrid[y][x] = 0;
+                            if (musicGrid[y][x]) {
+                                musicPixel(musicGrid[y][x], false);
+                                musicGrid[y][x] = 0;
                             }
                         }
                     }
@@ -2437,17 +2437,17 @@ window.addEventListener('DOMContentLoaded', (e) => {
                     for (let x = xmin; x <= xmax; x++) {
                         if (sandboxMode) {
                             grid[y][x] = pixNum.AIR;
-                            if (auxGrid[y][x]) {
-                                musicPixel(auxGrid[y][x], false);
-                                auxGrid[y][x] = 0;
+                            if (musicGrid[y][x]) {
+                                musicPixel(musicGrid[y][x], false);
+                                musicGrid[y][x] = 0;
                             }
                         } else if (placeableGrid[y][x] && grid[y][x] != pixNum.DELETER) {
                             inventory[pixelAt(x, y).id]++;
                             modifiedPixelCounts[grid[y][x]] = true;
                             grid[y][x] = pixNum.AIR;
-                            if (auxGrid[y][x]) {
-                                musicPixel(auxGrid[y][x], false);
-                                auxGrid[y][x] = 0;
+                            if (musicGrid[y][x]) {
+                                musicPixel(musicGrid[y][x], false);
+                                musicGrid[y][x] = 0;
                             }
                         }
                     }
