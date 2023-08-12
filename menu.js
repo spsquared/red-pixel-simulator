@@ -88,12 +88,20 @@ const loadingTips = [
     'You can design and submit a puzzle on the <a href="https://discord.pixelsimulator.repl.co" target="_blank">Pixel Simulator discord</a>!',
     'All of Pixel Simulator (including music!) is made by SP, SP^2, and Erik!',
     'Use the RedPrint Editor to save contraptions you use a lot.',
-    'Some levels are very RNG-based; messing around randomly usually works in those levels',
+    'Some levels are very RNG-based; messing around randomly usually works in those levels.',
     'There exists a few pixels that are not in the Pixel Picker...',
     '"Rafting Revisited" originally started as a play on how <span style="color: #0099FF;">Blue Pixel Simulator!</span> got multiple rafting puzzles as a "lazy workaround".',
     '"War is only a cowardly escape from the problems of peace" - Thomas Mann'
 ];
 const loadingTip = document.getElementById('loadingTip');
+function setLoadingTipInterval(tipDiv) {
+    tipDiv.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+    return setInterval(() => {
+        glitchTextTransition(tipDiv.innerHTML, loadingTips[Math.floor(Math.random() * loadingTips.length)], (text) => {
+            tipDiv.innerHTML = text;
+        }, 50, 2, 5, 1);
+    }, 8000);
+};
 function setTransitionTimeout(cb, ms) {
     let t = setTimeout(() => {
         cb();
@@ -129,13 +137,14 @@ function transitionToGame(cb) {
     clearInterval(titleBobController);
     document.getElementById('sidebar').scrollTo(0, 0);
     clearMenuScreen();
-    loadingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+    let loadingTipInterval = setLoadingTipInterval(loadingTip);
     loadingTip.style.opacity = '1';
     transitionBarTop.style.transform = 'translateY(60vh)';
     transitionBarBottom.style.transform = 'translateY(-60vh)';
     setTransitionTimeout(async () => {
         if (cb) await cb();
         menuScreen.style.backgroundColor = 'transparent';
+        clearInterval(loadingTipInterval);
         loadingTip.style.opacity = '0';
         transitionBarTop.style.transform = '';
         transitionBarBottom.style.transform = '';
@@ -163,7 +172,7 @@ function transitionToMenu(cb) {
     menuScreen.style.pointerEvents = '';
     titleContainer.style.transitionDuration = '';
     inMenuScreen = true;
-    loadingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+    let loadingTipInterval = setLoadingTipInterval(loadingTip);
     loadingTip.style.opacity = '1';
     transitionBarTop.style.transform = 'translateY(60vh)';
     transitionBarBottom.style.transform = 'translateY(-60vh)';
@@ -172,6 +181,7 @@ function transitionToMenu(cb) {
         if (cb) await cb();
         menuScreen.style.transitionDuration = '';
         menuScreen.style.backgroundColor = '';
+        clearInterval(loadingTipInterval);
         loadingTip.style.opacity = '0';
         transitionBarTop.style.transform = '';
         transitionBarBottom.style.transform = '';
@@ -188,12 +198,13 @@ function transitionWithinGame(cb) {
     menuScreen.style.visibility = '';
     menuScreen.style.pointerEvents = '';
     inMenuScreen = true;
-    loadingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+    let loadingTipInterval = setLoadingTipInterval(loadingTip);
     loadingTip.style.opacity = '1';
     transitionBarTop.style.transform = 'translateY(60vh)';
     transitionBarBottom.style.transform = 'translateY(-60vh)';
     setTransitionTimeout(async () => {
         if (cb) await cb();
+        clearInterval(loadingTipInterval);
         loadingTip.style.opacity = '0';
         transitionBarTop.style.transform = '';
         transitionBarBottom.style.transform = '';
@@ -309,7 +320,7 @@ multiplayerButton.onclick = (e) => {
     pixsimMenu._open = true;
     pixsimMenuConnecting.style.opacity = 1;
     pixsimMenuConnecting.style.pointerEvents = '';
-    pixsimMenuConnectingTip.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+    let loadingTip = setLoadingTipInterval(pixsimMenuConnectingTip);
     pixsimMenuContents.style.transform = '';
     pixsimMenu.style.transform = 'translateY(100vh)';
     glitchTextTransition(pixsimMenuConnectingText.innerText, 'Connecting to PixSim API...', (text) => {
@@ -322,6 +333,7 @@ multiplayerButton.onclick = (e) => {
     }, 5000);
     PixSimAPI.connect().then(() => {
         clearInterval(glitch);
+        clearInterval(loadingTip);
         pixsimMenuConnecting.style.opacity = 0;
         pixsimMenuConnecting.style.pointerEvents = 'none';
     }, (err) => {

@@ -2182,10 +2182,11 @@ function getPixSimPixelAmounts() {
 };
 function extractBooleanGrid(grid, compressed) {
     // behold - pointlessly one-lined code!
-    for (let i = 0, loc = 0, pixel = false; i < compressed.length; i++, pixel = !pixel) {
+    for (let i = 0, loc = 0, pixel = false; i < compressed.length; i++) {
         for (let j = 0; j < compressed[i]; j++, loc++) {
             grid[~~(loc / gridWidth)][loc % gridWidth] = pixel;
         }
+        if (compressed[i] != 255) pixel = !pixel;
     }
 };
 function generateTeamCode() {

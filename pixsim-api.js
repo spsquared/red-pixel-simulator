@@ -335,7 +335,6 @@ class PixSimAPI {
                         len = 0;
                     } else if (len == 255) {
                         compressedBoolGrid.push(len);
-                        compressedBoolGrid.push(0);
                         len = 0;
                     }
                     len++;

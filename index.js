@@ -78,16 +78,30 @@ function flipTextTransition(from, to, update, speed, block = 1) {
 function* flipTextTransitionGenerator(from, to, block) {
     let i = 0;
     let addSpaces = to.length < from.length;
+    let fromTags = from.match(/<(.*?)>/g) ?? [];
+    let toTags = to.match(/<(.*?)>/g) ?? [];
+    let cleanFrom = from;
+    let cleanTo = to;
+    fromTags.forEach((tag) => cleanFrom = cleanFrom.replace(tag, '§'));
+    toTags.forEach((tag) => cleanTo = cleanTo.replace(tag, '§'));
     while (true) {
-        let text = to.substring(0, i);
-        if (addSpaces && i >= to.length) {
-            for (let j = to.length; j < i; j++) {
+        let text = cleanTo.substring(0, i);
+        if (addSpaces && i >= cleanTo.length) {
+            for (let j = cleanTo.length; j < i; j++) {
                 text += ' ';
             }
         }
-        text += from.substring(i);
+        for (let j = 0; text.includes('§'); j++) {
+            text = text.replace('§', toTags[j]);
+        }
+        text += cleanFrom.substring(i);
+        let k = text.lastIndexOf('§'); // most useless optimization ever
+        for (let j = fromTags.length - 1; k >= 0; j--) {
+            text = text.substring(0, k) + fromTags[j] + text.substring(k + 1);
+            k = text.lastIndexOf('§');
+        }
         i += block;
-        if (i >= to.length + block && (!addSpaces || i >= from.length + block)) {
+        if (i >= cleanTo.length + block && (!addSpaces || i >= cleanFrom.length + block)) {
             yield to;
             break;
         }
@@ -108,19 +122,33 @@ function* glitchTextTransitionGenerator(from, to, block, glitchLength, advanceMo
     let addSpaces = to.length < from.length;
     let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-=!@#$%^&*()_+`~[]\\{}|;\':",./?';
     let a = 0;
+    let fromTags = from.match(/<(.*?)>/g) ?? [];
+    let toTags = to.match(/<(.*?)>/g) ?? [];
+    let cleanFrom = from;
+    let cleanTo = to;
+    fromTags.forEach((tag) => cleanFrom = cleanFrom.replace(tag, '§'));
+    toTags.forEach((tag) => cleanTo = cleanTo.replace(tag, '§'));
     while (true) {
-        let text = to.substring(0, i - glitchLength);
-        if (addSpaces && i >= to.length) {
-            for (let j = to.length; j < i - glitchLength; j++) {
+        let text = cleanTo.substring(0, i - glitchLength);
+        if (addSpaces && i >= cleanTo.length) {
+            for (let j = cleanTo.length; j < i - glitchLength; j++) {
                 text += ' ';
             }
         }
-        for (let j = Math.max(0, i - glitchLength); j < Math.min(i, Math.max(from.length, to.length)); j++) {
+        for (let j = 0; text.includes('§'); j++) {
+            text = text.replace('§', toTags[j]);
+        }
+        for (let j = Math.max(0, i - glitchLength); j < Math.min(i, Math.max(cleanFrom.length, cleanTo.length)); j++) {
             text += letters.charAt(~~(Math.random() * letters.length));
         }
-        text += from.substring(i);
+        text += cleanFrom.substring(i);
+        let k = text.lastIndexOf('§'); // most useless optimization ever
+        for (let j = fromTags.length - 1; k >= 0; j--) {
+            text = text.substring(0, k) + fromTags[j] + text.substring(k + 1);
+            k = text.lastIndexOf('§');
+        }
         if (a % advanceMod == 0) i += block;
-        if (i >= to.length + block + glitchLength && (!addSpaces || i >= from.length + block + glitchLength)) {
+        if (i >= cleanTo.length + block + glitchLength && (!addSpaces || i >= cleanFrom.length + block + glitchLength)) {
             yield to;
             break;
         }
