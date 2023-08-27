@@ -17,6 +17,7 @@ menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_
 
 window.addEventListener('load', async () => {
     await pixelsLoad;
+    await soundsLoad;
     document.getElementById('pageLoadCover').style.opacity = 0;
     document.getElementById('pageLoadCover').style.pointerEvents = 'none';
     setTimeout(() => {
@@ -536,7 +537,7 @@ function refreshGameList(games) {
                 }, 100);
                 wrapper.onclick = (e) => {
                     PixSimAPI.joinGame(game.code).then(handleJoinGame);
-                    clickSound();
+                    sounds.click();
                 };
             }
             existingIndex++;
@@ -563,7 +564,7 @@ function refreshGameList(games) {
             wrapper.appendChild(sub2);
             wrapper.onclick = (e) => {
                 PixSimAPI.joinGame(game.code).then(handleJoinGame);
-                clickSound();
+                sounds.click();
             };
             pixsimJoinList.appendChild(wrapper);
         }
@@ -680,9 +681,9 @@ async function startDragPlayerCard(card, username, pageX, pageY) {
         document.removeEventListener('mousemove', move);
         pixsimTeamsTAPlayers.onmouseout();
         pixsimTeamsTBPlayers.onmouseout();
-        tickSound();
+        sounds.tick();
     });
-    tickSound();
+    sounds.tick();
 };
 pixsimTeamsTAPlayers.onmouseover = (e) => {
     if (!pixsimDragging.dragging) return;
@@ -747,7 +748,7 @@ PixSimAPI.onUpdateTeamList = async (teams) => {
         pixsimHostStartGame.style.backgroundColor = 'grey';
         pixsimHostStartGame.style.borderColor = 'grey';
     }
-    shortDingSound();
+    sounds.shortDing();
 };
 PixSimAPI.onGameKicked = () => {
     if (PixSimAPI.gameRunning) {

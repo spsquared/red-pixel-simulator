@@ -1221,6 +1221,12 @@ function explode(x1, y1, size, defer) {
     }
     camera.shakeIntensity += size / (1 + camera.shakeIntensity * 0.5);
 };
+function craft(id, team) {
+    // oof
+};
+function hasPixels(id, team) {
+
+};
 
 // draw and update
 let deltaTime = 0;
@@ -1829,8 +1835,8 @@ function updateTick() {
                     }
                 }
             }
-            if (newMonsterCount != monsterCount && window.playMonsterDeathSound !== undefined) window.playMonsterDeathSound();
-            if (newFulfilledTargetCount != fulfilledTargetCount && window.playTargetFillSound !== undefined) window.playTargetFillSound();
+            if (newMonsterCount != monsterCount) sounds.monsterDeath();
+            if (newFulfilledTargetCount != fulfilledTargetCount) sounds.monsterDeath();
             frameList.push(performance.now());
             ticks++;
             if (!sandboxMode && newMonsterCount == 0 && !hasUnfulfilledTargets && !PixSimAPI.inGame) {
@@ -2362,7 +2368,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         drawScale = gridScale * camera.scale;
         screenScale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
         forceRedraw = true;
-        if (camera.scale != cScale) tickSound();
+        if (camera.scale != cScale) sounds.tick();
     };
     document.onkeydown = (e) => {
         if (e.target.matches('button') || e.key == 'Tab') {
@@ -2381,13 +2387,13 @@ window.addEventListener('DOMContentLoaded', (e) => {
             if (!brush.isSelection) {
                 let bsize = brush.size;
                 brush.size = Math.min(Math.ceil(Math.max(gridWidth, gridHeight) / 2 + 1), brush.size + 1);
-                if (brush.size != bsize) tickSound();
+                if (brush.size != bsize) sounds.tick();
             }
         } else if (key == 'arrowdown') {
             if (!brush.isSelection) {
                 let bsize = brush.size;
                 brush.size = Math.max(1, brush.size - 1);
-                if (brush.size != bsize) tickSound();
+                if (brush.size != bsize) sounds.tick();
             }
         } else if (key == 'x' && e.ctrlKey) {
             if (selection.show && (!PixSimAPI.inGame || !PixSimAPI.spectating)) {
@@ -2484,7 +2490,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         } else if (key == 'enter') {
             if (simulationPaused && !PixSimAPI.inGame) {
                 runTicks = 1;
-                tickSound();
+                sounds.tick();
             }
         } else if (key == 'w') {
             camera.mUp = true;
@@ -2558,13 +2564,13 @@ window.addEventListener('DOMContentLoaded', (e) => {
             holdingAlt = false;
         } else if (key == 'z' && e.altKey) {
             debugInfo = !debugInfo;
-            clickSound();
+            sounds.click();
         } else if (key == 'p') {
             if (!PixSimAPI.inGame) {
                 simulationPaused = !simulationPaused;
                 fastSimulation = false;
                 updateTimeControlButtons();
-                clickSound();
+                sounds.click();
             }
         } else if (key == '[' && mouseOver) {
             scaleCamera(0.5);
@@ -2615,7 +2621,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 } else {
                     brush.size = Math.min(Math.ceil(Math.max(gridWidth, gridHeight) / 2 + 1), brush.size + 1);
                 }
-                if (brush.size != bsize) tickSound();
+                if (brush.size != bsize) sounds.tick();
             }
         }
         if (holdingControl) { e.preventDefault(); }
@@ -2666,14 +2672,14 @@ const advanceTickButton = document.getElementById('advanceTick');
 function updateTimeControlButtons() {
     if (simulationPaused) {
         pauseButton.style.backgroundColor = 'red';
-        pauseButton.style.backgroundImage = 'url(/assets/play.svg)';
+        pauseButton.style.backgroundImage = 'url(/assets/svg/play.svg)';
         fastSimulationButton.style.backgroundColor = '';
         fastSimulationButton.disabled = true;
         advanceTickButton.disabled = false;
         pauseMusicPixels();
     } else {
         pauseButton.style.backgroundColor = 'lime';
-        pauseButton.style.backgroundImage = 'url(/assets/pause.svg)';
+        pauseButton.style.backgroundImage = 'url(/assets/svg/pause.svg)';
         if (fastSimulation) fastSimulationButton.style.backgroundColor = 'lime';
         else fastSimulationButton.style.backgroundColor = 'red';
         fastSimulationButton.disabled = false;

@@ -400,13 +400,13 @@ window.addEventListener('DOMContentLoaded', (e) => {
 rpGWInput.onkeydown = (e) => {
     if (e.key == 'Enter') {
         resizeRPGrid(parseInt(rpGWInput.value), rpGridHeight);
-        clickSound();
+        sounds.click();
     }
 };
 rpGHInput.onkeydown = (e) => {
     if (e.key == 'Enter') {
         resizeRPGrid(rpGridWidth, parseInt(rpGHInput.value));
-        clickSound();
+        sounds.click();
     }
 };
 document.getElementById('importRedprint').onclick = (e) => {
@@ -484,7 +484,7 @@ function refreshRedPrintList() {
         const openButton = document.createElement('button');
         openButton.classList.add('rplOpen');
         openButton.onclick = (e) => {
-            clickSound();
+            sounds.click();
             modal('Copy to RedPrint Editor?', 'Any unsaved work will be lost!', true).then((success) => {
                 if (success) {
                     rpNameInput.value = redprint.name;
@@ -497,7 +497,7 @@ function refreshRedPrintList() {
         const exportButton = document.createElement('button');
         exportButton.classList.add('rplExport');
         exportButton.onclick = (e) => {
-            clickSound();
+            sounds.click();
             let tempCode = generateRPCode();
             loadRPCode(redprint.code);
             selection.grid = [];
@@ -512,7 +512,7 @@ function refreshRedPrintList() {
         const deleteButton = document.createElement('button');
         deleteButton.classList.add('rplDelete');
         deleteButton.onclick = (e) => {
-            clickSound();
+            sounds.click();
             modal('Delete RedPrint?', 'This cannot be undone!', true).then((success) => {
                 if (success) {
                     redPrints.splice(redPrints.indexOf(redprint), 1);

@@ -1145,7 +1145,7 @@ const pixels = {
                 }
             };
             updateTouchingAnything(x, y, act);
-            let meltAngle = Math.random() * Math.PI * 2;
+            let meltAngle = random(0, Math.PI * 2);
             let travel = 0;
             rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 15), Math.round(y + Math.sin(meltAngle) * 15), (ax, ay) => {
                 if (grid[ay][ax] == pixNum.SNOW || grid[ay][ax] == pixNum.ICE) {
@@ -1256,7 +1256,7 @@ const pixels = {
             if (random() < (20 - flammability) / (aerated ? 280 : 20)) {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
             }
-            let meltAngle = Math.random() * Math.PI * 2;
+            let meltAngle = random(0, Math.PI * 2);
             let travel = 0;
             rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 10), Math.round(y + Math.sin(meltAngle) * 10), (ax, ay) => {
                 if (grid[ay][ax] == pixNum.SNOW || grid[ay][ax] == pixNum.ICE) {
@@ -4699,7 +4699,7 @@ const pixels = {
                 // probably will replace with better ellipse drawing algorithm that can do rotated ellipses
                 draw_ellipse((x, y) => {
                     if (y >= 0 && y < gridHeight && x >= 0 && x < gridWidth) nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
-                }, x, y, Math.floor(Math.random() * 20), Math.floor(Math.random() * 20));
+                }, x, y, Math.floor(random(0, 20)), Math.floor(random(0, 20)));
                 // floodfill moment
                 let visited = new Set();
                 function positionHash(x, y) {
@@ -4845,7 +4845,7 @@ const pixels = {
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        for (let k = 0; k < random(0, 1); k++) {
+                        for (let k = 0; k < random(0, 2); k++) {
                             camera.shakeIntensity += 0.1;
                             let rotationAmount = Math.floor(random(0, 360));
                             ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
@@ -4861,7 +4861,7 @@ const pixels = {
                             let borkYScale = random(0, 2);
                             ctx.fillStyle = 'rgb(0, 0, 0)';
                             fillPixels(0, 0, borkXScale, borkYScale, ctx);
-                            ctx.fillStyle = `rgb(100, 255, 0, ${(random() * 0.6 + 0.4)})`;
+                            ctx.fillStyle = `rgb(100, 255, 0, ${random(0.4, 1)})`;
                             fillPixels(0, 0, borkXScale, borkYScale, ctx);
                             ctx.restore();
                             ctx.rotate(-rotationAmount);
@@ -4903,7 +4903,7 @@ const pixels = {
                         abovectx.globalAlpha = opacity;
                         abovectx.fillStyle = 'rgb(255, 0, 0)';
                         for (let i = 0; i < width; i++) {
-                            drawLaserPath(getLaserPath(x + i, y + j, Math.floor(Math.random() * 4)));
+                            drawLaserPath(getLaserPath(x + i, y + j, Math.floor(random(0, 5))));
                         }
                     }
                 }
@@ -4995,7 +4995,7 @@ const pixels = {
                 if (random() < 0.1) {
                     nextFireGrid[ay][ax] = true;
                 }
-                teamGrid[y][x] = Math.floor(Math.random() * 3);
+                teamGrid[y][x] = Math.floor(random(0, 3));
                 move(Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridWidth - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridHeight - 1), Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridWidth - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridHeight - 1));
             };
             updateTouchingPixel(x, y, pixNum.AIR, chaos);
@@ -5651,7 +5651,7 @@ _@    ._`],
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
-                    nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
+                    nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_RED, pixNum.COLOR_BROWN + 1));
                 }
             });
         },
@@ -5713,7 +5713,7 @@ _@    ._`],
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
-                    let pix = Math.floor(Math.random() * (pixNum.COLOR_LIME - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
+                    let pix = Math.floor(random(pixNum.COLOR_RED, pixNum.COLOR_LIME + 1));
                     nextGrid[ay][ax] = pix == pixNum.COLOR_LIME ? pixNum.COLOR_VIOLET : pix;
                 }
             });
@@ -5776,7 +5776,7 @@ _@    ._`],
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
-                    nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLUE - pixNum.COLOR_LIME + 1)) + pixNum.COLOR_LIME;
+                    nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_LIME, pixNum.COLOR_BLUE + 1));
                 }
             });
         },
@@ -5838,7 +5838,7 @@ _@    ._`],
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
-                    nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_GREY + 1)) + pixNum.COLOR_GREY;
+                    nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_GREY, pixNum.COLOR_BLACK + 1));
                 }
             });
         },
@@ -5874,7 +5874,7 @@ _@    ._`],
         description: 'An artificial portal to the internal machinery of the Simulator<br><i>Not as efficient as collecting from a well</i>',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillStyle = 'rgb(140, 140, 140)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 if (!noAnimations || redrawing || forceRedraw) fillPixels(x, y, width, height, ctx);
             });
@@ -5884,7 +5884,7 @@ _@    ._`],
                     fillPixels(x2 + 1 / 5, y2 + 1 / 5, 3 / 5, 3 / 5, ctx);
                 });
             });
-            ctx.fillStyle = 'rgb(160, 160, 160)';
+            ctx.fillStyle = 'rgb(180, 180, 180)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 if (!noAnimations || redrawing || forceRedraw) {
                     forEachPixel(x, y, width, height, (x2, y2) => {
@@ -5906,19 +5906,37 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
-                if (validChangingPixel(ax, ay) && random() < 0.02) {
-                    nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BLACK - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
-                }
-            });
+            let restrictions = [];
+            if (updateTouchingPixel(x, y, pixNum.COLOR_GENERATOR_FILTER, (ax, ay) => {
+                return updateTouchingAnything(ax, ay, (bx, by) => {
+                    // probably better than supplying an array that's annoying to maintain to updateTouchingPixel
+                    if (grid[by][bx] >= pixNum.COLOR_RED && grid[by][bx] <= pixNum.COLOR_BROWN) {
+                        restrictions.push(grid[by][bx]);
+                        return true;
+                    }
+                    return false;
+                });
+            })) {
+                updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                    if (validChangingPixel(ax, ay) && random() < 0.02) {
+                        nextGrid[ay][ax] = restrictions[Math.floor(random(0, restrictions.length))];
+                    }
+                });
+            } else {
+                updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                    if (validChangingPixel(ax, ay) && random() < 0.02) {
+                        nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_RED, pixNum.COLOR_BROWN + 1));
+                    }
+                });
+            }
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillStyle = 'rgb(140, 140, 140)';
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'hsl(0, 80%, 75%)';
             ctx.fillRect(10, 10, 30, 30);
-            ctx.fillStyle = 'rgb(160, 160, 160)';
+            ctx.fillStyle = 'rgb(180, 180, 180)';
             ctx.fillRect(20, 10, 10, 30);
             ctx.fillRect(10, 20, 30, 10);
         },
@@ -6051,11 +6069,29 @@ _@    ._`],
             let team = teamGrid[y][x] - 1;
             if (teamPixelAmounts[team] !== undefined) {
                 if (teamPixelAmounts[team].water > 0) {
-                    updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
-                        if (validChangingPixel(ax, ay) && random() < 0.04) {
-                            nextGrid[ay][ax] = Math.floor(Math.random() * (pixNum.COLOR_BROWN - pixNum.COLOR_RED + 1)) + pixNum.COLOR_RED;
-                        }
-                    });
+                    let restrictions = [];
+                    if (updateTouchingPixel(x, y, pixNum.COLOR_GENERATOR_FILTER, (ax, ay) => {
+                        return updateTouchingAnything(ax, ay, (bx, by) => {
+                            // probably better than supplying an array that's annoying to maintain to updateTouchingPixel
+                            if (grid[by][bx] >= pixNum.COLOR_RED && grid[by][bx] <= pixNum.COLOR_BROWN) {
+                                restrictions.push(grid[by][bx]);
+                                return true;
+                            }
+                            return false;
+                        });
+                    })) {
+                        updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                            if (validChangingPixel(ax, ay) && random() < 0.04) {
+                                nextGrid[ay][ax] = restrictions[Math.floor(random(0, restrictions.length))];
+                            }
+                        });
+                    } else {
+                        updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                            if (validChangingPixel(ax, ay) && random() < 0.04) {
+                                nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_RED, pixNum.COLOR_BROWN + 1));
+                            }
+                        });
+                    }
                     if (ticks % 10 == 0) {
                         teamPixelAmounts[team].water--;
                         if (team == PixSimAPI.team) updatePixelAmount('water', teamPixelAmounts[team]);
@@ -6090,6 +6126,76 @@ _@    ._`],
         pickable: true,
         pixsimPickable: true,
         id: 'active_color_generator',
+        numId: 0
+    },
+    color_generator_filter: {
+        name: 'Color Generator Filter',
+        description: 'An attachment for color generators to control which colors are siphoned from the Simulator<br><i>Place in contact with a color generator and a color pixel to restrict the colors the generator will create</i>',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(140, 140, 140)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (redrawing || forceRedraw) fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = 'rgb(180, 180, 180)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                let end = y + height;
+                for (let i = y; i < end; i++) {
+                    fillPixels(x, i + 2 / 5, width, 1 / 5, ctx);
+                }
+                end = x + width;
+                for (let i = x; i < end; i++) {
+                    fillPixels(i + 2 / 5, y, 1 / 5, height, ctx);
+                }
+            });
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    let colors = [];
+                    updateTouchingAnything(x2, y2, (x3, y3) => {
+                        if (grid[y3][x3] >= pixNum.COLOR_RED && grid[y3][x3] <= pixNum.COLOR_BROWN) {
+                            colors.push(pixelAt(x3, y3).defaultRGB);
+                        }
+                    });
+                    if (colors.length > 0) {
+                        let colorSum = colors.reduce((prev, curr) => [prev[0] + curr[0], prev[1] + curr[1], prev[2] + curr[2]], [0, 0, 0]);
+                        ctx.fillStyle = `rgb(${colorSum[0] / colors.length}, ${colorSum[1] / colors.length}, ${colorSum[2] / colors.length})`
+                        fillPixels(x2 + 1 / 5, y2 + 1 / 5, 3 / 5, 3 / 5, ctx);
+                    } else {
+                        clearPixels(x2 + 1 / 5, y2 + 1 / 5, 3 / 5, 3 / 5, ctx);
+                    }
+                });
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(140, 140, 140)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(180, 180, 180)';
+            ctx.fillRect(20, 0, 10, 50);
+            ctx.fillRect(0, 20, 50, 10);
+            let gradient = ctx.createLinearGradient(40, 10, 10, 40);
+            for (let i = 0; i <= 360; i += 6) {
+                gradient.addColorStop(i / 360, `hsl(${i}, 100%, 50%)`);
+            }
+            ctx.fillStyle = gradient;
+            ctx.fillRect(10, 10, 30, 30);
+        },
+        prerender: function () { },
+        prerenderedFrames: [],
+        blastResistance: 18,
+        flammability: 0,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: true,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'color_generator_filter',
         numId: 0
     },
     color_red: generateColorPixel({
@@ -6932,9 +7038,9 @@ _@    ._`],
             });
         },
         update: function (x, y) {
-            if (window.rickastley) return;
-            musicPixel(89, true);
-            window.rickastley = true;
+            if (this.rickastley) return;
+            sounds.rickroll();
+            this.rickastley = true;
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -6942,12 +7048,13 @@ _@    ._`],
         prerender: function () {
             const { ctx, fillPixels, toImage } = new PreRenderer(canvasResolution);
             let rickastley = new Image();
-            rickastley.src = './assets/rickastley.png';
+            rickastley.src = './assets/img/rickastley.png';
             rickastley.onload = (e) => {
                 ctx.drawImage(rickastley, 0, 0, canvasResolution, canvasResolution);
                 this.prerenderedFrames.push(toImage());
             };
         },
+        rickastley: false,
         prerenderedFrames: [],
         blastResistance: Infinity,
         flammability: -Infinity,
@@ -7150,6 +7257,7 @@ function generateColorPixel(data) {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        defaultRGB: data.rgb0,
         prerenderedFrames: [],
         blastResistance: 5,
         flammability: 0,
@@ -7161,7 +7269,7 @@ function generateColorPixel(data) {
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
-        pickable: false,
+        pickable: true,
         pixsimPickable: true,
         id: `color_${data.color.toLowerCase()}`,
         numId: 0
@@ -7235,7 +7343,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
                 groupHeader.onclick = (e) => {
                     open = !open;
                     groupHeader._refresh();
-                    clickSound();
+                    sounds.click();
                 };
                 groupHeader._refresh = () => {
                     if (open) groupBody.style.maxHeight = groupContents.getBoundingClientRect().height + 'px';
