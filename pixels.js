@@ -6151,7 +6151,7 @@ _@    ._`],
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 forEachPixel(x, y, width, height, (x2, y2) => {
                     let colors = [];
-                    updateTouchingAnything(x2, y2, (x3, y3) => {
+                    if (!avoidGrid) updateTouchingAnything(x2, y2, (x3, y3) => {
                         if (grid[y3][x3] >= pixNum.COLOR_RED && grid[y3][x3] <= pixNum.COLOR_BROWN) {
                             colors.push(pixelAt(x3, y3).defaultRGB);
                         }
