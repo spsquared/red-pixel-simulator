@@ -23,10 +23,11 @@ function setAudio(file, cb) {
     });
 };
 const sounds = {};
-function addAudioQueue(buf, id) {
+function addAudioQueue(buf, id, randomDetune = 0) {
     const preloadQueue = [];
     preloadQueue.push(audioContext.createBufferSource());
     preloadQueue[0].buffer = buf;
+    preloadQueue[0].detune.value = Math.random() * randomDetune * 2 - randomDetune;
     if (sounds[id] === undefined) {
         sounds[id] = (volume = 1) => {
             if (sounds[id].variants.length == 1) sounds[id].variants[0](parseFloat(volume) || 1); // useless?
@@ -44,6 +45,7 @@ function addAudioQueue(buf, id) {
         source.start();
         const nextSource = audioContext.createBufferSource();
         nextSource.buffer = buf;
+        nextSource.detune.value = Math.random() * randomDetune * 2 - randomDetune;
         preloadQueue.push(nextSource);
     });
 };
@@ -212,13 +214,11 @@ window.addEventListener('load', async (e) => {
     }));
     promiseList.push(setAudio('./assets/sound/ding.mp3', (buf) => addAudioQueue(buf, 'ding')));
     promiseList.push(setAudio('./assets/sound/ding-short.mp3', (buf) => addAudioQueue(buf, 'shortDing')));
-    promiseList.push(setAudio('./assets/sound/explosion-1.mp3', (buf) => addAudioQueue(buf, 'explosion')));
-    promiseList.push(setAudio('./assets/sound/explosion-2.mp3', (buf) => addAudioQueue(buf, 'explosion')));
-    promiseList.push(setAudio('./assets/sound/explosion-3.mp3', (buf) => addAudioQueue(buf, 'explosion')));
-    promiseList.push(setAudio('./assets/sound/explosion-4.mp3', (buf) => addAudioQueue(buf, 'explosion')));
-    promiseList.push(setAudio('./assets/sound/explosion-5.mp3', (buf) => addAudioQueue(buf, 'explosion')));
-    promiseList.push(setAudio('./assets/sound/explosion-6.mp3', (buf) => addAudioQueue(buf, 'explosion')));
-    promiseList.push(setAudio('./assets/sound/monsterDeath.mp3', (buf) => addAudioQueue(buf, 'monsterDeath')));
+    promiseList.push(setAudio('./assets/sound/explosion-1.mp3', (buf) => addAudioQueue(buf, 'explosion', 500)));
+    promiseList.push(setAudio('./assets/sound/explosion-2.mp3', (buf) => addAudioQueue(buf, 'explosion', 500)));
+    promiseList.push(setAudio('./assets/sound/explosion-3.mp3', (buf) => addAudioQueue(buf, 'explosion', 500)));
+    promiseList.push(setAudio('./assets/sound/explosion-4.mp3', (buf) => addAudioQueue(buf, 'explosion', 500)));
+    promiseList.push(setAudio('./assets/sound/monsterDeath.mp3', (buf) => addAudioQueue(buf, 'monsterDeath', 200)));
     promiseList.push(setAudio('./assets/sound/targetFilled.mp3', (buf) => addAudioQueue(buf, 'targetFill')));
     promiseList.push(setAudio('./assets/sound/win.mp3', (buf) => addAudioQueue(buf, 'win')));
     promiseList.push(setAudio('./assets/sound/menu.mp3', (buf) => {
