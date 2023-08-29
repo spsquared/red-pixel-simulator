@@ -1220,6 +1220,7 @@ function explode(x1, y1, size, defer) {
         }
     }
     camera.shakeIntensity += size / (1 + camera.shakeIntensity * 0.5);
+    sounds.explosion(Math.pow(size / 80, 2));
 };
 function craft(id, team) {
     // oof
@@ -1549,23 +1550,27 @@ function drawBrush() {
             ctx.drawImage(bufferCanvas, 0, 0, canvasResolution, canvasResolution);
             let rect = calcBrushRectCoordinates(mXGrid, mYGrid);
             ctx.globalAlpha = 1;
+            ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.strokeStyle = 'rgb(255, 255, 255)';
             ctx.setLineDash([]);
             ctx.lineWidth = 2 * camera.scale;
             ctx.lineJoin = 'miter';
             ctx.globalCompositeOperation = 'difference';
             ctx.strokeRect(rect.xmin * drawScale - camera.x, rect.ymin * drawScale - camera.y, (rect.xmax - rect.xmin + 1) * drawScale, (rect.ymax - rect.ymin + 1) * drawScale);
+            ctx.fillRect(mX - 4, mY - 4, 8, 8);
             ctx.globalCompositeOperation = 'source-over';
         } else {
             let rect = calcBrushRectCoordinates(mXGrid, mYGrid)
             drawPixels((brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 0.5, ctx, true);
             ctx.globalAlpha = 1;
+            ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.strokeStyle = 'rgb(255, 255, 255)';
             ctx.setLineDash([]);
             ctx.lineWidth = 2 * camera.scale;
             ctx.lineJoin = 'miter';
             ctx.globalCompositeOperation = 'difference';
             ctx.strokeRect(rect.xmin * drawScale - camera.x, rect.ymin * drawScale - camera.y, (rect.xmax - rect.xmin + 1) * drawScale, (rect.ymax - rect.ymin + 1) * drawScale);
+            ctx.fillRect(mX - 4, mY - 4, 8, 8);
             ctx.globalCompositeOperation = 'source-over';
         }
     }

@@ -1,4 +1,4 @@
-const audioContext = new (window.AudioContext ?? window.webkitAudioContext ?? Error)();
+const audioContext = new AudioContext();
 let volume = parseInt(window.localStorage.getItem('volume') ?? 100);
 const volumeDisp = document.getElementById('volumeAdjustDisp');
 const volumeSlider = document.getElementById('volumeAdjustSlider');
@@ -23,20 +23,29 @@ function setAudio(file, cb) {
     });
 };
 const sounds = {};
-function createAudioQueue(buf, funcName) {
+function addAudioQueue(buf, id) {
     const preloadQueue = [];
     preloadQueue.push(audioContext.createBufferSource());
     preloadQueue[0].buffer = buf;
-    preloadQueue[0].connect(globalVolume);
-    preloadQueue[0].onended = preloadQueue[0].disconnect;
-    sounds[funcName] = () => {
-        preloadQueue.shift().start();
+    if (sounds[id] === undefined) {
+        sounds[id] = (volume = 1) => {
+            if (sounds[id].variants.length == 1) sounds[id].variants[0](parseFloat(volume) || 1); // useless?
+            else sounds[id].variants[Math.floor(Math.random() * sounds[id].variants.length)](parseFloat(volume) || 1);
+        };
+        sounds[id].variants = [];
+    }
+    sounds[id].variants.push((volume = 1) => {
+        const source = preloadQueue.shift();
+        const gain = audioContext.createGain();
+        gain.gain.value = volume;
+        source.connect(gain);
+        gain.connect(globalVolume);
+        source.onended = gain.disconnect;
+        source.start();
         const nextSource = audioContext.createBufferSource();
         nextSource.buffer = buf;
-        nextSource.connect(globalVolume);
         preloadQueue.push(nextSource);
-        nextSource.onended = nextSource.disconnect;
-    };
+    });
 };
 
 // music
@@ -191,25 +200,31 @@ let soundsLoad = new Promise((resolve, reject) => soundsResolveLoad = resolve);
 window.addEventListener('load', async (e) => {
     const promiseList = [];
     promiseList.push(setAudio('./assets/sound/click.mp3', (buf) => {
-        createAudioQueue(buf, 'click');
+        addAudioQueue(buf, 'click');
         document.querySelectorAll('.bclick').forEach(e => e.addEventListener('click', sounds.click));
         document.querySelectorAll('.pickerPixel').forEach(e => e.addEventListener('click', sounds.click));
         document.querySelectorAll('.levelButton').forEach(e => e.addEventListener('click', sounds.click));
     }));
     promiseList.push(setAudio('./assets/sound/tick.mp3', (buf) => {
-        createAudioQueue(buf, 'tick');
+        addAudioQueue(buf, 'tick');
         document.querySelectorAll('.btick').forEach(e => e.addEventListener('click', sounds.tick));
         document.querySelectorAll('.pickerPixel').forEach(e => e.firstChild.addEventListener('mouseover', sounds.tick));
     }));
-    promiseList.push(setAudio('./assets/sound/ding.mp3', (buf) => createAudioQueue(buf, 'ding')));
-    promiseList.push(setAudio('./assets/sound/ding-short.mp3', (buf) => createAudioQueue(buf, 'shortDing')));
-    promiseList.push(setAudio('./assets/sound/monsterDeath.mp3', (buf) => createAudioQueue(buf, 'monsterDeath')));
-    promiseList.push(setAudio('./assets/sound/targetFilled.mp3', (buf) => createAudioQueue(buf, 'targetFill')));
-    promiseList.push(setAudio('./assets/sound/win.mp3', (buf) => createAudioQueue(buf, 'win')));
+    promiseList.push(setAudio('./assets/sound/ding.mp3', (buf) => addAudioQueue(buf, 'ding')));
+    promiseList.push(setAudio('./assets/sound/ding-short.mp3', (buf) => addAudioQueue(buf, 'shortDing')));
+    promiseList.push(setAudio('./assets/sound/explosion-1.mp3', (buf) => addAudioQueue(buf, 'explosion')));
+    promiseList.push(setAudio('./assets/sound/explosion-2.mp3', (buf) => addAudioQueue(buf, 'explosion')));
+    promiseList.push(setAudio('./assets/sound/explosion-3.mp3', (buf) => addAudioQueue(buf, 'explosion')));
+    promiseList.push(setAudio('./assets/sound/explosion-4.mp3', (buf) => addAudioQueue(buf, 'explosion')));
+    promiseList.push(setAudio('./assets/sound/explosion-5.mp3', (buf) => addAudioQueue(buf, 'explosion')));
+    promiseList.push(setAudio('./assets/sound/explosion-6.mp3', (buf) => addAudioQueue(buf, 'explosion')));
+    promiseList.push(setAudio('./assets/sound/monsterDeath.mp3', (buf) => addAudioQueue(buf, 'monsterDeath')));
+    promiseList.push(setAudio('./assets/sound/targetFilled.mp3', (buf) => addAudioQueue(buf, 'targetFill')));
+    promiseList.push(setAudio('./assets/sound/win.mp3', (buf) => addAudioQueue(buf, 'win')));
     promiseList.push(setAudio('./assets/sound/menu.mp3', (buf) => {
         musicBuffers.set('menu', buf);
     }));
-    promiseList.push(setAudio('./assets/sound/null.mp3', (buf) => createAudioQueue(buf, 'rickroll')));
+    promiseList.push(setAudio('./assets/sound/null.mp3', (buf) => addAudioQueue(buf, 'rickroll')));
     promiseList.push(addMusicPixelSound(1));
     promiseList.push(addMusicPixelSound(2));
     promiseList.push(addMusicPixelSound(3));

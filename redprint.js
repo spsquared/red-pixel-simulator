@@ -1,7 +1,7 @@
 const redPrints = new Function(`try { return JSON.parse(window.localStorage.getItem('redprints') ?? '[]'); } catch { return JSON.parse(LZString.decompressFromBase64(window.localStorage.getItem('redprints'))); }`)();
 
 // canvas
-const rpCanvasRes = 600;
+const rpCanvasRes = 500;
 const rpCanvas = document.getElementById('rpCanvas');
 const rpDCanvas = createCanvas2();
 const rpCtx = rpCanvas.getContext('2d');
@@ -227,7 +227,7 @@ function rpDraw() {
     rpUpdateMouseControls();
     rpDrawBrush();
 };
-// copy + paste, brush size, & history
+// copy + paste & history
 const rpUnplaceablePixels = ['fire', 'placementUnRestriction', 'placementRestriction', 'monster', 'target', 'remove'];
 let lastMouseButton = brush.mouseButton;
 function rpUpdateMouseControls() {
