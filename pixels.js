@@ -1167,30 +1167,31 @@ const pixels = {
             nextFireGrid[y][x] = true;
             if (random() < 0.5) {
                 flow(x, y);
-            }
-            if (y > 0) {
-                if (random() < 0.125) {
-                    let validSlidingPositions = [];
-                    if (x > 0) {
-                        if (grid[y][x - 1] == pixNum.STONE && grid[y - 1][x - 1] == pixNum.STONE) {
-                            validSlidingPositions.push(-1);
+            } else {
+                if (y > 0) {
+                    if (random() < 0.125) {
+                        let validSlidingPositions = [];
+                        if (x > 0) {
+                            if (grid[y][x - 1] == pixNum.STONE && grid[y - 1][x - 1] == pixNum.STONE) {
+                                validSlidingPositions.push(-1);
+                            }
                         }
-                    }
-                    if (x < gridWidth - 1) {
-                        if (grid[y][x + 1] == pixNum.STONE && grid[y - 1][x + 1] == pixNum.STONE) {
-                            validSlidingPositions.push(1);
+                        if (x < gridWidth - 1) {
+                            if (grid[y][x + 1] == pixNum.STONE && grid[y - 1][x + 1] == pixNum.STONE) {
+                                validSlidingPositions.push(1);
+                            }
                         }
-                    }
-                    if (validSlidingPositions.length > 0) {
-                        let slidePosition = validSlidingPositions[Math.floor(random(0, validSlidingPositions.length))];
-                        if (validChangingPixel(x + slidePosition, y - 1) && canMoveTo(x + slidePosition, y - 1)) {
-                            move(x, y, x + slidePosition, y - 1);
+                        if (validSlidingPositions.length > 0) {
+                            let slidePosition = validSlidingPositions[Math.floor(random(0, validSlidingPositions.length))];
+                            if (validChangingPixel(x + slidePosition, y - 1) && canMoveTo(x + slidePosition, y - 1)) {
+                                move(x, y, x + slidePosition, y - 1);
+                            }
                         }
                     }
                 }
-            }
-            if (y > 0 && random() < 0.5 && (y == gridHeight - 1 || grid[y + 1][x] == pixNum.LAVA) && grid[y - 1][x] == pixNum.STONE && canMoveTo(x, y - 1)) {
-                move(x, y, x, y - 1);
+                if (y > 0 && random() < 0.5 && (y == gridHeight - 1 || grid[y + 1][x] == pixNum.LAVA) && grid[y - 1][x] == pixNum.STONE && canMoveTo(x, y - 1)) {
+                    move(x, y, x, y - 1);
+                }
             }
         },
         drawPreview: function (ctx) {
