@@ -3501,7 +3501,7 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) {
+                    if (grid[last[3]][last[2]] >= pixNum.LASER_LEFT && grid[last[3]][last[2]] <= pixNum.LASER_DOWN) {
                         teamGrid[last[3]][last[2]] = 0;
                         explode(last[2], last[3], 5, true);
                     }
@@ -3575,7 +3575,7 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) {
+                    if (grid[last[3]][last[2]] >= pixNum.LASER_LEFT && grid[last[3]][last[2]] <= pixNum.LASER_DOWN) {
                         teamGrid[last[3]][last[2]] = 0;
                         explode(last[2], last[3], 5, true);
                     }
@@ -3649,7 +3649,7 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) {
+                    if (grid[last[3]][last[2]] >= pixNum.LASER_LEFT && grid[last[3]][last[2]] <= pixNum.LASER_DOWN) {
                         teamGrid[last[3]][last[2]] = 0;
                         explode(last[2], last[3], 5, true);
                     }
@@ -3723,7 +3723,7 @@ const pixels = {
                 }
             } else {
                 if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) {
+                    if (grid[last[3]][last[2]] >= pixNum.LASER_LEFT && grid[last[3]][last[2]] <= pixNum.LASER_DOWN) {
                         teamGrid[last[3]][last[2]] = 0;
                         explode(last[2], last[3], 5, true);
                     }
@@ -5004,7 +5004,7 @@ const pixels = {
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
             if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                if (grid[last[3]][last[2]] > pixNum.LASER_LEFT && grid[last[3]][last[2]] < pixNum.LASER_DOWN) {
+                if (grid[last[3]][last[2]] >= pixNum.LASER_LEFT && grid[last[3]][last[2]] <= pixNum.LASER_DOWN) {
                     teamGrid[last[3]][last[2]] = 0;
                     explode(last[2], last[3], 5, true);
                 }

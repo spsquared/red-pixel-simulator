@@ -2092,6 +2092,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
         } else if (placePixel == 'monster') {
             if (sandboxMode) act(function (x, y) {
                 monsterGrid[y][x] = true;
+                grid[y][x] = pixNum.AIR;
             });
         } else if (placePixel == 'target') {
             if (sandboxMode) act(function (x, y) {
@@ -2101,6 +2102,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
             if (sandboxMode) {
                 act(function (x, y) {
                     grid[y][x] = clickPixelNum;
+                    monsterGrid[y][x] = false;
                     if (musicGrid[y][x]) {
                         musicPixel(musicGrid[y][x], false);
                         musicGrid[y][x] = -1;
