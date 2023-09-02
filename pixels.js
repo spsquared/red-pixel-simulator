@@ -1145,21 +1145,24 @@ const pixels = {
                 }
             };
             updateTouchingAnything(x, y, act);
-            let meltAngle = random(0, Math.PI * 2);
-            let travel = 0;
-            rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 15), Math.round(y + Math.sin(meltAngle) * 15), (ax, ay) => {
-                if (grid[ay][ax] == pixNum.SNOW || grid[ay][ax] == pixNum.ICE) {
-                    if (random() < (15 - travel) / 20) nextGrid[ay][ax] = pixNum.WATER;
-                } else if (grid[ay][ax] == pixNum.SILT) {
-                    if (random() < (10 - travel) / 16) nextGrid[ay][ax] = pixNum.CLAY;
-                } else if (grid[ay][ax] == pixNum.CLAY) {
-                    if (random() < (10 - travel) / 32) nextGrid[ay][ax] = pixNum.BRICKS;
-                    return true;
-                } else if (grid[ay][ax] == pixNum.MUD) {
-                    if (random() < (10 - travel) / 16) nextGrid[ay][ax] = pixNum.DIRT;
-                } else if (grid[ay][ax] !== pixNum.AIR) return true;
-                travel++;
-            });
+            for (let i = 0; i < 3; i++) {
+                let meltAngle = random(0, Math.PI * 2);
+                let travel = 0;
+                rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 10), Math.round(y + Math.sin(meltAngle) * 10), (ax, ay) => {
+                    if (!validChangingPixel(ax, ay)) return;
+                    if (grid[ay][ax] == pixNum.SNOW || grid[ay][ax] == pixNum.ICE) {
+                        if (random() < (15 - travel) / 20) nextGrid[ay][ax] = pixNum.WATER;
+                    } else if (grid[ay][ax] == pixNum.SILT) {
+                        if (random() < (10 - travel) / 10) nextGrid[ay][ax] = pixNum.CLAY;
+                    } else if (grid[ay][ax] == pixNum.CLAY) {
+                        if (random() < (10 - travel) / 20) nextGrid[ay][ax] = pixNum.BRICKS;
+                        return true;
+                    } else if (grid[ay][ax] == pixNum.MUD) {
+                        if (random() < (10 - travel) / 10) nextGrid[ay][ax] = pixNum.DIRT;
+                    } else if (grid[ay][ax] !== pixNum.AIR) return true;
+                    travel++;
+                });
+            }
             if (random() < 0.0001 * cooldownSpeed) {
                 nextGrid[y][x] = pixNum.STONE;
                 return;
@@ -1259,16 +1262,17 @@ const pixels = {
             }
             let meltAngle = random(0, Math.PI * 2);
             let travel = 0;
-            rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 10), Math.round(y + Math.sin(meltAngle) * 10), (ax, ay) => {
+            rayTrace(x, y, Math.round(x + Math.cos(meltAngle) * 5), Math.round(y + Math.sin(meltAngle) * 5), (ax, ay) => {
+                if (!validChangingPixel(ax, ay)) return;
                 if (grid[ay][ax] == pixNum.SNOW || grid[ay][ax] == pixNum.ICE) {
-                    if (random() < (10 - travel) / 30) nextGrid[ay][ax] = pixNum.WATER;
+                    if (random() < (5 - travel) / 30) nextGrid[ay][ax] = pixNum.WATER;
                 } else if (grid[ay][ax] == pixNum.SILT) {
-                    if (random() < (10 - travel) / 20) nextGrid[ay][ax] = pixNum.CLAY;
+                    if (random() < (5 - travel) / 20) nextGrid[ay][ax] = pixNum.CLAY;
                 } else if (grid[ay][ax] == pixNum.CLAY) {
-                    if (random() < (10 - travel) / 30) nextGrid[ay][ax] = pixNum.BRICKS;
+                    if (random() < (5 - travel) / 30) nextGrid[ay][ax] = pixNum.BRICKS;
                     return true;
                 } else if (grid[ay][ax] == pixNum.MUD) {
-                    if (random() < (10 - travel) / 20) nextGrid[ay][ax] = pixNum.DIRT;
+                    if (random() < (5 - travel) / 20) nextGrid[ay][ax] = pixNum.DIRT;
                 } else if (grid[ay][ax] !== pixNum.AIR) return true;
                 travel++;
             });
