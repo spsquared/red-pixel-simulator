@@ -336,7 +336,7 @@ const puzzles = [
             {
                 name: 'Sunset Rose Rafting',
                 description: `That's a cool sunset. It's not the best looking scenery to be in, but at least this river isn't radiator fluid.`,
-                saveCode: '',
+                saveCode: '1-1;0000;air:;1:;0:1:;0:1:;1:',
                 backgroundColor: new Function('let fn = ' + function () {
                     let a = ctx.createLinearGradient(0, 0, 0, canvasResolution);
                     a.addColorStop(0, '#028a9b');

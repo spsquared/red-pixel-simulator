@@ -1101,7 +1101,7 @@ function explode(x1, y1, size, defer) {
             nextGrid[y][x] = pixNum.AIR;
             monsterGrid[y][x] = false;
             if (random() < 0.5 * power / size) {
-                fireGrid[y][x] = true;
+                nextFireGrid[y][x] = true;
             }
             if (grid[y][x] == pixNum.AIR) return 0;
             if (chained < 5) {
@@ -2494,32 +2494,32 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 selection.grid = JSON.parse(LZString.decompressFromBase64(window.localStorage.getItem('clipboard')));
                 brush.isSelection = true;
             }
-        } else if (key == 'enter') {
+        } else if (key == 'enter' && !e.ctrlKey) {
             if (simulationPaused && !PixSimAPI.inGame) {
                 runTicks = 1;
                 sounds.tick();
             }
-        } else if (key == 'w') {
+        } else if (key == 'w' && !e.ctrlKey) {
             camera.mUp = true;
-        } else if (key == 's') {
+        } else if (key == 's' && !e.ctrlKey) {
             camera.mDown = true;
-        } else if (key == 'a') {
+        } else if (key == 'a' && !e.ctrlKey) {
             camera.mLeft = true;
-        } else if (key == 'd') {
+        } else if (key == 'd' && !e.ctrlKey) {
             camera.mRight = true;
-        } else if (key == 'i') {
+        } else if (key == 'i' && !e.ctrlKey) {
             let pixType = pixels[brush.pixel];
             if (pixType && pixType.rotation !== undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation + 1].id].box.click();
-        } else if (key == 'k') {
+        } else if (key == 'k' && !e.ctrlKey) {
             let pixType = pixels[brush.pixel];
             if (pixType && pixType.rotation !== undefined) pixelSelectors[numPixels[(3 % possibleRotations(pixType.numId)) + pixType.numId - pixType.rotation].id].box.click();
-        } else if (key == 'j') {
+        } else if (key == 'j' && !e.ctrlKey) {
             let pixType = pixels[brush.pixel];
             if (pixType && pixType.rotation !== undefined) pixelSelectors[numPixels[pixType.numId - pixType.rotation].id].box.click();
-        } else if (key == 'l') {
+        } else if (key == 'l' && !e.ctrlKey) {
             let pixType = pixels[brush.pixel];
             if (pixType && pixType.rotation !== undefined) pixelSelectors[numPixels[(2 % possibleRotations(pixType.numId)) + pixType.numId - pixType.rotation].id].box.click();
-        } else if (key == 'r') {
+        } else if (key == 'r' && !e.ctrlKey) {
             if (brush.isSelection && selection.grid[0] !== undefined) {
                 const newGrid = [];
                 for (let i = 0; i < selection.grid[0].length; i++) {
