@@ -754,6 +754,20 @@ function flow(x, y, isPassable = isAir) {
         }
     }
 };
+function canPush(x, y, dir, ignorePistons = false) {
+    if (!pixelAt(x, y).pushable || (grid[y][x] == pixNum.GOAL && targetGrid[y][x])) return false;
+    switch (dir) {
+        case 0:
+            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_RIGHT && grid[y][x] != pixNum.STICKY_PISTON_RIGHT));
+        case 1:
+            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_DOWN && grid[y][x] != pixNum.STICKY_PISTON_DOWN));
+        case 2:
+            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_LEFT && grid[y][x] != pixNum.STICKY_PISTON_LEFT));
+        case 3:
+            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_UP && grid[y][x] != pixNum.STICKY_PISTON_UP));
+    }
+    return false;
+};
 function push(x, y, dir, movePusher = true, ignorePistons = false) {
     let moveX = -1;
     let moveY = -1;
@@ -790,11 +804,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                grid[y][i] == pixNum.SLIME && y > 0 && !isAir(i, y - 1) && pixelAt(i, y - 1).pushable && slimePushes.push([i, y - 1]);
-                grid[y][i] == pixNum.SLIME && y < gridHeight - 1 && !isAir(i, y + 1) && pixelAt(i, y + 1).pushable && slimePushes.push([i, y + 1]);
-                if (!pixelAt(i, y).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_RIGHT || grid[y][i] == pixNum.STICKY_PISTON_RIGHT))) {
-                    break;
-                }
+                if (grid[y][i] == pixNum.SLIME && y > 0 && !isAir(i, y - 1) && pixelAt(i, y - 1).pushable) slimePushes.push([i, y - 1]);
+                if (grid[y][i] == pixNum.SLIME && y < gridHeight - 1 && !isAir(i, y + 1) && pixelAt(i, y + 1).pushable) slimePushes.push([i, y + 1]);
+                if (!canPush(i, y, 0, ignorePistons)) break;
             }
             if (moveX === -1 && lastCollapsible !== -1) {
                 moveX = lastCollapsible;
@@ -827,11 +839,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                grid[i][x] == pixNum.SLIME && x > 0 && !isAir(x - 1, i) && pixelAt(x - 1, i).pushable && slimePushes.push([x - 1, i]);
-                grid[i][x] == pixNum.SLIME && x < gridHeight - 1 && !isAir(x + 1, i) && pixelAt(x + 1, i).pushable && slimePushes.push([x + 1, i]);
-                if (!pixelAt(x, i).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_DOWN || grid[i][x] == pixNum.STICKY_PISTON_DOWN))) {
-                    break;
-                }
+                if (grid[i][x] == pixNum.SLIME && x > 0 && !isAir(x - 1, i) && pixelAt(x - 1, i).pushable) slimePushes.push([x - 1, i]);
+                if (grid[i][x] == pixNum.SLIME && x < gridHeight - 1 && !isAir(x + 1, i) && pixelAt(x + 1, i).pushable) slimePushes.push([x + 1, i]);
+                if (!canPush(x, i, 1, ignorePistons)) break;
             }
             if (moveY === -1 && lastCollapsible !== -1) {
                 moveY = lastCollapsible;
@@ -864,11 +874,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                grid[y][i] == pixNum.SLIME && y > 0 && !isAir(i, y - 1) && pixelAt(i, y - 1).pushable && slimePushes.push([i, y - 1]);
-                grid[y][i] == pixNum.SLIME && y < gridHeight - 1 && !isAir(i, y + 1) && pixelAt(i, y + 1).pushable && slimePushes.push([i, y + 1]);
-                if (!pixelAt(i, y).pushable || (grid[y][i] == pixNum.GOAL && targetGrid[y][i]) || grid[y][i] == pixNum.SLIDER_VERTICAL || (!ignorePistons && (grid[y][i] == pixNum.PISTON_LEFT || grid[y][i] == pixNum.STICKY_PISTON_LEFT))) {
-                    break;
-                }
+                if (grid[y][i] == pixNum.SLIME && y > 0 && !isAir(i, y - 1) && pixelAt(i, y - 1).pushable) slimePushes.push([i, y - 1]);
+                if (grid[y][i] == pixNum.SLIME && y < gridHeight - 1 && !isAir(i, y + 1) && pixelAt(i, y + 1).pushable) slimePushes.push([i, y + 1]);
+                if (!canPush(i, y, 2, ignorePistons)) break;
             }
             if (moveX === -1 && lastCollapsible !== -1) {
                 moveX = lastCollapsible;
@@ -901,11 +909,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                grid[i][x] == pixNum.SLIME && x > 0 && !isAir(x - 1, i) && pixelAt(x - 1, i).pushable && slimePushes.push([x - 1, i]);
-                grid[i][x] == pixNum.SLIME && x < gridHeight - 1 && !isAir(x + 1, i) && pixelAt(x + 1, i).pushable && slimePushes.push([x + 1, i]);
-                if (!pixelAt(x, i).pushable || (grid[i][x] == pixNum.GOAL && targetGrid[i][x]) || grid[i][x] == pixNum.SLIDER_HORIZONTAL || (!ignorePistons && (grid[i][x] == pixNum.PISTON_UP || grid[i][x] == pixNum.STICKY_PISTON_UP))) {
-                    break;
-                }
+                if (grid[i][x] == pixNum.SLIME && x > 0 && !isAir(x - 1, i) && pixelAt(x - 1, i).pushable) slimePushes.push([x - 1, i]);
+                if (grid[i][x] == pixNum.SLIME && x < gridHeight - 1 && !isAir(x + 1, i) && pixelAt(x + 1, i).pushable) slimePushes.push([x + 1, i]);
+                if (!canPush(x, i, 3, ignorePistons)) break;
             }
             if (moveY === -1 && lastCollapsible !== -1) {
                 moveY = lastCollapsible;
