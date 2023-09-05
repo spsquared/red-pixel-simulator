@@ -1104,7 +1104,6 @@ function explode(x1, y1, size, defer) {
     nextGrid[y1][x1] = pixNum.AIR;
     grid[y1][x1] = pixNum.AIR;
     teamGrid[y1][x1] = 0;
-    let chained = 0;
     function destroy(x, y, power) {
         if (random() < (power / size) * ((20 - pixelAt(x, y).blastResistance) / (85 - power))) {
             nextGrid[y][x] = pixNum.AIR;
@@ -1113,23 +1112,18 @@ function explode(x1, y1, size, defer) {
                 nextFireGrid[y][x] = true;
             }
             if (grid[y][x] == pixNum.AIR) return 0;
-            if (chained < 5) {
-                if (grid[y][x] == pixNum.NUKE) {
-                    pendingExplosions.push([x, y, 20]);
-                    grid[y][x] = pixNum.AIR;
-                    teamGrid[y][x] = 0;
-                    chained++;
-                } else if (grid[y][x] == pixNum.HUGE_NUKE) {
-                    pendingExplosions.push([x, y, 40]);
-                    grid[y][x] = pixNum.AIR;
-                    teamGrid[y][x] = 0;
-                    chained++;
-                } else if (grid[y][x] == pixNum.VERY_HUGE_NUKE) {
-                    pendingExplosions.push([x, y, 80]);
-                    grid[y][x] = pixNum.AIR;
-                    teamGrid[y][x] = 0;
-                    chained++;
-                }
+            if (grid[y][x] == pixNum.NUKE) {
+                pendingExplosions.push([x, y, 20]);
+                grid[y][x] = pixNum.AIR;
+                teamGrid[y][x] = 0;
+            } else if (grid[y][x] == pixNum.HUGE_NUKE) {
+                pendingExplosions.push([x, y, 40]);
+                grid[y][x] = pixNum.AIR;
+                teamGrid[y][x] = 0;
+            } else if (grid[y][x] == pixNum.VERY_HUGE_NUKE) {
+                pendingExplosions.push([x, y, 80]);
+                grid[y][x] = pixNum.AIR;
+                teamGrid[y][x] = 0;
             }
             if (grid[y][x] == pixNum.WATER) {
                 if (random() < (power * power / size) * 0.2) nextGrid[y][x] = pixNum.STEAM;
@@ -1231,7 +1225,7 @@ function explode(x1, y1, size, defer) {
     camera.shakeIntensity += size / (1 + camera.shakeIntensity * 0.5);
     sounds.explosion(Math.pow(size / 80, 2));
 };
-function craft(id, team) {
+function craftPixel(id, team) {
     // oof
 };
 function hasPixels(id, team) {
