@@ -111,6 +111,7 @@ const musicGrid = [];
 const lastMusicGrid = [];
 const placeableGrid = [];
 const lastPlaceableGrid = [];
+let pendingExplosions = [];
 
 // camera and brush
 const brush = {
@@ -190,18 +191,18 @@ function createGrid(width = 100, height = 100) {
     noisectx.clearRect(0, 0, canvasResolution, canvasResolution);
     noisectx.fillStyle = 'rgb(0, 0, 0)';
     for (let i = 0; i < gridHeight; i++) {
-        grid[i] = [];
-        lastGrid[i] = [];
-        nextGrid[i] = [];
-        fireGrid[i] = [];
-        lastFireGrid[i] = [];
-        nextFireGrid[i] = [];
-        monsterGrid[i] = [];
-        targetGrid[i] = [];
-        musicGrid[i] = [];
-        lastMusicGrid[i] = [];
-        placeableGrid[i] = [];
-        lastPlaceableGrid[i] = [];
+        grid[i] = new Array(gridWidth);
+        lastGrid[i] = new Array(gridWidth);
+        nextGrid[i] = new Array(gridWidth);
+        fireGrid[i] = new Array(gridWidth);
+        lastFireGrid[i] = new Array(gridWidth);
+        nextFireGrid[i] = new Array(gridWidth);
+        monsterGrid[i] = new Array(gridWidth);
+        targetGrid[i] = new Array(gridWidth);
+        musicGrid[i] = new Array(gridWidth);
+        lastMusicGrid[i] = new Array(gridWidth);
+        placeableGrid[i] = new Array(gridWidth);
+        lastPlaceableGrid[i] = new Array(gridWidth);
         for (let j = 0; j < gridWidth; j++) {
             grid[i][j] = pixNum.AIR;
             lastGrid[i][j] = -1;
@@ -528,6 +529,10 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
         Math.round((b1 * multiplier1) + (b2 * multiplier2)),
     ];
 };
+// function updatePixel(x, y) {
+//     randomSeed(ticks, x, y);
+//     numPixels[grid[y][x]].update(x, y);
+// };
 function updatePixel(x, y, i) {
     grid[y][x] !== 0 && numPixels[grid[y][x]] !== undefined && numPixels[grid[y][x]].updateStage === i && randomSeed(ticks, x, y) && numPixels[grid[y][x]].update(x, y);
 };
@@ -1111,40 +1116,75 @@ function explode(x1, y1, size, defer) {
             if (random() < 0.5 * power / size) {
                 nextFireGrid[y][x] = true;
             }
-            if (grid[y][x] == pixNum.AIR) return 0;
-            if (grid[y][x] == pixNum.NUKE) {
-                pendingExplosions.push([x, y, 20]);
-                grid[y][x] = pixNum.AIR;
-                teamGrid[y][x] = 0;
-            } else if (grid[y][x] == pixNum.HUGE_NUKE) {
-                pendingExplosions.push([x, y, 40]);
-                grid[y][x] = pixNum.AIR;
-                teamGrid[y][x] = 0;
-            } else if (grid[y][x] == pixNum.VERY_HUGE_NUKE) {
-                pendingExplosions.push([x, y, 80]);
-                grid[y][x] = pixNum.AIR;
-                teamGrid[y][x] = 0;
-            }
-            if (grid[y][x] == pixNum.WATER) {
-                if (random() < (power * power / size) * 0.2) nextGrid[y][x] = pixNum.STEAM;
-            } else if (grid[y][x] == pixNum.STEAM) {
-                if (random() < (power * power / size) * 0.8) nextGrid[y][x] = pixNum.STEAM;
-            } else if (grid[y][x] == pixNum.GUNPOWDER) {
-                pendingExplosions.push([x, y, 5]);
-                grid[y][x] = pixNum.AIR;
-                teamGrid[y][x] = 0;
-            } else if (grid[y][x] == pixNum.C4) {
-                pendingExplosions.push([x, y, 15]);
-                grid[y][x] = pixNum.AIR;
-                teamGrid[y][x] = 0;
-            } else if (grid[y][x] >= pixNum.FLAMETHROWER_LEFT && grid[y][x] <= pixNum.FLAMETHROWER_LEFT) {
-                pendingExplosions.push([x, y, 15]);
-                grid[y][x] = pixNum.ASH;
-                teamGrid[y][x] = 0;
-            } else if (random() < 1.2 - (power / size)) {
-                if (grid[y][x] == pixNum.STONE || grid[y][x] == pixNum.BASALT || grid[y][x] == pixNum.CONCRETE || grid[y][x] == pixNum.STONE_BRICKS || grid[y][x] == pixNum.BRICKS) nextGrid[y][x] = pixNum.GRAVEL;
-                else nextGrid[y][x] = pixNum.ASH;
-                teamGrid[y][x] = 0;
+            switch (grid[y][x]) {
+                case pixNum.AIR:
+                    return 0;
+                case pixNum.WATER:
+                case pixNum.SNOW:
+                case pixNum.ICE:
+                    if (random() < (power * power / size) * 0.2) nextGrid[y][x] = pixNum.STEAM;
+                    break;
+                case pixNum.GUNPOWDER:
+                    pendingExplosions.push([x, y, 5]);
+                    grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
+                    break;
+                case pixNum.C4:
+                    pendingExplosions.push([x, y, 15]);
+                    grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
+                    break;
+                case pixNum.FLAMETHROWER_LEFT:
+                    pendingExplosions.push([x, y, 15]);
+                    grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
+                    break;
+                case pixNum.FLAMETHROWER_UP:
+                    pendingExplosions.push([x, y, 15]);
+                    grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
+                    break;
+                case pixNum.FLAMETHROWER_RIGHT:
+                    pendingExplosions.push([x, y, 15]);
+                    grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
+                    break;
+                case pixNum.FLAMETHROWER_DOWN:
+                    pendingExplosions.push([x, y, 15]);
+                    grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
+                    break;
+                case pixNum.NUKE:
+                    pendingExplosions.push([x, y, 20]);
+                    grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
+                    break;
+                case pixNum.HUGE_NUKE:
+                    pendingExplosions.push([x, y, 40]);
+                    grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
+                    break;
+                case pixNum.VERY_HUGE_NUKE:
+                    pendingExplosions.push([x, y, 80]);
+                    grid[y][x] = pixNum.AIR;
+                    teamGrid[y][x] = 0;
+                    break;
+                default:
+                    if (random() < 1.2 - (power / size)) {
+                        switch (grid[y][x]) {
+                            case pixNum.STONE:
+                            case pixNum.BASALT:
+                            case pixNum.CONCRETE:
+                            case pixNum.STONE_BRICKS:
+                            case pixNum.BRICKS:
+                                nextGrid[y][x] = pixNum.GRAVEL;
+                                break;
+                            default:
+                                nextGrid[y][x] = pixNum.ASH;
+                                break;
+                        }
+                        teamGrid[y][x] = 0;
+                    }
             }
             return pixelAt(x, y).blastResistance / 40;
         }
@@ -1227,6 +1267,7 @@ function explode(x1, y1, size, defer) {
 };
 function craftPixel(id, team) {
     // oof
+    // suffix _any means any rotation can be used
 };
 function hasPixels(id, team) {
 
@@ -1331,9 +1372,6 @@ function drawFrame() {
         }
         gridoverctx.clearRect(0, 0, canvasResolution, canvasResolution);
         abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
-        for (let i in numPixels) {
-            numPixels[i].rectangles.length = 0;
-        }
 
         // get rectangles to draw
         let drawTeamGrid = PixSimAPI.inGame || forceDrawTeamGrid;
@@ -1341,6 +1379,9 @@ function drawFrame() {
         let xmax = Math.min(gridWidth - 1, Math.floor((camera.x + canvasResolution) * screenScale) + 1);
         let ymin = Math.max(0, Math.floor(camera.y * screenScale) - 1);
         let ymax = Math.min(gridHeight - 1, Math.floor((camera.y + canvasResolution) * screenScale) + 1);
+        for (let i in numPixels) {
+            numPixels[i].rectangles.length = 0;
+        }
         for (let y = ymin; y <= ymax; y++) {
             let curr = grid[y][xmin];
             let redrawing = grid[y][xmin] != lastGrid[y][xmin];
@@ -1348,9 +1389,9 @@ function drawFrame() {
             for (let x = xmin; x <= xmax; x++) {
                 amount++;
                 if (grid[y][x] != curr || (grid[y][x] != lastGrid[y][x]) != redrawing) {
-                    let pixelType = pixelData(curr);
+                    const pixelType = pixelData(curr);
                     if (curr != pixNum.AIR && (forceRedraw || redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations))) {
-                        numPixels[pixelType.numId].rectangles.push([x - amount, y, amount, 1, redrawing]);
+                        pixelType.rectangles.push([x - amount, y, amount, 1, redrawing]);
                     } else if (curr == pixNum.AIR && (forceRedraw || redrawing)) {
                         clearPixels(x - amount, y, amount, 1, gridctx);
                     }
@@ -1360,14 +1401,14 @@ function drawFrame() {
                 }
                 lastGrid[y][x] = grid[y][x];
             }
-            let pixelType = pixelData(curr);
+            const pixelType = pixelData(curr);
             if (curr != pixNum.AIR && (forceRedraw || redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations))) {
-                numPixels[pixelType.numId].rectangles.push([xmax - amount, y, amount + 1, 1, redrawing]);
+                pixelType.rectangles.push([xmax - amount, y, amount + 1, 1, redrawing]);
             } else if (curr == pixNum.AIR && (forceRedraw || redrawing)) {
                 clearPixels(xmax - amount, y, amount + 1, 1, gridctx);
             }
         }
-        let teamPixelRects = [[], []];
+        const teamPixelRects = [[], []];
         if (drawTeamGrid) {
             for (let y = ymin; y <= ymax; y++) {
                 let curr = teamGrid[y][xmin];
@@ -1462,7 +1503,10 @@ function drawFrame() {
     } else {
         ctx.drawImage(gameCanvas, 0, 0);
     }
-    if (inResetState || sandboxMode || PixSimAPI.inGame) ctx.drawImage(placeableCanvas, 0, 0);
+    if (inResetState || sandboxMode || PixSimAPI.inGame) {
+        ctx.globalAlpha = 0.2;
+        ctx.drawImage(placeableCanvas, 0, 0);
+    }
 
     drawBrush();
 
@@ -1479,11 +1523,11 @@ function drawFrame() {
     lastDeltaTime = deltaTime;
 };
 function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
-    numPixels[type].rectangles.length = 0;
     let xmin = Math.max(0, Math.floor(camera.x * screenScale) - 1);
     let xmax = Math.min(gridWidth - 1, Math.floor((camera.x + canvasResolution) * screenScale) + 1);
     let ymin = Math.max(0, Math.floor(camera.y * screenScale) - 1);
     let ymax = Math.min(gridHeight - 1, Math.floor((camera.y + canvasResolution) * screenScale) + 1);
+    numPixels[type].rectangles.length = 0;
     if (grid === lastGrid) {
         ctx.clearRect(0, 0, canvasResolution, canvasResolution);
         for (let y = ymin; y <= ymax; y++) {
@@ -1719,12 +1763,10 @@ function updateTick() {
             /*
             update priority:
             -: fire
-            0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers, collectors, spongy rice
+            0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers, spongy rice, music pixels, lag
             1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers
-            5: gravity solids, ice, rotators
-            6: steam, stone
-            7: water, lava, leaves, pumps, lava generators, freezers, wells, color wells, color generators, color collectors
-            8: lag, music pixels
+            5: gravity solids, stone, ice, rotators
+            6: water, lava, steam, leaves, pumps, lava generators, freezers, wells, color wells, color generators, color collectors
             -: monsters
             */
             let monsterCount = 0;
@@ -1759,7 +1801,7 @@ function updateTick() {
                     musicGrid[y][x] = 0;
                 }
             }
-            for (let updateStage = 0; updateStage <= 8; updateStage++) {
+            for (let updateStage = 0; updateStage <= 6; updateStage++) {
                 switch (updateStage) {
                     case 1:
                         for (let y = gridHeight - 1; y >= 0; y--) {

@@ -10,6 +10,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -43,6 +45,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -85,6 +89,10 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_brown: 2
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 3,
         flammability: 1,
@@ -143,6 +151,11 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            dirt: 1,
+            color_green: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 3,
         flammability: 15,
@@ -200,6 +213,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 4,
         flammability: 1,
@@ -236,6 +251,10 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_yellow: 2
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 5,
         flammability: 0,
@@ -283,6 +302,10 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_grey: 2
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 6,
         flammability: 0,
@@ -323,6 +346,11 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            dirt: 1,
+            color_red: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 7,
         flammability: 0,
@@ -383,6 +411,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 7,
         flammability: 0,
@@ -425,6 +455,10 @@ const pixels = {
             ctx.fillRect(0, 0, 25, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_brown: 2
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 12,
@@ -477,6 +511,10 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_lime: 1
+        },
+        craftAmount: 2,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 18,
@@ -484,7 +522,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -533,6 +571,10 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_green: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 2,
         flammability: 15,
@@ -591,6 +633,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 3,
         flammability: 4,
@@ -645,6 +689,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 3,
         flammability: 2,
@@ -683,6 +729,10 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_grey: 4
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 0,
@@ -690,7 +740,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -716,6 +766,11 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_grey: 3,
+            color_black: 2
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 16,
         flammability: 0,
@@ -789,6 +844,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 15,
         flammability: 0,
@@ -796,7 +853,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: true,
         animated: true,
         alwaysRedraw: false,
@@ -852,6 +909,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 0,
@@ -903,6 +962,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 0,
@@ -967,7 +1028,7 @@ const pixels = {
             if (updateTouchingAnything(x, y, (ax, ay) => {
                 if (grid[ay][ax] != pixNum.WATER && random() < pixelAt(ax, ay).flammability / 20) {
                     nextFireGrid[ay][ax] = true;
-                    if (random() < 0.8) {
+                    if (random() < 0.6) {
                         nextGrid[y][x] = pixNum.WATER;
                         return true;
                     }
@@ -1075,6 +1136,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -1203,6 +1266,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 17,
         flammability: 0,
@@ -1210,7 +1275,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: true,
         animated: true,
         alwaysRedraw: false,
@@ -1308,6 +1373,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 20,
@@ -1348,6 +1415,12 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            gravel: 2,
+            clay: 1,
+            color_grey: 1
+        },
+        craftAmount: 4,
         prerenderedFrames: [],
         blastResistance: 5,
         flammability: 0,
@@ -1381,6 +1454,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 18,
         flammability: 0,
@@ -1409,7 +1484,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             if (y < gridHeight - 1 && isPassableFluid(x, y + 1)) {
-                if ((grid[y][x - 1] == pixNum.STONE_BRICKS && grid[y + 1][x - 1] == pixNum.STONE_BRICKS) || (grid[y][x + 1] == pixNum.STONE_BRICKS && grid[y + 1][x + 1] == pixNum.STONE_BRICKS)) return;
+                if ((grid[y][x - 1] == pixNum.STONE_BRICKS && !isPassableFluid(x - 1, y + 1)) || (grid[y][x + 1] == pixNum.STONE_BRICKS && !isPassableFluid(x + 1, y + 1))) return;
                 move(x, y, x, y + 1);
             }
         },
@@ -1434,6 +1509,10 @@ const pixels = {
             fillPixels(1 / 4, 1 / 2, 1 / 8, 3 / 8);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            stone: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 0,
@@ -1462,10 +1541,10 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             if (y < gridHeight - 1 && isPassableFluid(x, y + 1)) {
-                if ((grid[y][x - 1] == pixNum.BRICKS && grid[y + 1][x - 1] == pixNum.BRICKS)
-                    || (grid[y][x + 1] == pixNum.BRICKS && grid[y + 1][x + 1] == pixNum.BRICKS)
-                    || (grid[y][x - 1] == pixNum.BRICKS && grid[y][x - 2] == pixNum.BRICKS && grid[y + 1][x - 2] == pixNum.BRICKS)
-                    || (grid[y][x + 1] == pixNum.BRICKS && grid[y][x + 2] == pixNum.BRICKS && grid[y + 1][x + 2] == pixNum.BRICKS)) return;
+                if ((grid[y][x - 1] == pixNum.BRICKS && !isPassableFluid(x - 1, y + 1))
+                    || (grid[y][x + 1] == pixNum.BRICKS && !isPassableFluid(x + 1, y + 1))
+                    || (grid[y][x - 1] == pixNum.BRICKS && grid[y][x - 2] == pixNum.BRICKS && !isPassableFluid(x - 2, y + 1))
+                    || (grid[y][x + 1] == pixNum.BRICKS && grid[y][x + 2] == pixNum.BRICKS && !isPassableFluid(x + 2, y + 1))) return;
                 move(x, y, x, y + 1);
             }
         },
@@ -1490,6 +1569,8 @@ const pixels = {
             fillPixels(1 / 4, 1 / 2, 1 / 8, 3 / 8);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 15,
         flammability: 0,
@@ -1543,6 +1624,10 @@ const pixels = {
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            wood: 2
+        },
+        craftAmount: 3,
         prerenderedFrames: [],
         blastResistance: 4,
         flammability: 16,
@@ -1593,6 +1678,13 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_green: 8,
+            color_lime: 1,
+            leaves: 24,
+            water: 2
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 15,
@@ -1639,6 +1731,12 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_yellow: 8,
+            wood: 1,
+            leaves: 24
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 10,
@@ -1657,7 +1755,7 @@ const pixels = {
     },
     pump: {
         name: 'Water Pump',
-        description: 'Violates the Laws of Thermodynamics to create water',
+        description: 'Violates the Laws of Thermodynamics to create water while consuming much less blue mass',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
@@ -1673,6 +1771,7 @@ const pixels = {
             updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.125) {
                     nextGrid[ay][ax] = pixNum.WATER;
+                    // 33% chance of consuming blue or cyan
                 }
             });
         },
@@ -1691,6 +1790,14 @@ const pixels = {
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            concrete: 8,
+            color_green: 2,
+            piston_any: 1,
+            cloner_any: 1,
+            water: 2
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 5,
         flammability: 0,
@@ -1698,7 +1805,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -1709,7 +1816,7 @@ const pixels = {
     },
     lava_generator: {
         name: 'Lava Heater',
-        description: 'Violates the Laws of Thermodynamics to create lava',
+        description: 'Violates the Laws of Thermodynamics to create lava while consuming much less red mass',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
@@ -1722,27 +1829,14 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 explode(x, y, 5, true);
             });
-            updateTouchingPixel(x, y, pixNum.SNOW, (ax, ay) => {
+            updateTouchingPixel(x, y, [pixNum.SNOW, pixNum.ICE], (ax, ay) => {
                 teamGrid[y][x] = 0;
                 explode(x, y, 6, true);
             });
-            updateTouchingPixel(x, y, pixNum.ICE, (ax, ay) => {
-                teamGrid[y][x] = 0;
-                explode(x, y, 6, true);
-            });
-            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+            updateTouchingPixel(x, y, [pixNum.AIR, pixNum.STEAM, pixNum.STONE], (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.075) {
                     nextGrid[ay][ax] = pixNum.LAVA;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.STEAM, (ax, ay) => {
-                if (validChangingPixel(ax, ay) && random() < 0.075) {
-                    nextGrid[ay][ax] = pixNum.LAVA;
-                }
-            });
-            updateTouchingPixel(x, y, pixNum.STONE, (ax, ay) => {
-                if (validChangingPixel(ax, ay) && random() < 0.075) {
-                    nextGrid[ay][ax] = pixNum.LAVA;
+                    // 33% chance to consume red or orange
                 }
             });
         },
@@ -1761,6 +1855,14 @@ const pixels = {
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            concrete: 8,
+            color_green: 2,
+            piston_any: 1,
+            cloner_any: 1,
+            lava: 2
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 5,
         flammability: 0,
@@ -1768,7 +1870,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -1818,6 +1920,13 @@ const pixels = {
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            concrete: 8,
+            color_green: 2,
+            cloner_any: 2,
+            ice: 4
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 5,
         flammability: 0,
@@ -1825,7 +1934,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 0,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -1873,6 +1982,13 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
         prerender: function () { },
+        recipe: {
+            color_cyan: 2,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 10,
         flammability: 6,
@@ -1923,6 +2039,13 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
         prerender: function () { },
+        recipe: {
+            color_cyan: 2,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 10,
         flammability: 6,
@@ -1973,6 +2096,13 @@ const pixels = {
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
         prerender: function () { },
+        recipe: {
+            color_cyan: 2,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 10,
         flammability: 6,
@@ -2023,6 +2153,13 @@ const pixels = {
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
         prerender: function () { },
+        recipe: {
+            color_cyan: 2,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 10,
         flammability: 6,
@@ -2076,6 +2213,11 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
         prerender: function () { },
+        recipe: {
+            piston_left: 1,
+            slime: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 11,
         flammability: 6,
@@ -2129,6 +2271,11 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
         prerender: function () { },
+        recipe: {
+            piston_up: 1,
+            slime: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 11,
         flammability: 6,
@@ -2182,6 +2329,11 @@ const pixels = {
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
         prerender: function () { },
+        recipe: {
+            piston_right: 1,
+            slime: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 11,
         flammability: 6,
@@ -2235,6 +2387,11 @@ const pixels = {
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
         prerender: function () { },
+        recipe: {
+            piston_down: 1,
+            slime: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 11,
         flammability: 6,
@@ -2289,6 +2446,13 @@ const pixels = {
             fillPixels(1 / 6, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            color_lime: 1,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 8,
@@ -2343,6 +2507,13 @@ const pixels = {
             fillPixels(1 / 4, 1 / 6, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            color_lime: 1,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 8,
@@ -2397,6 +2568,13 @@ const pixels = {
             fillPixels(2 / 3, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            color_lime: 1,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 8,
@@ -2451,6 +2629,13 @@ const pixels = {
             fillPixels(1 / 4, 2 / 3, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            color_lime: 1,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 8,
@@ -2511,6 +2696,14 @@ const pixels = {
             fillPixels(1 / 3, 2 / 5, 1 / 3, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            color_lime: 1,
+            color_blue: 1,
+            sticky_piston_left: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 12,
         flammability: 8,
@@ -2571,6 +2764,14 @@ const pixels = {
             fillPixels(2 / 5, 1 / 3, 1 / 5, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            color_lime: 1,
+            color_blue: 1,
+            sticky_piston_up: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 12,
         flammability: 8,
@@ -2631,6 +2832,14 @@ const pixels = {
             fillPixels(1 / 3, 2 / 5, 1 / 3, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            color_lime: 1,
+            color_blue: 1,
+            sticky_piston_right: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 12,
         flammability: 8,
@@ -2691,6 +2900,14 @@ const pixels = {
             fillPixels(2 / 5, 1 / 3, 1 / 5, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            color_lime: 1,
+            color_blue: 1,
+            sticky_piston_down: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 12,
         flammability: 8,
@@ -2743,6 +2960,8 @@ const pixels = {
             fillPixels(1 / 6, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 8,
@@ -2795,6 +3014,8 @@ const pixels = {
             fillPixels(1 / 4, 1 / 6, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 8,
@@ -2849,6 +3070,8 @@ const pixels = {
             fillPixels(2 / 3, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 8,
@@ -2901,6 +3124,8 @@ const pixels = {
             fillPixels(1 / 4, 2 / 3, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 8,
@@ -2947,6 +3172,13 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
         prerender: function () { },
+        recipe: {
+            piston_left: 1,
+            color_cyan: 1,
+            slime: 1,
+            concrete: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 4,
@@ -2993,6 +3225,13 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
         prerender: function () { },
+        recipe: {
+            piston_up: 1,
+            color_cyan: 1,
+            slime: 1,
+            concrete: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 4,
@@ -3039,6 +3278,13 @@ const pixels = {
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
         prerender: function () { },
+        recipe: {
+            piston_up: 1,
+            color_cyan: 1,
+            slime: 1,
+            concrete: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 4,
@@ -3085,6 +3331,13 @@ const pixels = {
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
         prerender: function () { },
+        recipe: {
+            piston_up: 1,
+            color_cyan: 1,
+            slime: 1,
+            concrete: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 4,
@@ -3160,6 +3413,14 @@ const pixels = {
             fillPixels(0, 0, 1 / 3, 2 / 3);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            rotator_left: 1,
+            rotator_up: 1,
+            rotator_right: 1,
+            rotator_down: 1,
+            slime: 2
+        },
+        craftAmount: 2,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 4,
@@ -3234,6 +3495,14 @@ const pixels = {
             fillPixels(0, 1 / 3, 1 / 3, 2 / 3);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            rotator_left: 1,
+            rotator_up: 1,
+            rotator_right: 1,
+            rotator_down: 1,
+            slime: 2
+        },
+        craftAmount: 2,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 4,
@@ -3276,6 +3545,11 @@ const pixels = {
             ctx.fillRect(0, 25 / 2, 50, 25);
         },
         prerender: function () { },
+        recipe: {
+            color_orange: 4,
+            color_brown: 2
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 18,
         flammability: 0,
@@ -3319,6 +3593,11 @@ const pixels = {
             ctx.fillRect(25 / 2, 0, 25, 50);
         },
         prerender: function () { },
+        recipe: {
+            color_orange: 4,
+            color_brown: 2
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 18,
         flammability: 0,
@@ -3369,6 +3648,11 @@ const pixels = {
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            crate: 1,
+            color_orange: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 2,
         flammability: 15,
@@ -3418,6 +3702,13 @@ const pixels = {
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: {
+            color_red: 2,
+            color_yellow: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 2,
         flammability: 15,
@@ -3451,6 +3742,12 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: {
+            leaves: 8,
+            water: 1,
+            plant: 2
+        },
+        craftAmount: 3,
         prerenderedFrames: [],
         blastResistance: 7,
         flammability: 4,
@@ -3525,6 +3822,17 @@ const pixels = {
             ctx.fillRect(0, 50 / 3, 25, 50 / 3);
         },
         prerender: function () { },
+        recipe: {
+            color_violet: 8,
+            color_green: 36,
+            color_red: 36,
+            color_blue: 36,
+            lava_heater: 1,
+            concrete: 1,
+            glass: 2,
+            mirror_any: 9
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 20,
@@ -3599,6 +3907,17 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 25);
         },
         prerender: function () { },
+        recipe: {
+            color_violet: 8,
+            color_green: 36,
+            color_red: 36,
+            color_blue: 36,
+            lava_heater: 1,
+            concrete: 1,
+            glass: 2,
+            mirror_any: 9
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 20,
@@ -3673,6 +3992,17 @@ const pixels = {
             ctx.fillRect(25, 50 / 3, 25, 50 / 3);
         },
         prerender: function () { },
+        recipe: {
+            color_violet: 8,
+            color_green: 36,
+            color_red: 36,
+            color_blue: 36,
+            lava_heater: 1,
+            concrete: 1,
+            glass: 2,
+            mirror_any: 9
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 20,
@@ -3747,6 +4077,17 @@ const pixels = {
             ctx.fillRect(50 / 3, 25, 50 / 3, 25);
         },
         prerender: function () { },
+        recipe: {
+            color_violet: 8,
+            color_green: 36,
+            color_red: 36,
+            color_blue: 36,
+            lava_heater: 1,
+            concrete: 1,
+            glass: 2,
+            mirror_any: 9
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 20,
@@ -3800,6 +4141,8 @@ const pixels = {
             fillPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -3862,6 +4205,8 @@ const pixels = {
             fillPixels(0, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 7,
         flammability: 0,
@@ -3906,6 +4251,8 @@ const pixels = {
             ctx.fillRect(25, 0, 25 / 2, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -3968,6 +4315,8 @@ const pixels = {
             fillPixels(1 / 30, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -4031,6 +4380,8 @@ const pixels = {
             fillPixels(1 / 30, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -4096,6 +4447,8 @@ const pixels = {
             fillPixels(1 / 5, 1 / 5, 1 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 0,
@@ -4161,6 +4514,8 @@ const pixels = {
             fillPixels(1 / 5, 1 / 5, 3 / 5, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 0,
@@ -4226,6 +4581,8 @@ const pixels = {
             fillPixels(3 / 5, 1 / 5, 1 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 0,
@@ -4291,6 +4648,8 @@ const pixels = {
             fillPixels(1 / 5, 3 / 5, 3 / 5, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 0,
@@ -4341,6 +4700,8 @@ const pixels = {
             fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 5,
@@ -4391,6 +4752,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 20,
@@ -4424,6 +4787,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 4,
@@ -4471,6 +4836,8 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 19,
         flammability: 2,
@@ -4520,6 +4887,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -4569,6 +4938,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -4618,6 +4989,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -4660,6 +5033,8 @@ const pixels = {
             ctx.fillRect(50 / 4, 50 / 4, 25, 25);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -4728,6 +5103,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -4770,6 +5147,8 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -4826,6 +5205,8 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 15,
         flammability: 0,
@@ -4833,7 +5214,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 3,
-        updateStage: 8,
+        updateStage: 0,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: true,
@@ -5030,6 +5411,8 @@ const pixels = {
             ctx.fillRect(22, 36, 6, 6);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: NaN,
         flammability: NaN,
@@ -5037,7 +5420,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         group: 3,
-        updateStage: 8,
+        updateStage: 0,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: true,
@@ -5067,6 +5450,8 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -5137,8 +5522,15 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(20, 10, 10, 10);
+            ctx.fillRect(10, 20, 10, 10);
+            ctx.fillRect(30, 20, 10, 10);
+            ctx.fillRect(20, 30, 20, 10);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 17,
@@ -5146,7 +5538,7 @@ const pixels = {
         cloneable: false,
         rotateable: false,
         group: 3,
-        updateStage: 8,
+        updateStage: 0,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -5255,6 +5647,8 @@ _ => @
 _# => @.
 _@    ._`],
         processedRules: [],
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 5,
         flammability: 0,
@@ -5274,7 +5668,13 @@ _@    ._`],
     placementUnRestriction: {
         name: 'Allow Placement',
         description: 'Allow modification of a region within puzzles and multiplayer',
-        draw: function (rectangles, opacity, ctx, avoidGrid) { },
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -5284,6 +5684,8 @@ _@    ._`],
             ctx.fillRect(5, 5, 40, 40);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -5304,7 +5706,7 @@ _@    ._`],
         name: 'Prevent Placement',
         description: 'Restrict modification of a region in puzzles and multiplayer',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity * 0.2;
+            ctx.globalAlpha = opacity;
             let scale = gridScale * camera.scale;
             // could add a buffer area around the edges and actually snap the canvas to the nearest pixel
             // also scale the canvas correctly
@@ -5343,6 +5745,8 @@ _@    ._`],
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -5417,6 +5821,8 @@ _@    ._`],
             fillPixels(1 / 4, 3 / 5, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 2,
         flammability: 20,
@@ -5462,6 +5868,8 @@ _@    ._`],
             ctx.fillRect(10, 10, 30, 30);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -5512,6 +5920,8 @@ _@    ._`],
             clearPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -5610,6 +6020,8 @@ _@    ._`],
                 addRender(Math.PI * i / 12);
             }
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 19,
         flammability: 0,
@@ -5672,6 +6084,8 @@ _@    ._`],
             ctx.fillRect(25 / 2, 25 / 2, 25, 25);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -5679,7 +6093,7 @@ _@    ._`],
         cloneable: false,
         rotateable: false,
         group: 6,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -5735,6 +6149,8 @@ _@    ._`],
             ctx.fillRect(25 / 2, 25 / 2, 25, 25);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -5742,7 +6158,7 @@ _@    ._`],
         cloneable: false,
         rotateable: false,
         group: 6,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -5797,6 +6213,8 @@ _@    ._`],
             ctx.fillRect(25 / 2, 25 / 2, 25, 25);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -5804,7 +6222,7 @@ _@    ._`],
         cloneable: false,
         rotateable: false,
         group: 6,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -5858,6 +6276,8 @@ _@    ._`],
             ctx.fillRect(25 / 2, 25 / 2, 25, 25);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
         flammability: 0,
@@ -5865,7 +6285,7 @@ _@    ._`],
         cloneable: false,
         rotateable: false,
         group: 6,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -5946,6 +6366,8 @@ _@    ._`],
             ctx.fillRect(10, 20, 30, 10);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 19,
         flammability: 0,
@@ -5953,7 +6375,7 @@ _@    ._`],
         cloneable: false,
         rotateable: false,
         group: 6,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -6117,6 +6539,8 @@ _@    ._`],
             ctx.fillRect(0, 20, 50, 10);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 19,
         flammability: 0,
@@ -6124,7 +6548,7 @@ _@    ._`],
         cloneable: false,
         rotateable: false,
         group: 6,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: true,
@@ -6187,6 +6611,8 @@ _@    ._`],
             ctx.fillRect(10, 10, 30, 30);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 18,
         flammability: 0,
@@ -6324,6 +6750,8 @@ _@    ._`],
             ctx.fillText('β', 60, 60);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 19,
         flammability: 0,
@@ -6331,7 +6759,7 @@ _@    ._`],
         cloneable: false,
         rotateable: false,
         group: 6,
-        updateStage: 7,
+        updateStage: 6,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -6359,6 +6787,8 @@ _@    ._`],
             ctx.fillRect(5, 5, 40, 40);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -6394,6 +6824,8 @@ _@    ._`],
             ctx.fillRect(5, 5, 40, 40);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -6429,6 +6861,8 @@ _@    ._`],
             ctx.fillRect(5, 5, 40, 40);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -6472,6 +6906,8 @@ _@    ._`],
             fillPixels(1 / 2, 1 / 2, 1 / 2, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -7016,6 +7452,8 @@ _@    ._`],
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -7060,6 +7498,8 @@ _@    ._`],
             };
         },
         rickastley: false,
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: Infinity,
         flammability: -Infinity,
@@ -7094,6 +7534,8 @@ _@    ._`],
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: undefined,
         flammability: undefined,
@@ -7225,6 +7667,8 @@ function generateMusicPixel(id, data) {
             ctx.fillText(data.text, 60, 48);
             this.prerenderedFrames.push(toImage());
         },
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 12,
         flammability: 0,
@@ -7233,7 +7677,7 @@ function generateMusicPixel(id, data) {
         rotateable: false,
         musicPixel: 0,
         group: 4,
-        updateStage: 8,
+        updateStage: 0,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: true,
@@ -7263,6 +7707,8 @@ function generateColorPixel(data) {
         },
         prerender: function () { },
         defaultRGB: data.rgb0,
+        recipe: { },
+        craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 5,
         flammability: 0,

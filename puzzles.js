@@ -124,7 +124,7 @@ const puzzles = [
             {
                 name: 'Down in the Mines',
                 description: `<i>[music]</i> Oh wait, we're lost. Oh wow, these red things are everywhere. Better get rid of those before they destroy this place, too. That suspiciously conveniently C-4 and gunpowder will probably help.`,
-                saveCode: '50-50;0000;stone-9:air-5:stone-6:dirt-30:stone-9:air-5:stone-16:dirt-11:stone-3:dirt-6:stone-9:air-5:stone-32:dirt-4:stone-9:air-5:stone-45:air-5:stone-4:air-22:stone-19:air-5:stone-4:air:gunpowder-4:air-17:stone-19:air-5:stone-4:gunpowder-5:air-17:stone-19:air-5:stone-9:air-2:wood:dirt-5:wood:air-2:wood-2:stone-7:water-3:stone-13:air-5:stone-9:air-2:wood:dirt-5:wood:air-3:stone-6:water-7:stone-11:air-5:stone-9:air-2:wood:dirt-5:wood:air-3:stone-5:sand:water-2:sand-5:stone-11:air-5:stone-9:air-2:stone-7:air-3:stone-6:sand-3:stone-15:air-5:stone-9:air-2:stone-7:air-3:stone-5:wood-4:stone-15:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-30:stone-9:air-5:stone-26:wood:air-2:wood:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-3:air-2:stone-10:air-5:stone-26:air-4:stone:air-4:stone-6:air-45:stone-5:air-14:dirt-2:air-29:stone-5:air-12:dirt-5:air-28:stone-5:air-11:dirt-7:air-27:stone-5:air-11:wood-7:air-27:stone-8:wood-2:air-4:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-20:wood:air-5:stone-24:air-16:wood:gunpowder-7:wood:air-8:c4-3:concrete:air-3:stone-10:air-14:wood:air:wood:gunpowder-6:wood-2:air-8:c4-3:concrete:stone:air-2:stone-10:air-3:wood-3:stone-19:air-2:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-18:air-10:stone-17:air-5:stone-18:air-10:stone-17:air-5:stone-19:lava-7:stone-10:;9c4:;8:1:4ba:2:d:6:2c:6:2c:6:2c:6:2c:6:1f0:6:2c:6:1fc:;338:1:248:1:21:1:2:1:1:1:1ab:1:24:1:31:1:a:1:15:1:1f7:;9c4:',
+                saveCode: '50-50;0000;stone-9:air-5:stone-6:dirt-30:stone-9:air-5:stone-16:dirt-11:stone-3:dirt-6:stone-9:air-5:stone-32:dirt-4:stone-9:air-5:stone-45:air-5:stone-4:air-22:stone-19:air-5:stone-4:air:gunpowder-4:air-17:stone-19:air-5:stone-4:gunpowder-5:air-17:stone-19:air-5:stone-9:air-2:wood:dirt-5:wood:air-2:wood-2:stone-7:water-3:stone-13:air-5:stone-9:air-2:wood:dirt-5:wood:air-3:stone-6:water-7:stone-11:air-5:stone-9:air-2:wood:dirt-5:wood:air-3:stone-5:sand:water-2:sand-5:stone-11:air-5:stone-9:air-2:stone-7:air-3:stone-6:sand-3:stone-15:air-5:stone-9:air-2:stone-7:air-3:stone-5:wood-4:stone-15:air-5:stone-6:air-30:stone-9:air-5:stone-6:air-18:crate:air-11:stone-9:air-5:stone-6:air-18:crate-2:air-10:stone-9:air-5:stone-6:air-18:crate-2:air-10:stone-9:air-5:stone-6:air-13:crate-2:air-2:crate-3:air-9:crate:stone-9:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-15:air-5:stone-26:air-4:stone-3:air-2:stone-10:air-5:stone-26:air-4:stone:air-4:stone-6:air-45:stone-5:air-14:dirt-2:air-29:stone-5:air-12:dirt-5:air-28:stone-5:air-11:dirt-7:air-27:stone-5:air-11:wood-7:air-27:stone-8:wood-2:air-4:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-5:stone-18:air-2:stone-25:air-20:wood:air-5:stone-24:air-16:wood:gunpowder-3:wood:air-3:wood:air-8:c4-3:concrete:air-3:stone-10:air-14:wood:air:wood:gunpowder-3:wood:gunpowder-3:wood:air-8:c4-3:concrete:stone:air-2:stone-10:air-3:wood-3:stone-19:air-2:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-23:air-5:stone-21:air:stone-15:basalt:stone-7:air-5:stone-3:basalt:stone-7:basalt:stone-9:air:stone-13:basalt:stone-2:basalt-2:stone-3:basalt:stone:air-5:stone:basalt:stone-2:basalt:stone-4:basalt-2:stone-2:basalt:stone-2:basalt:stone:air-10:stone-2:basalt-2:stone:basalt:stone-3:basalt:stone:basalt-2:stone:basalt-3:air-5:stone-2:basalt-2:stone-3:basalt:stone:basalt:stone:basalt:stone:basalt-3:stone-2:air-9:basalt:stone:basalt-3:stone-2:basalt-10:stone:air-5:basalt-19:lava-7:basalt-10:;9c4:;8:1:4ba:2:d:6:2c:6:2c:6:2c:6:2c:6:1f0:6:2c:6:1fc:;338:1:248:1:21:1:2:1:1:1:1ab:1:24:1:31:1:a:1:15:1:1f7:;9c4:',
                 backgroundColor: '#adadad',
                 inventory: {
                     sand: 1,
@@ -132,7 +132,7 @@ const puzzles = [
                     water: 3,
                     gunpowder: 5
                 },
-                id: '4cfe615f-9d76-4d07-a60d-5ce7f571ab1e'
+                id: '7f2a3ce0-3227-48cd-9d83-ed2e741cc4f4'
             },
             {
                 name: 'Maitian, is the Moon Big?',
@@ -167,7 +167,7 @@ const puzzles = [
             {
                 name: 'Hidden Diamonds?',
                 description: `I've been foolin' you the whole time, because... I've been hiding my diamonds... OVER... HERE!!! Wait, there are no diamonds in this game.<br><br>Though, those monsters seem to be hidden pretty well. Where are they? Hold up, you can see everything here anyways. What?`,
-                saveCode: '50-50;0000;stone-166:air-6:stone-43:air-8:stone-41:air-14:stone-5:air-5:stone-26:air-27:stone-9:basalt-10:stone-3:air-32:stone-5:basalt-12:stone:air-32:wood-2:air-3:basalt-13:air-37:basalt-16:air-34:basalt-17:air-30:stone-3:basalt-20:air-10:basalt-11:air-2:basalt-4:stone-3:basalt-41:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air:basalt-47:stone-2:air:stone-8:basalt-37:stone-13:basalt-35:stone-15:basalt-20:air-5:basalt-10:stone-15:air-2:basalt-12:air-12:basalt-8:stone-5:air-34:crate:air-2:basalt-7:stone-6:air-11:water-27:basalt-4:gravel-3:stone-5:air-5:gunpowder-4:air-2:water-2:gravel-4:water-16:gravel-4:stone-3:gravel-5:stone-16:gravel-34:stone-6:basalt-9:stone:gravel-34:stone-5:basalt-11:gravel-31:stone-6:basalt-2:air-3:basalt-8:stone-11:gravel-18:stone-2:air-19:stone-12:gravel-8:stone-10:air-5:gunpowder-2:c4:air-6:c4-2:air-4:stone-15:gravel-3:stone-11:c4-2:air-3:c4-5:air-5:c4-3:air-2:c4:stone-29:c4-2:air-3:crate-5:air-4:c4-7:stone-29:basalt-2:water-9:basalt-3:c4-7:basalt-10:stone-19:basalt-35:stone-14:basalt-39:stone-5:basalt-128:;9c4:;a6:6:2b:8:29:e:5:5:1a:1b:16:20:12:20:2:3:d:25:10:22:11:1e:17:a:74e:;689:1:48:1:2c:1:fd:1:65:2:2a:1:134:;9c4:',
+                saveCode: '50-50;0000;stone-166:air-6:stone-43:air-8:stone-41:air-14:stone-5:air-5:stone-26:air-27:stone-9:basalt-10:stone-3:air-32:stone-5:basalt-12:stone:air-32:wood-2:air-3:basalt-13:air-37:basalt-16:air-34:basalt-17:air-30:stone-3:basalt-20:air-10:basalt-11:air-2:basalt-4:stone-3:basalt-41:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air-2:basalt-48:air:basalt-47:stone-2:air:stone-8:basalt-37:stone-13:basalt-35:stone-15:basalt-20:air-5:basalt-10:stone-15:air-2:basalt-12:air-12:basalt-8:stone-5:air-34:crate:air-2:basalt-7:stone-6:air-11:water-27:basalt-4:gravel-3:stone-5:air-11:water-2:gravel-4:water-16:gravel-12:stone-9:basalt:air-5:stone:gravel-34:stone-8:basalt-2:air:gunpowder-3:basalt:stone:gravel-34:stone-5:basalt-11:gravel-31:stone-6:basalt-2:air-3:basalt-8:stone-11:gravel-18:stone-2:air-19:stone-12:gravel-8:stone-8:c4-3:air-4:gunpowder-2:c4:air-6:c4-2:air-4:stone-15:gravel-3:stone-10:c4-3:air-3:c4-5:air-5:c4-3:air-2:c4:stone-28:c4-3:air-3:crate-5:air-4:c4-7:stone-29:basalt-2:water-9:basalt-3:c4-7:basalt-10:stone-19:basalt-35:stone-14:basalt-39:stone-5:basalt-128:;9c4:;a6:6:2b:8:29:e:5:5:1a:1b:16:20:12:20:2:3:d:25:10:22:11:1e:17:a:74e:;689:1:ac:1:c6:1:65:2:2a:1:134:;9c4:',
                 backgroundColor: '#adadad',
                 inventory: {
                     dirt: 2,
@@ -181,7 +181,7 @@ const puzzles = [
                     gunpowder: 5,
                     c4: 5
                 },
-                id: '405353d3-cac4-4d8d-95c3-c01bd6826019'
+                id: '59c66923-7f80-4f05-9206-6f4b475f917f'
             },
             {
                 name: 'Creeper!?!?',
@@ -277,8 +277,8 @@ const puzzles = [
             },
             {
                 name: 'Explosive Rafting',
-                description: `Is it even proper to call <i>that</i> a raft? Is that explosives I see?<br><br><i>Level credits: Billiam</i>`,
-                saveCode: '50-50;0000;air-1039:wood:air-49:wood:air-49:wood:air-49:wood:air-49:wood:air-6:wood:air-42:wood:air-6:wood:air-42:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-12:wood:air-5:wood:air-16:wood:air-6:wood:air-4:wood-6:concrete-7:wood-10:air-8:wood-3:air-4:wood:air-6:wood:air-3:wood:air-5:glass:concrete-7:air-2:wood:air-5:wood:air-11:wood-23:concrete-7:air-2:wood:air-5:wood:air-14:wood:gunpowder-10:c4-8:wood:concrete-7:air-2:wood:air-5:wood:air-15:wood:gunpowder-8:c4-8:wood:air:concrete-7:water-2:wood:water-5:wood:water-16:wood-2:gunpowder-4:c4-8:wood-2:water-2:concrete-7:sand-2:wood:water-5:wood:water-18:wood-12:water-4:concrete-7:sand-2:wood:sand-2:water-3:wood:water-34:concrete-7:sand-2:wood:sand-3:water-2:wood:water-34:concrete-7:sand-2:wood:sand-5:wood:sand:water-33:concrete-7:sand-2:wood:sand-5:wood:sand-3:water-31:concrete-7:sand-2:wood:sand-5:wood:sand-5:water-29:;9c4:;44c:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:9:1:5:1:1:247:;27:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:ce:1:87:1:232:1:1d:1:36:1:3:1:2:1:3:1:5:2:1f5:;9c4:',
+                description: `Is it even correct to call <i>that</i> a raft? Is that explosives I see?<br><br><i>Level credits: Billiam</i>`,
+                saveCode: '50-50;0000;air-1039:wood:air-49:wood:air-49:wood:air-49:wood:air-49:wood:air-6:wood:air-42:wood:air-6:wood:air-42:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-12:wood:air-5:wood:air-16:wood:air-6:wood:air-4:wood-6:concrete-7:wood-10:air-7:wood-4:air-4:wood:air-6:wood:air-3:wood:air-5:glass:concrete-7:air-2:wood:air-5:wood:air-11:wood-23:concrete-7:air-2:wood:air-5:wood:air-14:wood:gunpowder-10:c4-8:wood:concrete-7:air-2:wood:air-5:wood:air-15:wood:gunpowder-8:c4-8:wood:air:concrete-7:water-2:wood:water-5:wood:water-16:wood-2:gunpowder-4:c4-8:wood-2:water-2:concrete-7:sand-2:wood:water-5:wood:water-18:wood-12:water-4:concrete-7:sand-2:wood:sand-2:water-3:wood:water-34:concrete-7:sand-2:wood:sand-3:water-2:wood:water-34:concrete-7:sand-2:wood:sand-5:wood:sand:water-33:concrete-7:sand-2:wood:sand-5:wood:sand-3:water-31:concrete-7:sand-2:wood:sand-5:wood:sand-5:water-29:;9c4:;44c:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:9:1:5:1:1:247:;27:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:ce:1:87:1:232:1:1c:1:37:1:3:1:2:1:3:1:5:2:1f5:;9c4:',
                 backgroundColor: '#65b7c7',
                 inventory: {
                     grass: 5,
@@ -287,7 +287,7 @@ const puzzles = [
                     concrete_powder: 6,
                     concrete: 10
                 },
-                id: 'ee55c18e-0f5a-4d21-8ffe-b279fde1a880'
+                id: '80a0397c-eb7c-44cd-9cf3-bc8baf5da6b5'
             },
             {
                 name: 'Frozen Lake Rafting',
@@ -336,7 +336,7 @@ const puzzles = [
             {
                 name: 'Sunset Rose Rafting',
                 description: `That's a cool sunset. It's not the best looking scenery to be in, but at least this river isn't radiator fluid.`,
-                saveCode: '1-1;0000;air:;1:;0:1:;0:1:;1:',
+                saveCode: '50-50;0000;air-305:grass-6:air-44:stone-6:air-44:stone-5:air-46:stone-3:air-23:leaves-2:air-23:stone-2:air-21:leaves-4:air-46:leaves-2:wood:leaves-2:air-46:wood:leaves-3:air-46:wood:air:leaves:air-47:wood:air-46:grass-3:dirt:grass:air-44:grass:dirt-5:grass-2:air-42:stone-8:air-42:stone-8:air-42:stone-7:air-44:stone-6:air-44:stone-4:air-47:stone-3:air-47:stone-2:air-625:wood:air-24:leaves:wood:leaves-2:air-21:wood:air-24:leaves:wood:leaves-2:air-21:wood:air-24:leaves:wood:leaves-2:air-21:wood:air-24:leaves:wood:leaves-2:air-18:crate:air-2:wood:air-25:wood:air-19:wood:crate:bricks-2:wood:basalt:lava:basalt:air:sponge:wood:air-19:wood:air-19:wood-2:bricks-2:wood:basalt-3:wood-3:air-15:crate-7:air-15:water-4:wood-7:water-138:mud-5:water-42:mud-3:dirt-5:mud-4:water-35:mud-3:dirt-4:stone:dirt-3:clay:dirt-2:clay:mud-5:water-24:mud-6:dirt-2:clay-3:stone-5:dirt-5:clay:dirt:clay-3:silt-24:clay-4:dirt-2:clay-3:dirt:stone-3:;9c4:;0:1f:13:1f:13:1f:13:1f:13:1f:13:1f:13:5:6:14:13:5:6:14:13:5:5:15:13:6:3:16:13:7:2:15:14:1e:14:1f:13:1f:13:1f:13:1c:16:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:4f9:;81f:1:1:1:1a2:;9c4:',
                 backgroundColor: new Function('let fn = ' + function () {
                     let a = ctx.createLinearGradient(0, 0, 0, canvasResolution);
                     a.addColorStop(0, '#028a9b');
@@ -349,8 +349,14 @@ const puzzles = [
                     return a;
                 }.toString() + '; return fn()')(),
                 inventory: {
+                    sand: 4,
+                    water: 3,
+                    dirt: 5,
+                    bricks: 25,
+                    crate: 2,
+
                 },
-                id: 'guh'
+                id: '420b583a-98e4-4c0b-9fc1-a22bd5ebaead'
             },
         ]
     },
