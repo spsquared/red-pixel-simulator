@@ -2409,6 +2409,270 @@ const pixels = {
         id: 'sticky_piston_down',
         numId: 0
     },
+    push_piston_left: {
+        name: 'Piston (Left)',
+        description: 'Pushes pixels in front of it without moving',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
+                });
+            });
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                let end = x + width;
+                for (let i = x; i < end; i++) {
+                    fillPixels(i + 1 / 2, y, 1 / 2, height, ctx);
+                }
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
+                return;
+            }
+            push(x, y, 0, false);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(0, 50 / 3, 25, 50 / 3);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(25, 0, 25, 50);
+        },
+        prerender: function () { },
+        recipe: {
+            color_cyan: 1,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 0,
+        group: 1,
+        updateStage: 3,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'push_piston_left',
+        numId: 0
+    },
+    push_piston_up: {
+        name: 'Pusher (Up)',
+        description: 'Pushes pixels in front of it without moving',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 3, y2, 1 / 3, 1 / 2, ctx);
+                });
+            });
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                let end = y + height;
+                for (let i = y; i < end; i++) {
+                    fillPixels(x, i + 1 / 2, width, 1 / 2, ctx);
+                }
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
+                return;
+            }
+            push(x, y, 1, false);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(50 / 3, 0, 50 / 3, 25);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 25, 50, 25);
+        },
+        prerender: function () { },
+        recipe: {
+            color_cyan: 1,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 1,
+        group: 1,
+        updateStage: 1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'push_piston_up',
+        numId: 0
+    },
+    push_piston_right: {
+        name: 'Pusher (Right)',
+        description: 'Pushes pixels in front of it without moving',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
+                });
+            });
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                let end = x + width;
+                for (let i = x; i < end; i++) {
+                    fillPixels(i, y, 1 / 2, height, ctx);
+                }
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
+                return;
+            }
+            push(x, y, 2, false);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(25, 50 / 3, 25, 50 / 3);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 25, 50);
+        },
+        prerender: function () { },
+        recipe: {
+            color_cyan: 1,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 2,
+        group: 1,
+        updateStage: 4,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'push_piston_right',
+        numId: 0
+    },
+    push_piston_down: {
+        name: 'Pusher (Down)',
+        description: 'Pushes pixels in front of it without moving',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 3, y2 + 1 / 2, 1 / 3, 1 / 2, ctx);
+                });
+            });
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                let end = y + height;
+                for (let i = y; i < end; i++) {
+                    fillPixels(x, i, width, 1 / 2, ctx);
+                }
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+                nextGrid[y][x] = pixNum.ASH;
+                teamGrid[y][x] = 0;
+                return;
+            }
+            push(x, y, 3, false);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(50 / 3, 25, 50 / 3, 25);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 25);
+        },
+        prerender: function () { },
+        recipe: {
+            color_cyan: 1,
+            color_blue: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 6,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 3,
+        group: 1,
+        updateStage: 2,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'push_piston_down',
+        numId: 0
+    },
     cloner_left: {
         name: 'Copier (Left)',
         description: 'Copies pixels from its right to its left',
@@ -4141,8 +4405,10 @@ const pixels = {
             fillPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            sand: 1,
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,

@@ -760,7 +760,7 @@ function flow(x, y, isPassable = isAir) {
     }
 };
 function canPush(x, y, dir, ignorePistons = false) {
-    if (!pixelAt(x, y).pushable || (grid[y][x] == pixNum.GOAL && targetGrid[y][x])) return false;
+    if (!validChangingPixel(x, y) || !pixelAt(x, y).pushable || (grid[y][x] == pixNum.GOAL && targetGrid[y][x])) return false;
     switch (dir) {
         case 0:
             return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_RIGHT && grid[y][x] != pixNum.STICKY_PISTON_RIGHT));
@@ -820,16 +820,15 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveX; i < x; i++) {
                     if (!canMoveTo(i, y)) return false;
                 }
+                if (!movePusher) x--;
                 for (let i = moveX; i < x; i++) {
                     nextGrid[y][i] = grid[y][i + 1];
                     fireGrid[y][i] = fireGrid[y][i + 1];
                     teamGrid[y][i] = teamGrid[y][i + 1];
                 }
-                if (movePusher) {
-                    nextGrid[y][x] = pixNum.AIR;
-                    fireGrid[y][x] = false;
-                    teamGrid[y][x] = 0;
-                }
+                nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
+                teamGrid[y][x] = 0;
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
                 }
@@ -855,16 +854,15 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveY; i < y; i++) {
                     if (!canMoveTo(x, i)) return false;
                 }
+                if (!movePusher) y--;
                 for (let i = moveY; i < y; i++) {
                     nextGrid[i][x] = grid[i + 1][x];
                     fireGrid[i][x] = fireGrid[i + 1][x];
                     teamGrid[i][x] = teamGrid[i + 1][x];
                 }
-                if (movePusher) {
-                    nextGrid[y][x] = pixNum.AIR;
-                    fireGrid[y][x] = false;
-                    teamGrid[y][x] = 0;
-                }
+                nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
+                teamGrid[y][x] = 0;
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
                 }
@@ -890,16 +888,15 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveX; i > x; i--) {
                     if (!canMoveTo(i, y)) return false;
                 }
+                if (!movePusher) x++;
                 for (let i = moveX; i > x; i--) {
                     nextGrid[y][i] = grid[y][i - 1];
                     fireGrid[y][i] = fireGrid[y][i - 1];
                     teamGrid[y][i] = teamGrid[y][i - 1];
                 }
-                if (movePusher) {
-                    nextGrid[y][x] = pixNum.AIR;
-                    fireGrid[y][x] = false;
-                    teamGrid[y][x] = 0;
-                }
+                nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
+                teamGrid[y][x] = 0;
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
                 }
@@ -925,16 +922,15 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveY; i > y; i--) {
                     if (!canMoveTo(x, i)) return false;
                 }
+                if (!movePusher) y++;
                 for (let i = moveY; i > y; i--) {
                     nextGrid[i][x] = grid[i - 1][x];
                     fireGrid[i][x] = fireGrid[i - 1][x];
                     teamGrid[i][x] = teamGrid[i - 1][x];
                 }
-                if (movePusher) {
-                    nextGrid[y][x] = pixNum.AIR;
-                    fireGrid[y][x] = false;
-                    teamGrid[y][x] = 0;
-                }
+                nextGrid[y][x] = pixNum.AIR;
+                fireGrid[y][x] = false;
+                teamGrid[y][x] = 0;
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
                 }
@@ -1710,7 +1706,7 @@ function drawUI() {
     let fpsText = `FPS: ${frameList.length} ${debugInfo ? `(${frameTime.toFixed(1)}ms/${averageFrameTime.toFixed(1)}ms)` : ''}`;
     let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(1)}ms/${averageTickTime.toFixed(1)}ms)` : ''}`;
     let brushSizeText = `Brush Size: ${(brush.isSelection && selection.grid[0] !== undefined) ? '-' : brush.size * 2 - 1}`;
-    let brushPixelText = (brush.isSelection && selection.grid[0] !== undefined) ? `Brush: Paste` : `Brush Pixel: ${pixelData(brush.pixel).name}`;
+    let brushPixelText = (brush.isSelection && selection.grid[0] !== undefined) ? `Brush: Paste` : `Brush Pixel: ${pixels[brush.pixel].name}`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
     ctx.fillStyle = '#FFF5';
     ctx.fillRect(1, 0, ctx.measureText(fpsText).width + 4, 20);
