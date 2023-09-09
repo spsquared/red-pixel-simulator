@@ -1587,6 +1587,124 @@ const pixels = {
         id: 'bricks',
         numId: 0
     },
+    glass: {
+        name: 'Glass',
+        description: 'For some reason you can see it',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                redrawing && clearPixels(x, y, width, height, ctx);
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(240, 240, 245)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(2, 12, 10, 10);
+            ctx.fillRect(12, 2, 10, 10);
+            ctx.fillRect(38, 28, 10, 10);
+            ctx.fillRect(28, 38, 10, 10);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(25);
+            ctx.fillStyle = 'rgba(180, 180, 210, 0.3)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            clearPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
+            clearPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
+            clearPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
+            clearPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
+            fillPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
+            fillPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
+            fillPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
+            fillPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: { },
+        craftAmount: 0,
+        prerenderedFrames: [],
+        blastResistance: 0,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        group: 0,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'glass',
+        numId: 0
+    },
+    reinforced_glass: {
+        name: 'Reinforced Glass',
+        description: 'Really heavy glass that happens to also be heat-resistant',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                redrawing && clearPixels(x, y, width, height, ctx);
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(240, 240, 245)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(2, 12, 10, 10);
+            ctx.fillRect(12, 2, 10, 10);
+            ctx.fillRect(38, 28, 10, 10);
+            ctx.fillRect(28, 38, 10, 10);
+            ctx.fillStyle = 'rgb(220, 220, 230)';
+            ctx.fillRect(0, 0, 50, 5);
+            ctx.fillRect(45, 0, 5, 50);
+            ctx.fillRect(0, 45, 50, 5);
+            ctx.fillRect(0, 0, 5, 50);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(150);
+            ctx.fillStyle = 'rgba(180, 180, 210, 0.3)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            clearPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
+            clearPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
+            clearPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
+            clearPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
+            fillPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
+            fillPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
+            fillPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
+            fillPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
+            ctx.fillStyle = 'rgb(220, 220, 230)';
+            fillPixels(0, 0, 1, 1 / 10);
+            fillPixels(9 / 10, 0, 1 / 10, 1);
+            fillPixels(0, 9 / 10, 1, 1 / 10);
+            fillPixels(0, 0, 1 / 10, 1);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: { },
+        craftAmount: 0,
+        prerenderedFrames: [],
+        blastResistance: 7,
+        flammability: 0,
+        pushable: false,
+        cloneable: true,
+        rotateable: false,
+        group: 0,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'reinforced_glass',
+        numId: 0
+    },
     crate: {
         name: 'Wooden Crate',
         description: 'A crate made of wood that floats on water (and other stuff)',
@@ -2201,8 +2319,8 @@ const pixels = {
                 return;
             }
             if (push((x < gridWidth - 1 && canPush(x + 1, y, 0)) ? x + 1 : x, y, 0)) {
-                if (y > 0 && canPush(x, y - 1, 0)) push(x, y - 1, 0);
-                if (y < gridHeight - 1 && canPush(x, y + 1, 0)) push(x, y + 1, 0);
+                if (y > 0 && canPush(x, y - 1, 0) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 0);
+                if (y < gridHeight - 1 && canPush(x, y + 1, 0) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 0);
             }
         },
         drawPreview: function (ctx) {
@@ -2259,8 +2377,8 @@ const pixels = {
                 return;
             }
             if (push(x, (y < gridHeight - 1 && canPush(x, y + 1, 1)) ? y + 1 : y, 1)) {
-                if (x > 0 && canPush(x - 1, y, 1)) push(x - 1, y, 1);
-                if (x < gridWidth - 1 && canPush(x + 1, y, 1)) push(x + 1, y, 1);
+                if (x > 0 && canPush(x - 1, y, 1) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 1);
+                if (x < gridWidth - 1 && canPush(x + 1, y, 1) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 1);
             }
         },
         drawPreview: function (ctx) {
@@ -2317,8 +2435,8 @@ const pixels = {
                 return;
             }
             if (push((x > 0 && canPush(x - 1, y, 0)) ? x - 1 : x, y, 2)) {
-                if (y > 0 && canPush(x, y - 1, 0)) push(x, y - 1, 2);
-                if (y < gridHeight - 1 && canPush(x, y + 1, 0)) push(x, y + 1, 2);
+                if (y > 0 && canPush(x, y - 1, 0) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 2);
+                if (y < gridHeight - 1 && canPush(x, y + 1, 0) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 2);
             }
         },
         drawPreview: function (ctx) {
@@ -2375,8 +2493,8 @@ const pixels = {
                 return;
             }
             if (push(x, (y > 0 && canPush(x, y - 1, 3)) ? y - 1 : y, 3)) {
-                if (x > 0 && canPush(x - 1, y, 3)) push(x - 1, y, 3);
-                if (x < gridWidth - 1 && canPush(x + 1, y, 3)) push(x + 1, y, 3);
+                if (x > 0 && canPush(x - 1, y, 3) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 3);
+                if (x < gridWidth - 1 && canPush(x + 1, y, 3) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 3);
             }
         },
         drawPreview: function (ctx) {
@@ -3935,7 +4053,7 @@ const pixels = {
     },
     cloner_deactivator: {
         name: 'Cloner Deactivator',
-        description: 'Deactivates cloners and copiers that are touching it',
+        description: 'Deactivates cloners and copiers that are touching it... and also uncollectable by collectors',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
@@ -4056,6 +4174,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            // CONSUME THE RESOURCES!!!!
             let path = getLaserPath(x, y, 0);
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
@@ -4088,10 +4207,10 @@ const pixels = {
         prerender: function () { },
         recipe: {
             color_violet: 8,
-            color_green: 36,
-            color_red: 36,
-            color_blue: 36,
-            lava_heater: 1,
+            color_green: 96,
+            color_red: 96,
+            color_blue: 96,
+            lava_heater: 6,
             concrete: 1,
             glass: 2,
             mirror_any: 9
@@ -4173,10 +4292,10 @@ const pixels = {
         prerender: function () { },
         recipe: {
             color_violet: 8,
-            color_green: 36,
-            color_red: 36,
-            color_blue: 36,
-            lava_heater: 1,
+            color_green: 96,
+            color_red: 96,
+            color_blue: 96,
+            lava_heater: 6,
             concrete: 1,
             glass: 2,
             mirror_any: 9
@@ -4258,10 +4377,10 @@ const pixels = {
         prerender: function () { },
         recipe: {
             color_violet: 8,
-            color_green: 36,
-            color_red: 36,
-            color_blue: 36,
-            lava_heater: 1,
+            color_green: 96,
+            color_red: 96,
+            color_blue: 96,
+            lava_heater: 6,
             concrete: 1,
             glass: 2,
             mirror_any: 9
@@ -4343,10 +4462,10 @@ const pixels = {
         prerender: function () { },
         recipe: {
             color_violet: 8,
-            color_green: 36,
-            color_red: 36,
-            color_blue: 36,
-            lava_heater: 1,
+            color_green: 96,
+            color_red: 96,
+            color_blue: 96,
+            lava_heater: 6,
             concrete: 1,
             glass: 2,
             mirror_any: 9
@@ -4367,126 +4486,6 @@ const pixels = {
         pickable: true,
         pixsimPickable: true,
         id: 'laser_down',
-        numId: 0
-    },
-    glass: {
-        name: 'Glass',
-        description: 'For some reason you can see it',
-        draw: function (rectangles, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                redrawing && clearPixels(x, y, width, height, ctx);
-                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
-            });
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(240, 240, 245)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
-            ctx.fillRect(2, 12, 10, 10);
-            ctx.fillRect(12, 2, 10, 10);
-            ctx.fillRect(38, 28, 10, 10);
-            ctx.fillRect(28, 38, 10, 10);
-        },
-        prerender: function () {
-            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(25);
-            ctx.fillStyle = 'rgba(180, 180, 210, 0.3)';
-            fillPixels(0, 0, 1, 1);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            clearPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
-            clearPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
-            clearPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
-            clearPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
-            fillPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
-            fillPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
-            fillPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
-            fillPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
-            this.prerenderedFrames.push(toImage());
-        },
-        recipe: {
-            sand: 1,
-        },
-        craftAmount: 1,
-        prerenderedFrames: [],
-        blastResistance: 0,
-        flammability: 0,
-        pushable: true,
-        cloneable: true,
-        rotateable: false,
-        group: 2,
-        updateStage: -1,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        pixsimPickable: true,
-        id: 'glass',
-        numId: 0
-    },
-    reinforced_glass: {
-        name: 'Reinforced Glass',
-        description: 'Really heavy glass that happens to also be heat-resistant',
-        draw: function (rectangles, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                redrawing && clearPixels(x, y, width, height, ctx);
-                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
-            });
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(240, 240, 245)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
-            ctx.fillRect(2, 12, 10, 10);
-            ctx.fillRect(12, 2, 10, 10);
-            ctx.fillRect(38, 28, 10, 10);
-            ctx.fillRect(28, 38, 10, 10);
-            ctx.fillStyle = 'rgb(220, 220, 230)';
-            ctx.fillRect(0, 0, 50, 5);
-            ctx.fillRect(45, 0, 5, 50);
-            ctx.fillRect(0, 45, 50, 5);
-            ctx.fillRect(0, 0, 5, 50);
-        },
-        prerender: function () {
-            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(150);
-            ctx.fillStyle = 'rgba(180, 180, 210, 0.3)';
-            fillPixels(0, 0, 1, 1);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            clearPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
-            clearPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
-            clearPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
-            clearPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
-            fillPixels(1 / 25, 6 / 25, 1 / 5, 1 / 5);
-            fillPixels(6 / 25, 1 / 25, 1 / 5, 1 / 5);
-            fillPixels(19 / 25, 14 / 25, 1 / 5, 1 / 5);
-            fillPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
-            ctx.fillStyle = 'rgb(220, 220, 230)';
-            fillPixels(0, 0, 1, 1 / 10);
-            fillPixels(9 / 10, 0, 1 / 10, 1);
-            fillPixels(0, 9 / 10, 1, 1 / 10);
-            fillPixels(0, 0, 1 / 10, 1);
-            this.prerenderedFrames.push(toImage());
-        },
-        recipe: { },
-        craftAmount: 0,
-        prerenderedFrames: [],
-        blastResistance: 7,
-        flammability: 0,
-        pushable: false,
-        cloneable: true,
-        rotateable: false,
-        group: 2,
-        updateStage: -1,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        pixsimPickable: true,
-        id: 'reinforced_glass',
         numId: 0
     },
     laser_scatterer: {
@@ -5913,8 +5912,12 @@ _ => @
 _# => @.
 _@    ._`],
         processedRules: [],
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            sand: 999999999,
+            color_red: 999999999,
+            very_huge_nuke: 999999999
+        },
+        craftAmount: 0.1,
         prerenderedFrames: [],
         blastResistance: 5,
         flammability: 0,
@@ -6302,6 +6305,39 @@ _@    ._`],
         pickable: true,
         pixsimPickable: false,
         id: 'pixelite_crystal',
+        numId: 0
+    },
+    collector: {
+        name: 'Collector',
+        description: 'Collects',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 4) % 24], ctx);
+            });
+        },
+        update: function (x, y) {
+            // if touch pixel collect it unless cloner deactivator
+        },
+        drawPreview: function (ctx) {
+        },
+        prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
+        prerenderedFrames: [],
+        blastResistance: 14,
+        flammability: 2,
+        pushable: false,
+        cloneable: false,
+        rotateable: false,
+        group: 6,
+        updateStage: 0,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        id: 'collector',
         numId: 0
     },
     generic_color_well: {
@@ -7019,8 +7055,8 @@ _@    ._`],
         recipe: { },
         craftAmount: 0,
         prerenderedFrames: [],
-        blastResistance: 19,
-        flammability: 0,
+        blastResistance: 12,
+        flammability: 2,
         pushable: true,
         cloneable: false,
         rotateable: false,

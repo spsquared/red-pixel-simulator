@@ -809,8 +809,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                if (grid[y][i] == pixNum.SLIME && y > 0 && !isAir(i, y - 1) && pixelAt(i, y - 1).pushable) slimePushes.push([i, y - 1]);
-                if (grid[y][i] == pixNum.SLIME && y < gridHeight - 1 && !isAir(i, y + 1) && pixelAt(i, y + 1).pushable) slimePushes.push([i, y + 1]);
+                if (grid[y][i] == pixNum.SLIME && y > 0 && !isAir(i, y - 1) && canPush(i, y - 1, 0, ignorePistons)) slimePushes.push([i, y - 1]);
+                if (grid[y][i] == pixNum.SLIME && y < gridHeight - 1 && !isAir(i, y + 1) && canPush(i, y + 1, 0, ignorePistons)) slimePushes.push([i, y + 1]);
                 if (!canPush(i, y, 0, ignorePistons)) break;
             }
             if (moveX === -1 && lastCollapsible !== -1) {
@@ -843,8 +843,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                if (grid[i][x] == pixNum.SLIME && x > 0 && !isAir(x - 1, i) && pixelAt(x - 1, i).pushable) slimePushes.push([x - 1, i]);
-                if (grid[i][x] == pixNum.SLIME && x < gridHeight - 1 && !isAir(x + 1, i) && pixelAt(x + 1, i).pushable) slimePushes.push([x + 1, i]);
+                if (grid[i][x] == pixNum.SLIME && x > 0 && !isAir(x - 1, i) && canPush(x - 1, i, 1, ignorePistons)) slimePushes.push([x - 1, i]);
+                if (grid[i][x] == pixNum.SLIME && x < gridHeight - 1 && !isAir(x + 1, i) && canPush(x + 1, i, 1, ignorePistons)) slimePushes.push([x + 1, i]);
                 if (!canPush(x, i, 1, ignorePistons)) break;
             }
             if (moveY === -1 && lastCollapsible !== -1) {
@@ -877,8 +877,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                if (grid[y][i] == pixNum.SLIME && y > 0 && !isAir(i, y - 1) && pixelAt(i, y - 1).pushable) slimePushes.push([i, y - 1]);
-                if (grid[y][i] == pixNum.SLIME && y < gridHeight - 1 && !isAir(i, y + 1) && pixelAt(i, y + 1).pushable) slimePushes.push([i, y + 1]);
+                if (grid[y][i] == pixNum.SLIME && y > 0 && !isAir(i, y - 1) && canPush(i, y - 1, 2, ignorePistons)) slimePushes.push([i, y - 1]);
+                if (grid[y][i] == pixNum.SLIME && y < gridHeight - 1 && !isAir(i, y + 1) && canPush(i, y + 1, 2, ignorePistons)) slimePushes.push([i, y + 1]);
                 if (!canPush(i, y, 2, ignorePistons)) break;
             }
             if (moveX === -1 && lastCollapsible !== -1) {
@@ -911,8 +911,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 }
                 if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
-                if (grid[i][x] == pixNum.SLIME && x > 0 && !isAir(x - 1, i) && pixelAt(x - 1, i).pushable) slimePushes.push([x - 1, i]);
-                if (grid[i][x] == pixNum.SLIME && x < gridHeight - 1 && !isAir(x + 1, i) && pixelAt(x + 1, i).pushable) slimePushes.push([x + 1, i]);
+                if (grid[i][x] == pixNum.SLIME && x > 0 && !isAir(x - 1, i) && canPush(x - 1, i, 1, ignorePistons)) slimePushes.push([x - 1, i]);
+                if (grid[i][x] == pixNum.SLIME && x < gridHeight - 1 && !isAir(x + 1, i) && canPush(x + 1, i, 1, ignorePistons)) slimePushes.push([x + 1, i]);
                 if (!canPush(x, i, 3, ignorePistons)) break;
             }
             if (moveY === -1 && lastCollapsible !== -1) {
@@ -1564,12 +1564,12 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
 function drawBrush() {
     if (!fastSimulation && !brush.selecting && !inWinScreen) {
         if (brush.isSelection && selection.grid[0] !== undefined) {
-            let x1 = Math.min(gridWidth, Math.max(0, Math.floor(mXGrid - selection.grid[0].length / 2)));
-            let x2 = Math.min(gridWidth - 1, Math.max(-1, Math.floor(mXGrid + selection.grid[0].length / 2) - 1));
-            let y1 = Math.min(gridHeight, Math.max(0, Math.floor(mYGrid - selection.grid.length / 2)));
-            let y2 = Math.min(gridHeight - 1, Math.max(-1, Math.floor(mYGrid + selection.grid.length / 2) - 1));
-            let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
-            let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
+            let x1 = Math.min(gridWidth, Math.max(0, Math.ceil(mXGrid - selection.grid[0].length / 2)));
+            let x2 = Math.min(gridWidth - 1, Math.max(-1, Math.ceil(mXGrid + selection.grid[0].length / 2) - 1));
+            let y1 = Math.min(gridHeight, Math.max(0, Math.ceil(mYGrid - selection.grid.length / 2)));
+            let y2 = Math.min(gridHeight - 1, Math.max(-1, Math.ceil(mYGrid + selection.grid.length / 2) - 1));
+            let offsetX = Math.ceil(mXGrid - selection.grid[0].length / 2);
+            let offsetY = Math.ceil(mYGrid - selection.grid.length / 2);
             for (let y = 0; y < selection.grid.length; y++) {
                 for (let x = 0; x < selection.grid[y].length; x++) {
                     if (x + offsetX >= 0 && x + offsetX < gridWidth && y + offsetY >= 0 && y + offsetY < gridHeight) {
@@ -1586,6 +1586,7 @@ function drawBrush() {
         } else if (brush.lineMode && !brush.startsInRPE) {
             const clickPixelNum = (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
             bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
+            bufferctx.globalCompositeOperation = 'source-over';
             brushActionLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.size, (rect) => {
                 drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 1, bufferctx, true);
             });
@@ -1601,8 +1602,12 @@ function drawBrush() {
             ctx.strokeRect(rect.xmin * drawScale - camera.x, rect.ymin * drawScale - camera.y, (rect.xmax - rect.xmin + 1) * drawScale, (rect.ymax - rect.ymin + 1) * drawScale);
             ctx.globalCompositeOperation = 'source-over';
         } else {
-            let rect = calcBrushRectCoordinates(mXGrid, mYGrid)
-            drawPixels((brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 0.5, ctx, true);
+            let rect = calcBrushRectCoordinates(mXGrid, mYGrid);
+            bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
+            bufferctx.globalCompositeOperation = 'source-over';
+            drawPixels((brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 1, bufferctx, true);
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(bufferCanvas, 0, 0, canvasResolution, canvasResolution);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(255, 255, 255)';
             ctx.setLineDash([]);
@@ -1657,6 +1662,7 @@ function updateCamera() {
     camera.shakeIntensity *= 0.9;
 };
 function drawUI() {
+    ctx.globalAlpha = 1;
     ctx.fillStyle = '#000';
     ctx.font = '20px Source Code Pro';
     ctx.textBaseline = 'top';
@@ -1959,8 +1965,8 @@ function updateBrush() {
         } else if (brush.mouseButton != -1) {
             brush.lineMode = false;
             if (brush.isSelection && selection.grid[0] !== undefined && (!PixSimAPI.inGame || !PixSimAPI.spectating)) {
-                let offsetX = Math.floor(mXGrid - selection.grid[0].length / 2);
-                let offsetY = Math.floor(mYGrid - selection.grid.length / 2);
+                let offsetX = Math.ceil(mXGrid - selection.grid[0].length / 2);
+                let offsetY = Math.ceil(mYGrid - selection.grid.length / 2);
                 let modifiedPixelCounts = [];
                 for (let y = 0; y < selection.grid.length; y++) {
                     if (y + offsetY >= 0 && y + offsetY < gridHeight) for (let x = 0; x < selection.grid[y].length; x++) {
