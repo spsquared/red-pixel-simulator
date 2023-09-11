@@ -6320,6 +6320,7 @@ _@    ._`],
             // if touch pixel collect it unless cloner deactivator
         },
         drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
         },
         prerender: function () { },
         recipe: { },

@@ -606,12 +606,13 @@ function fall(x, y, xTravel, yTravel, isPassable = isPassableFluid) {
         if (isPassable(x, y + 1) && canMoveTo(x, y + 1)) {
             move(x, y, x, y + 1);
         } else if (y < gridHeight - yTravel) {
-            let slideLeft = x >= xTravel && canMoveTo(x - 1, y);
-            let slideRight = x < gridWidth - xTravel && canMoveTo(x + 1, y);
+            let slideLeft = canMoveTo(x - 1, y);
+            let slideRight = canMoveTo(x + 1, y);
             let canMoveLeftDiagonal = false;
             let canMoveRightDiagonal = false;
             if (slideLeft) {
-                for (let i = x - 1; i >= x - xTravel; i--) {
+                let xmin = Math.max(x - xTravel, 0);
+                for (let i = x - 1; i >= xmin; i--) {
                     if (!isPassable(i, y)) {
                         slideLeft = false;
                         break;
@@ -631,7 +632,8 @@ function fall(x, y, xTravel, yTravel, isPassable = isPassableFluid) {
                 }
             }
             if (slideRight) {
-                for (let i = x + 1; i <= x + xTravel; i++) {
+                let xmax = Math.min(gridWidth - 1, x + xTravel);
+                for (let i = x + 1; i <= xmax; i++) {
                     if (!isPassable(i, y)) {
                         slideRight = false;
                         break;
@@ -1259,7 +1261,7 @@ function explode(x1, y1, size, defer) {
         }
     }
     camera.shakeIntensity += size / (1 + camera.shakeIntensity * 0.5);
-    sounds.explosion(Math.pow(size / 80, 2));
+    sounds.explosion(4 * Math.pow(size / 80, 2));
 };
 function craftPixel(id, team) {
     // oof
@@ -1338,6 +1340,13 @@ function draw() {
         frameList.shift();
     }
     drawUI();
+
+    // mouse cursor
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = 'rgb(255, 255, 255)';
+    ctx.globalCompositeOperation = 'difference';
+    ctx.fillRect(mX - 4, mY - 4, 8, 8);
+    ctx.globalCompositeOperation = 'source-over';
 
     prevMXGrid = mXGrid;
     prevMYGrid = mYGrid;
@@ -1633,10 +1642,6 @@ function drawBrush() {
         ctx.lineJoin = 'miter';
         ctx.strokeRect(xmin * drawScale - camera.x, ymin * drawScale - camera.y, (xmax - xmin + 1) * drawScale, (ymax - ymin + 1) * drawScale);
     }
-    ctx.fillStyle = 'rgb(255, 255, 255)';
-    ctx.globalCompositeOperation = 'difference';
-    ctx.fillRect(mX - 4, mY - 4, 8, 8);
-    ctx.globalCompositeOperation = 'source-over';
 };
 function updateCamera() {
     if ((!simulationPaused || !fastSimulation) && acceptInputs && !inWinScreen) {
