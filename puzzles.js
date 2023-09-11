@@ -550,6 +550,7 @@ let currentPuzzleId = 0;
 let currentPuzzleCompleted = false;
 const winScreen = document.getElementById('winScreen');
 const winBox = document.getElementById('winBox');
+const winTicksText = document.getElementById('winTicks');
 const winReset = document.getElementById('winReset');
 const winNext = document.getElementById('winNext');
 const winMenu = document.getElementById('winMenu');
@@ -570,6 +571,7 @@ function triggerWin() {
     })));
     sounds.win();
     document.getElementById(`puzzleButton-${currentPuzzleId}`).classList.add('levelButtonCompleted');
+    winTicksText.innerText = ticks + ' Ticks';
     winScreen.style.opacity = '1';
     winScreen.style.pointerEvents = 'all';
     winBox.style.transform = 'translateY(-50%)';
