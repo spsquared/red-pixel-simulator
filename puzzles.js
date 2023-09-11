@@ -411,7 +411,7 @@ const puzzles = [
             {
                 name: 'Green Lasers',
                 description: `Green lasers are bad for your health, and they're especially bad for pixels. Luckily, you have <h>laser scatterers, which scatters the laser beam into harmless green light</h>. Give it a try.`,
-                saveCode: '25;0000;wall-26:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-3:laser_down-3:air-11:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-9:wood-8:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-20:air-5:wall-2:air-23:wall-2:air-23:wall-2:air-23:wall-2:air-3:goal:air-19:wall-2:air-23:wall-2:air-23:wall-2:air-23:wall-8:laser_up-4:wall-14:;271:;1a:11:1:5:2:11:1:5:2:11:1:5:2:3:3:b:1:5:2:11:1:5:2:11:1:5:2:11:1:5:2:11:1:5:2:11:1:5:2:11:1:3:1:1:2:a:1:4:1:1:1:5:2:9:9:5:2:a:6:1:1:5:2:a:6:1:1:5:2:a:6:1:1:5:14:5:2:6:c:5:2:6:c:5:2:6:c:5:2:3:1:2:c:5:2:6:c:5:2:6:c:5:2:6:c:5:1a:;16b:2:17:3:ea:;110:1:160:',
+                saveCode: '25;0000;wall-26:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-3:laser_down-3:air-11:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-9:wood-8:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-20:air-5:wall-2:air-23:wall-2:air-23:wall-2:air-23:wall-2:air-3:goal:air-19:wall-2:air-23:wall-2:air-23:wall-2:air-23:wall-8:laser_up-4:wall-14:;271:;1a:11:8:11:8:11:8:3:3:b:8:11:8:11:8:11:8:11:8:11:8:11:8:a:1:4:1:1:8:9:10:a:6:1:8:a:6:1:8:a:6:1:21:6:13:6:13:6:13:3:1:2:13:6:13:6:13:6:2b:;16b:2:17:3:ea:;110:1:160:',
                 backgroundColor: '#ffffff',
                 inventory: {
                     concrete: 1,
@@ -420,7 +420,7 @@ const puzzles = [
                     slider_horizontal: 2,
                     laser_scatterer: 3
                 },
-                id: '81224eff-f6dd-4268-a5aa-1d672e4ebf3a'
+                id: '592a78ca-5f9e-4845-a6db-37a16e37a2b9'
             },
             {
                 name: 'Breaking Thermodynamics',
