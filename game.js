@@ -765,13 +765,13 @@ function canPush(x, y, dir, ignorePistons = false) {
     if (!validChangingPixel(x, y) || !pixelAt(x, y).pushable || (grid[y][x] == pixNum.GOAL && targetGrid[y][x])) return false;
     switch (dir) {
         case 0:
-            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_RIGHT && grid[y][x] != pixNum.STICKY_PISTON_RIGHT));
+            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_RIGHT && grid[y][x] != pixNum.STICKY_PISTON_RIGHT && grid[y][x] != pixNum.PUSH_PISTON_RIGHT));
         case 1:
-            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_DOWN && grid[y][x] != pixNum.STICKY_PISTON_DOWN));
+            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_DOWN && grid[y][x] != pixNum.STICKY_PISTON_DOWN && grid[y][x] != pixNum.PUSH_PISTON_DOWN));
         case 2:
-            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_LEFT && grid[y][x] != pixNum.STICKY_PISTON_LEFT));
+            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_LEFT && grid[y][x] != pixNum.STICKY_PISTON_LEFT && grid[y][x] != pixNum.PUSH_PISTON_LEFT));
         case 3:
-            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_UP && grid[y][x] != pixNum.STICKY_PISTON_UP));
+            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_UP && grid[y][x] != pixNum.STICKY_PISTON_UP && grid[y][x] != pixNum.PUSH_PISTON_UP));
     }
     return false;
 };
