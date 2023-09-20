@@ -92,7 +92,8 @@ const loadingTips = [
     'Some levels are very RNG-based; messing around randomly usually works in those levels.',
     'There exists a few pixels that are not in the Pixel Picker...',
     '"Rafting Revisited" originally started as a play on how <span style="color: #0099FF;">Blue Pixel Simulator!</span> got multiple rafting puzzles as a "lazy workaround".',
-    '"War is only a cowardly escape from the problems of peace" - Thomas Mann'
+    '"War is only a cowardly escape from the problems of peace" - Thomas Mann',
+    '.-. . -.. / .--. .. -..- . .-.. / ... .. -- ..- .-.. .- - --- .-. -.-.--'
 ];
 const loadingTip = document.getElementById('loadingTip');
 function setLoadingTipInterval(tipDiv) {
@@ -286,6 +287,7 @@ sandboxButton.onclick = (e) => {
     levelSelect.style.transform = '';
     clearTimeout(startTitleBob);
     levelDetails.style.display = 'none';
+    pixelPickerCrafting.style.display = '';
     restartButton.style.display = 'none';
     pauseButton.disabled = false;
     fastSimulationButton.disabled = false;
@@ -355,6 +357,7 @@ function selectPuzzle() {
     if (!acceptMenuInputs) return;
     clearTimeout(startTitleBob);
     levelDetails.style.display = '';
+    pixelPickerCrafting.style.display = 'none';
     restartButton.style.display = '';
     pauseButton.disabled = false;
     fastSimulationButton.disabled = false;

@@ -1288,7 +1288,7 @@ const pixels = {
         name: 'Fire',
         description: 'AAAAAA!!! It burns!',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
-            if (noNoise) {
+            if (noNoise || avoidGrid) {
                 ctx.globalAlpha = opacity / 2;
                 ctx.fillStyle = 'rgb(255, 180, 0)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
@@ -1300,6 +1300,7 @@ const pixels = {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
                 });
+                bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
                 bufferctx.globalAlpha = 1;
                 bufferctx.fillStyle = 'rgb(255, 255, 0)';
                 bufferctx.fillRect(0, 0, canvasResolution, canvasResolution);
@@ -1321,7 +1322,7 @@ const pixels = {
             updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
             });
-            let aerated = updateTouchingPixel(x, y, pixNum.AIR);
+            let aerated = grid[y][x] == pixNum.AIR || updateTouchingPixel(x, y, pixNum.AIR);
             if (random() < (20 - flammability) / (aerated ? 280 : 20)) {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
             }
