@@ -1,11 +1,9 @@
 window.addEventListener('error', (e) => {
     modal('An error occured:', `<span style="color: red;">${e.message}<br>${e.filename} ${e.lineno}:${e.colno}</span>`, false);
 });
-// Do not question why a lot of this code is written in procedural practices
-// RPS used to be a Khan Academy project so a lot of the code is written in procedural style
-// changing that now is too time-consuming and so it will probably never happen all at once
 
 // variables used elsewhere
+acceptInputs = true;
 inMenuScreen = true;
 
 // modal
@@ -16,7 +14,7 @@ const modalSubtitle = document.getElementById('modalSubtitle');
 const modalYes = document.getElementById('modalYes');
 const modalNo = document.getElementById('modalNo');
 const modalOk = document.getElementById('modalOk');
-function modal(title, subtitle, confirmation) {
+function modal(title, subtitle, confirmation = false) {
     if (!acceptInputs) return new Promise((resolve, reject) => reject('Modal already open'));
     acceptInputs = false;
     modalTitle.innerHTML = title;

@@ -159,7 +159,6 @@ const selection = {
 let removing = false;
 let holdingControl = false;
 let holdingAlt = false;
-let acceptInputs = true;
 let inResetState = true;
 let forceRedraw = true;
 
@@ -1133,20 +1132,8 @@ function explode(x1, y1, size, defer) {
                     teamGrid[y][x] = 0;
                     break;
                 case pixNum.FLAMETHROWER_LEFT:
-                    pendingExplosions.push([x, y, 15]);
-                    grid[y][x] = pixNum.AIR;
-                    teamGrid[y][x] = 0;
-                    break;
                 case pixNum.FLAMETHROWER_UP:
-                    pendingExplosions.push([x, y, 15]);
-                    grid[y][x] = pixNum.AIR;
-                    teamGrid[y][x] = 0;
-                    break;
                 case pixNum.FLAMETHROWER_RIGHT:
-                    pendingExplosions.push([x, y, 15]);
-                    grid[y][x] = pixNum.AIR;
-                    teamGrid[y][x] = 0;
-                    break;
                 case pixNum.FLAMETHROWER_DOWN:
                     pendingExplosions.push([x, y, 15]);
                     grid[y][x] = pixNum.AIR;
@@ -1267,7 +1254,7 @@ function craftPixel(id, team) {
     // oof
     // suffix _any means any rotation can be used
 };
-function hasPixels(id, team) {
+function canCraft(id, team) {
 
 };
 
@@ -1895,6 +1882,7 @@ function updateTick() {
             if (newMonsterCount != monsterCount) sounds.monsterDeath();
             if (newFulfilledTargetCount != fulfilledTargetCount) sounds.targetFill();
             frameList.push(performance.now());
+            resolveQueuedPixelAmountUpdates();
             ticks++;
             if (!sandboxMode && newMonsterCount == 0 && !hasUnfulfilledTargets && !PixSimAPI.inGame) {
                 triggerWin();
@@ -1988,9 +1976,9 @@ function updateBrush() {
                                 grid[y + offsetY][x + offsetX] = selection.grid[y][x];
                                 if (musicGrid[y + offsetY][x + offsetX]) {
                                     musicPixel(musicGrid[y + offsetY][x + offsetX], false);
-                                    musicGrid[y + offsetY][x + offsetX] = -1;
+                                    musicGrid[y + offsetY][x + offsetX] = 0;
                                 }
-                                if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_86) musicGrid[y + offsetY][x + offsetX] = -1;
+                                if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_86) musicGrid[y + offsetY][x + offsetX] = 0;
                             }
                         }
                     }
@@ -2157,9 +2145,9 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                     monsterGrid[y][x] = false;
                     if (musicGrid[y][x]) {
                         musicPixel(musicGrid[y][x], false);
-                        musicGrid[y][x] = -1;
+                        musicGrid[y][x] = 0;
                     }
-                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
+                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = 0;
                 });
             } else {
                 modifiedPixelCounts[clickPixelNum] = true;
@@ -2173,10 +2161,10 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                         grid[y][x] = clickPixelNum;
                         if (musicGrid[y][x]) {
                             musicPixel(musicGrid[y][x], false);
-                            musicGrid[y][x] = -1;
+                            musicGrid[y][x] = 0;
                         }
                         inventory[placePixel]--;
-                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = -1;
+                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = 0;
                         teamGrid[y][x] = pxteam + 1;
                     }
                     return inventory[placePixel] <= 0;

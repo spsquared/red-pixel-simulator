@@ -15,9 +15,13 @@ window.addEventListener('resize', (e) => {
 });
 menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
 
-window.addEventListener('load', async () => {
+window.addEventListener('DOMContentLoaded', async () => {
+    const loadingText = document.getElementById('loadingProgressText');
+    loadingText.innerText = 'Loading Pixels...';
     await pixelsLoad;
+    loadingText.innerText = 'Loading sounds...';
     await soundsLoad;
+    loadingText.innerText = '';
     document.getElementById('pageLoadCover').style.opacity = 0;
     document.getElementById('pageLoadCover').style.pointerEvents = 'none';
     setTimeout(() => {

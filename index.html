@@ -43,7 +43,10 @@
 <body>
     <div id="pageLoadCover">
         <div id="pageLoadCoverLoading"></div>
-        <noscript id="noscript">JavaScript was disabled! Red Pixel Simulator requires JavaScript to run!<br>Please enable it and <a href="" style="color: white">reload</a>!</noscript>
+        <div id="pageLoadCoverText">
+            <noscript id="noscript">JavaScript was disabled! Red Pixel Simulator requires JavaScript to run!<br>Please enable it and <a href="" style="color: white">reload</a>!</noscript>
+            <div id="loadingProgressText">Loading...</div>
+        </div>
         <style>
             #pageLoadCover {
                 position: fixed;
@@ -68,7 +71,7 @@
                 box-shadow: 0px 0px 0.5vw rgba(255, 255, 255, 0.5);
                 animation: pageLoadCoverProgress ease 2s infinite;
             }
-            #noscript {
+            #pageLoadCoverText {
                 position: fixed;
                 top: 55vh;
                 left: 0vw;
@@ -100,7 +103,7 @@
         <div id="gameControls">
             <div id="pixelPicker"></div>
             <div id="pixelPickerDescription"></div>
-            <div id="pixelPickerTooltip">Tooltip omg (crafting???????)</div>
+            <div id="pixelPickerCrafting"></div>
             <br>
             <table><tbody>
                 <tr>
