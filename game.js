@@ -15,7 +15,7 @@ const canvasContainer = document.getElementById('canvasContainer');
 const canvas = document.getElementById('canvas');
 const gameCanvas = document.createElement('canvas');
 const gridCanvas = createCanvas2();
-const gridOverlayCanvas = createCanvas2();
+const gridNoiseCanvas = createCanvas2();
 const aboveCanvas = createCanvas2();
 const monsterCanvas = createCanvas2();
 const fireCanvas = createCanvas2();
@@ -28,7 +28,7 @@ const bufferCanvas = createCanvas2();
 const ctx = canvas.getContext('2d');
 const gamectx = gameCanvas.getContext('2d');
 const gridctx = gridCanvas.getContext('2d');
-const gridoverctx = gridOverlayCanvas.getContext('2d');
+const gridnoisectx = gridNoiseCanvas.getContext('2d');
 const abovectx = aboveCanvas.getContext('2d');
 const monsterctx = monsterCanvas.getContext('2d');
 const firectx = fireCanvas.getContext('2d');
@@ -49,8 +49,8 @@ function resetCanvases() {
     gamectx.webkitImageSmoothingEnabled = false;
     gridctx.imageSmoothingEnabled = false;
     gridctx.webkitImageSmoothingEnabled = false;
-    gridoverctx.imageSmoothingEnabled = false;
-    gridoverctx.webkitImageSmoothingEnabled = false;
+    gridnoisectx.imageSmoothingEnabled = false;
+    gridnoisectx.webkitImageSmoothingEnabled = false;
     abovectx.imageSmoothingEnabled = false;
     abovectx.webkitImageSmoothingEnabled = false;
     monsterctx.imageSmoothingEnabled = false;
@@ -83,6 +83,7 @@ function resetCanvases() {
 const sidebar = document.getElementById('sidebar');
 const pixelPicker = document.getElementById('pixelPicker');
 const pixelPickerDescription = document.getElementById('pixelPickerDescription');
+const pixelPickerCrafting = document.getElementById('pixelPickerCrafting');
 const saveCodeText = document.getElementById('saveCode');
 const gridWidthText = document.getElementById('gridWidth');
 const gridHeightText = document.getElementById('gridHeight');
@@ -1294,7 +1295,7 @@ function draw() {
     ctx.resetTransform();
     gamectx.resetTransform();
     gridctx.resetTransform();
-    gridoverctx.resetTransform();
+    gridnoisectx.resetTransform();
     abovectx.resetTransform();
     monsterctx.resetTransform();
     firectx.resetTransform();
@@ -1305,7 +1306,7 @@ function draw() {
     ctx.globalAlpha = 1;
     gamectx.globalAlpha = 1;
     gridctx.globalAlpha = 1;
-    gridoverctx.globalAlpha = 1;
+    gridnoisectx.globalAlpha = 1;
     abovectx.globalAlpha = 1;
     monsterctx.globalAlpha = 1;
     firectx.globalAlpha = 1;
@@ -1362,7 +1363,7 @@ function drawFrame() {
                 noisebufferctx.drawImage(noiseCanvas, -camera.x, -camera.y, gridWidth * drawScale, gridHeight * drawScale);
             }
         }
-        gridoverctx.clearRect(0, 0, canvasResolution, canvasResolution);
+        gridnoisectx.clearRect(0, 0, canvasResolution, canvasResolution);
         abovectx.clearRect(0, 0, canvasResolution, canvasResolution);
 
         // get rectangles to draw
@@ -1440,10 +1441,10 @@ function drawFrame() {
         if (!PixSimAPI.inGame) drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         else drawBooleanGrid(PixSimAPI.team ? teamPlaceableGrids[1] : teamPlaceableGrids[0], lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         if (!noNoise) {
-            gridoverctx.globalAlpha = 1;
-            gridoverctx.globalCompositeOperation = 'destination-in';
-            gridoverctx.drawImage(noiseBufferCanvas, 0, 0);
-            gridoverctx.globalCompositeOperation = 'source-over';
+            gridnoisectx.globalAlpha = 1;
+            gridnoisectx.globalCompositeOperation = 'destination-in';
+            gridnoisectx.drawImage(noiseBufferCanvas, 0, 0);
+            gridnoisectx.globalCompositeOperation = 'source-over';
         }
         if (drawTeamGrid) {
             if (noNoise) {
@@ -1477,7 +1478,7 @@ function drawFrame() {
         // copy layers
         ctx.globalAlpha = 1;
         gamectx.globalAlpha = 1;
-        gridctx.drawImage(gridOverlayCanvas, 0, 0);
+        gridctx.drawImage(gridNoiseCanvas, 0, 0);
         gamectx.drawImage(gridCanvas, 0, 0);
         gamectx.drawImage(monsterCanvas, 0, 0);
         gamectx.drawImage(aboveCanvas, 0, 0);
@@ -2335,6 +2336,7 @@ PixSimAPI.onGameStart = () => {
         simulateSlowButton.checked = true;
         updateTimeControlButtons();
         levelDetails.style.display = 'none';
+        pixelPickerCrafting.style.display = '';
         restartButton.style.display = '';
         pauseButton.disabled = true;
         fastSimulationButton.disabled = true;
@@ -3021,6 +3023,7 @@ window.onresize = (e) => {
     if (window.innerWidth / window.innerHeight <= 1) pickerWidth = (Math.round((window.innerWidth) / 62) - 1) * 62 + 1;
     pixelPicker.style.width = pickerWidth + 2 + 'px';
     pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
+    pixelPickerCrafting.style.width = pickerWidth + 2 + 'px';
     forceRedraw = true;
 };
 window.addEventListener('load', window.onresize);

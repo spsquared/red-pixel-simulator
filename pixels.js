@@ -18,6 +18,7 @@ const pixels = {
         pushable: true,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 0,
         updateStage: -1,
         animatedNoise: false,
@@ -25,6 +26,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'air',
         numId: 0
     },
@@ -53,6 +56,7 @@ const pixels = {
         pushable: false,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: -1,
         animatedNoise: false,
@@ -60,6 +64,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'wall',
         numId: 0
     },
@@ -99,6 +105,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -106,6 +113,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'dirt',
         numId: 0
     },
@@ -162,6 +171,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -169,6 +179,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'grass',
         numId: 0
     },
@@ -184,12 +196,10 @@ const pixels = {
                 });
             } else {
                 ctx.fillStyle = 'rgb(90, 50, 0)';
+                gridnoisectx.fillStyle = 'rgb(105, 70, 0)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
-                });
-                gridoverctx.fillStyle = 'rgb(105, 70, 0)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
                 });
             }
         },
@@ -221,6 +231,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -228,6 +239,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'mud',
         numId: 0
     },
@@ -261,6 +274,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -268,6 +282,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'sand',
         numId: 0
     },
@@ -283,12 +299,10 @@ const pixels = {
                 });
             } else {
                 ctx.fillStyle = 'rgb(90, 90, 75)';
+                gridnoisectx.fillStyle = 'rgb(120, 120, 100)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
-                });
-                gridoverctx.fillStyle = 'rgb(120, 120, 100)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
                 });
             }
         },
@@ -303,7 +317,8 @@ const pixels = {
         },
         prerender: function () { },
         recipe: {
-            color_grey: 2
+            color_grey: 1,
+            color_black: 1
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -312,6 +327,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -319,6 +335,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'gravel',
         numId: 0
     },
@@ -357,6 +375,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -364,6 +383,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'clay',
         numId: 0
     },
@@ -379,12 +400,10 @@ const pixels = {
                 });
             } else {
                 ctx.fillStyle = 'rgb(160, 100, 90)';
+                gridnoisectx.fillStyle = 'rgb(240, 160, 110)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
-                });
-                gridoverctx.fillStyle = 'rgb(240, 160, 110)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
                 });
             }
         },
@@ -419,6 +438,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -426,6 +446,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'silt',
         numId: 0
     },
@@ -465,6 +487,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: -1,
         animatedNoise: false,
@@ -472,6 +495,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'wood',
         numId: 0
     },
@@ -512,15 +537,16 @@ const pixels = {
         },
         prerender: function () { },
         recipe: {
-            color_lime: 1
+            color_lime: 4
         },
-        craftAmount: 2,
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 18,
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 6,
         animatedNoise: false,
@@ -528,6 +554,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'leaves',
         numId: 0
     },
@@ -543,12 +571,10 @@ const pixels = {
                 });
             } else {
                 ctx.fillStyle = 'rgb(0, 125, 0)';
+                gridnoisectx.fillStyle = 'rgb(75, 200, 50)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
-                });
-                gridoverctx.fillStyle = 'rgb(75, 200, 50)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
                 });
             }
         },
@@ -572,7 +598,7 @@ const pixels = {
         },
         prerender: function () { },
         recipe: {
-            color_green: 1
+            color_green: 5
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -581,6 +607,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 0,
         animatedNoise: false,
@@ -588,123 +615,9 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'moss',
-        numId: 0
-    },
-    ash: {
-        name: 'Ash',
-        description: 'Burnt stuff, doesn\'t burn easily though',
-        draw: function (rectangles, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            if (noNoise) {
-                ctx.fillStyle = 'rgb(100, 110, 120)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, ctx);
-                });
-            } else {
-                ctx.fillStyle = 'rgb(80, 85, 90)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, ctx);
-                });
-                gridoverctx.fillStyle = 'rgb(120, 130, 140)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
-                });
-            }
-        },
-        update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            let removedWater = false;
-            if (updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
-                if (!removedWater && validChangingPixel(ax, ay) && random() < 0.2) {
-                    nextGrid[ay][ax] = pixNum.AIR;
-                    teamGrid[ay][ax] = 0;
-                    removedWater = true;
-                }
-            })) {
-                nextGrid[y][x] = pixNum.WET_ASH;
-                return;
-            }
-            fall(x, y, 1, 2);
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 110, 120)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
-        prerenderedFrames: [],
-        blastResistance: 3,
-        flammability: 4,
-        pushable: true,
-        cloneable: true,
-        rotateable: false,
-        group: 0,
-        updateStage: 5,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        pixsimPickable: true,
-        id: 'ash',
-        numId: 0
-    },
-    wet_ash: {
-        name: 'Wet Ash',
-        description: 'Definitely not silt',
-        draw: function (rectangles, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
-            if (noNoise) {
-                ctx.fillStyle = 'rgb(80, 80, 90)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, ctx);
-                });
-            } else {
-                ctx.fillStyle = 'rgb(70, 70, 80)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, ctx);
-                });
-                gridoverctx.fillStyle = 'rgb(85, 85, 90)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
-                });
-            }
-        },
-        update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (fireGrid[y][x] && random() < 0.1) {
-                nextGrid[y][x] = pixNum.ASH;
-                return;
-            }
-            function isPassableAshFluid(x, y) {
-                return isPassableFluid(x, y) || grid[y][x] == pixNum.ASH;
-            };
-            fall(x, y, 2, 1, isPassableAshFluid);
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(80, 80, 90)';
-            ctx.fillRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
-        prerenderedFrames: [],
-        blastResistance: 3,
-        flammability: 2,
-        pushable: true,
-        cloneable: true,
-        rotateable: false,
-        group: 0,
-        updateStage: 5,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        pixsimPickable: false,
-        id: 'wet_ash',
         numId: 0
     },
     stone: {
@@ -739,6 +652,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -746,6 +660,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'stone',
         numId: 0
     },
@@ -777,6 +693,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: -1,
         animatedNoise: false,
@@ -784,6 +701,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'basalt',
         numId: 0
     },
@@ -844,14 +763,18 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_blue: 1,
+            color_cyan: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 15,
         flammability: 0,
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 6,
         animatedNoise: true,
@@ -859,6 +782,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'water',
         numId: 0
     },
@@ -917,6 +842,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: true,
@@ -924,6 +850,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'ice',
         numId: 0
     },
@@ -939,12 +867,10 @@ const pixels = {
                 });
             } else {
                 ctx.fillStyle = 'rgb(230, 230, 230)';
+                gridnoisectx.fillStyle = 'rgb(230, 250, 250)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
-                });
-                gridoverctx.fillStyle = 'rgb(230, 250, 250)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
                 });
             }
         },
@@ -970,6 +896,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -977,6 +904,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'snow',
         numId: 0
     },
@@ -1144,6 +1073,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 6,
         animatedNoise: true,
@@ -1151,6 +1081,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'steam',
         numId: 0
     },
@@ -1202,6 +1134,8 @@ const pixels = {
                         if (random() < 0.1) nextGrid[ay][ax] = pixNum.SAND;
                     } else if (grid[ay][ax] == pixNum.SAND) {
                         if (random() < 0.01) nextGrid[ay][ax] = pixNum.GLASS;
+                    } else if (grid[ay][ax] == pixNum.IRON) {
+                        if (random() < 0.1) nextGrid[ay][ax] = pixNum.STEEL;
                     } else if (grid[ay][ax] == pixNum.GLASS) {
                         if (random() < 0.01) nextGrid[ay][ax] = pixNum.SAND;
                     }
@@ -1266,7 +1200,10 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {
+            color_red: 1,
+            color_orange: 1
+        },
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 17,
@@ -1274,6 +1211,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 6,
         animatedNoise: true,
@@ -1281,6 +1219,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'lava',
         numId: 0
     },
@@ -1297,8 +1237,10 @@ const pixels = {
             } else {
                 ctx.globalAlpha = opacity / 3;
                 ctx.fillStyle = 'rgb(255, 100, 0)';
+                // gridnoisectx.fillStyle = 'rgb(255, 255, 0)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
+                    // fillPixels(x, y, width, height, gridnoisectx);
                 });
                 bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
                 bufferctx.globalAlpha = 1;
@@ -1382,6 +1324,176 @@ const pixels = {
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: true,
+        group: 0,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
+        id: 'fire',
+        numId: 0
+    },
+    ash: {
+        name: 'Ash',
+        description: 'Burnt stuff, doesn\'t burn easily though',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = 'rgb(100, 110, 120)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+            } else {
+                ctx.fillStyle = 'rgb(80, 85, 90)';
+                gridnoisectx.fillStyle = 'rgb(120, 130, 140)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            let removedWater = false;
+            if (updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
+                if (!removedWater && validChangingPixel(ax, ay) && random() < 0.2) {
+                    nextGrid[ay][ax] = pixNum.AIR;
+                    teamGrid[ay][ax] = 0;
+                    removedWater = true;
+                }
+            })) {
+                nextGrid[y][x] = pixNum.WET_ASH;
+                return;
+            }
+            fall(x, y, 1, 2);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 110, 120)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
+        prerenderedFrames: [],
+        blastResistance: 3,
+        flammability: 4,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        collectible: true,
+        group: 0,
+        updateStage: 5,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        id: 'ash',
+        numId: 0
+    },
+    wet_ash: {
+        name: 'Wet Ash',
+        description: 'Definitely not silt',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = 'rgb(80, 80, 90)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+            } else {
+                ctx.fillStyle = 'rgb(70, 70, 80)';
+                gridnoisectx.fillStyle = 'rgb(85, 85, 90)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (fireGrid[y][x] && random() < 0.1) {
+                nextGrid[y][x] = pixNum.ASH;
+                return;
+            }
+            function isPassableAshFluid(x, y) {
+                return isPassableFluid(x, y) || grid[y][x] == pixNum.ASH;
+            };
+            fall(x, y, 2, 1, isPassableAshFluid);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(80, 80, 90)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
+        prerenderedFrames: [],
+        blastResistance: 3,
+        flammability: 2,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        collectible: true,
+        group: 0,
+        updateStage: 5,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
+        id: 'wet_ash',
+        numId: 0
+    },
+    iron: {
+        name: 'Raw Iron',
+        description: 'Some unrefined iron',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.globalAlpha = opacity;
+            if (noNoise) {
+                ctx.fillStyle = 'rgb(200, 180, 120)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+            } else {
+                ctx.fillStyle = 'rgb(160, 160, 180)';
+                gridnoisectx.fillStyle = 'rgb(220, 200, 120)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
+                });
+            }
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(200, 180, 120)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        recipe: {
+            color_grey: 4,
+            color_yellow: 3
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 12,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: -1,
         animatedNoise: false,
@@ -1389,7 +1501,59 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
-        id: 'fire',
+        generatedDescription: '',
+        image: '',
+        id: 'iron',
+        numId: 0
+    },
+    steel: {
+        name: 'Steel',
+        description: 'Somehow at some point some carbon and heat was added to some iron',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = 'rgb(180, 180, 180)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = 'rgb(210, 210, 210)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                let end = y + height;
+                for (let i = y; i < end; i++) {
+                    fillPixels(x, i, width, 1 / 8, ctx);
+                    fillPixels(x, i + 1 / 2, width, 1 / 8, ctx);
+                }
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillStyle = 'rgb(180, 180, 180)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(210, 210, 210)';
+            ctx.fillRect(0, 0, 50, 25 / 4);
+            ctx.fillRect(0, 25, 50, 25 / 4);
+        },
+        prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
+        prerenderedFrames: [],
+        blastResistance: 16,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        collectible: true,
+        group: 0,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        id: 'steel',
         numId: 0
     },
     concrete_powder: {
@@ -1418,6 +1582,7 @@ const pixels = {
         prerender: function () { },
         recipe: {
             gravel: 2,
+            sand: 2,
             clay: 1,
             color_grey: 1
         },
@@ -1428,6 +1593,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -1435,6 +1601,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'concrete_powder',
         numId: 0
     },
@@ -1463,6 +1631,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: -1,
         animatedNoise: false,
@@ -1470,6 +1639,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'concrete',
         numId: 0
     },
@@ -1520,6 +1691,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -1527,6 +1699,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'stone_bricks',
         numId: 0
     },
@@ -1578,6 +1752,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -1585,6 +1760,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'bricks',
         numId: 0
     },
@@ -1632,6 +1809,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: -1,
         animatedNoise: false,
@@ -1639,6 +1817,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'glass',
         numId: 0
     },
@@ -1688,14 +1868,18 @@ const pixels = {
             fillPixels(0, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            glass: 1,
+            steel_crate: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 7,
         flammability: 0,
         pushable: false,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: -1,
         animatedNoise: false,
@@ -1703,6 +1887,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'reinforced_glass',
         numId: 0
     },
@@ -1753,6 +1939,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 5,
         animatedNoise: false,
@@ -1760,7 +1947,78 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'crate',
+        numId: 0
+    },
+    steel_crate: {
+        name: 'Steel Crate',
+        description: 'A crate made of steel that sinks in water',
+        draw: function (rectangles, opacity, ctx, avoidGrid) {
+            ctx.globalAlpha = opacity;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(120, 120, 120)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(160, 160, 160)';
+            ctx.fillRect(15 / 2, 15 / 2, 35, 35);
+            ctx.fillStyle = 'rgb(120, 120, 120)';
+            ctx.rotate(Math.PI / 4);
+            ctx.fillRect(50 / Math.sqrt(2) - 5, -50 / Math.sqrt(2), 10, Math.sqrt(2) * 50);
+            ctx.resetTransform();
+            ctx.fillStyle = 'rgb(200, 200, 200)';
+            ctx.fillRect(5 / 2, 5 / 2, 5, 5);
+            ctx.fillRect(85 / 2, 5 / 2, 5, 5);
+            ctx.fillRect(85 / 2, 85 / 2, 5, 5);
+            ctx.fillRect(5 / 2, 85 / 2, 5, 5);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(40);
+            ctx.fillStyle = 'rgb(120, 120, 120)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(160, 160, 160)';
+            fillPixels(3 / 20, 3 / 20, 7 / 10, 7 / 10);
+            ctx.fillStyle = 'rgb(120, 120, 120)';
+            ctx.rotate(Math.PI / 4);
+            fillPixels(1 / Math.sqrt(2) - 0.1, -1 / Math.sqrt(2), 0.2, Math.sqrt(2));
+            ctx.resetTransform();
+            ctx.fillStyle = 'rgb(200, 200, 200)';
+            fillPixels(1 / 20, 1 / 20, 1 / 10, 1 / 10);
+            fillPixels(17 / 20, 1 / 20, 1 / 10, 1 / 10);
+            fillPixels(17 / 20, 17 / 20, 1 / 10, 1 / 10);
+            fillPixels(1 / 20, 17 / 20, 1 / 10, 1 / 10);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            steel: 3
+        },
+        craftAmount: 2,
+        prerenderedFrames: [],
+        blastResistance: 16,
+        flammability: 0,
+        pushable: false,
+        cloneable: true,
+        rotateable: false,
+        collectible: true,
+        group: 0,
+        updateStage: 5,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
+        id: 'steel_crate',
         numId: 0
     },
     plant: {
@@ -1801,6 +2059,7 @@ const pixels = {
             color_green: 8,
             color_lime: 1,
             leaves: 24,
+            moss: 4,
             water: 2
         },
         craftAmount: 1,
@@ -1810,6 +2069,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 0,
         animatedNoise: false,
@@ -1817,6 +2077,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'plant',
         numId: 0
     },
@@ -1862,6 +2124,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 0,
         animatedNoise: false,
@@ -1869,6 +2132,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'sponge',
         numId: 0
     },
@@ -1887,10 +2152,20 @@ const pixels = {
                 nextGrid[y][x] = pixNum.WATER;
                 teamGrid[y][x] = 0;
             });
-            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
-                if (validChangingPixel(ax, ay) && random() < 0.125) {
+            let team = teamGrid[y][x] - 1;
+            let consumeResources = teamPixelAmounts[team] !== undefined;
+            if (consumeResources || !PixSimAPI.inGame) updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                if (validChangingPixel(ax, ay) && random() < 0.125 && (!consumeResources || teamPixelAmounts[team].color_cyan > 0 || teamPixelAmounts[team].color_blue > 0)) {
                     nextGrid[ay][ax] = pixNum.WATER;
-                    // 33% chance of consuming blue or cyan
+                    if (teamPixelAmounts[team] !== undefined) {
+                        if (random() < 0.5 && teamPixelAmounts[team].color_cyan > 0) {
+                            teamPixelAmounts[team].color_cyan--;
+                            if (team == PixSimAPI.team) queueUpdatePixelAmount('color_cyan', teamPixelAmounts[team]);
+                        } else {
+                            teamPixelAmounts[team].color_blue--;
+                            if (team == PixSimAPI.team) queueUpdatePixelAmount('color_blue', teamPixelAmounts[team]);
+                        }
+                    }
                 }
             });
         },
@@ -1911,8 +2186,9 @@ const pixels = {
         },
         recipe: {
             concrete: 8,
+            steel: 1,
             color_green: 2,
-            piston_any: 1,
+            piston_any: 4,
             cloner_any: 1,
             water: 2
         },
@@ -1923,6 +2199,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 6,
         animatedNoise: false,
@@ -1930,6 +2207,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'pump',
         numId: 0
     },
@@ -1952,10 +2231,20 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 explode(x, y, 6, true);
             });
-            updateTouchingPixel(x, y, [pixNum.AIR, pixNum.STEAM, pixNum.STONE], (ax, ay) => {
-                if (validChangingPixel(ax, ay) && random() < 0.075) {
+            let team = teamGrid[y][x] - 1;
+            let consumeResources = teamPixelAmounts[team] !== undefined;
+            if (consumeResources || !PixSimAPI.inGame) updateTouchingPixel(x, y, [pixNum.AIR, pixNum.STONE], (ax, ay) => {
+                if (validChangingPixel(ax, ay) && random() < 0.075 && (!consumeResources || teamPixelAmounts[team].color_orange > 0 || teamPixelAmounts[team].color_red > 0)) {
                     nextGrid[ay][ax] = pixNum.LAVA;
-                    // 33% chance to consume red or orange
+                    if (teamPixelAmounts[team] !== undefined) {
+                        if (random() < 0.5 && teamPixelAmounts[team].color_orange > 0) {
+                            teamPixelAmounts[team].color_orange--;
+                            if (team == PixSimAPI.team) queueUpdatePixelAmount('color_orange', teamPixelAmounts[team]);
+                        } else {
+                            teamPixelAmounts[team].color_red--;
+                            if (team == PixSimAPI.team) queueUpdatePixelAmount('color_red', teamPixelAmounts[team]);
+                        }
+                    }
                 }
             });
         },
@@ -1976,8 +2265,9 @@ const pixels = {
         },
         recipe: {
             concrete: 8,
+            steel: 3,
             color_green: 2,
-            piston_any: 1,
+            piston_any: 4,
             cloner_any: 1,
             lava: 2
         },
@@ -1988,6 +2278,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 6,
         animatedNoise: false,
@@ -1995,6 +2286,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'lava_generator',
         numId: 0
     },
@@ -2041,8 +2334,9 @@ const pixels = {
         },
         recipe: {
             concrete: 8,
+            steel: 1,
             color_green: 2,
-            cloner_any: 2,
+            cloner_any: 4,
             ice: 4
         },
         craftAmount: 1,
@@ -2052,6 +2346,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 0,
         updateStage: 6,
         animatedNoise: false,
@@ -2059,6 +2354,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'freezer',
         numId: 0
     },
@@ -2115,6 +2412,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 0,
+        collectible: true,
         group: 1,
         updateStage: 3,
         animatedNoise: false,
@@ -2122,6 +2420,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'piston_left',
         numId: 0
     },
@@ -2172,6 +2472,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 1,
+        collectible: true,
         group: 1,
         updateStage: 1,
         animatedNoise: false,
@@ -2179,6 +2480,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'piston_up',
         numId: 0
     },
@@ -2229,6 +2532,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 2,
+        collectible: true,
         group: 1,
         updateStage: 4,
         animatedNoise: false,
@@ -2236,6 +2540,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'piston_right',
         numId: 0
     },
@@ -2286,6 +2592,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 3,
+        collectible: true,
         group: 1,
         updateStage: 2,
         animatedNoise: false,
@@ -2293,6 +2600,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'piston_down',
         numId: 0
     },
@@ -2344,6 +2653,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 0,
+        collectible: true,
         group: 1,
         updateStage: 3,
         animatedNoise: false,
@@ -2351,6 +2661,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'sticky_piston_left',
         numId: 0
     },
@@ -2402,6 +2714,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 1,
+        collectible: true,
         group: 1,
         updateStage: 1,
         animatedNoise: false,
@@ -2409,6 +2722,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'sticky_piston_up',
         numId: 0
     },
@@ -2460,6 +2775,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 2,
+        collectible: true,
         group: 1,
         updateStage: 4,
         animatedNoise: false,
@@ -2467,6 +2783,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'sticky_piston_right',
         numId: 0
     },
@@ -2518,6 +2836,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 3,
+        collectible: true,
         group: 1,
         updateStage: 2,
         animatedNoise: false,
@@ -2525,6 +2844,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'sticky_piston_down',
         numId: 0
     },
@@ -2584,6 +2905,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 0,
+        collectible: true,
         group: 1,
         updateStage: 3,
         animatedNoise: false,
@@ -2591,11 +2913,13 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'push_piston_left',
         numId: 0
     },
     push_piston_up: {
-        name: 'Pusher (Up)',
+        name: 'Piston (Up)',
         description: 'Pushes pixels in front of it without moving',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
@@ -2650,6 +2974,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 1,
+        collectible: true,
         group: 1,
         updateStage: 1,
         animatedNoise: false,
@@ -2657,11 +2982,13 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'push_piston_up',
         numId: 0
     },
     push_piston_right: {
-        name: 'Pusher (Right)',
+        name: 'Piston (Right)',
         description: 'Pushes pixels in front of it without moving',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
@@ -2716,6 +3043,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 2,
+        collectible: true,
         group: 1,
         updateStage: 4,
         animatedNoise: false,
@@ -2723,11 +3051,13 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'push_piston_right',
         numId: 0
     },
     push_piston_down: {
-        name: 'Pusher (Down)',
+        name: 'Piston (Down)',
         description: 'Pushes pixels in front of it without moving',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
@@ -2782,6 +3112,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 3,
+        collectible: true,
         group: 1,
         updateStage: 2,
         animatedNoise: false,
@@ -2789,6 +3120,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'push_piston_down',
         numId: 0
     },
@@ -2833,7 +3166,8 @@ const pixels = {
             color_lime: 1,
             color_blue: 1,
             concrete: 1,
-            wood: 1
+            wood: 1,
+            steel: 1,
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -2843,6 +3177,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 0,
+        collectible: true,
         group: 1,
         updateStage: 3,
         animatedNoise: false,
@@ -2850,6 +3185,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'cloner_left',
         numId: 0
     },
@@ -2894,6 +3231,7 @@ const pixels = {
             color_lime: 1,
             color_blue: 1,
             concrete: 1,
+            steel: 1,
             wood: 1
         },
         craftAmount: 1,
@@ -2904,6 +3242,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 1,
+        collectible: true,
         group: 1,
         updateStage: 1,
         animatedNoise: false,
@@ -2911,6 +3250,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'cloner_up',
         numId: 0
     },
@@ -2955,6 +3296,7 @@ const pixels = {
             color_lime: 1,
             color_blue: 1,
             concrete: 1,
+            steel: 1,
             wood: 1
         },
         craftAmount: 1,
@@ -2965,6 +3307,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 2,
+        collectible: true,
         group: 1,
         updateStage: 4,
         animatedNoise: false,
@@ -2972,6 +3315,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'cloner_right',
         numId: 0
     },
@@ -3016,6 +3361,7 @@ const pixels = {
             color_lime: 1,
             color_blue: 1,
             concrete: 1,
+            steel: 1,
             wood: 1
         },
         craftAmount: 1,
@@ -3026,6 +3372,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 3,
+        collectible: true,
         group: 1,
         updateStage: 2,
         animatedNoise: false,
@@ -3033,6 +3380,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'cloner_down',
         numId: 0
     },
@@ -3084,6 +3433,7 @@ const pixels = {
             color_blue: 1,
             sticky_piston_left: 1,
             concrete: 1,
+            steel: 1,
             wood: 1
         },
         craftAmount: 1,
@@ -3093,6 +3443,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: true,
+        collectible: true,
         group: 1,
         rotation: 0,
         updateStage: 3,
@@ -3101,6 +3452,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'push_cloner_left',
         numId: 0
     },
@@ -3152,6 +3505,7 @@ const pixels = {
             color_blue: 1,
             sticky_piston_up: 1,
             concrete: 1,
+            steel: 1,
             wood: 1
         },
         craftAmount: 1,
@@ -3161,6 +3515,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: true,
+        collectible: true,
         group: 1,
         rotation: 1,
         updateStage: 1,
@@ -3169,6 +3524,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'push_cloner_up',
         numId: 0
     },
@@ -3220,6 +3577,7 @@ const pixels = {
             color_blue: 1,
             sticky_piston_right: 1,
             concrete: 1,
+            steel: 1,
             wood: 1
         },
         craftAmount: 1,
@@ -3229,6 +3587,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: true,
+        collectible: true,
         group: 1,
         rotation: 2,
         updateStage: 4,
@@ -3237,6 +3596,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'push_cloner_right',
         numId: 0
     },
@@ -3288,6 +3649,7 @@ const pixels = {
             color_blue: 1,
             sticky_piston_down: 1,
             concrete: 1,
+            steel: 1,
             wood: 1
         },
         craftAmount: 1,
@@ -3297,6 +3659,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: true,
+        collectible: true,
         group: 1,
         rotation: 3,
         updateStage: 2,
@@ -3305,6 +3668,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'push_cloner_down',
         numId: 0
     },
@@ -3352,6 +3717,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 0,
+        collectible: true,
         group: 1,
         updateStage: 3,
         animatedNoise: false,
@@ -3359,6 +3725,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: false,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'super_cloner_left',
         numId: 0
     },
@@ -3408,6 +3776,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 1,
+        collectible: true,
         group: 1,
         updateStage: 1,
         animatedNoise: false,
@@ -3415,6 +3784,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: false,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'super_cloner_up',
         numId: 0
     },
@@ -3462,6 +3833,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 2,
+        collectible: true,
         group: 1,
         updateStage: 4,
         animatedNoise: false,
@@ -3469,6 +3841,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: false,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'super_cloner_right',
         numId: 0
     },
@@ -3516,6 +3890,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 3,
+        collectible: true,
         group: 1,
         updateStage: 2,
         animatedNoise: false,
@@ -3523,6 +3898,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: false,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'super_cloner_down',
         numId: 0
     },
@@ -3569,6 +3946,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         rotation: 0,
+        collectible: true,
         group: 1,
         updateStage: 5,
         animatedNoise: false,
@@ -3576,6 +3954,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'rotator_left',
         numId: 0
     },
@@ -3622,6 +4002,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         rotation: 1,
+        collectible: true,
         group: 1,
         updateStage: 5,
         animatedNoise: false,
@@ -3629,6 +4010,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'rotator_up',
         numId: 0
     },
@@ -3675,6 +4058,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         rotation: 2,
+        collectible: true,
         group: 1,
         updateStage: 5,
         animatedNoise: false,
@@ -3682,6 +4066,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'rotator_right',
         numId: 0
     },
@@ -3728,6 +4114,7 @@ const pixels = {
         cloneable: true,
         rotateable: false,
         rotation: 3,
+        collectible: true,
         group: 1,
         updateStage: 5,
         animatedNoise: false,
@@ -3735,6 +4122,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'rotator_down',
         numId: 0
     },
@@ -3744,7 +4133,7 @@ const pixels = {
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                if (frameModulo.get(10) >= 10 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(deltaTime / 10) % 4)], ctx);
+                if (frameModulo.get(10) >= 10 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 4 : (Math.floor(deltaTime / 10) % 4)], ctx);
             });
         },
         update: function (x, y) {
@@ -3756,18 +4145,15 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 255, 255, 1)';
+            ctx.fillStyle = 'rgba(75, 255, 255, 1)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(75, 255, 255, 0.66)';
+            ctx.fillStyle = 'rgba(75, 255, 255, 0.66)';
             ctx.fillRect(100 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(75, 255, 255, 0.33)';
+            ctx.fillStyle = 'rgba(75, 255, 255, 0.33)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(75, 255, 255, 0.2)';
-            ctx.fillRect(0, 0, 50 / 3, 50 / 3);
-            ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
             const { ctx, fillPixels, toImage } = new PreRenderer(3);
@@ -3795,6 +4181,15 @@ const pixels = {
             fillPixels(2 / 3, 1 / 3, 1 / 3, 2 / 3);
             fillPixels(0, 0, 1 / 3, 2 / 3);
             this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            ctx.globalAlpha = 0.5;
+            fillPixels(0, 0, 1 / 3, 1 / 3);
+            fillPixels(2 / 3, 2 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
         },
         recipe: {
             rotator_left: 1,
@@ -3810,6 +4205,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 1,
         updateStage: 5,
         animatedNoise: false,
@@ -3817,6 +4213,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'rotator_clockwise',
         numId: 0
     },
@@ -3826,7 +4224,7 @@ const pixels = {
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                if (frameModulo.get(10) >= 10 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 0 : (Math.floor(deltaTime / 10) % 4)], ctx);
+                if (frameModulo.get(10) >= 10 || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[noAnimations ? 4 : (Math.floor(deltaTime / 10) % 4)], ctx);
             });
         },
         update: function (x, y) {
@@ -3838,18 +4236,15 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(75, 255, 255, 1)';
+            ctx.fillStyle = 'rgba(75, 255, 255, 1)';
             ctx.fillRect(100 / 3, 50 / 3, 50 / 3, 50 / 3);
             ctx.fillRect(0, 50 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(75, 255, 255, 0.66)';
+            ctx.fillStyle = 'rgba(75, 255, 255, 0.66)';
             ctx.fillRect(0, 0, 50 / 3, 50 / 3);
             ctx.fillRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(75, 255, 255, 0.33)';
+            ctx.fillStyle = 'rgba(75, 255, 255, 0.33)';
             ctx.fillRect(50 / 3, 0, 50 / 3, 50 / 3);
             ctx.fillRect(50 / 3, 100 / 3, 50 / 3, 50 / 3);
-            ctx.fillStyle = 'rgb(75, 255, 255, 0.2)';
-            ctx.fillRect(100 / 3, 0, 50 / 3, 50 / 3);
-            ctx.fillRect(0, 100 / 3, 50 / 3, 50 / 3);
         },
         prerender: function () {
             const { ctx, fillPixels, toImage } = new PreRenderer(3);
@@ -3877,6 +4272,15 @@ const pixels = {
             fillPixels(2 / 3, 0, 1 / 3, 2 / 3);
             fillPixels(0, 1 / 3, 1 / 3, 2 / 3);
             this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            fillPixels(1 / 3, 0, 1 / 3, 1 / 3);
+            fillPixels(1 / 3, 2 / 3, 1 / 3, 1 / 3);
+            ctx.globalAlpha = 0.5;
+            fillPixels(2 / 3, 0, 1 / 3, 1 / 3);
+            fillPixels(0, 2 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
         },
         recipe: {
             rotator_left: 1,
@@ -3892,6 +4296,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 1,
         updateStage: 5,
         animatedNoise: false,
@@ -3899,6 +4304,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'rotator_counterclockwise',
         numId: 0
     },
@@ -3930,7 +4337,8 @@ const pixels = {
         prerender: function () { },
         recipe: {
             color_orange: 4,
-            color_brown: 2
+            color_brown: 2,
+            steel_crate: 1
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -3940,6 +4348,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 0,
+        collectible: true,
         group: 1,
         updateStage: -1,
         animatedNoise: false,
@@ -3947,6 +4356,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'slider_horizontal',
         numId: 0
     },
@@ -3978,7 +4389,8 @@ const pixels = {
         prerender: function () { },
         recipe: {
             color_orange: 4,
-            color_brown: 2
+            color_brown: 2,
+            steel_crate: 1
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -3988,6 +4400,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 1,
+        collectible: true,
         group: 1,
         updateStage: -1,
         animatedNoise: false,
@@ -3995,6 +4408,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'slider_vertical',
         numId: 0
     },
@@ -4042,6 +4457,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 1,
         updateStage: -1,
         animatedNoise: false,
@@ -4049,6 +4465,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'collapsible',
         numId: 0
     },
@@ -4098,6 +4516,7 @@ const pixels = {
         pushable: true,
         cloneable: false,
         rotateable: false,
+        collectible: true,
         group: 1,
         updateStage: -1,
         animatedNoise: false,
@@ -4105,6 +4524,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'cloner_deactivator',
         numId: 0
     },
@@ -4128,7 +4549,7 @@ const pixels = {
         recipe: {
             leaves: 8,
             water: 1,
-            plant: 2
+            moss: 2
         },
         craftAmount: 3,
         prerenderedFrames: [],
@@ -4137,6 +4558,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 1,
         updateStage: -1,
         animatedNoise: false,
@@ -4144,6 +4566,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'slime',
         numId: 0
     },
@@ -4176,6 +4600,7 @@ const pixels = {
         },
         update: function (x, y) {
             // CONSUME THE RESOURCES!!!!
+            // make less expensive to make generators less expensive?
             let path = getLaserPath(x, y, 0);
             let last = path[path.length - 1];
             if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
@@ -4211,9 +4636,10 @@ const pixels = {
             color_green: 96,
             color_red: 96,
             color_blue: 96,
-            lava_heater: 6,
-            concrete: 1,
+            lava_generator: 6,
+            concrete: 8,
             glass: 2,
+            steel: 2,
             mirror_any: 9
         },
         craftAmount: 1,
@@ -4224,6 +4650,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 0,
+        collectible: true,
         group: 2,
         updateStage: 0,
         animatedNoise: false,
@@ -4231,6 +4658,8 @@ const pixels = {
         alwaysRedraw: true,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'laser_left',
         numId: 0
     },
@@ -4296,8 +4725,9 @@ const pixels = {
             color_green: 96,
             color_red: 96,
             color_blue: 96,
-            lava_heater: 6,
-            concrete: 1,
+            lava_generator: 6,
+            concrete: 8,
+            steel: 2,
             glass: 2,
             mirror_any: 9
         },
@@ -4309,6 +4739,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 1,
+        collectible: true,
         group: 2,
         updateStage: 0,
         animatedNoise: false,
@@ -4316,6 +4747,8 @@ const pixels = {
         alwaysRedraw: true,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'laser_up',
         numId: 0
     },
@@ -4381,8 +4814,9 @@ const pixels = {
             color_green: 96,
             color_red: 96,
             color_blue: 96,
-            lava_heater: 6,
-            concrete: 1,
+            lava_generator: 6,
+            concrete: 8,
+            steel: 2,
             glass: 2,
             mirror_any: 9
         },
@@ -4394,6 +4828,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 2,
+        collectible: true,
         group: 2,
         updateStage: 0,
         animatedNoise: false,
@@ -4401,6 +4836,8 @@ const pixels = {
         alwaysRedraw: true,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'laser_right',
         numId: 0
     },
@@ -4466,8 +4903,9 @@ const pixels = {
             color_green: 96,
             color_red: 96,
             color_blue: 96,
-            lava_heater: 6,
-            concrete: 1,
+            lava_generator: 6,
+            concrete: 8,
+            steel: 2,
             glass: 2,
             mirror_any: 9
         },
@@ -4479,6 +4917,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 3,
+        collectible: true,
         group: 2,
         updateStage: 0,
         animatedNoise: false,
@@ -4486,6 +4925,8 @@ const pixels = {
         alwaysRedraw: true,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'laser_down',
         numId: 0
     },
@@ -4517,14 +4958,18 @@ const pixels = {
             ctx.fillRect(25, 0, 25 / 2, 50);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            glass: 2,
+            sand: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 2,
         updateStage: -1,
         animatedNoise: false,
@@ -4532,6 +4977,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'laser_scatterer',
         numId: 0
     },
@@ -4581,8 +5028,11 @@ const pixels = {
             fillPixels(1 / 30, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            reinforced_glass: 1,
+            steel: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -4590,6 +5040,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 0,
+        collectible: true,
         group: 2,
         updateStage: -1,
         animatedNoise: false,
@@ -4597,6 +5048,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'mirror_1',
         numId: 0
     },
@@ -4646,8 +5099,11 @@ const pixels = {
             fillPixels(1 / 30, 0, 1 / 10, 1);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            reinforced_glass: 1,
+            steel: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
@@ -4655,6 +5111,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 1,
+        collectible: true,
         group: 2,
         updateStage: -1,
         animatedNoise: false,
@@ -4662,6 +5119,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'mirror_2',
         numId: 0
     },
@@ -4713,8 +5172,15 @@ const pixels = {
             fillPixels(1 / 5, 1 / 5, 1 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_red: 2,
+            color_black: 1,
+            gunpowder: 4,
+            push_cloner_any: 1,
+            steel: 4,
+            concrete: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 0,
@@ -4722,6 +5188,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 0,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -4729,6 +5196,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'flamethrower_left',
         numId: 0
     },
@@ -4780,8 +5249,15 @@ const pixels = {
             fillPixels(1 / 5, 1 / 5, 3 / 5, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_red: 2,
+            color_black: 1,
+            gunpowder: 4,
+            push_cloner_any: 1,
+            steel: 4,
+            concrete: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 0,
@@ -4789,6 +5265,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 1,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -4796,6 +5273,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'flamethrower_up',
         numId: 0
     },
@@ -4847,8 +5326,15 @@ const pixels = {
             fillPixels(3 / 5, 1 / 5, 1 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_red: 2,
+            color_black: 1,
+            gunpowder: 4,
+            push_cloner_any: 1,
+            steel: 4,
+            concrete: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 0,
@@ -4856,6 +5342,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 2,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -4863,6 +5350,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'flamethrower_right',
         numId: 0
     },
@@ -4914,8 +5403,15 @@ const pixels = {
             fillPixels(1 / 5, 3 / 5, 3 / 5, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_red: 2,
+            color_black: 1,
+            gunpowder: 4,
+            push_cloner_any: 1,
+            steel: 4,
+            concrete: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 8,
         flammability: 0,
@@ -4923,6 +5419,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 3,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -4930,6 +5427,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'flamethrower_down',
         numId: 0
     },
@@ -4966,14 +5465,22 @@ const pixels = {
             fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_red: 2,
+            color_black: 1,
+            gunpowder: 4,
+            flamethrower_any: 1,
+            piston_any: 1,
+            concrete: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 5,
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -4981,6 +5488,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'detonator',
         numId: 0
     },
@@ -4996,12 +5505,10 @@ const pixels = {
                 });
             } else {
                 ctx.fillStyle = 'rgb(30, 20, 20)';
+                gridnoisectx.fillStyle = 'rgb(55, 40, 40)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
-                });
-                gridoverctx.fillStyle = 'rgb(55, 40, 40)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
                 });
             }
         },
@@ -5018,14 +5525,20 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_brown: 1,
+            // we don't have home depot pixels to get potassium nitrate pixels from, so here's some leaves
+            leaves: 12,
+            ash: 4
+        },
+        craftAmount: 2,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 20,
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -5033,6 +5546,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'gunpowder',
         numId: 0
     },
@@ -5053,14 +5568,20 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            // we also don't have hexogen and I don't want to be on any more government watch lists so here you go
+            plant: 24,
+            water: 1,
+            sponge: 1
+        },
+        craftAmount: 3,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 4,
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: -1,
         animatedNoise: false,
@@ -5068,6 +5589,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'c4',
         numId: 0
     },
@@ -5102,14 +5625,19 @@ const pixels = {
             ctx.fillRect(50 / 3, 0, 50 / 3, 50);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_orange: 1,
+            slider_horizontal: 1,
+            slider_vertical: 1,
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 19,
         flammability: 2,
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: -1,
         animatedNoise: false,
@@ -5117,6 +5645,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'nuke_diffuser',
         numId: 0
     },
@@ -5153,14 +5683,26 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_lime: 1,
+            color_blue: 2,
+            color_violet: 2,
+            color_black: 6,
+            color_brown: 4,
+            detonator: 1,
+            c4: 4,
+            plant: 48,
+            water: 1,
+            sponge: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -5168,6 +5710,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'nuke',
         numId: 0
     },
@@ -5204,14 +5748,25 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_blue: 3,
+            color_violet: 2,
+            color_black: 6,
+            color_brown: 4,
+            detonator: 1,
+            c4: 4,
+            plant: 96,
+            water: 1,
+            sponge: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -5219,12 +5774,14 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'huge_nuke',
         numId: 0
     },
     very_huge_nuke: {
         name: 'Very Huge Nuke',
-        description: 'AAAAAAAAAAAAAAAAAAAAA',
+        description: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
             ctx.fillStyle = 'rgb(255, 0, 70)';
@@ -5255,14 +5812,26 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_red: 1,
+            color_blue: 2,
+            color_violet: 2,
+            color_black: 6,
+            color_brown: 4,
+            detonator: 1,
+            huge_nuke: 4,
+            plant: 48,
+            water: 1,
+            sponge: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 0,
         flammability: 0,
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -5270,6 +5839,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'very_huge_nuke',
         numId: 0
     },
@@ -5307,6 +5878,7 @@ const pixels = {
         pushable: false,
         cloneable: true,
         rotateable: false,
+        collectible: false,
         group: 3,
         updateStage: -1,
         animatedNoise: false,
@@ -5314,6 +5886,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'deleter',
         numId: 0
     },
@@ -5329,12 +5903,10 @@ const pixels = {
                 });
             } else {
                 ctx.fillStyle = 'rgb(230, 230, 230)';
+                gridnoisectx.fillStyle = 'rgb(245, 245, 220)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
-                });
-                gridoverctx.fillStyle = 'rgb(245, 245, 220)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
                 });
             }
         },
@@ -5377,6 +5949,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -5384,6 +5957,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'spongy_rice',
         numId: 0
     },
@@ -5399,12 +5974,10 @@ const pixels = {
                 });
             } else {
                 ctx.fillStyle = 'rgb(230, 230, 230)';
+                gridnoisectx.fillStyle = 'rgb(245, 245, 220)';
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     fillPixels(x, y, width, height, ctx);
-                });
-                gridoverctx.fillStyle = 'rgb(245, 245, 220)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, gridoverctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
                 });
             }
         },
@@ -5421,6 +5994,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: -1,
         animatedNoise: false,
@@ -5428,6 +6002,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: false,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'expanded_spongy_rice',
         numId: 0
     },
@@ -5479,6 +6055,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -5486,6 +6063,8 @@ const pixels = {
         alwaysRedraw: true,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'lag_spike_generator',
         numId: 0
     },
@@ -5685,6 +6264,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -5692,6 +6272,8 @@ const pixels = {
         alwaysRedraw: true,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'corruption',
         numId: 0
     },
@@ -5724,6 +6306,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: false,
         group: 3,
         updateStage: -1,
         animatedNoise: false,
@@ -5731,6 +6314,8 @@ const pixels = {
         alwaysRedraw: true,
         pickable: false,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'spin',
         numId: 0
     },
@@ -5803,6 +6388,7 @@ const pixels = {
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: 0,
         animatedNoise: false,
@@ -5810,6 +6396,8 @@ const pixels = {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'life',
         numId: 0
     },
@@ -5925,13 +6513,16 @@ _@    ._`],
         pushable: true,
         cloneable: true,
         rotateable: false,
+        collectible: true,
         group: 3,
         updateStage: 5,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimPickable: true,
+        pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'sand',
         numId: 0
     },
@@ -5962,6 +6553,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 5,
         updateStage: -1,
         animatedNoise: false,
@@ -5969,6 +6561,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'placementUnRestriction',
         numId: 0
     },
@@ -6023,6 +6617,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 5,
         updateStage: -1,
         animatedNoise: false,
@@ -6030,6 +6625,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'placementRestriction',
         numId: 0
     },
@@ -6099,13 +6696,16 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 5,
         updateStage: -1,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
         pickable: true,
-        pixsimPickable: true,
+        pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'monster',
         numId: 0
     },
@@ -6146,13 +6746,16 @@ _@    ._`],
         pushable: true,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 5,
         updateStage: -1,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimPickable: true,
+        pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'goal',
         numId: 0
     },
@@ -6198,13 +6801,16 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 5,
         updateStage: -1,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimPickable: true,
+        pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'target',
         numId: 0
     },
@@ -6298,6 +6904,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: -1,
         animatedNoise: false,
@@ -6305,6 +6912,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'pixelite_crystal',
         numId: 0
     },
@@ -6313,25 +6922,81 @@ _@    ._`],
         description: 'Collects',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                if (!noAnimations || redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 4) % 24], ctx);
-            });
+            if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    if (redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    if (redrawing || forceRedraw) forEachPixel(x, y, width, height, (x2, y2) => {
+                        imagePixels(x2, y2, 1, 1, this.prerenderedFrames[teamGrid[y2][x2]], ctx);
+                    });
+                });
+            }
         },
         update: function (x, y) {
-            // if touch pixel collect it unless cloner deactivator
+            if (!validChangingPixel(x, y)) return;
+            if (teamGrid[y][x] == 0 || updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            updateTouchingAnything(x, y, (ax, ay) => {
+                if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible && random() < 0.1) {
+                    teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
+                    nextGrid[ay][ax] = pixNum.AIR;
+                    teamGrid[ay][ax] = 0;
+                }
+            });
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(80, 80, 80)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = '#FF0000';
+            ctx.font = 'bold 30px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('?', 25, 25);
         },
-        prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(120);
+            ctx.fillStyle = 'rgb(80, 80, 80)';
+            fillPixels(0, 0, 1, 1);
+            ctx.font = 'bold 75px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#FF0000';
+            ctx.fillText('?', 60, 60);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#FF0099';
+            ctx.fillText('α', 60, 60);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#3C70FF';
+            ctx.fillText('β', 60, 60);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            color_black: 16,
+            color_red: 4,
+            color_blue: 4,
+            steel: 2,
+            steel_crate: 1,
+            concrete: 8,
+            sticky_piston_any: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 14,
         flammability: 2,
-        pushable: false,
+        pushable: true,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: 0,
         animatedNoise: false,
@@ -6339,6 +7004,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'collector',
         numId: 0
     },
@@ -6396,6 +7063,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: 6,
         animatedNoise: false,
@@ -6403,6 +7071,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'generic_color_well',
         numId: 0
     },
@@ -6461,6 +7131,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: 6,
         animatedNoise: false,
@@ -6468,6 +7139,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'warm_color_well',
         numId: 0
     },
@@ -6525,6 +7198,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: 6,
         animatedNoise: false,
@@ -6532,6 +7206,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'cool_color_well',
         numId: 0
     },
@@ -6588,6 +7264,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: 6,
         animatedNoise: false,
@@ -6595,6 +7272,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'monochrome_color_well',
         numId: 0
     },
@@ -6670,14 +7349,35 @@ _@    ._`],
             ctx.fillRect(10, 20, 30, 10);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_red: 1,
+            color_orange: 1,
+            color_yellow: 1,
+            color_lime: 1,
+            color_green: 1,
+            color_cyan: 1,
+            color_blue: 1,
+            color_violet: 1,
+            color_grey: 1,
+            color_black: 1,
+            color_brown: 1,
+            steel: 8,
+            concrete: 8,
+            reinforced_glass: 4,
+            laser_any: 1,
+            mirror_any: 3,
+            laser_scatterer: 1,
+            cloner_any: 11,
+            freezer: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 19,
         flammability: 0,
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: 6,
         animatedNoise: false,
@@ -6685,6 +7385,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'passive_color_generator',
         numId: 0
     },
@@ -6825,7 +7527,8 @@ _@    ._`],
                     }
                     if (ticks % 10 == 0) {
                         teamPixelAmounts[team].water--;
-                        if (team == PixSimAPI.team) updatePixelAmount('water', teamPixelAmounts[team]);
+                        // lag?
+                        if (team == PixSimAPI.team) queueUpdatePixelAmount('water', teamPixelAmounts[team]);
                     }
                 } else if (random() < 0.03) {
                     explode(x, y, 20, true)
@@ -6843,14 +7546,21 @@ _@    ._`],
             ctx.fillRect(0, 20, 50, 10);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            passive_color_generator: 1,
+            steel: 1,
+            laser_any: 2,
+            mirror_any: 2,
+            freezer: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 19,
         flammability: 0,
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: 6,
         animatedNoise: false,
@@ -6858,6 +7568,8 @@ _@    ._`],
         alwaysRedraw: true,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'active_color_generator',
         numId: 0
     },
@@ -6915,14 +7627,21 @@ _@    ._`],
             ctx.fillRect(10, 10, 30, 30);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_grey: 4,
+            color_collector: 1,
+            steel: 2,
+            concrete: 2,
+            mirror_any: 6
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 18,
         flammability: 0,
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: -1,
         animatedNoise: false,
@@ -6930,6 +7649,8 @@ _@    ._`],
         alwaysRedraw: true,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'color_generator_filter',
         numId: 0
     },
@@ -6994,13 +7715,16 @@ _@    ._`],
         description: 'Collects colors for the team that placed it',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
+            ctx.fillStyle = noAnimations ? `hsl(0, 100%, 50%)` : `hsl(${(deltaTime * 2) % 360}, 80%, 50%)`;
             if (avoidGrid) {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    if (redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                    fillPixels(x, y, width, height, ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
                 });
             } else {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    if (redrawing || forceRedraw) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x, y, width, height, ctx);
+                    forEachPixel(x, y, width, height, (x2, y2) => {
                         imagePixels(x2, y2, 1, 1, this.prerenderedFrames[teamGrid[y2][x2]], ctx);
                     });
                 });
@@ -7008,20 +7732,25 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingAnything(x, y, (ax, ay) => {
-                if (grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN && validChangingPixel(ax, ay)) {
-                    teamPixelAmounts[0][numPixels[grid[ay][ax]].id]++;
+            if (teamGrid[y][x] > 0) updateTouchingAnything(x, y, (ax, ay) => {
+                if (validChangingPixel(ax, ay) && grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN) {
+                    teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
                     nextGrid[ay][ax] = pixNum.AIR;
-                    if (random() < 0.02) {
-                        nextGrid[y][x] = pixNum.AIR;
-                        teamGrid[y][x] = 0;
-                    }
+                    teamGrid[ay][ax] = 0;
+                    // if (random() < 0.02) {
+                    //     nextGrid[y][x] = pixNum.AIR;
+                    //     teamGrid[y][x] = 0;
+                    // }
                 }
             });
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(80, 80, 80)';
+            let gradient = ctx.createConicGradient(0, 25, 25);
+            for (let i = 0; i <= 18; i++) {
+                gradient.addColorStop(i / 18, `hsl(${i * 20}, 80%, 50%)`);
+            }
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(0, 0, 0)';
             ctx.fillRect(10, 10, 30, 30);
@@ -7033,8 +7762,6 @@ _@    ._`],
         },
         prerender: function () {
             const { ctx, fillPixels, toImage } = new PreRenderer(120);
-            ctx.fillStyle = 'rgb(80, 80, 80)';
-            fillPixels(0, 0, 1, 1);
             ctx.font = 'bold 75px Courier New, courier, monospace';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -7054,14 +7781,29 @@ _@    ._`],
             ctx.fillText('β', 60, 60);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            color_black: 12,
+            color_red: 1,
+            color_orange: 1,
+            color_yellow: 1,
+            color_lime: 1,
+            color_green: 1,
+            color_cyan: 1,
+            color_blue: 1,
+            color_violet: 1,
+            steel: 2,
+            steel_crate: 1,
+            concrete: 8,
+            sticky_piston_any: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 12,
         flammability: 2,
         pushable: true,
         cloneable: false,
         rotateable: false,
+        collectible: true,
         group: 6,
         updateStage: 6,
         animatedNoise: false,
@@ -7069,7 +7811,9 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
-        id: 'color_collector_a',
+        generatedDescription: '',
+        image: '',
+        id: 'color_collector',
         numId: 0
     },
     teamNone: {
@@ -7099,6 +7843,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: -1,
         animatedNoise: false,
@@ -7106,6 +7851,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'teamNone',
         numId: 0
     },
@@ -7136,6 +7883,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: -1,
         animatedNoise: false,
@@ -7143,6 +7891,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'teamAlpha',
         numId: 0
     },
@@ -7173,6 +7923,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: 6,
         updateStage: -1,
         animatedNoise: false,
@@ -7180,6 +7931,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'teamBeta',
         numId: 0
     },
@@ -7218,6 +7971,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: -1,
         updateStage: -1,
         animatedNoise: false,
@@ -7226,6 +7980,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: false,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: 'missing',
         numId: 0
     },
@@ -7764,6 +8520,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: -1,
         updateStage: -1,
         animatedNoise: false,
@@ -7771,6 +8528,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: false,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'remove',
         numId: 0
     },
@@ -7810,6 +8569,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: -1,
         updateStage: 0,
         animatedNoise: false,
@@ -7817,6 +8577,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: false,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'rickastley',
         numId: 0
     },
@@ -7846,6 +8608,7 @@ _@    ._`],
         pushable: false,
         cloneable: false,
         rotateable: false,
+        collectible: false,
         group: -1,
         updateStage: 0,
         animatedNoise: false,
@@ -7854,6 +8617,8 @@ _@    ._`],
         alwaysRedraw: false,
         pickable: false,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: 'red',
         numId: 0
     }
@@ -7863,42 +8628,51 @@ const pixNum = {};
 const pixelAmounts = {};
 const pixelSelectors = {};
 const pixelGroups = [];
+const pixelUpdates = new Map();
 function resetPixelAmounts(showPixels = true) {
     for (const group of pixelGroups) {
         group.style.display = 'none';
     }
+    let defaultAmount = sandboxMode ? Infinity : -Infinity;
     for (const id in pixels) {
-        pixelAmounts[id] = -Infinity;
+        pixelAmounts[id] = defaultAmount;
         updatePixelAmount(id, pixelAmounts, true, showPixels);
     }
     pixelAmounts['air'] = Infinity;
     updatePixelAmount('air', pixelAmounts, false, true);
 };
+function queueUpdatePixelAmount(id, inventory = pixelAmounts) {
+    if (!pixelUpdates.has(inventory)) pixelUpdates.set(inventory, new Set());
+    pixelUpdates.get(inventory).add(id);
+};
+function resolveQueuedPixelAmountUpdates() {
+    pixelUpdates.forEach((set, inventory) => set.forEach((id) => updatePixelAmount(id, inventory)));
+    pixelUpdates.clear();
+};
 function updatePixelAmount(id, inventory = pixelAmounts, hideEmpty = false, forceShow = false) {
-    if (pixelSelectors[id] !== undefined) {
-        if (sandboxMode) {
-            pixelSelectors[id].count.innerText = '';
+    if (pixelSelectors[id] === undefined) return;
+    if (sandboxMode) {
+        pixelSelectors[id].count.innerText = '';
+        pixelSelectors[id].box.classList.remove('pickerNoPixels');
+        pixelSelectors[id].box.style.display = '';
+        pixelSelectors[id].parentGroup.style.display = '';
+        pixelSelectors[id].parentGroup.children[0]._refresh();
+    } else {
+        pixelSelectors[id].count.innerText = inventory[id] == Infinity ? '∞' : inventory[id] == -Infinity ? 0 : inventory[id];
+        if (inventory[id] <= 0 || (PixSimAPI.gameRunning && !pixels[id].pixsimPickable)) {
+            pixelSelectors[id].box.classList.add('pickerNoPixels');
+            if (forceShow && !(PixSimAPI.inGame && !pixels[id].pixsimPickable)) {
+                pixelSelectors[id].box.style.display = '';
+                pixelSelectors[id].parentGroup.style.display = '';
+                pixelSelectors[id].parentGroup.children[0]._refresh();
+            } else if (hideEmpty || (PixSimAPI.inGame && !pixels[id].pixsimPickable)) {
+                pixelSelectors[id].box.style.display = 'none';
+            }
+        } else {
             pixelSelectors[id].box.classList.remove('pickerNoPixels');
             pixelSelectors[id].box.style.display = '';
             pixelSelectors[id].parentGroup.style.display = '';
             pixelSelectors[id].parentGroup.children[0]._refresh();
-        } else {
-            pixelSelectors[id].count.innerText = inventory[id] == Infinity ? '∞' : inventory[id] == -Infinity ? 0 : inventory[id];
-            if (inventory[id] <= 0 || (PixSimAPI.gameRunning && !pixels[id].pixsimPickable)) {
-                pixelSelectors[id].box.classList.add('pickerNoPixels');
-                if (forceShow && !(PixSimAPI.inGame && !pixels[id].pixsimPickable)) {
-                    pixelSelectors[id].box.style.display = '';
-                    pixelSelectors[id].parentGroup.style.display = '';
-                    pixelSelectors[id].parentGroup.children[0]._refresh();
-                } else if (hideEmpty || (PixSimAPI.inGame && !pixels[id].pixsimPickable)) {
-                    pixelSelectors[id].box.style.display = 'none';
-                }
-            } else {
-                pixelSelectors[id].box.classList.remove('pickerNoPixels');
-                pixelSelectors[id].box.style.display = '';
-                pixelSelectors[id].parentGroup.style.display = '';
-                pixelSelectors[id].parentGroup.children[0]._refresh();
-            }
         }
     }
 };
@@ -7908,6 +8682,63 @@ function getPixelAmounts() {
         if (pixelAmounts[i] != -Infinity) ret[i] = pixelAmounts[i];
     }
     return ret;
+};
+function generateCraftingHTML(id, inventory = pixelAmounts, images = true) {
+    const pixel = pixels[id];
+    if (pixel === undefined || pixel.craftAmount == 0) return document.createElement('div');
+    const container = document.createElement('div');
+    container.classList.add('craftContainer');
+    const resources = document.createElement('div');
+    resources.classList.add('craftResources');
+    if (images) resources.classList.add('craftResourcesImages');
+    for (const cid in pixel.recipe) {
+        // atrocious one-lining
+        const cpixel = pixels[cid.endsWith('_any') ? (cid.substring(0, cid.lastIndexOf('_any')) + (cid == 'slider_any' ? '_horizontal' : (cid == 'mirror_any' ? '_1' : '_left'))) : cid] ?? numPixels[pixNum.MISSING];
+        if (images) {
+            const box = document.createElement('div');
+            box.classList.add('craftPixel');
+            const img = new Image(50, 50);
+            img.classList.add('craftImage');
+            img.src = cpixel.image;
+            box.appendChild(img);
+            const amount = document.createElement('div');
+            amount.classList.add('craftAmount');
+            amount.innerText = pixel.recipe[cid];
+            if (inventory[cid] <= 0) amount.style.color = '#FF0000';
+            box.appendChild(amount);
+            resources.appendChild(box);
+        }
+        const label = document.createElement('div');
+        label.classList.add('craftLabel');
+        label.innerText = pixel.recipe[cid] + 'x ' + (cid.endsWith('_any') ? cpixel.name.replace('(Left)', '(Any)') : cpixel.name);
+        if (inventory[cid] <= 0) label.style.color = '#FF0000';
+        resources.appendChild(label);
+    }
+    container.appendChild(resources);
+    const product = document.createElement('div');
+    product.classList.add('craftProduct');
+    const box = document.createElement('div');
+    box.classList.add('craftPixelLarge');
+    if (PixSimAPI.inGame && canCraft(id, PixSimAPI.team)) {
+        box.classList.add('craftPixelCraftable');
+        box.onclick = (e) => {
+            craftPixel(id, PixSimAPI.team);
+            sounds.click();
+        };
+    } else if (!sandboxMode) {
+        box.classList.add('craftPixelUncraftable');
+    }
+    const img = new Image(50, 50);
+    img.classList.add('craftImage');
+    img.src = pixel.image;
+    box.appendChild(img);
+    const amount = document.createElement('div');
+    amount.classList.add('craftAmount');
+    amount.innerText = pixel.craftAmount;
+    box.appendChild(amount);
+    product.appendChild(box);
+    container.appendChild(product);
+    return container;
 };
 function generateMusicPixel(id, data) {
     return {
@@ -7980,6 +8811,7 @@ function generateMusicPixel(id, data) {
         cloneable: true,
         rotateable: false,
         musicPixel: 0,
+        collectible: true,
         group: 4,
         updateStage: 0,
         animatedNoise: false,
@@ -7987,6 +8819,8 @@ function generateMusicPixel(id, data) {
         alwaysRedraw: true,
         pickable: true,
         pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
         id: `music_${id}`,
         numId: 0
     }
@@ -8019,6 +8853,7 @@ function generateColorPixel(data) {
         pushable: true,
         cloneable: false,
         rotateable: false,
+        collectible: true,
         group: 6,
         updateStage: -1,
         animatedNoise: false,
@@ -8026,6 +8861,8 @@ function generateColorPixel(data) {
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
         id: `color_${data.color.toLowerCase()}`,
         numId: 0
     };
@@ -8051,7 +8888,9 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     for (const id in pixels) {
         const pixel = pixels[id];
         pixel.prerender();
-        pixel.generatedDescription = `<span style="font-size: 16px; font-weight: bold;">${pixels[id].name}</span><br>${pixels[id].description}<br>Blast Resistance: ${pixels[id].blastResistance}/20<br>Flammability: ${pixels[id].flammability}/20<br>Moveable: ${pixels[id].pushable}<br>Rotateable: ${pixels[id].rotateable}`
+        pixel.drawPreview(ctx2);
+        pixel.image = canvas2.toDataURL('image/png');
+        pixel.generatedDescription = `<span style="font-size: 16px; font-weight: bold;">${pixel.name}</span><br>${pixel.description}<br>Blast Resistance: ${pixel.blastResistance}/20<br>Flammability: ${pixel.flammability}/20<br>Moveable: ${pixel.pushable}<br>Cloneable: ${pixel.cloneable}`;
         if (pixel.pickable) {
             const box = document.createElement('div');
             box.classList.add('pickerPixel');
@@ -8060,16 +8899,21 @@ window.addEventListener('DOMContentLoaded', async (e) => {
                 box.classList.add('pickerPixelSelected');
                 brush.pixel = id;
                 pixelPickerDescription.innerHTML = pixel.generatedDescription;
+                pixelPickerCrafting.innerHTML = '';
+                if (sandboxMode || PixSimAPI.inGame) pixelPickerCrafting.appendChild(generateCraftingHTML(id, PixSimAPI.inGame ? teamPixelAmounts[PixSimAPI.team] : pixelAmounts));
             };
             box.onmouseover = (e) => {
                 pixelPickerDescription.innerHTML = pixel.generatedDescription;
+                pixelPickerCrafting.innerHTML = '';
+                if (sandboxMode || PixSimAPI.inGame) pixelPickerCrafting.appendChild(generateCraftingHTML(id, PixSimAPI.inGame ? teamPixelAmounts[PixSimAPI.team] : pixelAmounts));
             };
             box.onmouseout = (e) => {
                 pixelPickerDescription.innerHTML = pixels[brush.pixel].generatedDescription;
+                pixelPickerCrafting.innerHTML = '';
+                if (sandboxMode || PixSimAPI.inGame) pixelPickerCrafting.appendChild(generateCraftingHTML(brush.pixel, PixSimAPI.inGame ? teamPixelAmounts[PixSimAPI.team] : pixelAmounts));
             };
-            pixel.drawPreview(ctx2);
             const img = new Image(50, 50);
-            img.src = canvas2.toDataURL('image/png');
+            img.src = pixel.image;
             box.appendChild(img);
             const count = document.createElement('div');
             count.classList.add('pickerCount');
