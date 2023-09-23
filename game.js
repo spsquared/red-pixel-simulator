@@ -522,19 +522,18 @@ function imagePixels(x, y, width, height, source, ctx) {
 };
 function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
     let multiplier1 = (Math.sin(deltaTime * Math.PI / p) + 1) / 2;
-    let multiplier2 = (Math.sin((deltaTime + p) * Math.PI / p) + 1) / 2;
+    let multiplier2 = 1 - multiplier1;
     return [
         Math.round((r1 * multiplier1) + (r2 * multiplier2)),
         Math.round((g1 * multiplier1) + (g2 * multiplier2)),
         Math.round((b1 * multiplier1) + (b2 * multiplier2)),
     ];
 };
-// function updatePixel(x, y) {
-//     randomSeed(ticks, x, y);
-//     numPixels[grid[y][x]].update(x, y);
-// };
 function updatePixel(x, y, i) {
-    grid[y][x] !== 0 && numPixels[grid[y][x]] !== undefined && numPixels[grid[y][x]].updateStage === i && randomSeed(ticks, x, y) && numPixels[grid[y][x]].update(x, y);
+    if (grid[y][x] !== 0 && numPixels[grid[y][x]] !== undefined && numPixels[grid[y][x]].updateStage === i) {
+        randomSeed(ticks, x, y);
+        numPixels[grid[y][x]].update(x, y);
+    }
 };
 function updateTouchingPixel(x, y, types, action) {
     types = new Set(Array.isArray(types) ? types : [types]);
@@ -1248,7 +1247,7 @@ function explode(x1, y1, size, defer) {
             }
         }
     }
-    camera.shakeIntensity += size / (1 + camera.shakeIntensity * 0.5);
+    camera.shakeIntensity += (size / (1 + camera.shakeIntensity * 0.5)) * 0.2;
     sounds.explosion(4 * Math.pow(size / 80, 2));
 };
 function craftPixel(id, team) {
@@ -1488,9 +1487,10 @@ function drawFrame() {
 
         forceRedraw = false;
     }
-    if (enableCameraShake && Math.round(camera.shakeIntensity) > 0) {
-        let shakeX = Math.round(Math.random() * (2 * camera.shakeIntensity) - camera.shakeIntensity);
-        let shakeY = Math.round(Math.random() * (2 * camera.shakeIntensity) - camera.shakeIntensity);
+    if (enableCameraShake && Math.round(camera.shakeIntensity * 10) > 0) {
+        let intensity = camera.shakeIntensity * drawScale;
+        let shakeX = Math.round(Math.random() * (2 * intensity) - intensity);
+        let shakeY = Math.round(Math.random() * (2 * intensity) - intensity);
         let shakeSizeIncrease = Math.max(Math.abs(shakeX), Math.abs(shakeY));
         ctx.drawImage(gameCanvas, Math.min(shakeX, 0), Math.min(shakeY, 0), canvasResolution + shakeSizeIncrease, canvasResolution + shakeSizeIncrease);
     } else {
@@ -1758,11 +1758,11 @@ function updateTick() {
             /*
             update priority:
             -: fire
-            0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers, spongy rice, music pixels, lag
+            0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers, spongy rice, lag
             1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers
             5: gravity solids, stone, ice, rotators
             6: water, lava, steam, leaves, pumps, lava generators, freezers, wells, color wells, color generators, color collectors
-            -: monsters
+            -: monsters, music pixels
             */
             let monsterCount = 0;
             let fulfilledTargetCount = 0;
@@ -1855,6 +1855,7 @@ function updateTick() {
             for (let y = gridHeight - 1; y >= 0; y--) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) monsterPixelType.update(x, y);
+                    if (grid[y][x] >= pixNum.MUSIC_1 && grid[y][x] <= pixNum.MUSIC_88) numPixels[grid[y][x]].update(x, y);
                 }
             }
             let newMonsterCount = 0;
@@ -1979,7 +1980,7 @@ function updateBrush() {
                                     musicPixel(musicGrid[y + offsetY][x + offsetX], false);
                                     musicGrid[y + offsetY][x + offsetX] = 0;
                                 }
-                                if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_86) musicGrid[y + offsetY][x + offsetX] = 0;
+                                if (selection.grid[y][x] >= pixNum.MUSIC_1 && selection.grid[y][x] <= pixNum.MUSIC_88) musicGrid[y + offsetY][x + offsetX] = 0;
                             }
                         }
                     }
@@ -2148,7 +2149,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                         musicPixel(musicGrid[y][x], false);
                         musicGrid[y][x] = 0;
                     }
-                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = 0;
+                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_88) musicGrid[y][x] = 0;
                 });
             } else {
                 modifiedPixelCounts[clickPixelNum] = true;
@@ -2165,7 +2166,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                             musicGrid[y][x] = 0;
                         }
                         inventory[placePixel]--;
-                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_86) musicGrid[y][x] = 0;
+                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_88) musicGrid[y][x] = 0;
                         teamGrid[y][x] = pxteam + 1;
                     }
                     return inventory[placePixel] <= 0;

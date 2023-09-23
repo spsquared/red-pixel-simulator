@@ -6073,71 +6073,52 @@ const pixels = {
         description: '<span style="color: red">�</span>',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
             ctx.globalAlpha = opacity;
+            // corruption rewrite even though it was working as intended, it was just bad code
+            // oh wait it's supposed to be bad so it lags
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        for (let k = 0; k < random(0, 2); k++) {
-                            camera.shakeIntensity += 0.1;
-                            let rotationAmount = Math.floor(random(0, 360));
-                            ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
-                            let translateX = random(-10 * gridScale, 10 * gridScale);
-                            let translateY = random(-10 * gridScale, 10 * gridScale);
-                            let skewX = random(-Math.PI / 6, Math.PI / 6);
-                            let skewY = random(-Math.PI / 6, Math.PI / 6);
-                            ctx.translate(translateX, translateY);
-                            ctx.rotate(rotationAmount);
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    camera.shakeIntensity += random(0, 0.1);
+                    let randiter = random(0, 5);
+                    for (let i = 0; i < randiter; i++) {
+                        // this code is borken lol
+                        ctx.save();
+                        ctx.translate(random(-10 * drawScale, 10 * drawScale) + (x2 + 1 / 2) * drawScale - camera.x, random(-10 * drawScale, 10 * drawScale) + (y2 + 1 / 2) * drawScale - camera.y);
+                        ctx.transform(1, random(-Math.PI / 6, Math.PI / 6), random(-Math.PI / 6, Math.PI / 6), 1, 0, 0);
+                        ctx.rotate(random(0, 2 * Math.PI));
+                        let borkWidth = random(0, 2);
+                        let borkHeight = random(0, 1);
+                        ctx.fillStyle = 'rgb(0, 0, 0)';
+                        fillPixels(0, 0, borkWidth, borkHeight, ctx);
+                        ctx.fillStyle = `rgba(100, 255, 0, ${random(0.4, 1)})`;
+                        fillPixels(0, 0, borkWidth, borkHeight, ctx);
+                        ctx.restore();
+                    }
+                    if (random() < 0.02) {
+                        randiter = random(1, 5);
+                        for (let i = 0; i < randiter; i++) {
                             ctx.save();
-                            ctx.transform(1, skewY, skewX, 1, 0, 0);
-                            let borkXScale = random(0, 4);
-                            let borkYScale = random(0, 2);
-                            ctx.fillStyle = 'rgb(0, 0, 0)';
-                            fillPixels(0, 0, borkXScale, borkYScale, ctx);
-                            ctx.fillStyle = `rgb(100, 255, 0, ${random(0.4, 1)})`;
-                            fillPixels(0, 0, borkXScale, borkYScale, ctx);
+                            ctx.translate(random(-10 * drawScale, 10 * drawScale) + (x2 + 1 / 2) * drawScale - camera.x, random(-10 * drawScale, 10 * drawScale) + (y2 + 1 / 2) * drawScale - camera.y);
+                            ctx.rotate(random(0, 2 * Math.PI));
+                            drawPixels(pixNum.MISSING, [[0, 0, 1, 1, true]], opacity, ctx, true);
                             ctx.restore();
-                            ctx.rotate(-rotationAmount);
-                            ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
                         }
-                        if (random(1, 5) < 1.2) {
-                            for (let k = 0; k < random(1, 10); k++) {
-                                let rotationAmount = Math.floor(random(0, 360));
-                                ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
-                                let translateX = random(-20 * gridScale, 20 * gridScale);
-                                let translateY = random(-20 * gridScale, 20 * gridScale);
-                                ctx.translate(translateX, translateY);
-                                ctx.rotate(rotationAmount);
-                                drawPixels(pixNum.MISSING, [[0, 0, 1, 1, true]], opacity, ctx, true);
-                                ctx.rotate(-rotationAmount);
-                                ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
-                            }
-                            let rotationAmount = Math.floor(random(0, 360));
-                            ctx.translate((x + i + 1 / 2) * gridScale, (y + j + 1 / 2) * gridScale);
-                            let translateX = random(-gridWidth * gridScale, gridHeight * gridScale);
-                            let translateY = random(-gridWidth * gridScale, gridHeight * gridScale);
-                            let skewX = random(-Math.PI / 6, Math.PI / 6);
-                            let skewY = random(-Math.PI / 6, Math.PI / 6);
-                            ctx.translate(translateX, translateY);
-                            ctx.rotate(rotationAmount);
-                            ctx.save();
-                            ctx.transform(1, skewY, skewX, 1, 0, 0);
-                            ctx.fillStyle = 'rgb(255, 0, 0)';
-                            ctx.fillRect(0, 0, 90, 90);
-                            ctx.fillStyle = 'rgb(255, 255, 0)';
-                            ctx.fillRect(10, 10, 70, 70);
-                            ctx.fillStyle = 'rgb(255, 0, 0)';
-                            ctx.fillRect(40, 20, 10, 30);
-                            ctx.fillRect(40, 60, 10, 10);
-                            ctx.restore();
-                            ctx.rotate(-rotationAmount);
-                            ctx.translate(-(x + i + 1 / 2) * gridScale - translateX, -(y + j + 1 / 2) * gridScale - translateY);
-                        }
+                        ctx.save();
+                        ctx.translate(random(-20 * drawScale, 20 * drawScale) + (x2 + 1 / 2) * drawScale - camera.x, random(-20 * drawScale, 20 * drawScale) + (y2 + 1 / 2) * drawScale - camera.y);
+                        ctx.transform(1, random(-Math.PI / 6, Math.PI / 6), random(-Math.PI / 6, Math.PI / 6), 1, 0, 0);
+                        ctx.rotate(random(0, 2 * Math.PI));
+                        ctx.fillStyle = 'rgb(255, 0, 0)';
+                        ctx.fillRect(0, 0, 90, 90);
+                        ctx.fillStyle = 'rgb(255, 255, 0)';
+                        ctx.fillRect(10, 10, 70, 70);
+                        ctx.fillStyle = 'rgb(255, 0, 0)';
+                        ctx.fillRect(40, 20, 10, 30);
+                        ctx.fillRect(40, 60, 10, 10);
+                        ctx.restore();
                         abovectx.globalAlpha = opacity;
                         abovectx.fillStyle = 'rgb(255, 0, 0)';
-                        for (let i = 0; i < width; i++) {
-                            drawLaserPath(getLaserPath(x + i, y + j, Math.floor(random(0, 5))));
-                        }
+                        drawLaserPath(getLaserPath(x2, y2, Math.floor(random(0, 5))));
                     }
-                }
+                });
             });
         },
         update: function (x, y) {
@@ -6281,15 +6262,10 @@ const pixels = {
         name: 'Spin',
         description: 'SPINNY CARRIER GO WEEEEEEEEEEEEEEEEEEEEEEEEE!!!!',
         draw: function (rectangles, opacity, ctx, avoidGrid) {
-            ctx.globalAlpha = opacity;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 forEachPixel(x, y, width, height, (x2, y2) => {
-                    ctx.translate((x2 + 1 / 2) * gridScale, (y2 + 1 / 2) * gridScale);
-                    let translateX = random(-10 * gridScale, 10 * gridScale);
-                    let translateY = random(-10 * gridScale, 10 * gridScale);
-                    ctx.translate(translateX, translateY);
-                    let rotationAmount = Math.floor(random(0, 360));
-                    ctx.rotate(rotationAmount);
+                    ctx.translate((x2 + 1 / 2) * drawScale - camera.x, (y2 + 1 / 2) * drawScale - camera.y);
+                    ctx.rotate(random(0, 2 * Math.PI));
                 });
             });
         },
@@ -6393,7 +6369,7 @@ const pixels = {
         updateStage: 0,
         animatedNoise: false,
         animated: false,
-        alwaysRedraw: false,
+        alwaysRedraw: true,
         pickable: true,
         pixsimPickable: false,
         generatedDescription: '',
@@ -8764,7 +8740,7 @@ function generateMusicPixel(id, data) {
         },
         update: function (x, y) {
             if (updateTouchingAnything(x, y, (ax, ay) => {
-                if (grid[ay][ax] >= pixNum.MUSIC_1 && grid[ay][ax] <= pixNum.MUSIC_86) return false;
+                if (grid[ay][ax] >= pixNum.MUSIC_1 && grid[ay][ax] <= pixNum.MUSIC_88) return false;
                 return true;
             })) musicGrid[y][x] = id;
         },
@@ -8810,10 +8786,9 @@ function generateMusicPixel(id, data) {
         pushable: false,
         cloneable: true,
         rotateable: false,
-        musicPixel: 0,
         collectible: true,
         group: 4,
-        updateStage: 0,
+        updateStage: -1,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: true,
