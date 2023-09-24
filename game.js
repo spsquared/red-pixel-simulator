@@ -144,6 +144,15 @@ const camera = {
     y: 0,
     scale: 1,
     shakeIntensity: 0,
+    animation: {
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 0,
+        t0: 0,
+        t1: 0
+    },
+    locked: false,
     mUp: false,
     mDown: false,
     mLeft: false,
@@ -492,8 +501,8 @@ function PreRenderer(size = 60) {
         }
     }
 };
-function drawPixels(type, rectangles, opacity, ctx, avoidGrid = false) {
-    (numPixels[type] ?? numPixels[pixNum.MISSING]).draw(rectangles, opacity, ctx, avoidGrid);
+function drawPixels(type, rectangles, ctx, avoidGrid = false) {
+    (numPixels[type] ?? numPixels[pixNum.MISSING]).draw(rectangles, ctx, avoidGrid);
 };
 function forRectangles(rectangles, cb) {
     for (let rect of rectangles) {
@@ -1432,7 +1441,7 @@ function drawFrame() {
 
         // draw calls
         for (let i in numPixels) {
-            if (numPixels[i].rectangles.length > 0) drawPixels(i, numPixels[i].rectangles, 1, gridctx);
+            if (numPixels[i].rectangles.length > 0) drawPixels(i, numPixels[i].rectangles, gridctx);
         }
         drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
         drawBooleanGrid(monsterGrid, monsterGrid, pixNum.MONSTER, monsterctx);
@@ -1556,7 +1565,7 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
             else if (!pixel ^ invert && (forceRedraw || redrawing)) clearPixels(xmax - amount, y, amount + 1, 1, ctx);
         }
     }
-    if (numPixels[type].rectangles.length > 0) drawPixels(type, numPixels[type].rectangles, 1, ctx);
+    if (numPixels[type].rectangles.length > 0) drawPixels(type, numPixels[type].rectangles, ctx);
 };
 function drawBrush() {
     if (!fastSimulation && !brush.selecting && !inWinScreen) {
@@ -1567,13 +1576,17 @@ function drawBrush() {
             let y2 = Math.min(gridHeight - 1, Math.max(-1, Math.ceil(mYGrid + selection.grid.length / 2) - 1));
             let offsetX = Math.ceil(mXGrid - selection.grid[0].length / 2);
             let offsetY = Math.ceil(mYGrid - selection.grid.length / 2);
+            bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
+            bufferctx.globalCompositeOperation = 'source-over';
             for (let y = 0; y < selection.grid.length; y++) {
                 for (let x = 0; x < selection.grid[y].length; x++) {
                     if (x + offsetX >= 0 && x + offsetX < gridWidth && y + offsetY >= 0 && y + offsetY < gridHeight) {
-                        drawPixels(selection.grid[y][x], [[x + offsetX, y + offsetY, 1, 1, true]], 0.5, ctx, true);
+                        drawPixels(selection.grid[y][x], [[x + offsetX, y + offsetY, 1, 1, true]], bufferctx, true);
                     }
                 }
             }
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(bufferCanvas, 0, 0, canvasResolution, canvasResolution);
             ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgb(0, 0, 0)';
             ctx.setLineDash([drawScale / 2, drawScale / 2]);
@@ -1585,7 +1598,7 @@ function drawBrush() {
             bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
             bufferctx.globalCompositeOperation = 'source-over';
             brushActionLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.size, (rect) => {
-                drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 1, bufferctx, true);
+                drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], bufferctx, true);
             });
             ctx.globalAlpha = 0.5;
             ctx.drawImage(bufferCanvas, 0, 0, canvasResolution, canvasResolution);
@@ -1602,7 +1615,7 @@ function drawBrush() {
             let rect = calcBrushRectCoordinates(mXGrid, mYGrid);
             bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
             bufferctx.globalCompositeOperation = 'source-over';
-            drawPixels((brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 1, bufferctx, true);
+            drawPixels((brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], bufferctx, true);
             ctx.globalAlpha = 0.5;
             ctx.drawImage(bufferCanvas, 0, 0, canvasResolution, canvasResolution);
             ctx.globalAlpha = 1;

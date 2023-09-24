@@ -203,7 +203,7 @@ function rpDraw() {
         if (curr != pixNum.AIR) numPixels[curr].rectangles.push([rpGridWidth - amount - 1, i, amount + 1, 1, true]);
     }
     for (let i in numPixels) {
-        if (numPixels[i].rectangles.length > 0) drawPixels(i, numPixels[i].rectangles, 1, rpDCtx, true);
+        if (numPixels[i].rectangles.length > 0) drawPixels(i, numPixels[i].rectangles, rpDCtx, true);
     }
 
     // copy transfer canvas
@@ -228,7 +228,7 @@ function rpDraw() {
     rpDrawBrush();
 };
 // copy + paste & history
-const rpUnplaceablePixels = ['fire', 'placementUnRestriction', 'placementRestriction', 'monster', 'target', 'remove'];
+const rpUnplaceablePixels = ['fire', 'placementUnRestriction', 'placementRestriction', 'monster', 'target', 'remove', 'teamNone', 'teamAlpna', 'teamBeta'];
 let lastMouseButton = brush.mouseButton;
 function rpUpdateMouseControls() {
     if (rpUnplaceablePixels.indexOf(brush.pixel) == -1 && acceptInputs && rpMX >= 0 && rpMX < rpCanvasRes && rpMY >= 0 && rpMY < rpCanvasRes) {
@@ -295,7 +295,7 @@ function rpDrawBrush() {
         let offsetY = rpCanvasRes / 2 - rpGridScale * rpGridHeight / 2;
         rpDCtx.clearRect(0, 0, canvasResolution, canvasResolution);
         brushActionLine(brush.lineStartX, brush.lineStartY, rpMXGrid, rpMYGrid, (rect) => {
-            drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], 1, rpDCtx, true);
+            drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], rpDCtx, true);
         });
         rpCtx.globalAlpha = 0.5;
         rpCtx.drawImage(rpDCanvas, 0, 0, rpGridWidth * gridScale, rpGridHeight * gridScale, offsetX, offsetY, rpGridWidth * rpGridScale, rpGridHeight * rpGridScale);
@@ -311,8 +311,10 @@ function rpDrawBrush() {
         let offsetX = rpCanvasRes / 2 - rpGridScale * rpGridWidth / 2;
         let offsetY = rpCanvasRes / 2 - rpGridScale * rpGridHeight / 2;
         rpDCtx.clearRect(0, 0, canvasResolution, canvasResolution);
-        drawPixels((brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, [[rpMXGrid - brush.size + 1, rpMYGrid - brush.size + 1, brush.size * 2 - 1, brush.size * 2 - 1, true]], 0.5, rpDCtx, true);
+        drawPixels((brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId, [[rpMXGrid - brush.size + 1, rpMYGrid - brush.size + 1, brush.size * 2 - 1, brush.size * 2 - 1, true]], rpDCtx, true);
+        rpCtx.globalAlpha = 0.5;
         rpCtx.drawImage(rpDCanvas, 0, 0, rpGridWidth * gridScale, rpGridHeight * gridScale, offsetX, offsetY, rpGridWidth * rpGridScale, rpGridHeight * rpGridScale);
+        rpCtx.globalAlpha = 1;
         rpCtx.fillStyle = 'rgb(255, 255, 255)';
         rpCtx.strokeStyle = 'rgb(255, 255, 255)';
         rpCtx.globalCompositeOperation = 'difference';
