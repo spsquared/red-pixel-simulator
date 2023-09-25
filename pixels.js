@@ -4045,7 +4045,7 @@ const pixels = {
         },
         prerender: function () { },
         recipe: {
-            piston_up: 1,
+            piston_right: 1,
             color_cyan: 1,
             slime: 1,
             concrete: 1
@@ -4101,7 +4101,7 @@ const pixels = {
         },
         prerender: function () { },
         recipe: {
-            piston_up: 1,
+            piston_down: 1,
             color_cyan: 1,
             slime: 1,
             concrete: 1
@@ -5876,7 +5876,7 @@ const pixels = {
         blastResistance: 20,
         flammability: 0,
         pushable: false,
-        cloneable: true,
+        cloneable: false,
         rotateable: false,
         collectible: false,
         group: 3,
@@ -8784,7 +8784,7 @@ function generateMusicPixel(id, data) {
         blastResistance: 12,
         flammability: 0,
         pushable: false,
-        cloneable: true,
+        cloneable: false,
         rotateable: false,
         collectible: true,
         group: 4,
@@ -8854,7 +8854,7 @@ for (const id in pixels) {
 }
 let pixelsResolveLoad;
 let pixelsLoad = new Promise((resolve, reject) => pixelsResolveLoad = resolve);
-window.addEventListener('DOMContentLoaded', async (e) => {
+window.addEventListener('load', async (e) => {
     const canvas2 = document.createElement('canvas');
     const ctx2 = canvas2.getContext('2d');
     canvas2.width = 50;

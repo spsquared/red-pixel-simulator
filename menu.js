@@ -15,7 +15,7 @@ window.addEventListener('resize', (e) => {
 });
 menuScreen.style.setProperty('--title-left-offset', (window.innerWidth / 2 - (t_textSimulator.getBoundingClientRect().width + window.innerWidth * 0.01 + window.innerHeight * 0.3) / 2) + 'px');
 
-window.addEventListener('DOMContentLoaded', async () => {
+window.addEventListener('load', async () => {
     const loadingText = document.getElementById('loadingProgressText');
     loadingText.innerText = 'Loading Pixels...';
     await pixelsLoad;
