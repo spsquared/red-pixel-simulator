@@ -1248,6 +1248,7 @@ const pixels = {
                 bufferctx.fillRect(0, 0, canvasResolution, canvasResolution);
                 bufferctx.globalCompositeOperation = 'destination-in';
                 bufferctx.drawImage(noiseCanvas, camera.x / drawScale, camera.y / drawScale, canvasResolution / drawScale, canvasResolution / drawScale, 0, 0, canvasResolution, canvasResolution);
+                bufferctx.globalCompositeOperation = 'source-over';
                 ctx.globalAlpha = 0.2;
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     ctx.drawImage(bufferCanvas, x * drawScale - camera.x, y * drawScale - camera.y, width * drawScale, height * drawScale, x * drawScale - camera.x, y * drawScale - camera.y, width * drawScale, height * drawScale);

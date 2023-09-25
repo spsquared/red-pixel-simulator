@@ -1479,8 +1479,9 @@ function drawFrame() {
                 bufferctx.globalCompositeOperation = 'destination-in';
                 bufferctx.globalAlpha = 0.5;
                 bufferctx.drawImage(noiseBufferCanvas, 0, 0);
+                bufferctx.globalCompositeOperation = 'source-over';
+                teamsctx.drawImage(bufferCanvas, 0, 0);
             }
-            teamsctx.drawImage(bufferCanvas, 0, 0);
         }
 
         // copy layers
