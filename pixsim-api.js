@@ -73,6 +73,11 @@ class PixSimAPI {
     static #teams = {};
     static #gameModes = [
         {
+            name: 'Sandbox',
+            id: 'sandbox',
+            description: 'Literally sandbox mode but with multiplayer'
+        },
+        {
             name: 'Pixelite Crash',
             id: 'pixelcrash',
             description: 'Build vaults of Color and battle to destroy the other Pixelite crystal!<br>Teams must collect colors to create pixels in a battle-royale competition to break through and destroy their opponent.'

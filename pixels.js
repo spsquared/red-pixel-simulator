@@ -4576,20 +4576,18 @@ const pixels = {
         name: 'L.A.S.E.R. (Left)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
         draw: function (rectangles, ctx, avoidGrid) {
-            if (!noAnimations || forceRedraw) {
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = 'rgb(90, 0, 120)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, ctx);
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = 'rgb(90, 0, 120)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || forceRedraw || redrawing) fillPixels(x, y, width, height, ctx);
+            });
+            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || forceRedraw || redrawing) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
                 });
-                let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
-                ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    forEachPixel(x, y, width, height, (x2, y2) => {
-                        fillPixels(x2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
-                    });
-                });
-            }
+            });
             if (avoidGrid) return;
             abovectx.globalAlpha = 1;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
@@ -4668,20 +4666,18 @@ const pixels = {
         name: 'L.A.S.E.R. (Up)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Upwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
         draw: function (rectangles, ctx, avoidGrid) {
-            if (!noAnimations || forceRedraw) {
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = 'rgb(90, 0, 120)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, ctx);
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = 'rgb(90, 0, 120)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || forceRedraw || redrawing) fillPixels(x, y, width, height, ctx);
+            });
+            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || forceRedraw || redrawing) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 3, y2, 1 / 3, 1 / 2, ctx);
                 });
-                let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
-                ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    forEachPixel(x, y, width, height, (x2, y2) => {
-                        fillPixels(x2 + 1 / 3, y2, 1 / 3, 1 / 2, ctx);
-                    });
-                });
-            }
+            });
             if (avoidGrid) return;
             abovectx.globalAlpha = 1;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
@@ -4757,20 +4753,18 @@ const pixels = {
         name: 'L.A.S.E.R. (Right)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Rightwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
         draw: function (rectangles, ctx, avoidGrid) {
-            if (!noAnimations || forceRedraw) {
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = 'rgb(90, 0, 120)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, ctx);
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = 'rgb(90, 0, 120)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || forceRedraw || redrawing) fillPixels(x, y, width, height, ctx);
+            });
+            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || forceRedraw || redrawing) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
                 });
-                let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
-                ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    forEachPixel(x, y, width, height, (x2, y2) => {
-                        fillPixels(x2 + 1 / 2, y2 + 1 / 3, 1 / 2, 1 / 3, ctx);
-                    });
-                });
-            }
+            });
             if (avoidGrid) return;
             abovectx.globalAlpha = 1;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
@@ -4846,20 +4840,18 @@ const pixels = {
         name: 'L.A.S.E.R. (Down)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Downwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
         draw: function (rectangles, ctx, avoidGrid) {
-            if (!noAnimations || forceRedraw) {
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = 'rgb(90, 0, 120)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, ctx);
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = 'rgb(90, 0, 120)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || forceRedraw || redrawing) fillPixels(x, y, width, height, ctx);
+            });
+            let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
+            ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                if (!noAnimations || forceRedraw || redrawing) forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 3, y2 + 1 / 2, 1 / 3, 1 / 2, ctx);
                 });
-                let color = noAnimations ? [255, 0, 144] : colorAnimate(255, 0, 144, 60, 112, 255, 18);
-                ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    forEachPixel(x, y, width, height, (x2, y2) => {
-                        fillPixels(x2 + 1 / 3, y2 + 1 / 2, 1 / 3, 1 / 2, ctx);
-                    });
-                });
-            }
+            });
             if (avoidGrid) return;
             abovectx.globalAlpha = 1;
             abovectx.fillStyle = 'rgb(71, 216, 159)';
@@ -5914,26 +5906,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, [pixNum.MUD, pixNum.SILT, pixNum.WET_ASH, pixNum.WATER, pixNum.ICE, pixNum.SNOW, pixNum.STEAM, pixNum.PUMP, pixNum.FREEZER])) {
-                // lazy code moment
-                // probably will replace with better ellipse drawing algorithm that can do rotated ellipses
-                draw_ellipse((x, y) => {
-                    if (y >= 0 && y < gridHeight && x >= 0 && x < gridWidth) nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
-                }, x, y, Math.floor(random(0, 20)), Math.floor(random(0, 20)));
-                // floodfill moment
-                let visited = new Set();
-                function positionHash(x, y) {
-                    return y * gridWidth + x;
-                };
-                function badFloodfill(x, y) {
-                    visited.add(positionHash(x, y));
-                    if (nextGrid[y][x] == pixNum.EXPANDED_SPONGY_RICE) return;
-                    nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
-                    if (x > 0 && !visited.has(positionHash(x - 1, y))) badFloodfill(x - 1, y);
-                    if (y > 0 && !visited.has(positionHash(x, y - 1))) badFloodfill(x, y - 1);
-                    if (x < gridWidth - 1 && !visited.has(positionHash(x + 1, y))) badFloodfill(x + 1, y);
-                    if (y < gridHeight - 1 && !visited.has(positionHash(x, y + 1))) badFloodfill(x, y + 1);
-                };
-                badFloodfill(x, y);
+                nextGrid[y][x] = pixNum.ACTIVATED_SPONGY_RICE;
             } else fall(x, y, 1, 1, isPassableFluid);
         },
         drawPreview: function (ctx) {
@@ -5963,9 +5936,77 @@ const pixels = {
         id: 'spongy_rice',
         numId: 0
     },
+    activated_spongy_rice: {
+        name: 'Activated Spongy Rice',
+        description: '',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            if (noNoise) {
+                ctx.fillStyle = 'rgb(240, 240, 230)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                });
+            } else {
+                ctx.fillStyle = 'rgb(230, 230, 230)';
+                gridnoisectx.fillStyle = 'rgb(245, 245, 220)';
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                    fillPixels(x, y, width, height, gridnoisectx);
+                });
+            }
+        },
+        update: function (x, y) {
+            // lazy code moment
+            // probably will replace with better ellipse drawing algorithm that can do rotated ellipses
+            draw_ellipse((x, y) => {
+                if (y >= 0 && y < gridHeight && x >= 0 && x < gridWidth) nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
+            }, x, y, Math.ceil(random(1, 20)), Math.ceil(random(0, 20)));
+            // floodfill moment
+            let visited = new Set();
+            function positionHash(x, y) {
+                return y * gridWidth + x;
+            };
+            function badFloodfill(x, y) {
+                visited.add(positionHash(x, y));
+                if (nextGrid[y][x] == pixNum.EXPANDED_SPONGY_RICE) return;
+                nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
+                // if (grid[y][x] == pixNum.SPONGY_RICE) nextGrid[y][x] = pixNum.ACTIVATED_SPONGY_RICE;
+                if (x > 0 && !visited.has(positionHash(x - 1, y))) badFloodfill(x - 1, y);
+                if (y > 0 && !visited.has(positionHash(x, y - 1))) badFloodfill(x, y - 1);
+                if (x < gridWidth - 1 && !visited.has(positionHash(x + 1, y))) badFloodfill(x + 1, y);
+                if (y < gridHeight - 1 && !visited.has(positionHash(x, y + 1))) badFloodfill(x, y + 1);
+            };
+            badFloodfill(x, y);
+            nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        recipe: { },
+        craftAmount: 0,
+        prerenderedFrames: [],
+        blastResistance: 20,
+        flammability: 0,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        collectible: true,
+        group: 3,
+        updateStage: 0,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: false,
+        pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
+        id: 'activated_spongy_rice',
+        numId: 0
+    },
     expanded_spongy_rice: {
         name: 'Expanded Spongy Rice',
-        description: 'The solution to world hunger! Expands 4852x from just a drop of water!<br><i>(SPAARK is not responsible for any Spongy Rice-related injuries or deaths)</i>',
+        description: '',
         draw: function (rectangles, ctx, avoidGrid) {
             ctx.globalAlpha = 1;
             if (noNoise) {

@@ -682,13 +682,15 @@ window.addEventListener('DOMContentLoaded', (e) => {
         block.appendChild(title);
         let col = 0;
         for (let level in puzzles[section].levels) {
-            let savedData = window.localStorage.getItem(`challenge-${puzzles[section].levels[level].id}`);
+            const puzzle = puzzles[section].levels[level];
+            let savedData = window.localStorage.getItem(`challenge-${puzzle.id}`);
             if (savedData) try { savedData = JSON.parse(savedData); } catch { savedData = JSON.parse(LZString.decompressFromBase64(savedData)); };
             const button = document.createElement('button');
-            button.id = `puzzleButton-${puzzles[section].levels[level].id}`;
+            button.id = `puzzleButton-${puzzle.id}`;
             button.classList.add('levelButton');
             if (savedData && savedData.completed) button.classList.add('levelButtonCompleted');
             button.innerText = parseInt(level) + 1;
+            button.title = puzzle.name;
             button.onclick = (e) => {
                 sandboxMode = false;
                 loadPuzzle(section, level);

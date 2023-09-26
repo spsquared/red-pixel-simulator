@@ -152,6 +152,12 @@ const camera = {
         t0: 0,
         t1: 0
     },
+    viewport: {
+        xmin: 0,
+        xmax: 0,
+        ymin: 0,
+        ymax: 0
+    },
     locked: false,
     mUp: false,
     mDown: false,
@@ -1256,6 +1262,8 @@ function explode(x1, y1, size, defer) {
             }
         }
     }
+    let distance = Math.sqrt(Math.pow(Math.max(camera.viewport.xmin - x, x - camera.view.port.xmax, 0), 2) + Math.pow(Math.max(camera.viewport.ymin - y, y - camera.view.port.ymax, 0), 2));
+    // scale relative to set amount of pixels
     camera.shakeIntensity += (size / (1 + camera.shakeIntensity * 0.5)) * 0.2;
     sounds.explosion(4 * Math.pow(size / 80, 2));
 };
@@ -1327,8 +1335,8 @@ function draw() {
     ctx.setLineDash([]);
 
     updateBrush();
-    drawFrame();
     updateCamera();
+    drawFrame();
     updateTick();
 
     let now = performance.now();
@@ -1376,18 +1384,14 @@ function drawFrame() {
 
         // get rectangles to draw
         let drawTeamGrid = PixSimAPI.inGame || forceDrawTeamGrid;
-        let xmin = Math.max(0, Math.floor(camera.x * screenScale) - 1);
-        let xmax = Math.min(gridWidth - 1, Math.floor((camera.x + canvasResolution) * screenScale) + 1);
-        let ymin = Math.max(0, Math.floor(camera.y * screenScale) - 1);
-        let ymax = Math.min(gridHeight - 1, Math.floor((camera.y + canvasResolution) * screenScale) + 1);
         for (let i in numPixels) {
             numPixels[i].rectangles.length = 0;
         }
-        for (let y = ymin; y <= ymax; y++) {
-            let curr = grid[y][xmin];
-            let redrawing = grid[y][xmin] != lastGrid[y][xmin];
+        for (let y = camera.viewport.ymin; y <= camera.viewport.ymax; y++) {
+            let curr = grid[y][camera.viewport.xmin];
+            let redrawing = grid[y][camera.viewport.xmin] != lastGrid[y][camera.viewport.xmin];
             let amount = -1;
-            for (let x = xmin; x <= xmax; x++) {
+            for (let x = camera.viewport.xmin; x <= camera.viewport.xmax; x++) {
                 amount++;
                 if (grid[y][x] != curr || (grid[y][x] != lastGrid[y][x]) != redrawing) {
                     const pixelType = pixelData(curr);
@@ -1404,18 +1408,18 @@ function drawFrame() {
             }
             const pixelType = pixelData(curr);
             if (curr != pixNum.AIR && (forceRedraw || redrawing || pixelType.alwaysRedraw || (pixelType.animated && !noAnimations) || (pixelType.animatedNoise && !noNoise && !noAnimations))) {
-                pixelType.rectangles.push([xmax - amount, y, amount + 1, 1, redrawing]);
+                pixelType.rectangles.push([camera.viewport.xmax - amount, y, amount + 1, 1, redrawing]);
             } else if (curr == pixNum.AIR && (forceRedraw || redrawing)) {
-                clearPixels(xmax - amount, y, amount + 1, 1, gridctx);
+                clearPixels(camera.viewport.xmax - amount, y, amount + 1, 1, gridctx);
             }
         }
         const teamPixelRects = [[], []];
         if (drawTeamGrid) {
-            for (let y = ymin; y <= ymax; y++) {
-                let curr = teamGrid[y][xmin];
-                let redrawing = teamGrid[y][xmin] != lastTeamGrid[y][xmin];
+            for (let y = camera.viewport.ymin; y <= camera.viewport.ymax; y++) {
+                let curr = teamGrid[y][camera.viewport.xmin];
+                let redrawing = teamGrid[y][camera.viewport.xmin] != lastTeamGrid[y][camera.viewport.xmin];
                 let amount = -1;
-                for (let x = xmin; x <= xmax; x++) {
+                for (let x = camera.viewport.xmin; x <= camera.viewport.xmax; x++) {
                     amount++;
                     if (teamGrid[y][x] != curr || (teamGrid[y][x] != lastTeamGrid[y][x]) != redrawing) {
                         if (curr > 0 && (forceRedraw || redrawing)) {
@@ -1431,10 +1435,10 @@ function drawFrame() {
                     lastTeamGrid[y][x] = teamGrid[y][x];
                 }
                 if (curr > 0 && (forceRedraw || redrawing)) {
-                    clearPixels(xmax - amount, y, amount + 1, 1, teamsctx);
+                    clearPixels(camera.viewport.xmax - amount, y, amount + 1, 1, teamsctx);
                     teamPixelRects[curr - 1].push([xmax - amount, y, amount + 1, 1]);
                 } else if (curr == 0 && (forceRedraw || redrawing)) {
-                    clearPixels(xmax - amount, y, amount + 1, 1, teamsctx);
+                    clearPixels(camera.viewport.xmax - amount, y, amount + 1, 1, teamsctx);
                 }
             }
         }
@@ -1526,17 +1530,13 @@ function drawFrame() {
     lastDeltaTime = deltaTime;
 };
 function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
-    let xmin = Math.max(0, Math.floor(camera.x * screenScale) - 1);
-    let xmax = Math.min(gridWidth - 1, Math.floor((camera.x + canvasResolution) * screenScale) + 1);
-    let ymin = Math.max(0, Math.floor(camera.y * screenScale) - 1);
-    let ymax = Math.min(gridHeight - 1, Math.floor((camera.y + canvasResolution) * screenScale) + 1);
     numPixels[type].rectangles.length = 0;
     if (grid === lastGrid) {
         ctx.clearRect(0, 0, canvasResolution, canvasResolution);
-        for (let y = ymin; y <= ymax; y++) {
+        for (let y = camera.viewport.ymin; y <= camera.viewport.ymax; y++) {
             let pixel = false;
             let amount = 0;
-            for (let x = xmin; x <= xmax; x++) {
+            for (let x = camera.viewport.xmin; x <= camera.viewport.xmax; x++) {
                 amount++;
                 if (grid[y][x] != pixel) {
                     if (pixel ^ invert) numPixels[type].rectangles.push([x - amount, y, amount, 1, true]);
@@ -1544,14 +1544,14 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
                     amount = 0;
                 }
             }
-            if (pixel) numPixels[type].rectangles.push([xmax - amount, y, amount + 1, 1, true]);
+            if (pixel) numPixels[type].rectangles.push([camera.viewport.xmax - amount, y, amount + 1, 1, true]);
         }
     } else {
-        for (let y = ymin; y <= ymax; y++) {
+        for (let y = camera.viewport.ymin; y <= camera.viewport.ymax; y++) {
             let pixel = false;
             let redrawing = grid[y][0] != lastGrid[y][0];
             let amount = 0;
-            for (let x = xmin; x <= xmax; x++) {
+            for (let x = camera.viewport.xmin; x <= camera.viewport.xmax; x++) {
                 amount++;
                 if (grid[y][x] != pixel || (grid[y][x] != lastGrid[y][x]) != redrawing) {
                     if (pixel ^ invert && (forceRedraw || redrawing)) numPixels[type].rectangles.push([x - amount, y, amount, 1, true]);
@@ -1562,8 +1562,8 @@ function drawBooleanGrid(grid, lastGrid, type, ctx, invert = false) {
                 }
                 lastGrid[y][x] = grid[y][x];
             }
-            if (pixel ^ invert && (forceRedraw || redrawing)) numPixels[type].rectangles.push([xmax - amount, y, amount + 1, 1, true]);
-            else if (!pixel ^ invert && (forceRedraw || redrawing)) clearPixels(xmax - amount, y, amount + 1, 1, ctx);
+            if (pixel ^ invert && (forceRedraw || redrawing)) numPixels[type].rectangles.push([camera.viewport.xmax - amount, y, amount + 1, 1, true]);
+            else if (!pixel ^ invert && (forceRedraw || redrawing)) clearPixels(camera.viewport.xmax - amount, y, amount + 1, 1, ctx);
         }
     }
     if (numPixels[type].rectangles.length > 0) drawPixels(type, numPixels[type].rectangles, ctx);
@@ -1665,6 +1665,10 @@ function updateCamera() {
             mXGrid = Math.floor((mX + camera.x) * screenScale);
             mYGrid = Math.floor((mY + camera.y) * screenScale);
         }
+        camera.viewport.xmin = Math.max(0, Math.floor(camera.x * screenScale) - 1);
+        camera.viewport.xmax = Math.min(gridWidth - 1, Math.floor((camera.x + canvasResolution) * screenScale) + 1);
+        camera.viewport.ymin = Math.max(0, Math.floor(camera.y * screenScale) - 1);
+        camera.viewport.ymax = Math.min(gridHeight - 1, Math.floor((camera.y + canvasResolution) * screenScale) + 1);
     }
     camera.shakeIntensity *= 0.9;
 };
