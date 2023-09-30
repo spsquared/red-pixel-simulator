@@ -8610,7 +8610,9 @@ _@    ._`],
         },
         update: function (x, y) {
             simulationPaused = true;
-            modal('Red Pixel Simulator', '86 7A 91 7A 8A 26 7C 87 86 86 76 26 7C 81 91 7A 26 94 87 90 26 90 88', false).then(() => window.location.reload());
+            modal('<span style="color: red;">Red Pixel Simulator</span>', '<span style="color: red;">86 7A 91 7A 8A 26 7C 87 86 86 76 26 7C 81 91 7A 26 94 87 90 26 90 88</span>', false).then(() => {
+                for (;;) print();
+            });
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);

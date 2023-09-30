@@ -620,8 +620,8 @@ function fall(x, y, xTravel, yTravel, isPassable = isPassableFluid) {
         if (isPassable(x, y + 1) && canMoveTo(x, y + 1)) {
             move(x, y, x, y + 1);
         } else if (y < gridHeight - yTravel) {
-            let slideLeft = canMoveTo(x - 1, y);
-            let slideRight = canMoveTo(x + 1, y);
+            let slideLeft = canMoveTo(x - 1, y) && isPassable(x - 1, y);
+            let slideRight = canMoveTo(x + 1, y) && isPassable(x + 1, y);
             let canMoveLeftDiagonal = false;
             let canMoveRightDiagonal = false;
             if (slideLeft) {
@@ -1263,6 +1263,7 @@ function explode(x1, y1, size, defer) {
         }
     }
     let distance = Math.sqrt(Math.pow(Math.max(camera.viewport.xmin - x, x - camera.view.port.xmax, 0), 2) + Math.pow(Math.max(camera.viewport.ymin - y, y - camera.view.port.ymax, 0), 2));
+    // 100 pixels?
     // scale relative to set amount of pixels
     camera.shakeIntensity += (size / (1 + camera.shakeIntensity * 0.5)) * 0.2;
     sounds.explosion(4 * Math.pow(size / 80, 2));
