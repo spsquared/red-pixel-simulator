@@ -7027,6 +7027,99 @@ _@    ._`],
         id: 'collector',
         numId: 0
     },
+    instant_collector: {
+        name: 'Instant Collector',
+        description: 'Collects but fast',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    if (redrawing || forceRedraw) imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    if (redrawing || forceRedraw) forEachPixel(x, y, width, height, (x2, y2) => {
+                        imagePixels(x2, y2, 1, 1, this.prerenderedFrames[teamGrid[y2][x2]], ctx);
+                    });
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (teamGrid[y][x] == 0 || updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            updateTouchingAnything(x, y, (ax, ay) => {
+                if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible) {
+                    teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
+                    nextGrid[ay][ax] = pixNum.AIR;
+                    teamGrid[ay][ax] = 0;
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(140, 140, 140)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = '#FF0000';
+            ctx.font = 'bold 30px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('?', 25, 25);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(120);
+            ctx.fillStyle = 'rgb(140, 140, 140)';
+            fillPixels(0, 0, 1, 1);
+            ctx.font = 'bold 75px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#FF0000';
+            ctx.fillText('?', 60, 60);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#FF0099';
+            ctx.fillText('α', 60, 60);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#3C70FF';
+            ctx.fillText('β', 60, 60);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            color_violet: 16,
+            color_grey: 8,
+            collector: 1,
+            steel: 4,
+            concrete: 8,
+            sticky_piston_any: 4,
+            rotator_clockwise: 2,
+            rotator_counterclockwise: 2
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 14,
+        flammability: 2,
+        pushable: true,
+        cloneable: false,
+        rotateable: false,
+        collectible: false,
+        group: 6,
+        updateStage: 0,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        id: 'instant_collector',
+        numId: 0
+    },
     generic_color_well: {
         name: 'Rainbow Color Well',
         description: 'A portal to the color vats hidden within the machinery of the Simulator',
@@ -7755,10 +7848,6 @@ _@    ._`],
                     teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
                     nextGrid[ay][ax] = pixNum.AIR;
                     teamGrid[ay][ax] = 0;
-                    // if (random() < 0.02) {
-                    //     nextGrid[y][x] = pixNum.AIR;
-                    //     teamGrid[y][x] = 0;
-                    // }
                 }
             });
         },

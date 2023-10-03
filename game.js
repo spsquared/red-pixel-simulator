@@ -1262,11 +1262,10 @@ function explode(x1, y1, size, defer) {
             }
         }
     }
-    let distance = Math.sqrt(Math.pow(Math.max(camera.viewport.xmin - x, x - camera.view.port.xmax, 0), 2) + Math.pow(Math.max(camera.viewport.ymin - y, y - camera.view.port.ymax, 0), 2));
-    // 100 pixels?
-    // scale relative to set amount of pixels
-    camera.shakeIntensity += (size / (1 + camera.shakeIntensity * 0.5)) * 0.2;
-    sounds.explosion(4 * Math.pow(size / 80, 2));
+    let distance = Math.sqrt(Math.pow(Math.max(camera.viewport.xmin - x1, x1 - camera.viewport.xmax, 0), 2) + Math.pow(Math.max(camera.viewport.ymin - y1, y1 - camera.viewport.ymax, 0), 2));
+    let intensity = size * Math.min(1, Math.max(0, 1 - (distance / 150)));
+    camera.shakeIntensity += (intensity / (1 + camera.shakeIntensity * 0.5)) * 0.2;
+    sounds.explosion(4 * Math.pow(intensity / 80, 2));
 };
 function craftPixel(id, team) {
     // oof

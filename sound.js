@@ -30,8 +30,10 @@ function addAudioQueue(buf, id, randomDetune = 0) {
     preloadQueue[0].detune.value = Math.random() * randomDetune * 2 - randomDetune;
     if (sounds[id] === undefined) {
         sounds[id] = (volume = 1) => {
-            if (sounds[id].variants.length == 1) sounds[id].variants[0](parseFloat(volume) || 1); // useless?
-            else sounds[id].variants[Math.floor(Math.random() * sounds[id].variants.length)](parseFloat(volume) || 1);
+            let v = isNaN(parseFloat(volume)) ? 1 : parseFloat(volume);
+            if (v == 0) return;
+            if (sounds[id].variants.length == 1) sounds[id].variants[0](v); // useless?
+            else sounds[id].variants[Math.floor(Math.random() * sounds[id].variants.length)](v);
         };
         sounds[id].variants = [];
     }
