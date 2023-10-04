@@ -141,7 +141,7 @@ const pixels = {
             }
             for (let i = Math.max(y - 1, 0); i <= Math.min(y + 1, gridHeight - 1); i++) {
                 for (let j = Math.max(x - 1, 0); j <= Math.min(x + 1, gridWidth - 1); j++) {
-                    if (grid[i][j] == pixNum.DIRT && (i != y || j != x) && random() < 0.2) {
+                    if (grid[i][j] == pixNum.DIRT && validChangingPixel(j, i) && (i != y || j != x) && random() < 0.2) {
                         let canGrow = false;
                         updateTouchingPixel(j, i, pixNum.AIR, function (actionX2, actionY2) {
                             if (actionY2 <= i) canGrow = true;

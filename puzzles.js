@@ -659,6 +659,7 @@ function loadPuzzle(section, level) {
                 pixelAmounts[pixelType] = puzzle.inventory[pixelType];
                 updatePixelAmount(pixelType, pixelAmounts, false, true);
             }
+            currentPuzzleCompleted = false;
         }
         pixelAmounts['air'] = Infinity;
         updatePixelAmount('air', pixelAmounts, false, false);
