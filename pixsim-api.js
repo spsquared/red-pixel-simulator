@@ -52,7 +52,7 @@ socket.on('pong', () => {
 
 // reusable wrapper interface (ignore the stuff above)
 class PixSimAPI {
-    static #undef = this.init();
+    static #undef = this.#init();
     static #connected = false;
     static #RSA = {
         key: null,
@@ -93,7 +93,7 @@ class PixSimAPI {
     static #gridHeight = 0;
     static #inputQueue = [];
 
-    static init() {
+    static #init() {
         this.onUpdateTeamList = () => { };
         this.onGameModeChange = () => { };
         this.onGameStart = () => { };
@@ -233,6 +233,9 @@ class PixSimAPI {
         return await new Promise(async (resolve, reject) => {
             const maplist = await this.#httpGET('/pixsim-api/mapslist/' + this.#gameModes[this.#gameMode].id);
         });
+    }
+    static async getScript() {
+        // gets a script
     }
 
     static set onUpdateTeamList(cb) {

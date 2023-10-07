@@ -441,6 +441,7 @@ document.getElementById('rpSave').onclick = (e) => {
         modal('<span style="color: red">Too Many RedPrints!</span>', 'You have reached the maximum amount of RedPrints that can be stored safely. Please delete some RedPrints.<br>This will be resolved when we (eventually) implement an account system and RedPrints will be stored globally.');
         return;
     }
+    if (rpNameInput.value.length == 0) return;
     const thumbCanvas = document.createElement('canvas');
     thumbCanvas.width = 200;
     thumbCanvas.height = 200;

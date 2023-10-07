@@ -1875,7 +1875,7 @@ const pixels = {
         },
         craftAmount: 1,
         prerenderedFrames: [],
-        blastResistance: 7,
+        blastResistance: 12,
         flammability: 0,
         pushable: false,
         cloneable: true,
@@ -8651,6 +8651,12 @@ _@    ._`],
             });
         },
         update: function (x, y) {
+            updateTouchingAnything(x, y, (ax, ay) => {
+                if (grid[ay][ax] != pixNum.RICKASTLEY && random() < 0.2 * ((21 - pixelAt(ax, ay).blastResistance) / 20)) nextGrid[ay][ax] = pixNum.RICKASTLEY;
+            });
+            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                if (grid[ay][ax] != pixNum.RICKASTLEY && random() < 0.5) nextGrid[ay][ax] = pixNum.RICKASTLEY;
+            });
             if (this.rickastley) return;
             sounds.rickroll();
             this.rickastley = true;

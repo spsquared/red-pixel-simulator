@@ -613,6 +613,10 @@
     background-color: #DDDDDD;
     border: none;
 }
+#joinGameCodeCode::placeholder {
+    font-size: 18px;
+    line-height: 36px;
+}
 #joinGameCodeJoin {
     float: right;
     width: 30%;
