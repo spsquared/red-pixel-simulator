@@ -888,8 +888,10 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
-        craftAmount: 0,
+        recipe: {
+            ice: 1
+        },
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 1,
         flammability: 0,
@@ -2337,8 +2339,7 @@ const pixels = {
             concrete: 8,
             steel: 1,
             color_green: 2,
-            cloner_any: 4,
-            ice: 4
+            cloner_any: 4
         },
         craftAmount: 1,
         prerenderedFrames: [],
