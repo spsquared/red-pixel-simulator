@@ -1204,7 +1204,7 @@ const pixels = {
             color_red: 1,
             color_orange: 1
         },
-        craftAmount: 0,
+        craftAmount: 1,
         prerenderedFrames: [],
         blastResistance: 17,
         flammability: 0,

@@ -1726,14 +1726,14 @@ function drawUI() {
     let brushPixelText = (brush.isSelection && selection.grid[0] !== undefined) ? `Brush: Paste` : `Brush Pixel: ${pixels[brush.pixel].name}`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
     ctx.fillStyle = '#FFF5';
-    ctx.fillRect(1, 0, ctx.measureText(fpsText).width + 4, 20);
-    ctx.fillRect(1, 21, ctx.measureText(tickText).width + 4, 20);
-    ctx.fillRect(canvasResolution - ctx.measureText(brushSizeText).width - 4, 0, ctx.measureText(brushSizeText).width + 2, 20);
-    ctx.fillRect(canvasResolution - ctx.measureText(brushPixelText).width - 4, 21, ctx.measureText(brushPixelText).width + 2, 20);
-    ctx.fillRect(canvasResolution - ctx.measureText(zoomText).width - 4, 42, ctx.measureText(zoomText).width + 2, 20);
+    ctx.fillRect(4, 4, ctx.measureText(fpsText).width + 4, 20);
+    ctx.fillRect(4, 25, ctx.measureText(tickText).width + 4, 20);
+    ctx.fillRect(canvasResolution - 4, 4, -ctx.measureText(brushSizeText).width - 4, 20);
+    ctx.fillRect(canvasResolution - 4, 25, -ctx.measureText(brushPixelText).width - 4, 20);
+    ctx.fillRect(canvasResolution - 4, 46, -ctx.measureText(zoomText).width - 4, 20);
     ctx.fillStyle = '#000';
-    ctx.fillText(fpsText, 3, 1);
-    ctx.fillText(tickText, 3, 22);
+    ctx.fillText(fpsText, 6, 5);
+    ctx.fillText(tickText, 6, 26);
     while (lastFpsList + 100 < performance.now()) {
         lastFpsList += 100;
         fpsList.push(frameList.length);
@@ -1746,9 +1746,9 @@ function drawUI() {
         }
     }
     ctx.textAlign = 'right';
-    ctx.fillText(brushSizeText, canvasResolution - 3, 1);
-    ctx.fillText(brushPixelText, canvasResolution - 3, 22);
-    ctx.fillText(zoomText, canvasResolution - 3, 43);
+    ctx.fillText(brushSizeText, canvasResolution - 6, 5);
+    ctx.fillText(brushPixelText, canvasResolution - 6, 26);
+    ctx.fillText(zoomText, canvasResolution - 6, 47);
     if (fastSimulation) {
         ctx.font = '60px Source Code Pro';
         ctx.textAlign = 'center';
@@ -1756,14 +1756,14 @@ function drawUI() {
         ctx.fillText('SIMULATING...', canvasResolution / 2, canvasResolution / 2);
     } else if (simulationPaused) {
         ctx.fillStyle = '#FFF5';
-        ctx.fillRect(canvasResolution - 84, 63, 82, 20);
+        ctx.fillRect(canvasResolution - 4, 67, -76, 20);
         ctx.fillStyle = '#000';
-        ctx.fillText('PAUSED', canvasResolution - 3, 64);
+        ctx.fillText('PAUSED', canvasResolution - 6, 68);
     } else if (slowSimulation) {
         ctx.fillStyle = '#FFF5';
-        ctx.fillRect(canvasResolution - 124, 63, 122, 20);
+        ctx.fillRect(canvasResolution - 4, 67, -100, 20);
         ctx.fillStyle = '#000';
-        ctx.fillText('SLOWMODE', canvasResolution - 3, 64);
+        ctx.fillText('SLOWMODE', canvasResolution - 6, 68);
     }
     if (PixSimAPI.inGame) drawPixSimUI();
 };
@@ -2822,7 +2822,7 @@ pauseButton.onclick = (e) => {
 };
 simulateSlowButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    slowSimulation = !slowSimulation;
+    slowSimulation = simulateSlowButton.checked;
 };
 fastSimulationButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
