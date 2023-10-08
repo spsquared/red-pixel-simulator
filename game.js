@@ -1016,11 +1016,12 @@ function rotatePixel(x, y) {
     }
 };
 function getLaserPath(x, y, dir) {
-    if (x < 0 || x >= gridWidth || y < 0 || y >= gridHeight) return [[0, 0, 0, 0]];
+    if (x < 0 || x >= gridWidth || y < 0 || y >= gridHeight) return [[-1, -1]];
     let path = [];
     let cdir = dir;
     let startX = x;
     let startY = y;
+    path.push([startX, startY]);
     let iterations = 0;
     while (iterations < maxLaserDepth && startX >= 0 && startX < gridWidth && startY >= 0 && startY < gridHeight) {
         let endX = startX;
@@ -1032,7 +1033,7 @@ function getLaserPath(x, y, dir) {
                     if (!isTransparent(endX, endY)) break;
                     endX--;
                 }
-                path.push([startX, startY, endX, endY]);
+                path.push([endX, endY]);
                 if (endX >= 0 && grid[endY][endX] == pixNum.MIRROR_1) cdir = 3;
                 else if (endX >= 0 && grid[endY][endX] == pixNum.MIRROR_2) cdir = 1;
                 else return path;
@@ -1043,7 +1044,7 @@ function getLaserPath(x, y, dir) {
                     if (!isTransparent(endX, endY)) break;
                     endY--;
                 }
-                path.push([startX, startY, endX, endY]);
+                path.push([endX, endY]);
                 if (endY >= 0 && grid[endY][endX] == pixNum.MIRROR_1) cdir = 2;
                 else if (endY >= 0 && grid[endY][endX] == pixNum.MIRROR_2) cdir = 0;
                 else return path;
@@ -1054,7 +1055,7 @@ function getLaserPath(x, y, dir) {
                     if (!isTransparent(endX, endY)) break;
                     endX++;
                 }
-                path.push([startX, startY, endX, endY]);
+                path.push([endX, endY]);
                 if (endX < gridWidth && grid[endY][endX] == pixNum.MIRROR_1) cdir = 1;
                 else if (endX < gridWidth && grid[endY][endX] == pixNum.MIRROR_2) cdir = 3;
                 else return path;
@@ -1065,13 +1066,13 @@ function getLaserPath(x, y, dir) {
                     if (!isTransparent(endX, endY)) break;
                     endY++;
                 }
-                path.push([startX, startY, endX, endY]);
+                path.push([endX, endY]);
                 if (endY < gridHeight && grid[endY][endX] == pixNum.MIRROR_1) cdir = 0;
                 else if (endY < gridHeight && grid[endY][endX] == pixNum.MIRROR_2) cdir = 2;
                 else return path;
                 break;
             default:
-                path.push([startX, startY, endX, endY]);
+                path.push([endX, endY]);
                 return path;
         }
         startX = endX;
@@ -1081,37 +1082,32 @@ function getLaserPath(x, y, dir) {
     return path;
 };
 function drawLaserPath(path) {
-    for (let line of path) {
-        if (line[1] == line[3]) {
-            fillPixels(Math.min(line[0], line[2]) + 1, line[1] + 1 / 3, Math.abs(line[0] - line[2]) - 1, 1 / 3, abovectx);
-            if (grid[line[1]][line[0]] == pixNum.MIRROR_1 || grid[line[1]][line[0]] == pixNum.MIRROR_2) {
-                if (line[0] < line[2]) {
-                    fillPixels(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
-                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixels(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
-                    else fillPixels(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
-                } else {
-                    fillPixels(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
-                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixels(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
-                    else fillPixels(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
-                }
-                imagePixels(line[0], line[1], 1, 1, pixelAt(line[0], line[1]).prerenderedFrames[0], abovectx);
-            }
-        } else {
-            fillPixels(line[0] + 1 / 3, Math.min(line[1], line[3]) + 1, 1 / 3, Math.abs(line[1] - line[3]) - 1, abovectx);
-            if (grid[line[1]][line[0]] == pixNum.MIRROR_1 || grid[line[1]][line[0]] == pixNum.MIRROR_2) {
-                if (line[1] < line[3]) {
-                    fillPixels(line[0] + 1 / 3, line[1] + 1 / 2, 1 / 3, 1 / 2, abovectx);
-                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixels(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
-                    else fillPixels(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
-                } else {
-                    fillPixels(line[0] + 1 / 3, line[1], 1 / 3, 1 / 2, abovectx);
-                    if (grid[line[1]][line[0]] == pixNum.MIRROR_1) fillPixels(line[0], line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
-                    else fillPixels(line[0] + 1 / 2, line[1] + 1 / 3, 1 / 2, 1 / 3, abovectx);
-                }
-                imagePixels(line[0], line[1], 1, 1, pixelAt(line[0], line[1]).prerenderedFrames[0], abovectx);
-            }
-        }
+    if (path.length <= 1) return;
+    abovectx.lineWidth = 1 / 3 * drawScale;
+    abovectx.lineJoin = 'bevel';
+    abovectx.lineCap = 'butt';
+    abovectx.beginPath();
+    let first = path.shift();
+    if (first[1] == path[0][1]) {
+        if (first[0] < path[0][0]) abovectx.moveTo((first[0] + 1) * drawScale - camera.x, (first[1] + 0.5) * drawScale - camera.y);
+        else abovectx.moveTo(first[0] * drawScale - camera.x, (first[1] + 0.5) * drawScale - camera.y);
+    } else {
+        if (first[1] < path[0][1]) abovectx.moveTo((first[0] + 0.5) * drawScale - camera.x, (first[1] + 1) * drawScale - camera.y);
+        else abovectx.moveTo((first[0] + 0.5) * drawScale - camera.x, first[1] * drawScale - camera.y);
     }
+    let last = path.pop();
+    for (let point of path) {
+        abovectx.lineTo((point[0] + 0.5) * drawScale - camera.x, (point[1] + 0.5) * drawScale - camera.y);
+    }
+    let beforeLast = path.pop() ?? first;
+    if (last[1] == beforeLast[1]) {
+        if (beforeLast[0] < last[0]) abovectx.lineTo(last[0] * drawScale - camera.x, (last[1] + 0.5) * drawScale - camera.y);
+        else abovectx.lineTo((last[0] + 1) * drawScale - camera.x, (last[1] + 0.5) * drawScale - camera.y);
+    } else {
+        if (beforeLast[1] < last[1]) abovectx.lineTo((last[0] + 0.5) * drawScale - camera.x, last[1] * drawScale - camera.y);
+        else abovectx.lineTo((last[0] + 0.5) * drawScale - camera.x, (last[1] + 1) * drawScale - camera.y);
+    }
+    abovectx.stroke();
 };
 function explode(x1, y1, size, defer) {
     if (defer) {

@@ -10,7 +10,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -48,7 +48,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -56,7 +56,7 @@ const pixels = {
         pushable: false,
         cloneable: false,
         rotateable: false,
-        collectible: true,
+        collectible: false,
         group: 0,
         updateStage: -1,
         animatedNoise: false,
@@ -223,7 +223,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 4,
@@ -430,7 +430,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 7,
@@ -834,7 +834,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 1,
@@ -1067,7 +1067,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -1319,7 +1319,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -1380,7 +1380,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 3,
@@ -1437,7 +1437,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 3,
@@ -1538,7 +1538,7 @@ const pixels = {
             ctx.fillRect(0, 25, 50, 25 / 4);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 16,
@@ -1626,7 +1626,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 18,
@@ -1747,7 +1747,7 @@ const pixels = {
             fillPixels(1 / 4, 1 / 2, 1 / 8, 3 / 8);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 15,
@@ -1781,9 +1781,13 @@ const pixels = {
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(240, 240, 245)';
+            ctx.fillStyle = 'rgba(180, 180, 210, 0.3)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.clearRect(2, 12, 10, 10);
+            ctx.clearRect(12, 2, 10, 10);
+            ctx.clearRect(38, 28, 10, 10);
+            ctx.clearRect(28, 38, 10, 10);
             ctx.fillRect(2, 12, 10, 10);
             ctx.fillRect(12, 2, 10, 10);
             ctx.fillRect(38, 28, 10, 10);
@@ -1804,7 +1808,7 @@ const pixels = {
             fillPixels(14 / 25, 19 / 25, 1 / 5, 1 / 5);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -1838,9 +1842,13 @@ const pixels = {
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(240, 240, 245)';
+            ctx.fillStyle = 'rgba(180, 180, 210, 0.3)';
             ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.clearRect(2, 12, 10, 10);
+            ctx.clearRect(12, 2, 10, 10);
+            ctx.clearRect(38, 28, 10, 10);
+            ctx.clearRect(28, 38, 10, 10);
             ctx.fillRect(2, 12, 10, 10);
             ctx.fillRect(12, 2, 10, 10);
             ctx.fillRect(38, 28, 10, 10);
@@ -3710,7 +3718,7 @@ const pixels = {
             fillPixels(1 / 6, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 14,
@@ -3767,7 +3775,7 @@ const pixels = {
             fillPixels(1 / 4, 1 / 6, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 14,
@@ -3826,7 +3834,7 @@ const pixels = {
             fillPixels(2 / 3, 1 / 4, 1 / 6, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 14,
@@ -3883,7 +3891,7 @@ const pixels = {
             fillPixels(1 / 4, 2 / 3, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 14,
@@ -4591,7 +4599,7 @@ const pixels = {
             });
             if (avoidGrid) return;
             abovectx.globalAlpha = 1;
-            abovectx.fillStyle = 'rgb(71, 216, 159)';
+            abovectx.strokeStyle = 'rgb(71, 216, 159)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 for (let i = 0; i < height; i++) {
                     drawLaserPath(getLaserPath(x, y + i, 0));
@@ -4603,24 +4611,24 @@ const pixels = {
             // make less expensive to make generators less expensive?
             let path = getLaserPath(x, y, 0);
             let last = path[path.length - 1];
-            if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
-            if (monsterGrid[last[3]][last[2]]) {
+            if (last[0] < 0 || last[0] >= gridWidth || last[1] < 0 || last[1] >= gridHeight) return;
+            if (monsterGrid[last[1]][last[0]]) {
                 if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
-                    monsterGrid[last[3]][last[2]] = false;
-                    nextFireGrid[last[3]][last[2]] = true;
-                    teamGrid[last[3]][last[2]] = 0;
+                    monsterGrid[last[1]][last[0]] = false;
+                    nextFireGrid[last[1]][last[0]] = true;
+                    teamGrid[last[1]][last[0]] = 0;
                 }
             } else {
-                if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] >= pixNum.LASER_LEFT && grid[last[3]][last[2]] <= pixNum.LASER_DOWN) {
-                        teamGrid[last[3]][last[2]] = 0;
-                        explode(last[2], last[3], 5, true);
+                if (random() < pixelAt(last[0], last[1]).flammability / 100) {
+                    if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
+                        teamGrid[last[1]][last[0]] = 0;
+                        explode(last[0], last[1], 5, true);
                     }
-                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) {
-                        nextGrid[last[3]][last[2]] = pixNum.AIR;
-                        teamGrid[last[3]][last[2]] = 0;
+                    if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                        nextGrid[last[1]][last[0]] = pixNum.AIR;
+                        teamGrid[last[1]][last[0]] = 0;
                     }
-                } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
+                } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -4681,7 +4689,7 @@ const pixels = {
             });
             if (avoidGrid) return;
             abovectx.globalAlpha = 1;
-            abovectx.fillStyle = 'rgb(71, 216, 159)';
+            abovectx.strokeStyle = 'rgb(71, 216, 159)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 for (let i = 0; i < width; i++) {
                     drawLaserPath(getLaserPath(x + i, y, 1));
@@ -4691,23 +4699,23 @@ const pixels = {
         update: function (x, y) {
             let path = getLaserPath(x, y, 1);
             let last = path[path.length - 1];
-            if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
-            if (monsterGrid[last[3]][last[2]]) {
+            if (last[0] < 0 || last[0] >= gridWidth || last[1] < 0 || last[1] >= gridHeight) return;
+            if (monsterGrid[last[1]][last[0]]) {
                 if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
-                    monsterGrid[last[3]][last[2]] = false;
-                    nextFireGrid[last[3]][last[2]] = true;
+                    monsterGrid[last[1]][last[0]] = false;
+                    nextFireGrid[last[1]][last[0]] = true;
                 }
             } else {
-                if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] >= pixNum.LASER_LEFT && grid[last[3]][last[2]] <= pixNum.LASER_DOWN) {
-                        teamGrid[last[3]][last[2]] = 0;
-                        explode(last[2], last[3], 5, true);
+                if (random() < pixelAt(last[0], last[1]).flammability / 100) {
+                    if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
+                        teamGrid[last[1]][last[0]] = 0;
+                        explode(last[0], last[1], 5, true);
                     }
-                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) {
-                        nextGrid[last[3]][last[2]] = pixNum.AIR;
-                        teamGrid[last[3]][last[2]] = 0;
+                    if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                        nextGrid[last[1]][last[0]] = pixNum.AIR;
+                        teamGrid[last[1]][last[0]] = 0;
                     }
-                } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
+                } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -4768,7 +4776,7 @@ const pixels = {
             });
             if (avoidGrid) return;
             abovectx.globalAlpha = 1;
-            abovectx.fillStyle = 'rgb(71, 216, 159)';
+            abovectx.strokeStyle = 'rgb(71, 216, 159)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 for (let i = 0; i < height; i++) {
                     drawLaserPath(getLaserPath(x + width - 1, y + i, 2));
@@ -4778,23 +4786,23 @@ const pixels = {
         update: function (x, y) {
             let path = getLaserPath(x, y, 2);
             let last = path[path.length - 1];
-            if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
-            if (monsterGrid[last[3]][last[2]]) {
+            if (last[0] < 0 || last[0] >= gridWidth || last[1] < 0 || last[1] >= gridHeight) return;
+            if (monsterGrid[last[1]][last[0]]) {
                 if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
-                    monsterGrid[last[3]][last[2]] = false;
-                    nextFireGrid[last[3]][last[2]] = true;
+                    monsterGrid[last[1]][last[0]] = false;
+                    nextFireGrid[last[1]][last[0]] = true;
                 }
             } else {
-                if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] >= pixNum.LASER_LEFT && grid[last[3]][last[2]] <= pixNum.LASER_DOWN) {
-                        teamGrid[last[3]][last[2]] = 0;
-                        explode(last[2], last[3], 5, true);
+                if (random() < pixelAt(last[0], last[1]).flammability / 100) {
+                    if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
+                        teamGrid[last[1]][last[0]] = 0;
+                        explode(last[0], last[1], 5, true);
                     }
-                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) {
-                        nextGrid[last[3]][last[2]] = pixNum.AIR;
-                        teamGrid[last[3]][last[2]] = 0;
+                    if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                        nextGrid[last[1]][last[0]] = pixNum.AIR;
+                        teamGrid[last[1]][last[0]] = 0;
                     }
-                } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
+                } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -4855,7 +4863,7 @@ const pixels = {
             });
             if (avoidGrid) return;
             abovectx.globalAlpha = 1;
-            abovectx.fillStyle = 'rgb(71, 216, 159)';
+            abovectx.strokeStyle = 'rgb(71, 216, 159)';
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 for (let i = 0; i < width; i++) {
                     drawLaserPath(getLaserPath(x + i, y + height - 1, 3));
@@ -4865,23 +4873,23 @@ const pixels = {
         update: function (x, y) {
             let path = getLaserPath(x, y, 3);
             let last = path[path.length - 1];
-            if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
-            if (monsterGrid[last[3]][last[2]]) {
+            if (last[0] < 0 || last[0] >= gridWidth || last[1] < 0 || last[1] >= gridHeight) return;
+            if (monsterGrid[last[1]][last[0]]) {
                 if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
-                    monsterGrid[last[3]][last[2]] = false;
-                    nextFireGrid[last[3]][last[2]] = true;
+                    monsterGrid[last[1]][last[0]] = false;
+                    nextFireGrid[last[1]][last[0]] = true;
                 }
             } else {
-                if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                    if (grid[last[3]][last[2]] >= pixNum.LASER_LEFT && grid[last[3]][last[2]] <= pixNum.LASER_DOWN) {
-                        teamGrid[last[3]][last[2]] = 0;
-                        explode(last[2], last[3], 5, true);
+                if (random() < pixelAt(last[0], last[1]).flammability / 100) {
+                    if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
+                        teamGrid[last[1]][last[0]] = 0;
+                        explode(last[0], last[1], 5, true);
                     }
-                    if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) {
-                        nextGrid[last[3]][last[2]] = pixNum.AIR;
-                        teamGrid[last[3]][last[2]] = 0;
+                    if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                        nextGrid[last[1]][last[0]] = pixNum.AIR;
+                        teamGrid[last[1]][last[0]] = 0;
                     }
-                } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
+                } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
             }
         },
         drawPreview: function (ctx) {
@@ -4989,9 +4997,7 @@ const pixels = {
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(220, 220, 220)';
+            ctx.fillStyle = 'rgba(200, 200, 200, 0.6)';
             ctx.rotate(Math.PI / 4);
             ctx.fillRect(50 / Math.sqrt(2) - 7.5, -50 / Math.sqrt(2), 15, Math.sqrt(2) * 50);
             ctx.resetTransform();
@@ -5060,9 +5066,7 @@ const pixels = {
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(220, 220, 220)';
+            ctx.fillStyle = 'rgba(200, 200, 200, 0.6)';
             ctx.rotate(Math.PI / 4);
             ctx.fillRect(0, -7.5, Math.sqrt(2) * 50, 15);
             ctx.resetTransform();
@@ -5864,7 +5868,7 @@ const pixels = {
             ctx.fillRect(50 / 4, 50 / 4, 25, 25);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -5916,7 +5920,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -5984,7 +5988,7 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -6029,10 +6033,10 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
-        blastResistance: 20,
+        blastResistance: 5,
         flammability: 0,
         pushable: true,
         cloneable: true,
@@ -6090,7 +6094,7 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 15,
@@ -6158,7 +6162,7 @@ const pixels = {
                         ctx.fillRect(40, 60, 10, 10);
                         ctx.restore();
                         abovectx.globalAlpha = 1;
-                        abovectx.fillStyle = 'rgb(255, 0, 0)';
+                        abovectx.strokeStyle = 'rgb(255, 0, 0)';
                         drawLaserPath(getLaserPath(x2, y2, Math.floor(random(0, 5))));
                     }
                 });
@@ -6257,17 +6261,10 @@ const pixels = {
             updateTouchingAnything(x, y, chaos);
             let path = getLaserPath(x, y, Math.floor(random() * 4));
             let last = path[path.length - 1];
-            if (last[2] < 0 || last[2] >= gridWidth || last[3] < 0 || last[3] >= gridHeight) return;
-            if (random() < pixelAt(last[2], last[3]).flammability / 100) {
-                if (grid[last[3]][last[2]] >= pixNum.LASER_LEFT && grid[last[3]][last[2]] <= pixNum.LASER_DOWN) {
-                    teamGrid[last[3]][last[2]] = 0;
-                    explode(last[2], last[3], 5, true);
-                }
-                if (grid[last[3]][last[2]] != pixNum.LASER_SCATTERER) {
-                    nextGrid[last[3]][last[2]] = pixNum.AIR;
-                    teamGrid[last[3]][last[2]] = 0;
-                }
-            } else if (random() < pixelAt(last[2], last[3]).flammability / 100) nextFireGrid[last[3]][last[2]] = true;
+            if (last[0] < 0 || last[0] >= gridWidth || last[1] < 0 || last[1] >= gridHeight) return;
+            if (random() < pixelAt(last[0], last[1]).flammability / 100) {
+                explode(last[0], last[1], 10, true);
+            } else if (random() < pixelAt(last[0], last[1]).flammability / 50) nextFireGrid[last[1]][last[0]] = true;
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -6280,7 +6277,7 @@ const pixels = {
             ctx.fillRect(22, 36, 6, 6);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: NaN,
@@ -6317,7 +6314,7 @@ const pixels = {
             ctx.clearRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -6399,7 +6396,7 @@ const pixels = {
             ctx.fillRect(20, 30, 20, 10);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 8,
@@ -6564,7 +6561,7 @@ _@    ._`],
             ctx.fillRect(5, 5, 40, 40);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -6628,7 +6625,7 @@ _@    ._`],
             ctx.resetTransform();
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -6707,7 +6704,7 @@ _@    ._`],
             fillPixels(1 / 4, 3 / 5, 1 / 2, 1 / 6);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 2,
@@ -6757,7 +6754,7 @@ _@    ._`],
             ctx.fillRect(10, 10, 30, 30);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -6812,7 +6809,7 @@ _@    ._`],
             clearPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -6915,7 +6912,7 @@ _@    ._`],
                 addRender(Math.PI * i / 12);
             }
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 19,
@@ -6955,10 +6952,10 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (teamGrid[y][x] == 0 || updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             updateTouchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible && random() < 0.1) {
-                    teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
+                    if (teamGrid[y][x] != 0) teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
                     nextGrid[ay][ax] = pixNum.AIR;
                     teamGrid[ay][ax] = 0;
                 }
@@ -7019,7 +7016,7 @@ _@    ._`],
         group: 6,
         updateStage: 0,
         animatedNoise: false,
-        animated: true,
+        animated: false,
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
@@ -7047,10 +7044,10 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (teamGrid[y][x] == 0 || updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             updateTouchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible) {
-                    teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
+                    if (teamGrid[y][x] != 0) teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
                     nextGrid[ay][ax] = pixNum.AIR;
                     teamGrid[ay][ax] = 0;
                 }
@@ -7112,7 +7109,7 @@ _@    ._`],
         group: 6,
         updateStage: 0,
         animatedNoise: false,
-        animated: true,
+        animated: false,
         alwaysRedraw: false,
         pickable: true,
         pixsimPickable: true,
@@ -7167,7 +7164,7 @@ _@    ._`],
             ctx.fillRect(25 / 2, 25 / 2, 25, 25);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -7235,7 +7232,7 @@ _@    ._`],
             ctx.fillRect(25 / 2, 25 / 2, 25, 25);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -7302,7 +7299,7 @@ _@    ._`],
             ctx.fillRect(25 / 2, 25 / 2, 25, 25);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -7368,7 +7365,7 @@ _@    ._`],
             ctx.fillRect(25 / 2, 25 / 2, 25, 25);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 20,
@@ -7612,39 +7609,35 @@ _@    ._`],
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let team = teamGrid[y][x] - 1;
-            if (teamPixelAmounts[team] !== undefined) {
-                if (teamPixelAmounts[team].water > 0) {
-                    let restrictions = [];
-                    if (updateTouchingPixel(x, y, pixNum.COLOR_GENERATOR_FILTER, (ax, ay) => {
-                        return updateTouchingAnything(ax, ay, (bx, by) => {
-                            // probably better than supplying an array that's annoying to maintain to updateTouchingPixel
-                            if (grid[by][bx] >= pixNum.COLOR_RED && grid[by][bx] <= pixNum.COLOR_BROWN) {
-                                restrictions.push(grid[by][bx]);
-                                return true;
-                            }
-                            return false;
-                        });
-                    })) {
-                        updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
-                            if (validChangingPixel(ax, ay) && random() < 0.04) {
-                                nextGrid[ay][ax] = restrictions[Math.floor(random(0, restrictions.length))];
-                            }
-                        });
-                    } else {
-                        updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
-                            if (validChangingPixel(ax, ay) && random() < 0.04) {
-                                nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_RED, pixNum.COLOR_BROWN + 1));
-                            }
-                        });
-                    }
-                    if (ticks % 10 == 0) {
-                        teamPixelAmounts[team].water--;
-                        // lag?
-                        if (team == PixSimAPI.team) queueUpdatePixelAmount('water', teamPixelAmounts[team]);
-                    }
-                } else if (random() < 0.03) {
-                    explode(x, y, 20, true)
-                };
+            if (team == -1 || teamPixelAmounts[team].water > 0) {
+                let restrictions = [];
+                if (updateTouchingPixel(x, y, pixNum.COLOR_GENERATOR_FILTER, (ax, ay) => {
+                    return updateTouchingAnything(ax, ay, (bx, by) => {
+                        if (grid[by][bx] >= pixNum.COLOR_RED && grid[by][bx] <= pixNum.COLOR_BROWN) {
+                            restrictions.push(grid[by][bx]);
+                            return true;
+                        }
+                        return false;
+                    });
+                })) {
+                    updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                        if (validChangingPixel(ax, ay) && random() < 0.04) {
+                            nextGrid[ay][ax] = restrictions[Math.floor(random(0, restrictions.length))];
+                        }
+                    });
+                } else {
+                    updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                        if (validChangingPixel(ax, ay) && random() < 0.04) {
+                            nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_RED, pixNum.COLOR_BROWN + 1));
+                        }
+                    });
+                }
+                if (ticks % 10 == 0 && team != -1) {
+                    teamPixelAmounts[team].water--;
+                    if (team == PixSimAPI.team) queueUpdatePixelAmount('water', teamPixelAmounts[team]);
+                }
+            } else if (random() < 0.03) {
+                explode(x, y, 20, true)
             }
         },
         drawPreview: function (ctx) {
@@ -7844,9 +7837,9 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (teamGrid[y][x] > 0) updateTouchingAnything(x, y, (ax, ay) => {
+            updateTouchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN) {
-                    teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
+                    if (teamGrid[y][x] != 0) teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
                     nextGrid[ay][ax] = pixNum.AIR;
                     teamGrid[ay][ax] = 0;
                 }
@@ -7943,7 +7936,7 @@ _@    ._`],
             ctx.fillRect(5, 5, 40, 40);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -7983,7 +7976,7 @@ _@    ._`],
             ctx.fillRect(5, 5, 40, 40);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -8023,7 +8016,7 @@ _@    ._`],
             ctx.fillRect(5, 5, 40, 40);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -8071,7 +8064,7 @@ _@    ._`],
             fillPixels(1 / 2, 1 / 2, 1 / 2, 1 / 2);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -8620,7 +8613,7 @@ _@    ._`],
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 0,
@@ -8675,7 +8668,7 @@ _@    ._`],
             };
         },
         rickastley: false,
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: Infinity,
@@ -8707,7 +8700,7 @@ _@    ._`],
         update: function (x, y) {
             simulationPaused = true;
             modal('<span style="color: red;">Red Pixel Simulator</span>', '<span style="color: red;">86 7A 91 7A 8A 26 7C 87 86 86 76 26 7C 81 91 7A 26 94 87 90 26 90 88</span>', false).then(() => {
-                for (;;) print();
+                for (; ;) print();
             });
         },
         drawPreview: function (ctx) {
@@ -8716,7 +8709,7 @@ _@    ._`],
             ctx.fillRect(0, 0, 50, 50);
         },
         prerender: function () { },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: undefined,
@@ -8918,7 +8911,7 @@ function generateMusicPixel(id, data) {
             ctx.fillText(data.text, 60, 48);
             this.prerenderedFrames.push(toImage());
         },
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 12,
@@ -8926,7 +8919,7 @@ function generateMusicPixel(id, data) {
         pushable: false,
         cloneable: false,
         rotateable: false,
-        collectible: true,
+        collectible: false,
         group: 4,
         updateStage: -1,
         animatedNoise: false,
@@ -8960,7 +8953,7 @@ function generateColorPixel(data) {
         },
         prerender: function () { },
         defaultRGB: data.rgb0,
-        recipe: { },
+        recipe: {},
         craftAmount: 0,
         prerenderedFrames: [],
         blastResistance: 5,
@@ -8968,7 +8961,7 @@ function generateColorPixel(data) {
         pushable: true,
         cloneable: false,
         rotateable: false,
-        collectible: true,
+        collectible: false,
         group: 6,
         updateStage: -1,
         animatedNoise: false,
