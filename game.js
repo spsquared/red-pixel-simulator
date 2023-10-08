@@ -796,6 +796,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     let slimePushes = [];
     if (!validChangingPixel(x, y)) return;
     let startsSlime = grid[y][x] == pixNum.SLIME;
+    let startsCollectorHandle = grid[y][x] == pixNum.COLLECTOR_HANDLE;
     if (startsSlime) {
         switch (dir) {
             case 0:
@@ -816,9 +817,28 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 break;
         }
     }
+    let isCollector = (x, y) => {
+        return grid[y][x] == pixNum.COLLECTOR || grid[y][x] == pixNum.INSTANT_COLLECTOR || grid[y][x] == pixNum.COLOR_COLLECTOR;
+    };
+    if (startsCollectorHandle) {
+        switch (dir) {
+            case 0:
+                if (x < gridWidth - 1 && isCollector(x + 1, y)) x++;
+                break;
+            case 1:
+                if (y < gridHeight - 1 && isCollector(x, y + 1)) y++;
+                break;
+            case 2:
+                if (x > 0 && isCollector(x - 1, y)) x--;
+                break;
+            case 3:
+                if (y > 0 && isCollector(x, y - 1)) y--;
+                break;
+        }
+    }
     switch (dir) {
         case 0:
-            for (let i = x - !startsSlime; i >= 0; i--) {
+            for (let i = x - !(startsSlime || startsCollectorHandle); i >= 0; i--) {
                 if (isAir(i, y)) {
                     moveX = i;
                     if (grid[y][i] == pixNum.DELETER) moveX++;
@@ -827,6 +847,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
                 if (grid[y][i] == pixNum.SLIME && y > 0 && !isAir(i, y - 1) && canPush(i, y - 1, 0, ignorePistons)) slimePushes.push([i, y - 1]);
                 if (grid[y][i] == pixNum.SLIME && y < gridHeight - 1 && !isAir(i, y + 1) && canPush(i, y + 1, 0, ignorePistons)) slimePushes.push([i, y + 1]);
+                if (grid[y][i] == pixNum.COLLECTOR_HANDLE && y > 0 && isCollector(i, y - 1)) slimePushes.push([i, y - 1]);
+                if (grid[y][i] == pixNum.COLLECTOR_HANDLE && y < gridHeight - 1 && isCollector(i, y + 1)) slimePushes.push([i, y + 1]);
                 if (!canPush(i, y, 0, ignorePistons)) break;
             }
             if (moveX === -1 && lastCollapsible !== -1) {
@@ -852,7 +874,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             return false;
         case 1:
-            for (let i = y - !startsSlime; i >= 0; i--) {
+            for (let i = y - !(startsSlime || startsCollectorHandle); i >= 0; i--) {
                 if (isAir(x, i)) {
                     moveY = i;
                     if (grid[i][x] == pixNum.DELETER) moveY++;
@@ -861,6 +883,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
                 if (grid[i][x] == pixNum.SLIME && x > 0 && !isAir(x - 1, i) && canPush(x - 1, i, 1, ignorePistons)) slimePushes.push([x - 1, i]);
                 if (grid[i][x] == pixNum.SLIME && x < gridHeight - 1 && !isAir(x + 1, i) && canPush(x + 1, i, 1, ignorePistons)) slimePushes.push([x + 1, i]);
+                if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x > 0 && isCollector(x - 1, i)) slimePushes.push([x - 1, i]);
+                if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x < gridWidth - 1 && isCollector(x + 1, i)) slimePushes.push([x + 1, i]);
                 if (!canPush(x, i, 1, ignorePistons)) break;
             }
             if (moveY === -1 && lastCollapsible !== -1) {
@@ -886,7 +910,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             return false;
         case 2:
-            for (let i = x + !startsSlime; i < gridWidth; i++) {
+            for (let i = x + !(startsSlime || startsCollectorHandle); i < gridWidth; i++) {
                 if (isAir(i, y)) {
                     moveX = i;
                     if (grid[y][i] == pixNum.DELETER) moveX--;
@@ -895,6 +919,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
                 if (grid[y][i] == pixNum.SLIME && y > 0 && !isAir(i, y - 1) && canPush(i, y - 1, 2, ignorePistons)) slimePushes.push([i, y - 1]);
                 if (grid[y][i] == pixNum.SLIME && y < gridHeight - 1 && !isAir(i, y + 1) && canPush(i, y + 1, 2, ignorePistons)) slimePushes.push([i, y + 1]);
+                if (grid[y][i] == pixNum.COLLECTOR_HANDLE && y > 0 && isCollector(i, y - 1)) slimePushes.push([i, y - 1]);
+                if (grid[y][i] == pixNum.COLLECTOR_HANDLE && y < gridHeight - 1 && isCollector(i, y + 1)) slimePushes.push([i, y + 1]);
                 if (!canPush(i, y, 2, ignorePistons)) break;
             }
             if (moveX === -1 && lastCollapsible !== -1) {
@@ -920,7 +946,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             }
             return false;
         case 3:
-            for (let i = y + !startsSlime; i < gridHeight; i++) {
+            for (let i = y + !(startsSlime || startsCollectorHandle); i < gridHeight; i++) {
                 if (isAir(x, i)) {
                     moveY = i;
                     if (grid[i][x] == pixNum.DELETER) moveY--;
@@ -929,6 +955,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
                 if (grid[i][x] == pixNum.SLIME && x > 0 && !isAir(x - 1, i) && canPush(x - 1, i, 1, ignorePistons)) slimePushes.push([x - 1, i]);
                 if (grid[i][x] == pixNum.SLIME && x < gridHeight - 1 && !isAir(x + 1, i) && canPush(x + 1, i, 1, ignorePistons)) slimePushes.push([x + 1, i]);
+                if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x > 0 && isCollector(x - 1, i)) slimePushes.push([x - 1, i]);
+                if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x < gridWidth - 1 && isCollector(x + 1, i)) slimePushes.push([x + 1, i]);
                 if (!canPush(x, i, 3, ignorePistons)) break;
             }
             if (moveY === -1 && lastCollapsible !== -1) {

@@ -7118,6 +7118,69 @@ _@    ._`],
         id: 'instant_collector',
         numId: 0
     },
+    collector_handle: {
+        name: 'Collector Handle',
+        description: 'Lets you move collectors by moving the handle - but don\'t break it off!',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                redrawing && clearPixels(x, y, width, height, ctx);
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.clearRect(10, 10, 30, 30);
+            ctx.clearRect(0, 0, 50 / 3, 50 / 3);
+            ctx.clearRect(100 / 3, 0, 50 / 3, 50 / 3);
+            ctx.clearRect(100 / 3, 100 / 3, 50 / 3, 50 / 3);
+            ctx.clearRect(0, 100 / 3, 50 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(200, 200, 200)';
+            ctx.fillRect(10, 20, 30, 10);
+            ctx.fillRect(20, 10, 10, 30);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(15);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            fillPixels(0, 0, 1, 1);
+            clearPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            clearPixels(0, 0, 1 / 3, 1 / 3);
+            clearPixels(2 / 3, 0, 1 / 3, 1 / 3);
+            clearPixels(2 / 3, 2 / 3, 1 / 3, 1 / 3);
+            clearPixels(0, 2 / 3, 1 / 3, 1 / 3);
+            ctx.fillStyle = 'rgb(200, 200, 200)';
+            fillPixels(1 / 5, 2 / 5, 3 / 5, 1 / 5);
+            fillPixels(2 / 5, 1 / 5, 1 / 5, 3 / 5);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            color_violet: 4,
+            steel: 2,
+            slime: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 10,
+        flammability: 4,
+        pushable: true,
+        cloneable: false,
+        rotateable: false,
+        collectible: false,
+        group: 6,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        id: 'collector_handle',
+        numId: 0
+    },
     generic_color_well: {
         name: 'Rainbow Color Well',
         description: 'A portal to the color vats hidden within the machinery of the Simulator',
