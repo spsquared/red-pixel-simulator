@@ -1,5 +1,5 @@
-const apiURI = 'https://api.pixelsimulator.repl.co';
-// const apiURI = 'http://localhost:5000';
+// const apiURI = 'https://api.pixelsimulator.repl.co';
+const apiURI = 'http://localhost:5000';
 const socket = io(apiURI, {
     path: '/pixsim-api/game/',
     autoConnect: false,
@@ -229,13 +229,13 @@ class PixSimAPI {
 
     static async getMap() {
         // request list of maps for game mode and pick one to load
-        // allows player-decided map loading in the future
+        // allow player-decided map loading in the future?
         return await new Promise(async (resolve, reject) => {
             const maplist = await this.#httpGET('/pixsim-api/mapslist/' + this.#gameModes[this.#gameMode].id);
         });
     }
-    static async getScript() {
-        // gets a script
+    static async getScript(scriptPath) {
+        return await this.#httpGET('/pixsim-api/controllers/' + (scriptPath[0] == '/' ? scriptPath.substring(1) : scriptPath) + '?format=rps');;
     }
 
     static set onUpdateTeamList(cb) {
@@ -573,7 +573,7 @@ class PixSimAPI {
                 resolve(req.response);
             };
             req.onerror = () => {
-                modal('An HTTP error occured:', `GET ${path}<br>${req.status} - ${req.statusText}`, false);
+                modal('An HTTP error occured:', `GET ${apiURI + path}<br>${req.status}`, false);
                 reject(new Error(req.status));
             };
             req.send();

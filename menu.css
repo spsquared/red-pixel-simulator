@@ -14,7 +14,7 @@
 }
 
 #titleContainer {
-    position: absolute;
+    position: fixed;
     top: 35vh;
     left: 0px;
     width: 100vw;
@@ -705,7 +705,7 @@
 }
 
 #creditsAnimation {
-    position: absolute;
+    position: fixed;
     top: 110vh;
     left: 0px;
     width: 100vw;
