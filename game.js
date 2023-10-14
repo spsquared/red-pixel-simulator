@@ -149,8 +149,18 @@ const camera = {
         y1: 0,
         x2: 0,
         y2: 0,
+        s1: 0,
+        s2: 0,
         t0: 0,
-        t1: 0
+        t1: 0,
+        timing: new CubicBezier(1, 1, 0, 0, 1),
+        timingFunctions: {
+            linear: new CubicBezier(1, 1, 0, 0, 1),
+            lightEase: new CubicBezier(0.4, 0, 0.6, 1),
+            ease: new CubicBezier(0.5, 0, 0.5, 1),
+            easeIn: new CubicBezier(0.6, 0, 1, 1),
+            easeOut: new CubicBezier(0, 0, 0.4, 1),
+        }
     },
     viewport: {
         xmin: 0,
@@ -1289,9 +1299,9 @@ function explode(x1, y1, size, defer) {
             }
         }
     }
-    let distance = Math.sqrt(Math.pow(Math.max(camera.viewport.xmin - x1, x1 - camera.viewport.xmax, 0), 2) + Math.pow(Math.max(camera.viewport.ymin - y1, y1 - camera.viewport.ymax, 0), 2));
+    let distance = cameraDistance(x1, y1);
+    cameraShake(x1, y1, size);
     let intensity = size * Math.min(1, Math.max(0, 1 - (distance / 150)));
-    camera.shakeIntensity += (intensity / (1 + camera.shakeIntensity * 0.5)) * 0.2;
     sounds.explosion(4 * Math.pow(intensity / 80, 2));
 };
 function craftPixel(id, team) {
@@ -1680,20 +1690,30 @@ function drawBrush() {
     }
 };
 function updateCamera() {
-    if ((!simulationPaused || !fastSimulation) && acceptInputs && !inWinScreen) {
-        if (camera.mUp && !camera.mDown) {
-            camera.y = Math.max(0, Math.min(camera.y - 20, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+    if ((!simulationPaused || !fastSimulation) && !inWinScreen) {
+        if (camera.animation.t1 >= performance.now()) {
+            let t = camera.animation.timing.at((performance.now() - camera.animation.t0) / (camera.animation.t1 - camera.animation.t0));
+            camera.x = (camera.animation.x2 - camera.animation.x1) * t + camera.animation.x1;
+            camera.y = (camera.animation.y2 - camera.animation.y1) * t + camera.animation.y1;
+            camera.scale = Math.round(((camera.animation.s2 - camera.animation.s1) * t + camera.animation.s1) * 1000) / 1000;
+            drawScale = gridScale * camera.scale;
+            screenScale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
             forceRedraw = true;
-        } else if (camera.mDown && !camera.mUp) {
-            camera.y = Math.max(0, Math.min(camera.y + 20, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
-            forceRedraw = true;
-        }
-        if (camera.mLeft && !camera.mRight) {
-            camera.x = Math.max(0, Math.min(camera.x - 20, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
-            forceRedraw = true;
-        } else if (camera.mRight && !camera.mLeft) {
-            camera.x = Math.max(0, Math.min(camera.x + 20, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
-            forceRedraw = true;
+        } else if (acceptInputs) {
+            if (camera.mUp && !camera.mDown) {
+                camera.y = Math.max(0, Math.min(camera.y - 20, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+                forceRedraw = true;
+            } else if (camera.mDown && !camera.mUp) {
+                camera.y = Math.max(0, Math.min(camera.y + 20, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+                forceRedraw = true;
+            }
+            if (camera.mLeft && !camera.mRight) {
+                camera.x = Math.max(0, Math.min(camera.x - 20, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+                forceRedraw = true;
+            } else if (camera.mRight && !camera.mLeft) {
+                camera.x = Math.max(0, Math.min(camera.x + 20, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
+                forceRedraw = true;
+            }
         }
         if (forceRedraw) {
             mXGrid = Math.floor((mX + camera.x) * screenScale);
@@ -2241,6 +2261,33 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
         })));
         saveCodeText.value = saveCode;
     }
+};
+
+// camera stuff
+function moveCamera(x, y, s, t, curve = camera.animation.timingFunctions.linear) {
+    if (t == 0) {
+        camera.x = x;
+        camera.y = y;
+        camera.scale = 2 ** Math.round(Math.log2(s));
+        return;
+    }
+    camera.animation.x1 = camera.x;
+    camera.animation.y1 = camera.y;
+    camera.animation.s1 = camera.scale;
+    camera.animation.x2 = Math.round(x);
+    camera.animation.y2 = Math.round(y);
+    camera.animation.s2 = 2 ** Math.round(Math.log2(s));
+    camera.animation.t0 = performance.now();
+    camera.animation.t1 = camera.animation.t0 + t;
+    camera.animation.timing = curve;
+};
+function cameraDistance(x, y) {
+    return Math.sqrt(Math.pow(Math.max(camera.viewport.xmin - x, x - camera.viewport.xmax, 0), 2) + Math.pow(Math.max(camera.viewport.ymin - y, y - camera.viewport.ymax, 0), 2));
+};
+function cameraShake(x, y, intensity) {
+    let distance = cameraDistance(x, y);
+    let adjustedIntensity = intensity * Math.min(1, Math.max(0, 1 - (distance / 150)));
+    camera.shakeIntensity += (adjustedIntensity / (1 + camera.shakeIntensity * 0.5)) * 0.2;
 };
 
 // PixSim multiplayer addons

@@ -6955,9 +6955,17 @@ _@    ._`],
             if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             updateTouchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible && random() < 0.1) {
-                    if (teamGrid[y][x] != 0) teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
-                    nextGrid[ay][ax] = pixNum.AIR;
-                    teamGrid[ay][ax] = 0;
+                    if (grid[ay][ax] == pixNum.NUKE) explode(ax, ay, 20);
+                    else if (grid[ay][ax] == pixNum.HUGE_NUKE) explode(ax, ay, 40);
+                    else if (grid[ay][ax] == pixNum.VERY_HUGE_NUKE) explode(ax, ay, 80);
+                    else {
+                        if (teamGrid[y][x] != 0) {
+                            if (teamGrid[ay][ax] != teamGrid[y][x] && random() < 0.6) return;
+                            teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
+                        }
+                        nextGrid[ay][ax] = pixNum.AIR;
+                        teamGrid[ay][ax] = 0;
+                    }
                 }
             });
         },
@@ -7047,9 +7055,17 @@ _@    ._`],
             if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             updateTouchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible) {
-                    if (teamGrid[y][x] != 0) teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
-                    nextGrid[ay][ax] = pixNum.AIR;
-                    teamGrid[ay][ax] = 0;
+                    if (grid[ay][ax] == pixNum.NUKE) explode(ax, ay, 20);
+                    else if (grid[ay][ax] == pixNum.HUGE_NUKE) explode(ax, ay, 40);
+                    else if (grid[ay][ax] == pixNum.VERY_HUGE_NUKE) explode(ax, ay, 80);
+                    else {
+                        if (teamGrid[y][x] != 0) {
+                            if (teamGrid[ay][ax] != teamGrid[y][x] && random() < 0.6) return;
+                            teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
+                        }
+                        nextGrid[ay][ax] = pixNum.AIR;
+                        teamGrid[ay][ax] = 0;
+                    }
                 }
             });
         },

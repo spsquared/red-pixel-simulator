@@ -251,14 +251,11 @@ function rpUpdateMouseControls() {
                     }
                 });
             }
+        } else if (brush.mouseButton == 1 && numPixels[rpGrid[rpMYGrid][rpMXGrid]].pickable && pixelSelectors[numPixels[rpGrid[rpMYGrid][rpMXGrid]].id].box.style.display != 'none') {
+            pixelSelectors[numPixels[rpGrid[rpMYGrid][rpMXGrid]].id].box.onclick();
         } else if (brush.mouseButton != -1) {
             brush.lineMode = false;
-            if (pixelAt(mXGrid, mYGrid).pickable && pixelSelectors[pixelAt(mXGrid, mYGrid).id].box.style.display != 'none') {
-                pixelSelectors[pixelAt(mXGrid, mYGrid).id].box.onclick();
-            }
-            if (brush.mouseButton == 1 && numPixels[rpGrid[rpMYGrid][rpMXGrid]].pickable && pixelSelectors[numPixels[rpGrid[rpMYGrid][rpMXGrid]].id].box.style.display != 'none') {
-                pixelSelectors[numPixels[rpGrid[rpMYGrid][rpMXGrid]].id].box.onclick();
-            } else if ((lastMouseButton == 2 || removing)) {
+            if ((lastMouseButton == 2 || removing)) {
                 let xmin = Math.max(0, rpMXGrid - brush.size + 1);
                 let xmax = Math.min(rpGridWidth - 1, rpMXGrid + brush.size - 1);
                 let ymin = Math.max(0, rpMYGrid - brush.size + 1);
