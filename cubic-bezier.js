@@ -27,7 +27,8 @@ class CubicBezier {
     }
 
     at(t) {
-        if (t < 0 || t > 1) return 0;
+        if (t < 0) return this.points[0];
+        if (t > 1) return this.points[this.points.length - 1];
         let tIndex = t * (this.points.length - 1);
         if (this.points[tIndex] != undefined) return this.points[tIndex];
         let bIndex = Math.floor(tIndex);

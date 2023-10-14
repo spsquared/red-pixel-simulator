@@ -154,6 +154,7 @@ const camera = {
         t0: 0,
         t1: 0,
         timing: new CubicBezier(1, 1, 0, 0, 1),
+        running: false,
         timingFunctions: {
             linear: new CubicBezier(1, 1, 0, 0, 1),
             lightEase: new CubicBezier(0.4, 0, 0.6, 1),
@@ -1691,7 +1692,7 @@ function drawBrush() {
 };
 function updateCamera() {
     if ((!simulationPaused || !fastSimulation) && !inWinScreen) {
-        if (camera.animation.t1 >= performance.now()) {
+        if (camera.animation.t1 >= performance.now() || camera.animation.running) {
             let t = camera.animation.timing.at((performance.now() - camera.animation.t0) / (camera.animation.t1 - camera.animation.t0));
             camera.x = (camera.animation.x2 - camera.animation.x1) * t + camera.animation.x1;
             camera.y = (camera.animation.y2 - camera.animation.y1) * t + camera.animation.y1;
@@ -1699,6 +1700,7 @@ function updateCamera() {
             drawScale = gridScale * camera.scale;
             screenScale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
             forceRedraw = true;
+            if (camera.animation.t1 < performance.now()) camera.animation.running = false;
         } else if (acceptInputs) {
             if (camera.mUp && !camera.mDown) {
                 camera.y = Math.max(0, Math.min(camera.y - 20, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
@@ -2269,6 +2271,9 @@ function moveCamera(x, y, s, t, curve = camera.animation.timingFunctions.linear)
         camera.x = x;
         camera.y = y;
         camera.scale = 2 ** Math.round(Math.log2(s));
+        drawScale = gridScale * camera.scale;
+        screenScale = (gridWidth < gridHeight ? gridWidth : gridHeight) / canvasSize / camera.scale / canvasScale;
+        forceRedraw = true;
         return;
     }
     camera.animation.x1 = camera.x;
@@ -2280,6 +2285,7 @@ function moveCamera(x, y, s, t, curve = camera.animation.timingFunctions.linear)
     camera.animation.t0 = performance.now();
     camera.animation.t1 = camera.animation.t0 + t;
     camera.animation.timing = curve;
+    camera.animation.running = true;
 };
 function cameraDistance(x, y) {
     return Math.sqrt(Math.pow(Math.max(camera.viewport.xmin - x, x - camera.viewport.xmax, 0), 2) + Math.pow(Math.max(camera.viewport.ymin - y, y - camera.viewport.ymax, 0), 2));
