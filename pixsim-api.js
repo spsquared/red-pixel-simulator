@@ -580,3 +580,94 @@ class PixSimAPI {
         });
     }
 };
+
+class PXASMRunner {
+    #worker = new Worker('./pixsimassembly.js');
+
+    constructor() {
+        this.#worker.onmessage = (e) => {
+            switch (e.data[0]) {
+                case 'setPixel':
+                    if (typeof e.data[1][0] == 'number' && typeof e.data[1][1] == 'number' && pixels[e.data[1][2]] != undefined) {
+                        grid[e.data[1][1]][e.data[1][0]] = pixels[e.data[1][2]].numId;
+                        this.#worker.postMessage([0]);
+                    }
+                    break;
+                case 'getPixel':
+                    if (typeof e.data[1][0] == 'number' && typeof e.data[1][1] == 'number') {
+                        this.#worker.postMessage([0, grid[e.data[1][1]][e.data[1][0]]]);
+                    }
+                    break;
+                case 'setAmount':
+                    if (pixels[e.data[1][0]] != undefined && (e.data[1][1] === 0 || e.data[1][1] === 1) && typeof e.data[1][2] == 'number') {
+                        teamPixelAmounts[e.data[1][1]][e.data[1][0]] = e.data[1][2];
+                        this.#worker.postMessage([0]);
+                    }
+                    break;
+                case 'getAmount':
+                    if (pixels[e.data[1][0]] != undefined && (e.data[1][1] === 0 || e.data[1][1] === 1)) {
+                        this.#worker.postMessage([0, teamPixelAmounts[e.data[1][1]][e.data[1][0]]]);
+                    }
+                    break;
+                case 'moveCamera':
+                    if (typeof e.data[1][0] == 'number' && typeof e.data[1][1] == 'number' && typeof e.data[1][2] == 'number') {
+                        moveCamera(e.data[1][0], e.data[1][1], e.data[1][2], e.data[1][3] ?? 0, camera.animation.timingFunctions.ease);
+                    }
+                    break;
+                case 'shakeCamera':
+                    if (typeof e.data[1][0] == 'number' && typeof e.data[1][1] == 'number' && typeof e.data[1][2] == 'number') {
+                        cameraShake(e.data[1][0], e.data[1][1], e.data[1][2]);
+                    }
+                    break;
+                case 'triggerWin':
+                    // oof
+                    break;
+                case 'playSound':
+                    // not implemented
+                    break;
+                case 'startSim':
+                    simulationPaused = true;
+                    slowSimulation = false;
+                    if (e.data[1][0] === 1) slowSimulation = true;
+                    fastSimulation = false;
+                    updateTimeControlButtons();
+                    break;
+                case 'stopSim':
+                    simulationPaused = false;
+                    fastSimulation = false;
+                    updateTimeControlButtons();
+                    break;
+                case 'awaitTick':
+                    // do nothing, the next tick will resolve it
+                    break;
+                case 1:
+                    modal('A PixSimAssembly error occured:', `<span style="color: red;">${e.data[1].message}</span>`, false);
+                    break;
+            }
+        };
+        this.#worker.onerror = (e) => {
+            modal('A PixSimAssembly error occured:', `<span style="color: red;">${e.message}<br>${e.filename} ${e.lineno}:${e.colno}</span>`, false);
+        };
+    }
+
+    run(script) {
+        return new Promise((resolve, reject) => {
+            this.#worker.addEventListener('message', function res(e) {
+                if (e.data[0] === 0) {
+                    resolve();
+                    this.removeEventListener('message', res);
+                }
+            });
+            this.#worker.postMessage([1, script]);
+        });
+    }
+    
+    tick() {
+        this.#worker.postMessage([1, `setVariable("tick", ${ticks});`]);
+        this.#worker.postMessage([2]);
+    }
+
+    terminate() {
+        this.#worker.terminate();
+    }
+}
