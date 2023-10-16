@@ -1,5 +1,5 @@
-const apiURI = 'https://api.pixelsimulator.repl.co';
-// const apiURI = 'http://localhost:5000';
+// const apiURI = 'https://api.pixelsimulator.repl.co';
+const apiURI = 'http://localhost:5000';
 const socket = io(apiURI, {
     path: '/pixsim-api/game/',
     autoConnect: false,
@@ -231,7 +231,8 @@ class PixSimAPI {
         // request list of maps for game mode and pick one to load
         // allow player-decided map loading in the future?
         return await new Promise(async (resolve, reject) => {
-            const maplist = await this.#httpGET('/pixsim-api/mapslist/' + this.#gameModes[this.#gameMode].id);
+            const maplist = await this.#httpGET('/pixsim-api/maps/list/' + this.#gameModes[this.#gameMode].id);
+            // oh wait, it's borken
         });
     }
     static async getScript(scriptPath) {
@@ -650,8 +651,8 @@ class PXASMRunner {
         };
     }
 
-    run(script) {
-        return new Promise((resolve, reject) => {
+    async run(script) {
+        return await new Promise((resolve, reject) => {
             this.#worker.addEventListener('message', function res(e) {
                 if (e.data[0] === 0) {
                     resolve();
@@ -661,10 +662,18 @@ class PXASMRunner {
             this.#worker.postMessage([1, script]);
         });
     }
-    
-    tick() {
-        this.#worker.postMessage([1, `setVariable("tick", ${ticks});`]);
-        this.#worker.postMessage([2]);
+
+    async tick() {
+        return await new Promise((resolve, reject) => {
+            this.#worker.addEventListener('message', async function res(e) {
+                if (e.data[0] === 'awaitTick') {
+                    resolve();
+                    this.removeEventListener('message', res);
+                }
+            });
+            this.#worker.postMessage([1, `setVariable("tick", ${ticks});`]);
+            this.#worker.postMessage([2]);
+        });
     }
 
     terminate() {

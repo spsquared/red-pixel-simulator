@@ -1481,7 +1481,7 @@ function drawFrame() {
                 }
                 if (curr > 0 && (forceRedraw || redrawing)) {
                     clearPixels(camera.viewport.xmax - amount, y, amount + 1, 1, teamsctx);
-                    teamPixelRects[curr - 1].push([xmax - amount, y, amount + 1, 1]);
+                    teamPixelRects[curr - 1].push([camera.viewport.xmax - amount, y, amount + 1, 1]);
                 } else if (curr == 0 && (forceRedraw || redrawing)) {
                     clearPixels(camera.viewport.xmax - amount, y, amount + 1, 1, teamsctx);
                 }
@@ -1935,8 +1935,6 @@ function updateTick() {
             let newMonsterCount = 0;
             let newFulfilledTargetCount = 0;
             let hasUnfulfilledTargets = false;
-            pixsimData.pixeliteCounts[0] = 0;
-            pixsimData.pixeliteCounts[1] = 0;
             for (let y = 0; y < gridHeight; y++) {
                 for (let x = 0; x < gridWidth; x++) {
                     if (monsterGrid[y][x]) newMonsterCount++;
@@ -1948,7 +1946,6 @@ function updateTick() {
                         if (grid[y][x] == pixNum.GOAL) newFulfilledTargetCount++;
                         else hasUnfulfilledTargets = true;
                     }
-                    if (grid[y][x] == pixNum.PIXELITE_CRYSTAL) pixsimData.pixeliteCounts[teamGrid[y][x] - 1]++;
                     if (musicGrid[y][x] != lastMusicGrid[y][x]) {
                         if (musicGrid[y][x] != 0) musicPixel(musicGrid[y][x], true);
                         else if (musicGrid[y][x] == 0) musicPixel(lastMusicGrid[y][x], false);
@@ -1967,23 +1964,22 @@ function updateTick() {
             inResetState = false;
         }
 
-        // send tick
+        // multiplayer tick and send
         if (PixSimAPI.inGame && PixSimAPI.gameRunning) {
-            for (let y = 0; y < gridHeight; y++) {
-                for (let x = 0; x < gridWidth; x++) {
-                }
-            }
-            PixSimAPI.sendTick(grid, teamGrid, [
-                fireGrid,
-                monsterGrid,
-                targetGrid,
-                teamPlaceableGrids[0],
-                teamPlaceableGrids[1]
-            ], {
-                tick: ticks,
-                pixelAmounts: getPixSimPixelAmounts(),
-                pixeliteCounts: pixsimData.pixeliteCounts,
-                cameraShake: camera.shakeIntensity
+            new Promise(async (resolve, reject) => {
+                await pixsimData.scriptRunner.tick();
+                PixSimAPI.sendTick(grid, teamGrid, [
+                    fireGrid,
+                    monsterGrid,
+                    targetGrid,
+                    teamPlaceableGrids[0],
+                    teamPlaceableGrids[1]
+                ], {
+                    tick: ticks,
+                    pixelAmounts: getPixSimPixelAmounts(),
+                    pixeliteCounts: pixsimData.pixeliteCounts,
+                    cameraShake: camera.shakeIntensity
+                });
             });
         }
 
@@ -2321,7 +2317,8 @@ function createPixSimGrid() {
 const teamPixelAmounts = [{}, {}];
 const pixsimData = {
     gameStart: 0,
-    pixeliteCounts: [0, 0]
+    pixeliteCounts: [0, 0],
+    scriptRunner: null
 };
 function resetPixSimPixelAmounts() {
     for (const id in pixels) {
@@ -2420,12 +2417,10 @@ PixSimAPI.onGameStart = () => {
     transitionToGame(async () => {
         resetPixSimPixelAmounts();
         if (PixSimAPI.isHost) {
-            // const map = await PixSimAPI.getMap();
-            createGrid(300, 100)
-            // const map = await PixSimAPI.getMap();
-            // map object contains save code, placeable code, team code, and starting materials
-            // load the placeable codes and team code separately
+            const map = await PixSimAPI.getMap();
             pixsimData.gameStart = Date.now(); // game timer
+            pixsimData.scriptRunner = new PXASMRunner();
+            // load scripts and run them
         }
         pixsimMenu._open = false;
         pixsimMenu.style.transform = '';
