@@ -47,7 +47,21 @@ function rasterize(placePixel, x0, y0, a, b, hw) {
     }
 }
 
-function draw_ellipse(placePixel, x0, y0, a, b) {
+function drawEllipse(placePixel, x0, y0, a, b) {
     rasterize(placePixel, x0, y0, a, b, true);
     rasterize(placePixel, x0, y0, b, a, false);
-}
+};
+
+function fillEllipse(placePixel, x0, y0, a, b) {
+    let as = a ** 2;
+    let bs = b ** 2;
+    for (let i = -b; i <= b; i++) {
+        for (let j = -a; j <= a; j++) {
+            if (((j ** 2) / as) + ((i ** 2) / bs) < 1) placePixel(x0 + j, y0 + i);
+        }
+    }
+};
+
+function fillSkewedEllipse(placePixel, x0, y0, a, b, c, d) {
+    // uhh
+};

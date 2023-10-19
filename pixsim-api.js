@@ -267,6 +267,7 @@ class PixSimAPI {
             socket.emit('ready');
         });
     }
+    // ADD ROUNDS!!!!
     static set onGameEnd(cb) {
         if (typeof cb != 'function') return;
         socket.off('gameEnd');

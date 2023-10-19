@@ -514,18 +514,18 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             if (updateTouchingPixel(x, y, pixNum.WOOD)) return;
             let touchingLeaves = 0;
-            let xmin = Math.max(0, Math.min(x - 1, gridWidth - 1));
-            let xmax = Math.max(0, Math.min(x + 1, gridWidth - 1));
-            let ymin = Math.max(0, Math.min(y - 1, gridHeight - 1));
-            let ymax = Math.max(0, Math.min(y + 1, gridHeight - 1));
-            for (let i = xmin; i <= xmax; i++) {
-                for (let j = ymin; j <= ymax; j++) {
-                    if (grid[j][i] == pixNum.LEAVES) touchingLeaves++;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    if (isOnGrid(x - j, y - i) && grid[y - i][x - j] == pixNum.WOOD || grid[y - i][x - j] == pixNum.LEAVES) touchingLeaves++;
                 }
             }
-            if (touchingLeaves < 4) {
+            updateTouchingPixel(x, y, [pixNum.WOOD, pixNum.LEAVES], (x1, y1) => {
+                touchingLeaves++;
+            });
+            if (touchingLeaves < 3) {
                 if (random() < 0.01) {
                     nextGrid[y][x] = pixNum.AIR;
+                    if (random() < 1 / 140) nextGrid[y][x] = pixNum.SAPLING;
                     teamGrid[y][x] = 0;
                 }
             }
@@ -557,6 +557,112 @@ const pixels = {
         generatedDescription: '',
         image: '',
         id: 'leaves',
+        numId: 0
+    },
+    sapling: {
+        name: 'Sapling',
+        description: 'Smol tree',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                redrawing && clearPixels(x, y, width, height, ctx);
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
+            else {
+                if (y == gridHeight - 1 || (grid[y + 1][x] != pixNum.DIRT && grid[y + 1][x] != pixNum.MUD && grid[y + 1][x] != pixNum.GRASS)) {
+                    if (random() < 0.01) nextGrid[y][x] = pixNum.WOOD;
+                } else {
+                    let canOverrideWithWood = (x, y) => {
+                        return (grid[y][x] == pixNum.AIR  || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.LEAVES || grid[y][x] == pixNum.SAPLING) && (nextGrid[y][x] == -1 || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.LEAVES || nextGrid[y][x] == pixNum.WOOD);
+                    };
+                    let branch = (x1, y1, angle, size, length) => {
+                        let x2 = Math.round(Math.max(0, Math.min(gridWidth - 1, x1 + Math.cos(angle) * length)));
+                        let y2 = Math.round(Math.max(0, Math.min(gridHeight - 1, y1 - Math.sin(angle) * length)));
+                        let rectWidth = Math.max(1, Math.round(size * Math.sin(angle))); // intentionally swapped
+                        let rectHeight = Math.max(1, Math.round(size * Math.cos(angle)));
+                        rayTrace(x1, y1, x2, y2, (x3, y3) => {
+                            if (!isOnGrid(x3, y3) || !canOverrideWithWood(x3, y3)) return true;
+                            x3 -= Math.floor(rectWidth / 2);
+                            y3 -= Math.floor(rectHeight / 2);
+                            for (let i = 0; i < rectHeight; i++) {
+                                for (let j = 0; j < rectWidth; j++) {
+                                    if (isOnGrid(x3 + j, y3 + i) && canOverrideWithWood(x3 + j, y3 + i)) nextGrid[y3 + i][x3 + j] = pixNum.WOOD;
+                                }
+                            }
+                        });
+                        if (size > 1) {
+                            let continueAngle = random(0.2, 0.4) * (Math.round(random()) * 2 - 1);
+                            branch(x2, y2, angle + continueAngle, size * random(0.5, 0.9), length * random(0.5, 1));
+                            let forcedBranch = random() < 0.5 - continueAngle * 0.7 + (((Math.PI / 2) - angle) * 0.5);
+                            if (random() < 0.3 || forcedBranch) branch(x2, y2, angle + random(0.6, 1.6) + (((Math.PI / 2) - angle) * 0.2), size * random(0.2, 0.6), length * random(0.5, 1));
+                            if (random() < 0.3 || !forcedBranch) branch(x2, y2, angle - random(0.6, 1.6) - (((Math.PI / 2) - angle) * 0.2), size * random(0.2, 0.6), length * random(0.5, 1));
+                        } else {
+                            fillEllipse((x3, y3) => {
+                                if (isOnGrid(x3, y3) && (grid[y3][x3] == pixNum.AIR || grid[y3][x3] == pixNum.STEAM) && canMoveTo(x3, y3)) nextGrid[y3][x3] = pixNum.LEAVES;
+                            }, x2, y2 - 1, Math.ceil(random(2, 2.5) * growthFactor), Math.ceil(random(1.5, 2.5) * growthFactor));
+                        }
+                    };
+                    let growth = 0;
+                    let growthFactor = 1;
+                    // check for water in future
+                    for (let i = y + 1; i < gridHeight && (i - y) < 5; i++) {
+                        if (grid[i][x] == pixNum.MUD) growth++;
+                        else if (grid[i][x] == pixNum.DIRT || grid[i][x] == pixNum.GRASS) growth += 2;
+                        else break;
+                    }
+                    if (random() < growth / 80) {
+                        growthFactor = (Math.log(growth) / Math.log(4)) + 0.5;
+                        branch(x, y, Math.PI / 2, Math.ceil(growth * random(0.2, 0.3)), growth * random(0.8, 1.5));
+                    }
+                }
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 220, 0)';
+            ctx.fillRect(25 / 3, 0, 100 / 3, 50 / 3 + 1);
+            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
+            ctx.fillStyle = 'rgb(175, 125, 75)';
+            ctx.fillRect(50 / 3, 100 / 3, 25 / 3, 50 / 3);
+            ctx.fillStyle = 'rgb(150, 100, 75)';
+            ctx.fillRect(25, 100 / 3, 25 / 3, 50 / 3);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(6);
+            ctx.fillStyle = 'rgb(100, 220, 0)';
+            fillPixels(1 / 6, 0, 2 / 3, 1 / 3);
+            fillPixels(0, 1 / 3, 1, 1 / 3);
+            ctx.fillStyle = 'rgb(175, 125, 75)';
+            fillPixels(1 / 3, 2 / 3, 1 / 6, 1 / 3);
+            ctx.fillStyle = 'rgb(150, 100, 75)';
+            fillPixels(1 / 2, 2 / 3, 1 / 6, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            // a bunch of brown and lime but not too much
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 16,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        collectible: true,
+        group: 0,
+        updateStage: 5,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        id: 'sapling',
         numId: 0
     },
     moss: {
@@ -4492,7 +4598,7 @@ const pixels = {
         update: function (x, y) { },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(220, 0, 0)';
+            ctx.fillStyle = 'rgb(180, 40, 255)';
             ctx.fillRect(0, 0, 50, 50);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             ctx.fillRect(0, 50 / 3, 50, 50 / 3);
@@ -4503,7 +4609,7 @@ const pixels = {
         },
         prerender: function () {
             const { ctx, fillPixels, toImage } = new PreRenderer(6);
-            ctx.fillStyle = 'rgb(220, 0, 0)';
+            ctx.fillStyle = 'rgb(180, 40, 255)';
             fillPixels(0, 0, 1, 1);
             ctx.fillStyle = 'rgb(100, 100, 100)';
             fillPixels(0, 1 / 3, 1, 1 / 3);
@@ -4514,7 +4620,7 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         recipe: {
-            color_red: 2,
+            color_violet: 2,
             color_yellow: 1,
             concrete: 1,
             wood: 1
@@ -5962,26 +6068,28 @@ const pixels = {
         },
         update: function (x, y) {
             // lazy code moment
-            // probably will replace with better ellipse drawing algorithm that can do rotated ellipses
-            draw_ellipse((x, y) => {
-                if (y >= 0 && y < gridHeight && x >= 0 && x < gridWidth) nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
-            }, x, y, Math.ceil(random(1, 20)), Math.ceil(random(0, 20)));
-            // floodfill moment
-            let visited = new Set();
-            function positionHash(x, y) {
-                return y * gridWidth + x;
-            };
-            function badFloodfill(x, y) {
-                visited.add(positionHash(x, y));
-                if (nextGrid[y][x] == pixNum.EXPANDED_SPONGY_RICE) return;
-                nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
-                // if (grid[y][x] == pixNum.SPONGY_RICE) nextGrid[y][x] = pixNum.ACTIVATED_SPONGY_RICE;
-                if (x > 0 && !visited.has(positionHash(x - 1, y))) badFloodfill(x - 1, y);
-                if (y > 0 && !visited.has(positionHash(x, y - 1))) badFloodfill(x, y - 1);
-                if (x < gridWidth - 1 && !visited.has(positionHash(x + 1, y))) badFloodfill(x + 1, y);
-                if (y < gridHeight - 1 && !visited.has(positionHash(x, y + 1))) badFloodfill(x, y + 1);
-            };
-            badFloodfill(x, y);
+            // drawEllipse((x1, y1) => {
+            //     if (isOnGrid(x1, y1)) nextGrid[y1][x1] = pixNum.EXPANDED_SPONGY_RICE;
+            // }, x, y, Math.ceil(random(1, 20)), Math.ceil(random(0, 20)));
+            // // floodfill moment
+            // let visited = new Set();
+            // function positionHash(x, y) {
+            //     return y * gridWidth + x;
+            // };
+            // function badFloodfill(x, y) {
+            //     visited.add(positionHash(x, y));
+            //     if (nextGrid[y][x] == pixNum.EXPANDED_SPONGY_RICE) return;
+            //     nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
+            //     // if (grid[y][x] == pixNum.SPONGY_RICE) nextGrid[y][x] = pixNum.ACTIVATED_SPONGY_RICE;
+            //     if (x > 0 && !visited.has(positionHash(x - 1, y))) badFloodfill(x - 1, y);
+            //     if (y > 0 && !visited.has(positionHash(x, y - 1))) badFloodfill(x, y - 1);
+            //     if (x < gridWidth - 1 && !visited.has(positionHash(x + 1, y))) badFloodfill(x + 1, y);
+            //     if (y < gridHeight - 1 && !visited.has(positionHash(x, y + 1))) badFloodfill(x, y + 1);
+            // };
+            // badFloodfill(x, y);
+            fillEllipse((x1, y1) => {
+                if (isOnGrid(x1, y1)) nextGrid[y1][x1] = pixNum.EXPANDED_SPONGY_RICE;
+            }, x, y, Math.ceil(random(1, 20)), Math.ceil(random(0, 20)))
             nextGrid[y][x] = pixNum.EXPANDED_SPONGY_RICE;
         },
         drawPreview: function (ctx) {
@@ -6961,6 +7069,7 @@ _@    ._`],
                     else {
                         if (teamGrid[y][x] != 0) {
                             if (teamGrid[ay][ax] != teamGrid[y][x] && random() < 0.6) return;
+                            if (grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN && random < 0.95) return;
                             teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
                         }
                         nextGrid[ay][ax] = pixNum.AIR;
@@ -7061,6 +7170,7 @@ _@    ._`],
                     else {
                         if (teamGrid[y][x] != 0) {
                             if (teamGrid[ay][ax] != teamGrid[y][x] && random() < 0.6) return;
+                            if (grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN && random < 0.95) return;
                             teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
                         }
                         nextGrid[ay][ax] = pixNum.AIR;
@@ -7580,7 +7690,7 @@ _@    ._`],
     },
     active_color_generator: {
         name: 'Active Color Generator',
-        description: 'An artificial portal to the internal machinery of the Simulator<br><i>Requires water to cool its more powerful singularity generator; <span style="color: red; font-weight: bold;">will blow up if it runs out of water!</span></i>',
+        description: 'An artificial portal to the internal machinery of the Simulator<br><i>Requires water to cool its more powerful singularity generator; <span style="color: red; font-weight: bold;">it will blow up if it runs out of water!</span></i>',
         draw: function (rectangles, ctx, avoidGrid) {
             ctx.globalAlpha = 1;
             ctx.fillStyle = 'rgb(140, 140, 140)';
@@ -7711,7 +7821,7 @@ _@    ._`],
                         }
                     });
                 }
-                if (ticks % 10 == 0 && team != -1) {
+                if (ticks % 20 == 0 && team != -1) {
                     teamPixelAmounts[team].water--;
                     if (team == PixSimAPI.team) queueUpdatePixelAmount('water', teamPixelAmounts[team]);
                 }
@@ -9040,7 +9150,7 @@ function generateColorPixel(data) {
         pushable: true,
         cloneable: false,
         rotateable: false,
-        collectible: false,
+        collectible: true,
         group: 6,
         updateStage: -1,
         animatedNoise: false,

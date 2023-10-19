@@ -853,7 +853,7 @@
 }
 #loadingTip {
     position: fixed;
-    top: 80vh;
+    top: 70vh;
     left: 10vw;
     width: 80vw;
     text-align: center;

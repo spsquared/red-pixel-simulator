@@ -489,11 +489,6 @@ window.addEventListener('load', (e) => {
     }
 });
 
-// utilities
-function getDistance(x1, y1, x2, y2) {
-    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-};
-
 // shared pixel functions
 function PreRenderer(size = 60) {
     const rendCanvas = document.createElement('canvas');
@@ -591,6 +586,9 @@ function pixelAt(x, y) {
 };
 function pixelData(numId) {
     return numPixels[numId] ?? numPixels[pixNum.MISSING];
+};
+function isOnGrid(x, y) {
+    return x >= 0 && x < gridWidth && y >= 0 && y < gridHeight;
 };
 function validChangingPixel(x, y) {
     return nextGrid[y][x] == -1;
@@ -1058,14 +1056,14 @@ function rotatePixel(x, y) {
     }
 };
 function getLaserPath(x, y, dir) {
-    if (x < 0 || x >= gridWidth || y < 0 || y >= gridHeight) return [[-1, -1]];
+    if (!isOnGrid(x, y)) return [[-1, -1]];
     let path = [];
     let cdir = dir;
     let startX = x;
     let startY = y;
     path.push([startX, startY]);
     let iterations = 0;
-    while (iterations < maxLaserDepth && startX >= 0 && startX < gridWidth && startY >= 0 && startY < gridHeight) {
+    while (iterations < maxLaserDepth && isOnGrid(startX, startY)) {
         let endX = startX;
         let endY = startY;
         switch (cdir) {
@@ -1303,7 +1301,7 @@ function explode(x1, y1, size, defer) {
     let distance = cameraDistance(x1, y1);
     cameraShake(x1, y1, size);
     let intensity = size * Math.min(1, Math.max(0, 1 - (distance / 150)));
-    sounds.explosion(4 * Math.pow(intensity / 80, 2));
+    sounds.explosion(4 * ((intensity / 80) ** 2));
 };
 function craftPixel(id, team) {
     // oof
@@ -1626,9 +1624,7 @@ function drawBrush() {
             bufferctx.globalCompositeOperation = 'source-over';
             for (let y = 0; y < selection.grid.length; y++) {
                 for (let x = 0; x < selection.grid[y].length; x++) {
-                    if (x + offsetX >= 0 && x + offsetX < gridWidth && y + offsetY >= 0 && y + offsetY < gridHeight) {
-                        drawPixels(selection.grid[y][x], [[x + offsetX, y + offsetY, 1, 1, true]], bufferctx, true);
-                    }
+                    if (isOnGrid(x + offsetX, y + offsetY)) drawPixels(selection.grid[y][x], [[x + offsetX, y + offsetY, 1, 1, true]], bufferctx, true);
                 }
             }
             ctx.globalAlpha = 0.5;
@@ -1834,7 +1830,7 @@ function updateTick() {
             -: fire
             0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers, spongy rice, lag
             1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers
-            5: gravity solids, stone, ice, rotators
+            5: gravity solids, stone, ice, rotators, saplings
             6: water, lava, steam, leaves, pumps, lava generators, freezers, wells, color wells, color generators, color collectors
             -: monsters, music pixels
             */
@@ -2284,7 +2280,7 @@ function moveCamera(x, y, s, t, curve = camera.animation.timingFunctions.linear)
     camera.animation.running = true;
 };
 function cameraDistance(x, y) {
-    return Math.sqrt(Math.pow(Math.max(camera.viewport.xmin - x, x - camera.viewport.xmax, 0), 2) + Math.pow(Math.max(camera.viewport.ymin - y, y - camera.viewport.ymax, 0), 2));
+    return Math.sqrt((Math.max(camera.viewport.xmin - x, x - camera.viewport.xmax, 0) ** 2) + (Math.max(camera.viewport.ymin - y, y - camera.viewport.ymax, 0) ** 2));
 };
 function cameraShake(x, y, intensity) {
     let distance = cameraDistance(x, y);
