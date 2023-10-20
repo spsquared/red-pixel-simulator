@@ -561,7 +561,7 @@ const pixels = {
     },
     sapling: {
         name: 'Sapling',
-        description: 'Smol tree',
+        description: 'Smol tree (comes pre-watered*)<br><i>*water not included</i>',
         draw: function (rectangles, ctx, avoidGrid) {
             ctx.globalAlpha = 1;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
@@ -577,7 +577,7 @@ const pixels = {
                     if (random() < 0.01) nextGrid[y][x] = pixNum.WOOD;
                 } else {
                     let canOverrideWithWood = (x, y) => {
-                        return (grid[y][x] == pixNum.AIR  || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.LEAVES || grid[y][x] == pixNum.SAPLING) && (nextGrid[y][x] == -1 || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.LEAVES || nextGrid[y][x] == pixNum.WOOD);
+                        return (grid[y][x] == pixNum.AIR  || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.LEAVES || grid[y][x] == pixNum.WOOD || grid[y][x] == pixNum.SAPLING) && (nextGrid[y][x] == -1 || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.LEAVES || nextGrid[y][x] == pixNum.WOOD);
                     };
                     let branch = (x1, y1, angle, size, length) => {
                         let x2 = Math.round(Math.max(0, Math.min(gridWidth - 1, x1 + Math.cos(angle) * length)));
@@ -590,7 +590,10 @@ const pixels = {
                             y3 -= Math.floor(rectHeight / 2);
                             for (let i = 0; i < rectHeight; i++) {
                                 for (let j = 0; j < rectWidth; j++) {
-                                    if (isOnGrid(x3 + j, y3 + i) && canOverrideWithWood(x3 + j, y3 + i)) nextGrid[y3 + i][x3 + j] = pixNum.WOOD;
+                                    if (isOnGrid(x3 + j, y3 + i) && canOverrideWithWood(x3 + j, y3 + i)) {
+                                        nextGrid[y3 + i][x3 + j] = pixNum.WOOD;
+                                        teamGrid[y3 + i][x3 + j] = teamGrid[y][x];
+                                    }
                                 }
                             }
                         });
@@ -602,7 +605,10 @@ const pixels = {
                             if (random() < 0.3 || !forcedBranch) branch(x2, y2, angle - random(0.6, 1.6) - (((Math.PI / 2) - angle) * 0.2), size * random(0.2, 0.6), length * random(0.5, 1));
                         } else {
                             fillEllipse((x3, y3) => {
-                                if (isOnGrid(x3, y3) && (grid[y3][x3] == pixNum.AIR || grid[y3][x3] == pixNum.STEAM) && canMoveTo(x3, y3)) nextGrid[y3][x3] = pixNum.LEAVES;
+                                if (isOnGrid(x3, y3) && (grid[y3][x3] == pixNum.AIR || grid[y3][x3] == pixNum.STEAM) && canMoveTo(x3, y3)) {
+                                    nextGrid[y3][x3] = pixNum.LEAVES;
+                                    teamGrid[y3][x3] = teamGrid[y][x];
+                                }
                             }, x2, y2 - 1, Math.ceil(random(2, 2.5) * growthFactor), Math.ceil(random(1.5, 2.5) * growthFactor));
                         }
                     };
@@ -617,6 +623,7 @@ const pixels = {
                     if (random() < growth / 80) {
                         growthFactor = (Math.log(growth) / Math.log(4)) + 0.5;
                         branch(x, y, Math.PI / 2, Math.ceil(growth * random(0.2, 0.3)), growth * random(0.8, 1.5));
+                        nextGrid[y][x] = pixNum.WOOD;
                     }
                 }
             }
@@ -643,7 +650,9 @@ const pixels = {
             this.prerenderedFrames.push(toImage());
         },
         recipe: {
-            // a bunch of brown and lime but not too much
+            color_brown: 16,
+            color_lime: 8,
+            water: 4
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -2267,13 +2276,13 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             updateTouchingPixel(x, y, pixNum.LAVA, (ax, ay) => {
                 nextGrid[y][x] = pixNum.WATER;
-                teamGrid[y][x] = 0;
             });
             let team = teamGrid[y][x] - 1;
             let consumeResources = teamPixelAmounts[team] !== undefined;
             if (consumeResources || !PixSimAPI.inGame) updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.125 && (!consumeResources || teamPixelAmounts[team].color_cyan > 0 || teamPixelAmounts[team].color_blue > 0)) {
                     nextGrid[ay][ax] = pixNum.WATER;
+                    teamGrid[ay][ax] = teamGrid[y][x];
                     if (teamPixelAmounts[team] !== undefined) {
                         if (random() < 0.5 && teamPixelAmounts[team].color_cyan > 0) {
                             teamPixelAmounts[team].color_cyan--;
@@ -2346,13 +2355,14 @@ const pixels = {
             });
             updateTouchingPixel(x, y, [pixNum.SNOW, pixNum.ICE], (ax, ay) => {
                 teamGrid[y][x] = 0;
-                explode(x, y, 6, true);
+                explode(x, y, 7, true);
             });
             let team = teamGrid[y][x] - 1;
             let consumeResources = teamPixelAmounts[team] !== undefined;
             if (consumeResources || !PixSimAPI.inGame) updateTouchingPixel(x, y, [pixNum.AIR, pixNum.STONE], (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.075 && (!consumeResources || teamPixelAmounts[team].color_orange > 0 || teamPixelAmounts[team].color_red > 0)) {
                     nextGrid[ay][ax] = pixNum.LAVA;
+                    teamGrid[ay][ax] = teamGrid[y][x];
                     if (teamPixelAmounts[team] !== undefined) {
                         if (random() < 0.5 && teamPixelAmounts[team].color_orange > 0) {
                             teamPixelAmounts[team].color_orange--;
@@ -2480,7 +2490,6 @@ const pixels = {
     // ████████████████████    ██████    ██    ██████    ██    ██  ██  ██  ██    ████████████████████
     // ██          ████████    ██        ██        ██    ██    ██  ██  ██████    ████████          ██
     // ██          ████████    ██      ██████  ██████    ██    ██████  ██  ██    ████████          ██
-    // it would be better to have a separate rotation grid but I've inherited this pit and dug it too deep to get out now
     piston_left: {
         name: 'Pusher (Left)',
         description: 'Pushes pixels in its path',
@@ -5674,7 +5683,7 @@ const pixels = {
         prerender: function () { },
         recipe: {
             // we also don't have hexogen and I don't want to be on any more government watch lists so here you go
-            plant: 24,
+            plant: 18,
             water: 1,
             sponge: 1
         },
@@ -7068,7 +7077,7 @@ _@    ._`],
                     else if (grid[ay][ax] == pixNum.VERY_HUGE_NUKE) explode(ax, ay, 80);
                     else {
                         if (teamGrid[y][x] != 0) {
-                            if (teamGrid[ay][ax] != teamGrid[y][x] && random() < 0.6) return;
+                            if (teamGrid[ay][ax] != 0 && teamGrid[ay][ax] != teamGrid[y][x] && random() < 0.6) return;
                             if (grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN && random < 0.95) return;
                             teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
                         }
@@ -7169,7 +7178,7 @@ _@    ._`],
                     else if (grid[ay][ax] == pixNum.VERY_HUGE_NUKE) explode(ax, ay, 80);
                     else {
                         if (teamGrid[y][x] != 0) {
-                            if (teamGrid[ay][ax] != teamGrid[y][x] && random() < 0.6) return;
+                            if (teamGrid[ay][ax] != 0 && teamGrid[ay][ax] != teamGrid[y][x] && random() < 0.6) return;
                             if (grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN && random < 0.95) return;
                             teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
                         }
@@ -7284,10 +7293,10 @@ _@    ._`],
         },
         recipe: {
             color_violet: 4,
-            steel: 2,
+            steel: 1,
             slime: 1
         },
-        craftAmount: 1,
+        craftAmount: 2,
         prerenderedFrames: [],
         blastResistance: 10,
         flammability: 4,

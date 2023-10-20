@@ -1219,8 +1219,7 @@ function explode(x1, y1, size, defer) {
                                 nextGrid[y][x] = pixNum.ASH;
                                 break;
                         }
-                        teamGrid[y][x] = 0;
-                    }
+                    } else teamGrid[y][x] = 0;
             }
             return pixelAt(x, y).blastResistance / 40;
         }
