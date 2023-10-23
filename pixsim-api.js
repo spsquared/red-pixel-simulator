@@ -585,41 +585,39 @@ class PixSimAPI {
 
 class PXASMRunner {
     #worker = new Worker('./pixsimassembly.js');
+    #postedData = new Map();
 
     constructor() {
         this.#worker.onmessage = (e) => {
+            const dat = e.data[1];
             switch (e.data[0]) {
                 case 'setPixel':
-                    if (typeof e.data[1][0] == 'number' && typeof e.data[1][1] == 'number' && pixels[e.data[1][2]] != undefined) {
-                        grid[e.data[1][1]][e.data[1][0]] = pixels[e.data[1][2]].numId;
+                    if (isOnGrid(dat[0], dat[1])) {
+                        grid[dat[1]][dat[0]] = (pixels[dat[2]] ?? numPixels[pixNum.MISSING]).numId;
                         this.#worker.postMessage([0]);
                     }
                     break;
                 case 'getPixel':
-                    if (typeof e.data[1][0] == 'number' && typeof e.data[1][1] == 'number') {
-                        this.#worker.postMessage([0, grid[e.data[1][1]][e.data[1][0]]]);
+                    if (isOnGrid(dat[0], dat[1])) {
+                        this.#worker.postMessage([0, grid[dat[1]][dat[0]]]);
                     }
                     break;
                 case 'setAmount':
-                    if (pixels[e.data[1][0]] != undefined && (e.data[1][1] === 0 || e.data[1][1] === 1) && typeof e.data[1][2] == 'number') {
-                        teamPixelAmounts[e.data[1][1]][e.data[1][0]] = e.data[1][2];
+                    if (pixels[dat[0]] != undefined) {
+                        teamPixelAmounts[dat[1]][dat[0]] = dat[2];
                         this.#worker.postMessage([0]);
                     }
                     break;
                 case 'getAmount':
-                    if (pixels[e.data[1][0]] != undefined && (e.data[1][1] === 0 || e.data[1][1] === 1)) {
-                        this.#worker.postMessage([0, teamPixelAmounts[e.data[1][1]][e.data[1][0]]]);
+                    if (pixels[dat[0]] != undefined) {
+                        this.#worker.postMessage([0, teamPixelAmounts[dat[1]][dat[0]]]);
                     }
                     break;
                 case 'moveCamera':
-                    if (typeof e.data[1][0] == 'number' && typeof e.data[1][1] == 'number' && typeof e.data[1][2] == 'number') {
-                        moveCamera(e.data[1][0], e.data[1][1], e.data[1][2], e.data[1][3] ?? 0, camera.animation.timingFunctions.ease);
-                    }
+                    moveCamera(dat[0], dat[1], dat[2], dat[3] ?? 0, camera.animation.timingFunctions.ease);
                     break;
                 case 'shakeCamera':
-                    if (typeof e.data[1][0] == 'number' && typeof e.data[1][1] == 'number' && typeof e.data[1][2] == 'number') {
-                        cameraShake(e.data[1][0], e.data[1][1], e.data[1][2]);
-                    }
+                    cameraShake(dat[0], dat[1], dat[2]);
                     break;
                 case 'triggerWin':
                     // oof
@@ -630,7 +628,7 @@ class PXASMRunner {
                 case 'startSim':
                     simulationPaused = true;
                     slowSimulation = false;
-                    if (e.data[1][0] === 1) slowSimulation = true;
+                    if (dat[0] === 1) slowSimulation = true;
                     fastSimulation = false;
                     updateTimeControlButtons();
                     break;
@@ -643,7 +641,7 @@ class PXASMRunner {
                     // do nothing, the next tick will resolve it
                     break;
                 case 1:
-                    modal('A PixSimAssembly error occured:', `<span style="color: red;">${e.data[1].message}</span>`, false);
+                    modal('A PixSimAssembly error occured:', `<span style="color: red;">${dat.message}</span>`, false);
                     break;
             }
         };
@@ -666,10 +664,14 @@ class PXASMRunner {
 
     async tick() {
         return await new Promise((resolve, reject) => {
+            this.#postedData = {};
+            const postedData = this.#postedData;
             this.#worker.addEventListener('message', async function res(e) {
                 if (e.data[0] === 'awaitTick') {
                     resolve();
                     this.removeEventListener('message', res);
+                } else if (e.data[0] == 'postData') {
+                    postedData[e.data[1][0]] = e.data[1][1];
                 }
             });
             this.#worker.postMessage([1, `setVariable("tick", ${ticks});`]);

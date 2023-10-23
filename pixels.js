@@ -131,7 +131,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let dead = random() < 0.1;
-            if (dead) updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+            if (dead) updateTouchingPixel(x, y, [pixNum.AIR, pixNum.SAPLING], (ax, ay) => {
                 if (ay <= y) dead = false;
             });
             if (!dead) dead = updateTouchingPixel(x, y, pixNum.LAVA);
@@ -143,7 +143,7 @@ const pixels = {
                 for (let j = Math.max(x - 1, 0); j <= Math.min(x + 1, gridWidth - 1); j++) {
                     if (grid[i][j] == pixNum.DIRT && validChangingPixel(j, i) && (i != y || j != x) && random() < 0.2) {
                         let canGrow = false;
-                        updateTouchingPixel(j, i, pixNum.AIR, function (actionX2, actionY2) {
+                        updateTouchingPixel(j, i, [pixNum.AIR, pixNum.SAPLING], function (actionX2, actionY2) {
                             if (actionY2 <= i) canGrow = true;
                         });
                         if (canGrow) nextGrid[i][j] = pixNum.GRASS;
@@ -2753,9 +2753,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push((x < gridWidth - 1 && canPush(x + 1, y, 0)) ? x + 1 : x, y, 0)) {
-                if (y > 0 && canPush(x, y - 1, 0) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 0);
-                if (y < gridHeight - 1 && canPush(x, y + 1, 0) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 0);
+            if (push((x < gridWidth - 1 && canPush(x + 1, y, 0, true)) ? x + 1 : x, y, 0)) {
+                if (y > 0 && canPush(x, y - 1, 0, true) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 0);
+                if (y < gridHeight - 1 && canPush(x, y + 1, 0, true) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 0);
             }
         },
         drawPreview: function (ctx) {
@@ -2814,9 +2814,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push(x, (y < gridHeight - 1 && canPush(x, y + 1, 1)) ? y + 1 : y, 1)) {
-                if (x > 0 && canPush(x - 1, y, 1) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 1);
-                if (x < gridWidth - 1 && canPush(x + 1, y, 1) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 1);
+            if (push(x, (y < gridHeight - 1 && canPush(x, y + 1, 1, true)) ? y + 1 : y, 1)) {
+                if (x > 0 && canPush(x - 1, y, 1, true) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 1);
+                if (x < gridWidth - 1 && canPush(x + 1, y, 1, true) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 1);
             }
         },
         drawPreview: function (ctx) {
@@ -2875,9 +2875,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push((x > 0 && canPush(x - 1, y, 0)) ? x - 1 : x, y, 2)) {
-                if (y > 0 && canPush(x, y - 1, 0) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 2);
-                if (y < gridHeight - 1 && canPush(x, y + 1, 0) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 2);
+            if (push((x > 0 && canPush(x - 1, y, 0, true)) ? x - 1 : x, y, 2)) {
+                if (y > 0 && canPush(x, y - 1, 0, true) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 2);
+                if (y < gridHeight - 1 && canPush(x, y + 1, 0, true) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 2);
             }
         },
         drawPreview: function (ctx) {
@@ -2936,9 +2936,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push(x, (y > 0 && canPush(x, y - 1, 3)) ? y - 1 : y, 3)) {
-                if (x > 0 && canPush(x - 1, y, 3) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 3);
-                if (x < gridWidth - 1 && canPush(x + 1, y, 3) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 3);
+            if (push(x, (y > 0 && canPush(x, y - 1, 3, true)) ? y - 1 : y, 3)) {
+                if (x > 0 && canPush(x - 1, y, 3, true) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 3);
+                if (x < gridWidth - 1 && canPush(x + 1, y, 3, true) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 3);
             }
         },
         drawPreview: function (ctx) {
@@ -3291,8 +3291,8 @@ const pixels = {
             color_lime: 1,
             color_blue: 1,
             concrete: 1,
-            wood: 1,
             steel: 1,
+            wood: 1
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -4694,6 +4694,47 @@ const pixels = {
         generatedDescription: '',
         image: '',
         id: 'slime',
+        numId: 0
+    },
+    unslime: {
+        name: 'Unslime',
+        description: 'Not sticky purple stuff',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = 'rgb(200, 20, 220)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(200, 20, 220)';
+            ctx.fillRect(0, 0, 50, 50);
+        },
+        prerender: function () { },
+        recipe: {
+            color_violet: 1,
+            slime: 3
+        },
+        craftAmount: 3,
+        prerenderedFrames: [],
+        blastResistance: 7,
+        flammability: 4,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        collectible: true,
+        group: 1,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
+        id: 'unslime',
         numId: 0
     },
     laser_left: {
@@ -7253,6 +7294,108 @@ _@    ._`],
         id: 'instant_collector',
         numId: 0
     },
+    color_collector: {
+        name: 'Color Collector',
+        description: 'Collects colors for the team that placed it',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = noAnimations ? `hsl(0, 100%, 50%)` : `hsl(${(deltaTime * 2) % 360}, 80%, 50%)`;
+            if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    fillPixels(x, y, width, height, ctx);
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        imagePixels(x2, y2, 1, 1, this.prerenderedFrames[teamGrid[y2][x2]], ctx);
+                    });
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y)) return;
+            updateTouchingAnything(x, y, (ax, ay) => {
+                if (validChangingPixel(ax, ay) && grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN) {
+                    if (teamGrid[y][x] != 0) teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
+                    nextGrid[ay][ax] = pixNum.AIR;
+                    teamGrid[ay][ax] = 0;
+                }
+            });
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            let gradient = ctx.createConicGradient(0, 25, 25);
+            for (let i = 0; i <= 18; i++) {
+                gradient.addColorStop(i / 18, `hsl(${i * 20}, 80%, 50%)`);
+            }
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.fillStyle = '#FF0000';
+            ctx.font = 'bold 30px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('?', 25, 25);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(120);
+            ctx.font = 'bold 75px Courier New, courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#FF0000';
+            ctx.fillText('?', 60, 60);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#FF0099';
+            ctx.fillText('α', 60, 60);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
+            ctx.fillStyle = '#3C70FF';
+            ctx.fillText('β', 60, 60);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            color_black: 12,
+            color_red: 1,
+            color_orange: 1,
+            color_yellow: 1,
+            color_lime: 1,
+            color_green: 1,
+            color_cyan: 1,
+            color_blue: 1,
+            color_violet: 1,
+            steel: 2,
+            steel_crate: 1,
+            concrete: 8,
+            sticky_piston_any: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 12,
+        flammability: 2,
+        pushable: true,
+        cloneable: false,
+        rotateable: false,
+        collectible: true,
+        group: 6,
+        updateStage: 6,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        id: 'color_collector',
+        numId: 0
+    },
     collector_handle: {
         name: 'Collector Handle',
         description: 'Lets you move collectors by moving the handle - but don\'t break it off!',
@@ -8013,108 +8156,6 @@ _@    ._`],
         rgb0: [140, 80, 30],
         rgb1: [100, 50, 10]
     }),
-    color_collector: {
-        name: 'Color Collector',
-        description: 'Collects colors for the team that placed it',
-        draw: function (rectangles, ctx, avoidGrid) {
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = noAnimations ? `hsl(0, 100%, 50%)` : `hsl(${(deltaTime * 2) % 360}, 80%, 50%)`;
-            if (avoidGrid) {
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, ctx);
-                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
-                });
-            } else {
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    fillPixels(x, y, width, height, ctx);
-                    forEachPixel(x, y, width, height, (x2, y2) => {
-                        imagePixels(x2, y2, 1, 1, this.prerenderedFrames[teamGrid[y2][x2]], ctx);
-                    });
-                });
-            }
-        },
-        update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            updateTouchingAnything(x, y, (ax, ay) => {
-                if (validChangingPixel(ax, ay) && grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN) {
-                    if (teamGrid[y][x] != 0) teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
-                    nextGrid[ay][ax] = pixNum.AIR;
-                    teamGrid[ay][ax] = 0;
-                }
-            });
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            let gradient = ctx.createConicGradient(0, 25, 25);
-            for (let i = 0; i <= 18; i++) {
-                gradient.addColorStop(i / 18, `hsl(${i * 20}, 80%, 50%)`);
-            }
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(0, 0, 0)';
-            ctx.fillRect(10, 10, 30, 30);
-            ctx.fillStyle = '#FF0000';
-            ctx.font = 'bold 30px Courier New, courier, monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('?', 25, 25);
-        },
-        prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(120);
-            ctx.font = 'bold 75px Courier New, courier, monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
-            ctx.fillStyle = '#FF0000';
-            ctx.fillText('?', 60, 60);
-            this.prerenderedFrames.push(toImage());
-            ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
-            ctx.fillStyle = '#FF0099';
-            ctx.fillText('α', 60, 60);
-            this.prerenderedFrames.push(toImage());
-            ctx.fillStyle = 'rgb(0, 0, 0)';
-            fillPixels(1 / 5, 1 / 5, 3 / 5, 3 / 5);
-            ctx.fillStyle = '#3C70FF';
-            ctx.fillText('β', 60, 60);
-            this.prerenderedFrames.push(toImage());
-        },
-        recipe: {
-            color_black: 12,
-            color_red: 1,
-            color_orange: 1,
-            color_yellow: 1,
-            color_lime: 1,
-            color_green: 1,
-            color_cyan: 1,
-            color_blue: 1,
-            color_violet: 1,
-            steel: 2,
-            steel_crate: 1,
-            concrete: 8,
-            sticky_piston_any: 1
-        },
-        craftAmount: 1,
-        prerenderedFrames: [],
-        blastResistance: 12,
-        flammability: 2,
-        pushable: true,
-        cloneable: false,
-        rotateable: false,
-        collectible: true,
-        group: 6,
-        updateStage: 6,
-        animatedNoise: false,
-        animated: true,
-        alwaysRedraw: false,
-        pickable: true,
-        pixsimPickable: true,
-        generatedDescription: '',
-        image: '',
-        id: 'color_collector',
-        numId: 0
-    },
     teamNone: {
         name: 'Remove Team Marker',
         description: 'Removes team markers from a region',

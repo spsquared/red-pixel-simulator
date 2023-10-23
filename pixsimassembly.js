@@ -14,6 +14,17 @@ class PXASMBoundsError extends ReferenceError {
         postMessage([1, this]);
     }
 }
+class PXASMArgumentError extends TypeError {
+    constructor(message = undefined) {
+        super(message);
+        this.name = 'PXASMArgumentError';
+        postMessage([1, this]);
+    }
+}
+
+let checkArgType = (v, t) => {
+    if (typeof v != t) throw PXASMArgumentError(`Expected a ${t}, got ${v} (${typeof v})`);
+};
 
 // reserved variables? ticks?
 const variables = new Map();
@@ -43,7 +54,7 @@ function getArray(n, i) {
     return arr[i];
 };
 async function forEach(v, n, cb) {
-    if (!Array.isArray(n)) throw new PXASMReferenceError(`'${n}' is not an array`);
+    if (!Array.isArray(n)) throw new PXASMArgumentError(`'${n}' is not an array`);
     for (let a of n) {
         setVariable(v, a);
         await cb();
@@ -53,7 +64,7 @@ function defFunction(fn, ...params) {
     functions.set(fn, [params[params.length - 1], params.slice(0, -1)]);
 };
 async function callFunction(fn, ...params) {
-    if (!functions.has(fn)) throw new PXASMReferenceError(`'${fn}' is not a function`);
+    if (!functions.has(fn)) throw new PXASMArgumentError(`'${fn}' is not a function`);
     const fndata = functions.get(fn);
     for (let i in fndata[1]) {
         setVariable(fndata[1][i], params[i]);
@@ -67,31 +78,55 @@ function print(...s) {
     console.log(...s);
 };
 async function setPixel(x, y, id) {
+    checkArgType(x, 'number');
+    checkArgType(y, 'number');
+    checkArgType(id, 'string');
     return await sendCommand('setPixel', x, y, id);
 };
 async function getPixel(x, y) {
+    checkArgType(x, 'number');
+    checkArgType(y, 'number');
+    checkArgType(id, 'string');
     return await sendCommand('getPixel', x, y);
 };
 async function setAmount(id, t, n) {
+    checkArgType(id, 'string');
+    checkArgType(t, 'number');
+    checkArgType(n, 'number');
+    if (t != 0 && t != 1) throw new PXASMArgumentError(`Team ID must be 0 or 1, got ${t}`);
     return await sendCommand('setAmount', id, t, n);
 };
 async function getAmount(id, t) {
+    checkArgType(id, 'string');
+    checkArgType(t, 'number');
+    if (t != 0 && t != 1) throw new PXASMArgumentError(`Team ID must be 0 or 1, got ${t}`);
     return await sendCommand('getAmount', id, t);
 };
 function moveCamera(x, y, s, t) {
+    checkArgType(x, 'number');
+    checkArgType(y, 'number');
+    checkArgType(s, 'number');
     sendCommand('moveCamera', x, y, s, t);
 };
 function shakeCamera(x, y, t) {
+    checkArgType(x, 'number');
+    checkArgType(y, 'number');
+    checkArgType(t, 'number');
     sendCommand('shakeCamera', x, y, t);
 };
 function triggerWin(t) {
+    checkArgType(t, 'number');
+    if (t != 0 && t != 1) throw new PXASMArgumentError(`Team ID must be 0 or 1, got ${t}`);
     sendCommand('triggerWin', t);
 };
 function playSound(id, x, y, v) {
+    checkArgType(id, 'string');
+    checkArgType(x, 'number');
+    checkArgType(y, 'number');
     sendCommand('playSound', id, x, y, v);
 };
-function startSim() {
-    sendCommand('startSim');
+function startSim(slow) {
+    sendCommand('startSim', [slow]);
 };
 function stopSim() {
     sendCommand('stopSim');
@@ -106,6 +141,9 @@ async function awaitTick() {
             }
         });
     });
+};
+function postData(lb, dat) {
+    sendCommand('postData', [lb, dat]);
 };
 
 onmessage = async (e) => {
