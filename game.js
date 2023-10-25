@@ -189,7 +189,7 @@ let holdingAlt = false;
 let inResetState = true;
 let forceRedraw = true;
 
-// save codes
+// save codes (base 10 for backwards compatibility)
 function createGrid(width = 100, height = 100) {
     if (width < 1 || height < 1) return;
     gridWidth = width;

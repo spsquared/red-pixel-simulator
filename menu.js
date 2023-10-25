@@ -106,13 +106,15 @@ const loadingTips = [
     'waht was i going ot ad dagian/?',
     'This is a very helpful tip',
     'In other news, last week we did batteries',
-    'Do <i>YOU</i> want an InstaPixel++™™™™?<br>Well you\'re in Luck!™ If you don\'t want an InstaPixel++™™™, then you\'re still in Luck™, because we\'re selling InstaNot™Pixels++™™™! Now Includes++™™--+™ the Limited++™-Edition™ Buh++™™™++™™™™+----™-++ Pixel™!<br>Buy Now™ for the limited-time price of $49.99997e3! Or buy Later™++ for ,59$999.99™ Buy 5 and get <i>e</i> + 3<i>i</i> free! Buy 11-- and get a FREE™™+™ Exp™oBundle™+™ consisting of 8 rotateable++ PlastiCloners™, 10 PlastiConcrete™, and the Exclusive™™ Exp™onential+++™™™ PlastiCloner™! Buy within the next NaN+++-+-™-- Days™™™ to get<a href="https://rickroll.pixelsimulator.repl.co/">*</a> a chance to win++ the legacy™ RareSnow™™™™™™™™™++++++™™ pack! Includes a RareSnow<a>*</a>, a π% chance of the Rare™ BluSnow, an <i>e</i>% chance of the Ultra++ Rare™™ IridecenSnow™, and a 1 / 6.333% chance of the extremely Rare™ GlowinSnow™™!<br>Tune in to Sample™Provider™(sp™)™ Today™ on your local NodePad™++ for more fboat™ Details™.<br><br><i style="font-size: 6px;">RareSnow may™ be raw.</i>',
+    'Do <i>YOU</i> want an InstaPixel++™™™?<br>Well you\'re in Luck!™ If you don\'t want an InstaPixel++™™™, then you\'re still in Luck™, because we\'re selling InstaNot™Pixels++™™™! Now Includes++™™--+™ the Limited++™-Edition™ Buh++™™™++™™™™+----™-++ Pixel™!<br>Buy Now™ for the limited-time price of $49.99997e3! Or buy Later™++ for ,59$999.99™! Buy 5 and get <i>e</i> + 3<i>i</i> free! Buy 11-- and get a FREE™™+™ Exp™oBundle™+™ consisting of 8 rotateable++ PlastiCloners™, 10 PlastiConcrete™, and the Exclusive™™ Exp™onential+++™™™ PlastiCloner™! Buy within the next NaN+++-+-™-- Days™™™ to get<a href="https://rickroll.pixelsimulator.repl.co/">*</a> a chance to win++ the legacy™ RareSnow™™™™™™™™™++++++™™ pack! Includes a RareSnow<a>*</a>, a π% chance of the Rare™ BluSnow™™, an <i>e</i>% chance of the Ultra++ Rare™™ IridecenSnow™, and a 1 / 6.333% chance of the extremely Rare™ GlowinSnow™™!<br>Tune in to Sample™Provider™(sp™)™ Today™ on your local NodePad™++ for more fboat™ Details™.<br><br><i style="font-size: 6px;">RareSnow may™ be raw.</i>',
     'Sometimes there are more efficient alternatives to using cloner farms',
     'Different wells produce different colors',
     'Wells produce an average of 0.05 colors per tick',
     'Passive generators produce an average of 0.02 colors per tick',
     'Active generators produce an average of 0.04 colors per tick',
-    'Use color generator filters to increase production for a particular color'
+    'Use color generator filters to increase production for a particular color',
+    'According to all known laws<br>of aviation,<br>there is no way a bee<br>should be able to fly.<br>Its wings are too small to get<br>its fat little body off the ground.<br>The bee, of course, flies anyway<br>because bees don\'t care<br>what humans think is impossible.<br><br>Yellow, black. Yellow, black.<br>Yellow, black. Yellow, black.<br>Ooh, black and yellow!<br>Let\'s shake it up a little.<br><br>Barry! Breakfast is ready!<br><br>Coming!',
+    
 ];
 const loadingTip = document.getElementById('loadingTip');
 function setLoadingTipInterval(tipDiv) {

@@ -600,9 +600,9 @@ const pixels = {
                         if (size > 1) {
                             let continueAngle = random(0.2, 0.4) * (Math.round(random()) * 2 - 1);
                             branch(x2, y2, angle + continueAngle, size * random(0.5, 0.9), length * random(0.5, 1));
-                            let forcedBranch = random() < 0.5 - continueAngle * 0.7 + (((Math.PI / 2) - angle) * 0.5);
-                            if (random() < 0.3 || forcedBranch) branch(x2, y2, angle + random(0.6, 1.6) + (((Math.PI / 2) - angle) * 0.2), size * random(0.2, 0.6), length * random(0.5, 1));
-                            if (random() < 0.3 || !forcedBranch) branch(x2, y2, angle - random(0.6, 1.6) - (((Math.PI / 2) - angle) * 0.2), size * random(0.2, 0.6), length * random(0.5, 1));
+                            let forcedBranch = random() < 0.5 - continueAngle * 0.8 + (((Math.PI / 2) - angle) * 0.5);
+                            if (random() < 0.2 || forcedBranch) branch(x2, y2, angle + random(0.6, 1.6) + (((Math.PI / 2) - angle) * 0.2), size * random(0.2, 0.6), length * random(0.5, 1));
+                            if (random() < 0.2 || !forcedBranch) branch(x2, y2, angle - random(0.6, 1.6) - (((Math.PI / 2) - angle) * 0.2), size * random(0.2, 0.6), length * random(0.5, 1));
                         } else {
                             fillEllipse((x3, y3) => {
                                 if (isOnGrid(x3, y3) && (grid[y3][x3] == pixNum.AIR || grid[y3][x3] == pixNum.STEAM) && canMoveTo(x3, y3)) {
@@ -615,7 +615,7 @@ const pixels = {
                     let growth = 0;
                     let growthFactor = 1;
                     // check for water in future
-                    for (let i = y + 1; i < gridHeight && (i - y) < 5; i++) {
+                    for (let i = y + 1; i < gridHeight && (i - y) < 6; i++) {
                         if (grid[i][x] == pixNum.MUD) growth++;
                         else if (grid[i][x] == pixNum.DIRT || grid[i][x] == pixNum.GRASS) growth += 2;
                         else break;
@@ -2159,13 +2159,15 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (!updateTouchingPixel(x, y, pixNum.AIR) && !updateTouchingPixel(x, y, pixNum.WATER)) {
+            if (!updateTouchingPixel(x, y, pixNum.CONCRETE) && !updateTouchingPixel(x, y, pixNum.WATER)) {
                 nextGrid[y][x] = pixNum.WATER;
                 return;
             }
             updateTouchingPixel(x, y, pixNum.CONCRETE, (ax, ay) => {
-                nextGrid[y][x] = pixNum.WATER;
-                nextGrid[ay][ax] = pixNum.PLANT;
+                if (random() < 0.1) {
+                    nextGrid[y][x] = pixNum.WATER;
+                    nextGrid[ay][ax] = pixNum.PLANT;
+                }
             });
             if (y < gridHeight - 1) {
                 if (isPassableFluid(x, y + 1)) {
@@ -5845,7 +5847,7 @@ const pixels = {
             color_brown: 4,
             detonator: 1,
             c4: 4,
-            plant: 48,
+            plant: 96,
             water: 1,
             sponge: 1
         },
@@ -5908,8 +5910,8 @@ const pixels = {
             color_black: 6,
             color_brown: 4,
             detonator: 1,
-            c4: 4,
-            plant: 96,
+            nuke: 4,
+            plant: 192,
             water: 1,
             sponge: 1
         },
@@ -5974,7 +5976,7 @@ const pixels = {
             color_brown: 4,
             detonator: 1,
             huge_nuke: 4,
-            plant: 48,
+            plant: 384,
             water: 1,
             sponge: 1
         },
