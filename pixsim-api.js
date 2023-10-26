@@ -1,5 +1,5 @@
-const apiURI = 'https://api.pixelsimulator.repl.co';
-// const apiURI = 'http://localhost:5000';
+// const apiURI = 'https://api.pixelsimulator.repl.co';
+const apiURI = 'http://localhost:5000';
 const socket = io(apiURI, {
     path: '/pixsim-api/game/',
     autoConnect: false,
@@ -79,8 +79,8 @@ class PixSimAPI {
         },
         {
             name: 'Pixelite Crash',
-            id: 'pixelcrash',
-            description: 'Build vaults of Color and battle to destroy the other Pixelite crystal!<br>Teams must collect colors to create pixels in a battle-royale competition to break through and destroy their opponent.'
+            id: 'pixelite_crash',
+            description: 'Build vaults of Color and battle to destroy the other Pixelite crystals!<br>Teams must collect colors to create pixels in a battle-royale competition to break through and destroy their opponent.'
         },
         {
             name: 'Platformer Godmode',
@@ -533,7 +533,10 @@ class PixSimAPI {
     }
 
     static getGameModeData(mode) {
-        return this.#gameModes[mode];
+        for (let gm of this.#gameModes) {
+            if (gm.id == mode) return gm;
+        }
+        return null;
     }
 
     static set onDisconnect(cb) {

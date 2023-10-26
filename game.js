@@ -1337,18 +1337,58 @@ function explode(x1, y1, size, defer) {
     sounds.explosion(4 * ((intensity / 80) ** 2));
 };
 function craftPixel(id, team) {
-    // oof
-    // suffix _any means any rotation can be used
+    if (team == 0) return false;
+    const inventory = teamPixelAmounts[team - 1];
+    const recipe = pixels[id].recipe;
+    for (let requirement in recipe) {
+        if (requirement.endsWith('_any')) {
+            let remain = recipe[requirement];
+            let pixel = requirement.substring(0, requirement.lastIndexOf('_any'));
+            let removePixels = (id) => {
+                if (remain == 0) return;
+                let before = inventory[id];
+                inventory[id] = Math.max(0, inventory[id] - remain);
+                remain -= before - inventory[id];
+            };
+            if (pixel == 'slider') {
+                removePixels(pixel + '_horizontal');
+                removePixels(pixel + '_vertical');
+            } else if (pixel == 'mirror') {
+                removePixels(pixel + '_1');
+                removePixels(pixel + '_2');
+            } else {
+                removePixels(pixel + '_left');
+                removePixels(pixel + '_up');
+                removePixels(pixel + '_right');
+                removePixels(pixel + '_down');
+            }
+        } else {
+            inventory[requirement] -= recipe[requirement];
+        }
+    }
+    inventory[id]++;
 };
 function canCraft(id, team) {
     if (team == 0) return false;
     const inventory = teamPixelAmounts[team - 1];
     const recipe = pixels[id].recipe;
     for (let requirement in recipe) {
+        let total = inventory[requirement] ?? 0;
         if (requirement.endsWith('_any')) {
-
+            let pixel = requirement.substring(0, requirement.lastIndexOf('_any'));
+            if (pixel == 'slider') {
+                total = inventory[pixel + '_horizontal'] + inventory[pixel + '_vertical'];
+            } else if (pixel == 'mirror') {
+                total = inventory[pixel + '_1'] + inventory[pixel + '_2'];
+            } else {
+                total = inventory[pixel + '_left'] + inventory[pixel + '_up'] + inventory[pixel + '_right'] + inventory[pixel + '_down'];
+            }
+        }
+        if (total < recipe[requirement]) {
+            return false;
         }
     }
+    return true;
 };
 
 // draw and update
@@ -1987,6 +2027,7 @@ function updateTick() {
         if (PixSimAPI.inGame && PixSimAPI.gameRunning) {
             new Promise(async (resolve, reject) => {
                 await pixsimData.scriptRunner.tick();
+                console.log('tick')
                 PixSimAPI.sendTick(grid, teamGrid, [
                     fireGrid,
                     targetGrid,
@@ -2428,9 +2469,10 @@ PixSimAPI.onGameStart = () => {
     transitionToGame(async () => {
         resetPixSimPixelAmounts();
         if (PixSimAPI.isHost) {
-            const map = await PixSimAPI.getMap();
+            // const map = await PixSimAPI.getMap();
             pixsimData.gameStart = Date.now(); // game timer
             pixsimData.scriptRunner = new PXASMRunner();
+            pixsimData.scriptRunner.run('while(1){await awaitTick();}');
             // load scripts and run them
         }
         pixsimMenu._open = false;
@@ -2485,9 +2527,9 @@ PixSimAPI.onGameTick = (compressedGrid, compressedTeamGrid, compressedBooleanGri
         }
     }
     extractBooleanGrid(fireGrid, compressedBooleanGrids[0]);
-    extractBooleanGrid(targetGrid, compressedBooleanGrids[2]);
-    extractBooleanGrid(teamPlaceableGrids[0], compressedBooleanGrids[3]);
-    extractBooleanGrid(teamPlaceableGrids[1], compressedBooleanGrids[4]);
+    extractBooleanGrid(targetGrid, compressedBooleanGrids[1]);
+    extractBooleanGrid(teamPlaceableGrids[0], compressedBooleanGrids[2]);
+    extractBooleanGrid(teamPlaceableGrids[1], compressedBooleanGrids[3]);
     let teamPixelAmount1 = tickData.teamPixelAmounts[PixSimAPI.team];
     let teamPixelAmount2 = teamPixelAmounts[PixSimAPI.team];
     if (teamPixelAmount1 !== undefined) {
@@ -3109,7 +3151,7 @@ window.animateBackgroundColor = () => {
 const menuButton = document.getElementById('backToMenu');
 menuButton.onclick = async (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    if (PixSimAPI.inGame && !await modal('Leave game?', 'Are you sure you want to leave the game? You will NOT be able to rejoin!', true)) return;
+    if (PixSimAPI.inGame && !await modal('Leave game?', 'Are you sure you want to leave the game? You will NOT be able to rejoin!<br><i style="color: red;">You will lose rating!</i>', true)) return;
     if (PixSimAPI.inGame) {
         PixSimAPI.leaveGame();
         PixSimAPI.disconnect();

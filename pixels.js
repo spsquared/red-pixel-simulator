@@ -574,7 +574,7 @@ const pixels = {
             if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
             else {
                 if (y == gridHeight - 1 || (grid[y + 1][x] != pixNum.DIRT && grid[y + 1][x] != pixNum.MUD && grid[y + 1][x] != pixNum.GRASS)) {
-                    if (random() < 0.01) nextGrid[y][x] = pixNum.WOOD;
+                    if (random() < 0.001) nextGrid[y][x] = pixNum.DIRT;
                 } else {
                     let canOverrideWithWood = (x, y) => {
                         return (grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.LEAVES || grid[y][x] == pixNum.WOOD || grid[y][x] == pixNum.SAPLING) && (nextGrid[y][x] == -1 || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.LEAVES || nextGrid[y][x] == pixNum.WOOD);
@@ -2157,7 +2157,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (!updateTouchingPixel(x, y, pixNum.CONCRETE) && !updateTouchingPixel(x, y, pixNum.WATER)) {
+            if (!updateTouchingPixel(x, y, pixNum.AIR) && !updateTouchingPixel(x, y, pixNum.CONCRETE)) {
                 nextGrid[y][x] = pixNum.WATER;
                 return;
             }
@@ -2167,12 +2167,8 @@ const pixels = {
                     nextGrid[ay][ax] = pixNum.PLANT;
                 }
             });
-            if (y < gridHeight - 1) {
-                if (isPassableFluid(x, y + 1)) {
-                    if (canMoveTo(x, y + 1) && (grid[y + 1][x] == pixNum.WATER) ? random() < 0.5 : true) {
-                        move(x, y, x, y + 1);
-                    }
-                }
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1) && ((grid[y + 1][x] == pixNum.WATER) ? random() < 0.5 : true)) {
+                move(x, y, x, y + 1);
             }
         },
         drawPreview: function (ctx) {
@@ -8993,6 +8989,17 @@ function generateCraftingHTML(id, inventory = pixelAmounts, images = true) {
     for (const cid in pixel.recipe) {
         // atrocious one-lining
         const cpixel = pixels[cid.endsWith('_any') ? (cid.substring(0, cid.lastIndexOf('_any')) + (cid == 'slider_any' ? '_horizontal' : (cid == 'mirror_any' ? '_1' : '_left'))) : cid] ?? numPixels[pixNum.MISSING];
+        let total = inventory[cid] ?? 0;
+        if (cid.endsWith('_any')) {
+            let pixel = cid.substring(0, cid.lastIndexOf('_any'));
+            if (pixel == 'slider') {
+                total = inventory[pixel + '_horizontal'] + inventory[pixel + '_vertical'];
+            } else if (pixel == 'mirror') {
+                total = inventory[pixel + '_1'] + inventory[pixel + '_2'];
+            } else {
+                total = inventory[pixel + '_left'] + inventory[pixel + '_up'] + inventory[pixel + '_right'] + inventory[pixel + '_down'];
+            }
+        }
         if (images) {
             const box = document.createElement('div');
             box.classList.add('craftPixel');
@@ -9003,14 +9010,14 @@ function generateCraftingHTML(id, inventory = pixelAmounts, images = true) {
             const amount = document.createElement('div');
             amount.classList.add('craftAmount');
             amount.innerText = pixel.recipe[cid];
-            if (inventory[cid] <= 0) amount.style.color = '#FF0000';
+            if (total < pixel.recipe[cid]) amount.style.color = '#FF3030';
             box.appendChild(amount);
             resources.appendChild(box);
         }
         const label = document.createElement('div');
         label.classList.add('craftLabel');
         label.innerText = pixel.recipe[cid] + 'x ' + (cid.endsWith('_any') ? cpixel.name.replace('(Left)', '(Any)') : cpixel.name);
-        if (inventory[cid] <= 0) label.style.color = '#FF0000';
+        if (total < pixel.recipe[cid]) label.style.color = '#FF3030';
         resources.appendChild(label);
     }
     container.appendChild(resources);

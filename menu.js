@@ -542,7 +542,7 @@ function refreshGameList(games) {
                     codeText.innerText = text;
                 }, 100);
                 const sub1 = wrapper.children[1];
-                glitchTextTransition(sub1.innerText, `${game.open ? 'Running' : 'Open'} ❖ ${PixSimAPI.getGameModeData(game.type).name} ❖ ${game.hostPlatform.toUpperCase()} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
+                glitchTextTransition(sub1.innerText, `${game.open ? 'Open' : 'Running'} ❖ ${PixSimAPI.getGameModeData(game.type).name} ❖ ${game.hostPlatform.toUpperCase()} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
                     sub1.innerText = text;
                 }, 100);
                 const sub2 = wrapper.children[2];
@@ -566,7 +566,7 @@ function refreshGameList(games) {
             wrapper.appendChild(codeText);
             const sub1 = document.createElement('div');
             sub1.classList.add('joinTileSub1');
-            flipTextTransition('', `${game.open ? 'Running' : 'Open'} ❖ ${PixSimAPI.getGameModeData(game.type).name} ❖ ${game.hostPlatform.toUpperCase()} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
+            flipTextTransition('', `${game.open ? 'Open' : 'Running'} ❖ ${PixSimAPI.getGameModeData(game.type).name} ❖ ${game.hostPlatform.toUpperCase()} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
                 sub1.innerText = text;
             }, 100);
             wrapper.appendChild(sub1);
