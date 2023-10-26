@@ -78,10 +78,10 @@ const puzzles = [
                     sand: 5,
                     wood: 3,
                     leaves: 8,
-                    water: 1,
-                    plant: 1
+                    moss: 1,
+                    water: 1
                 },
-                id: '56550ea3-28fa-48ff-84ac-2a5b41e4902a'
+                id: 'b6e8d92d-5d93-44cd-9b59-9d302a1ec5f3'
             },
             {
                 name: 'Rafting',
@@ -186,7 +186,7 @@ const puzzles = [
             {
                 name: 'Creeper!?!?',
                 description: `No, I'm not finishing the joke.<br><br>Why don't you just finish the level instead? I've given you some pushers to help you.`,
-                saveCode: '50-50;0000;stone-736:air-14:stone-31:air-27:stone-23:air-35:stone-12:air-67:stone-5:air-44:stone-6:air-30:stone-20:air-24:stone-26:air-24:stone-26:air-26:stone-24:air-28:stone-22:air-28:stone-29:air-22:stone-28:air-24:stone-28:air-22:slider_horizontal-19:stone-9:air-23:concrete:air-15:concrete:air:stone-10:air-22:concrete:air-15:concrete:air:stone-12:air-20:concrete:air-15:concrete:air:stone-12:air-20:concrete:air-15:concrete:air:stone-13:air-19:concrete:air-11:plant-2:air-2:concrete:air:stone-14:air-18:concrete:air-11:leaves-2:air-2:concrete:air:stone-14:air-18:concrete:air-11:leaves-2:air-2:concrete:air:stone-14:air-18:concrete:air-11:grass-2:air-2:concrete:air:stone-17:air-15:concrete:air-11:gunpowder-2:air-2:concrete:air:stone-263:basalt-5:stone-39:basalt-11:stone-37:basalt-18:stone-10:basalt-217:;9c4:;2e0:e:1f:13:1f:13:1c:16:16:17:1b:16:1c:8:5be:;63a:2:30:2:356:;9c4:',
+                saveCode: '&1;50-50;0000;stone-2e0:air-e:stone-1f:air-1b:stone-17:air-23:stone-c:air-43:stone-5:air-2c:stone-6:air-1e:stone-14:air-18:stone-1a:air-18:stone-1a:air-1a:stone-18:air-1c:stone-16:air-1c:stone-1d:air-16:stone-1c:air-18:stone-1c:air-16:slider_horizontal-13:stone-9:air-17:concrete:air-f:concrete:air:stone-a:air-16:concrete:air-f:concrete:air:stone-c:air-14:concrete:air-b:monster-2:air-2:concrete:air:stone-c:air-14:concrete:air-b:monster-2:air-2:concrete:air:stone-d:air-13:concrete:air-b:slime-2:air-2:concrete:air:stone-e:air-12:concrete:air-b:leaves-2:air-2:concrete:air:stone-e:air-12:concrete:air-b:leaves-2:air-2:concrete:air:stone-e:air-12:concrete:air-b:grass-2:air-2:concrete:air:stone-11:air-f:concrete:air-b:gunpowder-2:air-2:concrete:air:stone-107:basalt-5:stone-27:basalt-b:stone-25:basalt-12:stone-a:basalt-217:;9c4:;2e0:e:1f:13:1f:13:1c:16:16:17:1b:16:1c:8:5be:;9c4:',
                 backgroundColor: '#adadad',
                 inventory: {
                     sand: 1,
@@ -198,7 +198,7 @@ const puzzles = [
                     piston_down: 2,
                     slider_vertical: 1
                 },
-                id: '0fef3270-c5dd-463b-bf19-00088b8371d7'
+                id: 'cff125a2-a61e-44bd-a0dd-698dd6b531a8'
             }
         ]
     },
@@ -392,7 +392,7 @@ const puzzles = [
             {
                 name: 'Moving Machines',
                 description: `There's those <h>goal</h> (gold) and <h>target</h> (cyan) pixels I alluded to earlier. You must <h>push the goal pixels into the targets to win</h>. Those yellow-orange pixels with horizontal and vertical lines are <h>sliders</h>- They <h>can only be pushed along one axis</h> and <h>can be rotated</h>, perhaps that will be useful here.<br><br><i>Remember, when in doubt, do random stuff and see what happens!</i>`,
-                saveCode: '50;0000;wall-51:air-8:piston_down:air-39:wall-2:air-48:wall-2:air-6:piston_right:air-28:leaves-3:air-10:wall-2:air-35:leaves-3:air-10:wall-2:air-7:piston_up:air-26:leaves-2:wood:leaves-2:air-9:wall-2:air-34:leaves-2:wood:leaves-2:air-9:wall-2:grass-8:air-28:wood:air-11:wall-2:dirt-8:grass-14:air-14:wood:air-2:grass-9:wall-2:dirt-22:grass-14:dirt:grass-2:dirt-9:wall-2:dirt-48:wall-2:dirt-48:wall-52:air-48:wall-2:air-48:wall-2:air-3:slider_horizontal:air-44:wall-2:air-48:wall-2:air-48:wall-2:air-48:wall-2:air-34:cloner_down:air-13:wall-2:air-8:wall-26:air:rotator_clockwise:air-3:rotator_clockwise:air-8:wall-2:air-8:wall:air-21:piston_down:air-2:wall:air-14:wall-2:air-8:wall:air-20:rotator_down:slider_vertical:air-2:wall:air-14:wall-2:air-8:wall:air-20:slider_vertical:air-3:wall:air:piston_up:air-12:wall-2:air-8:wall-4:piston_up:wall:piston_up-2:wall-5:piston_up:wall-7:air-4:wall:air:rotator_clockwise:air-3:rotator_clockwise:air-8:wall-2:air-8:wall:air-19:wall:air-4:wall:air-14:wall-2:air-8:wall:air-19:wall:air-4:wall:air-14:wall-2:air-4:slider_vertical:air-3:wall:air-19:wall:air-4:wall:air-14:wall-2:air-4:slider_vertical:air-3:wall-2:air-19:slider_horizontal-2:air-2:wall:air-14:wall-2:air-3:cloner_left:air-4:wall:air-19:wall:air-4:wall:air-14:wall-2:air-8:wall:air-19:wall:air-4:wall:air-14:wall-2:air-8:wall-26:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-2:air-33:wall:air-14:wall-20:air-8:wall-8:air-14:wall-2:air-26:wall:air-21:wall-2:air-26:wall:air-21:wall-2:air-26:wall:air-21:wall-2:air-24:wall:air:wall:air-21:wall-2:air-15:goal:air-10:wall:air-21:wall-2:air-26:wall:air-21:wall-2:air-26:wall:air-14:wall:air-6:wall-2:air-26:wall:air-21:wall-2:air-26:wall:air-21:wall-51:;9c4:;33:8:1:18:11:21:11:6:1:1a:11:21:11:7:1:19:11:21:19:19:27:b:d9:8:1a:e:2:8:1a:e:2:3:1:4:1a:e:2:8:1a:e:2:8:1a:e:2:8:1a:e:2:8:1b:d:3d:13:1f:13:1f:13:51:13:1f:13:20:12:20:12:1f:13:1f:6:1:c:48:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:43:11:11:e:2:11:11:e:2:11:11:e:2:11:11:e:2:f:1:1:11:e:2:11:11:e:2:11:11:7:1:6:2:11:11:e:2:11:11:e:33:;126:1:31:1:2f:1:1:1:3c5:1:77:2:22:1:d:2:3c8:;8b8:1:10b:',
+                saveCode: '&1;50-50;0000;wall-33:air-8:piston_down:air-27:wall-2:air-30:wall-2:air-6:piston_right:air-1c:leaves-3:air-a:wall-2:air-23:leaves-3:air-a:wall-2:air-7:piston_up:air-1a:leaves-2:wood:leaves-2:air-9:wall-2:air-22:leaves-2:wood:leaves-2:air-4:monster:air-2:monster:air:wall-2:grass-8:air-1c:wood:air-4:monster:air:monster:air-2:crate:air:wall-2:dirt-8:grass-e:air-e:wood:air-2:grass-9:wall-2:dirt-16:grass-e:dirt:grass-2:dirt-9:wall-2:dirt-30:wall-2:dirt-30:wall-34:air-30:wall-2:air-30:wall-2:air-3:slider_horizontal:air-2c:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-22:cloner_down:air-d:wall-2:air-8:wall-1a:air:rotator_clockwise:air-3:rotator_clockwise:air-8:wall-2:air-8:wall:air-15:piston_down:air-2:wall:air-e:wall-2:air-8:wall:air-14:rotator_down:slider_vertical:air-2:wall:air-e:wall-2:air-8:wall:air-14:slider_vertical:air-3:wall:air:piston_up:air-c:wall-2:air-8:wall-4:piston_up:wall:piston_up-2:wall-5:piston_up:wall-7:air-4:wall:air:rotator_clockwise:air-3:rotator_clockwise:air-8:wall-2:air-8:wall:air-13:wall:air-4:wall:air-e:wall-2:air-8:wall:air-13:wall:air-4:wall:air-e:wall-2:air-4:slider_vertical:air-3:wall:monster:air-12:wall:air-4:wall:air-e:wall-2:air-4:slider_vertical:air-3:wall-2:air-13:slider_horizontal-2:air-2:wall:air-e:wall-2:air-3:cloner_left:air-4:wall:air-13:wall:monster-2:air-2:wall:air-e:wall-2:air-8:wall:air-6:monster:air-c:wall:monster-2:air-2:wall:air-e:wall-2:air-8:wall-1a:air-e:wall-2:air-21:wall:air-e:wall-2:air-21:wall:air-e:wall-2:air-21:wall:air-e:wall-2:air-21:wall:air-e:wall-2:air-21:wall:air-e:wall-2:air-21:wall:air-e:wall-2:air-21:wall:air-e:wall-14:air-8:wall-8:air-e:wall-2:air-1a:wall:air-15:wall-2:air-1a:wall:air-15:wall-2:air-1a:wall:air-15:wall-2:air-18:wall:air:wall:air-15:wall-2:air-f:goal:air-a:wall:air-15:wall-2:air-1a:wall:air-15:wall-2:air-1a:wall:air-e:wall:air-6:wall-2:air-1a:wall:air-15:wall-2:air-1a:wall:air-15:wall-51:;9c4:;33:8:1:18:11:21:11:6:1:1a:11:21:11:7:1:19:11:21:19:19:27:b:d9:8:1a:e:2:8:1a:e:2:3:1:4:1a:e:2:8:1a:e:2:8:1a:e:2:8:1a:e:2:8:1b:d:3d:13:1f:13:1f:13:51:13:1f:13:20:12:20:12:1f:13:1f:6:1:c:48:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:11:8:10:9:43:11:11:e:2:11:11:e:2:11:11:e:2:11:11:e:2:f:1:1:11:e:2:11:11:e:2:11:11:7:1:6:2:11:11:e:2:11:11:e:33:;8b8:1:10b:',
                 backgroundColor: '#ffffff',
                 inventory: {
                     piston_left: 3,
@@ -406,7 +406,7 @@ const puzzles = [
                     slider_horizontal: 5,
                     slider_vertical: 2
                 },
-                id: 'a47ec9c3-d9fa-4d01-8ac7-4ef6405a246e'
+                id: 'eec8026b-0182-47e2-a9aa-5803deaa757e'
             },
             {
                 name: 'Green Lasers',
@@ -609,7 +609,7 @@ function triggerWin() {
     };
     winMenu.onclick = (e) => {
         hide();
-        transitionToMenu();
+        transitionToMenu(puzzleButton.onclick);
     };
     document.addEventListener('keydown', keyHandle);
 };

@@ -17,7 +17,6 @@ const gameCanvas = document.createElement('canvas');
 const gridCanvas = createCanvas2();
 const gridNoiseCanvas = createCanvas2();
 const aboveCanvas = createCanvas2();
-const monsterCanvas = createCanvas2();
 const fireCanvas = createCanvas2();
 const targetCanvas = createCanvas2();
 const placeableCanvas = createCanvas2();
@@ -30,7 +29,6 @@ const gamectx = gameCanvas.getContext('2d');
 const gridctx = gridCanvas.getContext('2d');
 const gridnoisectx = gridNoiseCanvas.getContext('2d');
 const abovectx = aboveCanvas.getContext('2d');
-const monsterctx = monsterCanvas.getContext('2d');
 const firectx = fireCanvas.getContext('2d');
 const targetctx = targetCanvas.getContext('2d');
 const placeablectx = placeableCanvas.getContext('2d');
@@ -53,8 +51,6 @@ function resetCanvases() {
     gridnoisectx.webkitImageSmoothingEnabled = false;
     abovectx.imageSmoothingEnabled = false;
     abovectx.webkitImageSmoothingEnabled = false;
-    monsterctx.imageSmoothingEnabled = false;
-    monsterctx.webkitImageSmoothingEnabled = false;
     firectx.imageSmoothingEnabled = false;
     firectx.webkitImageSmoothingEnabled = false;
     targetctx.imageSmoothingEnabled = false;
@@ -106,7 +102,6 @@ const nextGrid = [];
 const fireGrid = [];
 const lastFireGrid = [];
 const nextFireGrid = [];
-const monsterGrid = [];
 const targetGrid = [];
 const musicGrid = [];
 const lastMusicGrid = [];
@@ -208,7 +203,6 @@ function createGrid(width = 100, height = 100) {
     fireGrid.length = 0;
     lastFireGrid.length = 0;
     nextFireGrid.length = 0;
-    monsterGrid.length = 0;
     targetGrid.length = 0;
     musicGrid.length = 0;
     lastMusicGrid.length = 0;
@@ -223,7 +217,6 @@ function createGrid(width = 100, height = 100) {
         fireGrid[i] = new Array(gridWidth);
         lastFireGrid[i] = new Array(gridWidth);
         nextFireGrid[i] = new Array(gridWidth);
-        monsterGrid[i] = new Array(gridWidth);
         targetGrid[i] = new Array(gridWidth);
         musicGrid[i] = new Array(gridWidth);
         lastMusicGrid[i] = new Array(gridWidth);
@@ -236,7 +229,6 @@ function createGrid(width = 100, height = 100) {
             fireGrid[i][j] = false;
             lastFireGrid[i][j] = false;
             nextFireGrid[i][j] = -1;
-            monsterGrid[i][j] = false;
             targetGrid[i][j] = false;
             musicGrid[i][j] = 0;
             lastMusicGrid[i][j] = 0;
@@ -252,7 +244,7 @@ function createGrid(width = 100, height = 100) {
     createPixSimGrid();
 };
 function loadSaveCode() {
-    if (saveCode.length != 0) {
+    if (saveCode.length > 0) {
         simulationPaused = true;
         fastSimulation = false;
         updateTimeControlButtons();
@@ -260,8 +252,7 @@ function loadSaveCode() {
         ticks = 0;
         stopAllMusicPixels();
         let sections = saveCode.split(';');
-        if (isNaN(parseInt(sections[0]))) return;
-        function parseSaveCode(code) {
+        function parseSaveCode(code, base) {
             let x = 0;
             let y = 0;
             let i = 0;
@@ -297,7 +288,7 @@ function loadSaveCode() {
                     i = nextOpenBracket + 1;
                 } else if (minNext == nextCloseBracket) {
                     let loopedSection = loopedPixels.pop();
-                    let iterations = parseInt(code.substring(nextCloseBracket + 1, nextPipeline));
+                    let iterations = parseInt(code.substring(nextCloseBracket + 1, nextPipeline), base);
                     if (loopedPixels.length) {
                         for (let i = 0; i < iterations; i++) {
                             loopedPixels[loopedPixels.length - 1].push(...loopedSection);
@@ -312,7 +303,7 @@ function loadSaveCode() {
                     i = nextPipeline + 1;
                 } else if (minNext == nextDash) {
                     let pixel = code.substring(i, nextDash);
-                    let amount = parseInt(code.substring(nextDash + 1, nextColon));
+                    let amount = parseInt(code.substring(nextDash + 1, nextColon), base);
                     if (loopedPixels.length) {
                         loopedPixels[loopedPixels.length - 1].push([pixel, amount])
                     } else {
@@ -358,13 +349,51 @@ function loadSaveCode() {
                 i = next + 1;
             }
         };
-        if (sections[0]) createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
-        if (sections[1]) ticks = parseInt(sections[1], 16);
-        if (sections[2]) parseSaveCode(sections[2]);
-        if (sections[3]) parseBooleanCode(fireGrid, sections[3]);
-        if (sections[4]) parseBooleanCode(placeableGrid, sections[4]);
-        if (sections[5]) parseBooleanCode(monsterGrid, sections[5]);
-        if (sections[6]) parseBooleanCode(targetGrid, sections[6]);
+        if (sections[0] == '&1') {
+            sections.shift();
+            if (isNaN(parseInt(sections[0]))) return;
+            if (sections[0]) createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
+            if (sections[1]) ticks = parseInt(sections[1], 16);
+            if (sections[2]) parseSaveCode(sections[2], 16);
+            if (sections[3]) parseBooleanCode(fireGrid, sections[3]);
+            if (sections[4]) parseBooleanCode(placeableGrid, sections[4]);
+            if (sections[5]) parseBooleanCode(targetGrid, sections[5]);
+        } else {
+            if (isNaN(parseInt(sections[0]))) return;
+            if (sections[0]) createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
+            if (sections[1]) ticks = parseInt(sections[1], 16);
+            if (sections[2]) parseSaveCode(sections[2], 10);
+            if (sections[3]) parseBooleanCode(fireGrid, sections[3]);
+            if (sections[4]) parseBooleanCode(placeableGrid, sections[4]);
+            if (sections[5]) {
+                let x = 0;
+                let y = 0;
+                let i = 0;
+                function addPixels(monster, amount) {
+                    while (amount > 0) {
+                        if (monster) grid[y][x++] = pixNum.MONSTER;
+                        else x++;
+                        if (x == gridWidth) {
+                            y++;
+                            x = 0;
+                            if (y == gridHeight) return true;
+                        }
+                        amount--;
+                    }
+                    return false;
+                };
+                let monster = false;
+                while (i < sections[5].length) {
+                    let next = sections[5].indexOf(':', i);
+                    if (next == -1) break;
+                    let amount = parseInt(sections[5].substring(i, next), 16);
+                    if (addPixels(monster, amount)) break;
+                    monster = !monster;
+                    i = next + 1;
+                }
+            }
+            if (sections[6]) parseBooleanCode(targetGrid, sections[6]);
+        }
         updateTimeControlButtons();
         camera.x = Math.max(0, Math.min(camera.x, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
         camera.y = Math.max(0, Math.min(camera.y, (canvasResolution * (gridHeight / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
@@ -374,7 +403,7 @@ function loadSaveCode() {
     }
 };
 function generateSaveCode() {
-    let saveCode = `${gridWidth}-${gridHeight};${'0000'.substring(0, 4 - (ticks % 65536).toString(16).length)}${(ticks % 65536).toString(16)};`;
+    let saveCode = `&1;${gridWidth}-${gridHeight};${'0000'.substring(0, 4 - (ticks % 65536).toString(16).length)}${(ticks % 65536).toString(16)};`;
     let pixel = -1;
     let amount = 0;
     for (let i = 0; i < gridHeight; i++) {
@@ -385,7 +414,7 @@ function generateSaveCode() {
                     if (amount == 1) {
                         saveCode += `${pixelData(pixel).id}:`;
                     } else {
-                        saveCode += `${pixelData(pixel).id}-${amount}:`;
+                        saveCode += `${pixelData(pixel).id}-${amount.toString(16)}:`;
                     }
                 }
                 pixel = grid[i][j];
@@ -431,7 +460,6 @@ function generateSaveCode() {
     };
     createBooleanCode(fireGrid);
     createBooleanCode(placeableGrid);
-    createBooleanCode(monsterGrid);
     createBooleanCode(targetGrid);
     return saveCode;
 };
@@ -594,16 +622,16 @@ function validChangingPixel(x, y) {
     return nextGrid[y][x] == -1;
 };
 function isAir(x, y) {
-    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.DELETER;
+    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.DELETER || grid[y][x] == pixNum.MONSTER;
 };
 function isPassableFluid(x, y) {
-    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.LAVA || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.DELETER;
+    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.LAVA || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.DELETER || grid[y][x] == pixNum.MONSTER;
 };
 function isPassableLiquid(x, y) {
-    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.LAVA || grid[y][x] == pixNum.DELETER;
+    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.WATER || grid[y][x] == pixNum.LAVA || grid[y][x] == pixNum.DELETER || grid[y][x] == pixNum.MONSTER;
 };
 function isTransparent(x, y) {
-    return (grid[y][x] == pixNum.AIR && !monsterGrid[y][x]) || grid[y][x] == pixNum.GLASS || grid[y][x] == pixNum.REINFORCED_GLASS;
+    return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.GLASS || grid[y][x] == pixNum.REINFORCED_GLASS;
 };
 function canMoveTo(x, y) {
     return nextGrid[y][x] == -1 || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.DELETER;
@@ -612,6 +640,13 @@ function move(x1, y1, x2, y2) {
     if (grid[y2][x2] == pixNum.DELETER) {
         nextGrid[y1][x1] = pixNum.AIR;
         fireGrid[y1][x1] = false;
+        teamGrid[y1][x1] = false;
+    } else if (grid[y2][x2] == pixNum.MONSTER) {
+        nextGrid[y1][x1] = pixNum.AIR;
+        nextGrid[y2][x2] = pixNum.AIR;
+        fireGrid[y1][x1] = false;
+        fireGrid[y2][x2] = false;
+        teamGrid[y1][x1] = false;
         teamGrid[y2][x2] = false;
     } else {
         nextGrid[y1][x1] = grid[y2][x2];
@@ -1160,7 +1195,6 @@ function explode(x1, y1, size, defer) {
     function destroy(x, y, power) {
         if (random() < (power / size) * ((20 - pixelAt(x, y).blastResistance) / (85 - power))) {
             nextGrid[y][x] = pixNum.AIR;
-            monsterGrid[y][x] = false;
             if (random() < 0.5 * power / size) {
                 nextFireGrid[y][x] = true;
             }
@@ -1355,7 +1389,6 @@ function draw() {
     gridctx.resetTransform();
     gridnoisectx.resetTransform();
     abovectx.resetTransform();
-    monsterctx.resetTransform();
     firectx.resetTransform();
     targetctx.resetTransform();
     placeablectx.resetTransform();
@@ -1366,7 +1399,6 @@ function draw() {
     gridctx.globalAlpha = 1;
     gridnoisectx.globalAlpha = 1;
     abovectx.globalAlpha = 1;
-    monsterctx.globalAlpha = 1;
     firectx.globalAlpha = 1;
     targetctx.globalAlpha = 1;
     placeablectx.globalAlpha = 1;
@@ -1490,7 +1522,6 @@ function drawFrame() {
             if (numPixels[i].rectangles.length > 0) drawPixels(i, numPixels[i].rectangles, gridctx);
         }
         drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
-        drawBooleanGrid(monsterGrid, monsterGrid, pixNum.MONSTER, monsterctx);
         drawBooleanGrid(targetGrid, targetGrid, pixNum.TARGET, targetctx);
         if (!PixSimAPI.inGame) drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         else drawBooleanGrid(PixSimAPI.team ? teamPlaceableGrids[1] : teamPlaceableGrids[0], lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
@@ -1535,7 +1566,6 @@ function drawFrame() {
         gamectx.globalAlpha = 1;
         gridctx.drawImage(gridNoiseCanvas, 0, 0);
         gamectx.drawImage(gridCanvas, 0, 0);
-        gamectx.drawImage(monsterCanvas, 0, 0);
         gamectx.drawImage(aboveCanvas, 0, 0);
         gamectx.drawImage(targetCanvas, 0, 0);
         gamectx.drawImage(fireCanvas, 0, 0);
@@ -1831,14 +1861,15 @@ function updateTick() {
             1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers
             5: gravity solids, stone, ice, rotators, saplings
             6: water, lava, steam, leaves, pumps, lava generators, freezers, wells, color wells, color generators, color collectors
-            -: monsters, music pixels
+            7: monsters, music pixels
+            -: music pixels
             */
             let monsterCount = 0;
             let fulfilledTargetCount = 0;
             const firePixelType = numPixels[pixNum.FIRE];
             for (let y = 0; y < gridHeight; y++) {
                 for (let x = 0; x < gridWidth; x++) {
-                    if (monsterGrid[y][x]) monsterCount++;
+                    if (grid[y][x] == pixNum.MONSTER) monsterCount++;
                     if (targetGrid[y][x] && grid[y][x] == pixNum.GOAL) fulfilledTargetCount++;
                     if (fireGrid[y][x]) {
                         randomSeed(ticks, x, y);
@@ -1865,7 +1896,7 @@ function updateTick() {
                     musicGrid[y][x] = 0;
                 }
             }
-            for (let updateStage = 0; updateStage <= 6; updateStage++) {
+            for (let updateStage = 0; updateStage <= 7; updateStage++) {
                 switch (updateStage) {
                     case 1:
                         for (let y = gridHeight - 1; y >= 0; y--) {
@@ -1920,19 +1951,12 @@ function updateTick() {
                     }
                 }
             }
-            const monsterPixelType = numPixels[pixNum.MONSTER];
-            for (let y = gridHeight - 1; y >= 0; y--) {
-                for (let x = 0; x < gridWidth; x++) {
-                    if (monsterGrid[y][x]) monsterPixelType.update(x, y);
-                    if (grid[y][x] >= pixNum.MUSIC_1 && grid[y][x] <= pixNum.MUSIC_88) numPixels[grid[y][x]].update(x, y);
-                }
-            }
             let newMonsterCount = 0;
             let newFulfilledTargetCount = 0;
             let hasUnfulfilledTargets = false;
             for (let y = 0; y < gridHeight; y++) {
                 for (let x = 0; x < gridWidth; x++) {
-                    if (monsterGrid[y][x]) newMonsterCount++;
+                    if (grid[y][x] == pixNum.MONSTER) newMonsterCount++;
                     if (nextFireGrid[y][x] !== -1) {
                         fireGrid[y][x] = nextFireGrid[y][x];
                         nextFireGrid[y][x] = -1;
@@ -1965,7 +1989,6 @@ function updateTick() {
                 await pixsimData.scriptRunner.tick();
                 PixSimAPI.sendTick(grid, teamGrid, [
                     fireGrid,
-                    monsterGrid,
                     targetGrid,
                     teamPlaceableGrids[0],
                     teamPlaceableGrids[1]
@@ -2132,7 +2155,6 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 act(function (x, y) {
                     grid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
-                    monsterGrid[y][x] = false;
                     targetGrid[y][x] = false;
                     if (musicGrid[y][x]) {
                         musicPixel(musicGrid[y][x], false);
@@ -2196,11 +2218,6 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
             if (sandboxMode) act(function (x, y) {
                 placeable[y][x] = true;
             });
-        } else if (placePixel == 'monster') {
-            if (sandboxMode) act(function (x, y) {
-                monsterGrid[y][x] = true;
-                grid[y][x] = pixNum.AIR;
-            });
         } else if (placePixel == 'target') {
             if (sandboxMode) act(function (x, y) {
                 targetGrid[y][x] = true;
@@ -2209,7 +2226,6 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
             if (sandboxMode) {
                 act(function (x, y) {
                     grid[y][x] = clickPixelNum;
-                    monsterGrid[y][x] = false;
                     if (musicGrid[y][x]) {
                         musicPixel(musicGrid[y][x], false);
                         musicGrid[y][x] = 0;
@@ -2469,7 +2485,6 @@ PixSimAPI.onGameTick = (compressedGrid, compressedTeamGrid, compressedBooleanGri
         }
     }
     extractBooleanGrid(fireGrid, compressedBooleanGrids[0]);
-    extractBooleanGrid(monsterGrid, compressedBooleanGrids[1]);
     extractBooleanGrid(targetGrid, compressedBooleanGrids[2]);
     extractBooleanGrid(teamPlaceableGrids[0], compressedBooleanGrids[3]);
     extractBooleanGrid(teamPlaceableGrids[1], compressedBooleanGrids[4]);

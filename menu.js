@@ -531,16 +531,6 @@ pixsimJoinGameCodeJoin.onclick = (e) => {
 };
 function refreshGameList(games) {
     let scrollPos = pixsimJoinList.scrollTop;
-    function type(t) {
-        switch (t) {
-            case 'vaultwars':
-                return 'Vault Wars';
-            case 'resourcerace':
-                return 'Resource Race';
-            default:
-                return 'Unknown';
-        }
-    };
     if (pixsimJoinList.children[0].tagName == 'SPAN') pixsimJoinList.children[0].remove();
     let existingIndex = 0;
     for (let game of games) {
@@ -552,7 +542,7 @@ function refreshGameList(games) {
                     codeText.innerText = text;
                 }, 100);
                 const sub1 = wrapper.children[1];
-                glitchTextTransition(sub1.innerText, `${game.open ? 'Running' : 'Open'} ❖ ${type(game.type)} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
+                glitchTextTransition(sub1.innerText, `${game.open ? 'Running' : 'Open'} ❖ ${PixSimAPI.getGameModeData(game.type).name} ❖ ${game.hostPlatform.toUpperCase()} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
                     sub1.innerText = text;
                 }, 100);
                 const sub2 = wrapper.children[2];
@@ -576,7 +566,7 @@ function refreshGameList(games) {
             wrapper.appendChild(codeText);
             const sub1 = document.createElement('div');
             sub1.classList.add('joinTileSub1');
-            flipTextTransition('', `${game.open ? 'Running' : 'Open'} ❖ ${type(game.type)} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
+            flipTextTransition('', `${game.open ? 'Running' : 'Open'} ❖ ${PixSimAPI.getGameModeData(game.type).name} ❖ ${game.hostPlatform.toUpperCase()} ❖ ${PixSimAPI.getUserData(game.hostName).igname}`, (text) => {
                 sub1.innerText = text;
             }, 100);
             wrapper.appendChild(sub1);

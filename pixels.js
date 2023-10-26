@@ -577,7 +577,7 @@ const pixels = {
                     if (random() < 0.01) nextGrid[y][x] = pixNum.WOOD;
                 } else {
                     let canOverrideWithWood = (x, y) => {
-                        return (grid[y][x] == pixNum.AIR  || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.LEAVES || grid[y][x] == pixNum.WOOD || grid[y][x] == pixNum.SAPLING) && (nextGrid[y][x] == -1 || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.LEAVES || nextGrid[y][x] == pixNum.WOOD);
+                        return (grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.STEAM || grid[y][x] == pixNum.LEAVES || grid[y][x] == pixNum.WOOD || grid[y][x] == pixNum.SAPLING) && (nextGrid[y][x] == -1 || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.LEAVES || nextGrid[y][x] == pixNum.WOOD);
                     };
                     let branch = (x1, y1, angle, size, length) => {
                         let x2 = Math.round(Math.max(0, Math.min(gridWidth - 1, x1 + Math.cos(angle) * length)));
@@ -1373,7 +1373,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            let flammability = monsterGrid[y][x] ? numPixels[pixNum.MONSTER].flammability : pixelAt(x, y).flammability;
+            let flammability = pixelAt(x, y).flammability;
             let isLava = grid[y][x] == pixNum.LAVA;
             if (flammability == 0 && !isLava && (grid[y][x] != pixNum.AIR || random() < 0.3)) {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
@@ -1409,18 +1409,16 @@ const pixels = {
                     explode(x, y, 5, true);
                 } else if (grid[y][x] != pixNum.ASH && random() < 0.3) {
                     nextGrid[y][x] = pixNum.ASH;
-                    monsterGrid[y][x] = false;
                     teamGrid[y][x] = 0;
                 } else {
                     nextGrid[y][x] = pixNum.AIR;
-                    monsterGrid[y][x] = false;
                     teamGrid[y][x] = 0;
                 }
             }
             for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridHeight - 1); j++) {
                 for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridWidth - 1); i++) {
                     if (nextFireGrid[j][i] != -1 || (i == x && j == y)) continue;
-                    let flammability = monsterGrid[j][i] ? numPixels[pixNum.MONSTER].flammability : pixelAt(i, j).flammability;
+                    let flammability = pixelAt(i, j).flammability;
                     if (random() < flammability / (aerated ? 20 : 60) + (j < y ? 0.4 : 0) - ((i != x && j != y) ? 0.4 : 0) - (aerated ? 0 : 0.2)) nextFireGrid[j][i] = true;
                     if (grid[j][i] == pixNum.WATER && random() < 0.05) nextGrid[j][i] = pixNum.STEAM;
                     if (grid[j][i] == pixNum.ICE && random() < 0.1) nextGrid[j][i] = pixNum.WATER;
@@ -4770,24 +4768,16 @@ const pixels = {
             let path = getLaserPath(x, y, 0);
             let last = path[path.length - 1];
             if (last[0] < 0 || last[0] >= gridWidth || last[1] < 0 || last[1] >= gridHeight) return;
-            if (monsterGrid[last[1]][last[0]]) {
-                if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
-                    monsterGrid[last[1]][last[0]] = false;
-                    nextFireGrid[last[1]][last[0]] = true;
+            if (random() < pixelAt(last[0], last[1]).flammability / 100) {
+                if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
+                    teamGrid[last[1]][last[0]] = 0;
+                    explode(last[0], last[1], 5, true);
+                }
+                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                    nextGrid[last[1]][last[0]] = pixNum.AIR;
                     teamGrid[last[1]][last[0]] = 0;
                 }
-            } else {
-                if (random() < pixelAt(last[0], last[1]).flammability / 100) {
-                    if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
-                        teamGrid[last[1]][last[0]] = 0;
-                        explode(last[0], last[1], 5, true);
-                    }
-                    if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
-                        nextGrid[last[1]][last[0]] = pixNum.AIR;
-                        teamGrid[last[1]][last[0]] = 0;
-                    }
-                } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
-            }
+            } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -4858,23 +4848,16 @@ const pixels = {
             let path = getLaserPath(x, y, 1);
             let last = path[path.length - 1];
             if (last[0] < 0 || last[0] >= gridWidth || last[1] < 0 || last[1] >= gridHeight) return;
-            if (monsterGrid[last[1]][last[0]]) {
-                if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
-                    monsterGrid[last[1]][last[0]] = false;
-                    nextFireGrid[last[1]][last[0]] = true;
+            if (random() < pixelAt(last[0], last[1]).flammability / 100) {
+                if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
+                    teamGrid[last[1]][last[0]] = 0;
+                    explode(last[0], last[1], 5, true);
                 }
-            } else {
-                if (random() < pixelAt(last[0], last[1]).flammability / 100) {
-                    if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
-                        teamGrid[last[1]][last[0]] = 0;
-                        explode(last[0], last[1], 5, true);
-                    }
-                    if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
-                        nextGrid[last[1]][last[0]] = pixNum.AIR;
-                        teamGrid[last[1]][last[0]] = 0;
-                    }
-                } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
-            }
+                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                    nextGrid[last[1]][last[0]] = pixNum.AIR;
+                    teamGrid[last[1]][last[0]] = 0;
+                }
+            } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -4945,23 +4928,16 @@ const pixels = {
             let path = getLaserPath(x, y, 2);
             let last = path[path.length - 1];
             if (last[0] < 0 || last[0] >= gridWidth || last[1] < 0 || last[1] >= gridHeight) return;
-            if (monsterGrid[last[1]][last[0]]) {
-                if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
-                    monsterGrid[last[1]][last[0]] = false;
-                    nextFireGrid[last[1]][last[0]] = true;
+            if (random() < pixelAt(last[0], last[1]).flammability / 100) {
+                if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
+                    teamGrid[last[1]][last[0]] = 0;
+                    explode(last[0], last[1], 5, true);
                 }
-            } else {
-                if (random() < pixelAt(last[0], last[1]).flammability / 100) {
-                    if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
-                        teamGrid[last[1]][last[0]] = 0;
-                        explode(last[0], last[1], 5, true);
-                    }
-                    if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
-                        nextGrid[last[1]][last[0]] = pixNum.AIR;
-                        teamGrid[last[1]][last[0]] = 0;
-                    }
-                } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
-            }
+                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                    nextGrid[last[1]][last[0]] = pixNum.AIR;
+                    teamGrid[last[1]][last[0]] = 0;
+                }
+            } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -5032,23 +5008,16 @@ const pixels = {
             let path = getLaserPath(x, y, 3);
             let last = path[path.length - 1];
             if (last[0] < 0 || last[0] >= gridWidth || last[1] < 0 || last[1] >= gridHeight) return;
-            if (monsterGrid[last[1]][last[0]]) {
-                if (random() < numPixels[pixNum.MONSTER].flammability / 100) {
-                    monsterGrid[last[1]][last[0]] = false;
-                    nextFireGrid[last[1]][last[0]] = true;
+            if (random() < pixelAt(last[0], last[1]).flammability / 100) {
+                if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
+                    teamGrid[last[1]][last[0]] = 0;
+                    explode(last[0], last[1], 5, true);
                 }
-            } else {
-                if (random() < pixelAt(last[0], last[1]).flammability / 100) {
-                    if (grid[last[1]][last[0]] >= pixNum.LASER_LEFT && grid[last[1]][last[0]] <= pixNum.LASER_DOWN) {
-                        teamGrid[last[1]][last[0]] = 0;
-                        explode(last[0], last[1], 5, true);
-                    }
-                    if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
-                        nextGrid[last[1]][last[0]] = pixNum.AIR;
-                        teamGrid[last[1]][last[0]] = 0;
-                    }
-                } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
-            }
+                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                    nextGrid[last[1]][last[0]] = pixNum.AIR;
+                    teamGrid[last[1]][last[0]] = 0;
+                }
+            } else if (random() < pixelAt(last[0], last[1]).flammability / 100) nextFireGrid[last[1]][last[0]] = true;
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -6816,29 +6785,9 @@ _@    ._`],
             });
         },
         update: function (x, y) {
-            if (grid[y][x] != pixNum.AIR) {
-                grid[y][x] = pixNum.AIR;
-                monsterGrid[y][x] = false;
-                nextFireGrid[y][x] = false;
-                teamGrid[y][x] = 0;
-            } else if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1) && !monsterGrid[y + 1][x]) {
-                if (grid[y + 1][x] == pixNum.DELETER) {
-                    nextGrid[y][x] = pixNum.AIR;
-                    monsterGrid[y][x] = false;
-                    nextFireGrid[y][x] = false;
-                    teamGrid[y][x] = 0;
-                } else {
-                    nextGrid[y][x] = grid[y + 1][x];
-                    nextGrid[y + 1][x] = grid[y][x];
-                    monsterGrid[y + 1][x] = true;
-                    monsterGrid[y][x] = false;
-                    let temp = fireGrid[y][x];
-                    fireGrid[y][x] = fireGrid[y + 1][x];
-                    fireGrid[y + 1][x] = temp;
-                    temp = teamGrid[y][x];
-                    teamGrid[y][x] = teamGrid[y + 1][x];
-                    teamGrid[y + 1][x] = temp;
-                }
+            if (!validChangingPixel(x, y)) return;
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && grid[y + 1][x] != pixNum.MONSTER && canMoveTo(x, y + 1)) {
+                move(x, y, x, y + 1);
             }
         },
         drawPreview: function (ctx) {
@@ -6874,7 +6823,7 @@ _@    ._`],
         rotateable: false,
         collectible: false,
         group: 5,
-        updateStage: -1,
+        updateStage: 7,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -9114,7 +9063,7 @@ function generateMusicPixel(id, data) {
         },
         update: function (x, y) {
             if (updateTouchingAnything(x, y, (ax, ay) => {
-                if (grid[ay][ax] >= pixNum.MUSIC_1 && grid[ay][ax] <= pixNum.MUSIC_88) return false;
+                if ((grid[ay][ax] >= pixNum.MUSIC_1 && grid[ay][ax] <= pixNum.MUSIC_88) || grid[ay][ax] == pixNum.MONSTER) return false;
                 return true;
             })) musicGrid[y][x] = id;
         },
@@ -9162,7 +9111,7 @@ function generateMusicPixel(id, data) {
         rotateable: false,
         collectible: false,
         group: 4,
-        updateStage: -1,
+        updateStage: 7,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: true,

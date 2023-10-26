@@ -532,6 +532,10 @@ class PixSimAPI {
         return this.#spectating;
     }
 
+    static getGameModeData(mode) {
+        return this.#gameModes[mode];
+    }
+
     static set onDisconnect(cb) {
         if (typeof cb != 'function') return;
         socket.off('disconnect');
@@ -552,6 +556,7 @@ class PixSimAPI {
     static getUserData(username) {
         if (this.#userCache.has(username)) return this.#userCache.get(username);
         else {
+            // probably should get the user data lol
             const userData = {
                 igname: 'Unknown',
                 img: '',
