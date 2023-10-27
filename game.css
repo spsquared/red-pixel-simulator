@@ -145,6 +145,12 @@
 .pickerPixelSelected:hover {
     border-color: gold !important;
 }
+.pickerKeybind {
+    position: absolute;
+    top: 0px;
+    right: 2px;
+    pointer-events: none;
+}
 .pickerCount {
     position: absolute;
     bottom: 0px;
@@ -160,6 +166,12 @@
     padding: 8px 8px;
     margin-right: 8px;
     text-align: justify;
+}
+#pixelPickerKeybindButton {
+    margin: 0px 0px;
+    margin-top: 4px;
+    border-width: 2px;
+    font-size: 12px;
 }
 #pixelPickerCrafting {
     border: 2px solid black;
@@ -512,6 +524,26 @@
 }
 #controlsTable td:nth-child(2), #controlsTable td:nth-child(4) {
     font-weight: 300;
+}
+
+#keybindScreen {
+    display: inline-block;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    padding-top: calc(50vh - 32px);
+    text-align: center;
+    vertical-align: middle;
+    color: black;
+    font-family: 'Lucida Console', Lucida, monospace;
+    font-size: 32px;
+    background-color: rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    backdrop-filter: blur(2px);
+    transition: 100ms linear opacity;
+    pointer-events: none;
 }
 
 #winScreen {

@@ -216,6 +216,7 @@ window.addEventListener('load', async (e) => {
     }));
     promiseList.push(setAudio('./assets/sound/ding.mp3', (buf) => addAudioQueue(buf, 'ding')));
     promiseList.push(setAudio('./assets/sound/ding-short.mp3', (buf) => addAudioQueue(buf, 'shortDing')));
+    promiseList.push(setAudio('./assets/sound/deny.mp3', (buf) => addAudioQueue(buf, 'deny')));
     promiseList.push(setAudio('./assets/sound/explosion-1.mp3', (buf) => addAudioQueue(buf, 'explosion', 500)));
     promiseList.push(setAudio('./assets/sound/explosion-2.mp3', (buf) => addAudioQueue(buf, 'explosion', 500)));
     promiseList.push(setAudio('./assets/sound/explosion-3.mp3', (buf) => addAudioQueue(buf, 'explosion', 500)));

@@ -362,6 +362,7 @@ multiplayerButton.onclick = (e) => {
         pixsimMenuConnecting.style.pointerEvents = 'none';
     }, (err) => {
         clearInterval(glitch);
+        clearInterval(loadingTip);
         modal('Could not connect to PixSim API:', `<span style="color: red;">${err.message}</span>`).then(() => pixsimMenuClose.click());
     });
 };
@@ -531,7 +532,7 @@ pixsimJoinGameCodeJoin.onclick = (e) => {
 };
 function refreshGameList(games) {
     let scrollPos = pixsimJoinList.scrollTop;
-    if (pixsimJoinList.children[0].tagName == 'SPAN') pixsimJoinList.children[0].remove();
+    if (pixsimJoinList.children.length == 0 || pixsimJoinList.children[0].tagName == 'SPAN') pixsimJoinList.children[0].remove();
     let existingIndex = 0;
     for (let game of games) {
         if (existingIndex < pixsimJoinList.children.length) {

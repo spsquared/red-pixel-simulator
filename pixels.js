@@ -28,6 +28,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'air',
         numId: 0
     },
@@ -66,6 +67,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'wall',
         numId: 0
     },
@@ -81,7 +83,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.WATER)) {
+            if (touchingPixel(x, y, pixNum.WATER)) {
                 nextGrid[y][x] = pixNum.MUD;
                 return;
             }
@@ -115,6 +117,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'dirt',
         numId: 0
     },
@@ -131,10 +134,10 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let dead = random() < 0.1;
-            if (dead) updateTouchingPixel(x, y, [pixNum.AIR, pixNum.SAPLING], (ax, ay) => {
+            if (dead) touchingPixel(x, y, [pixNum.AIR, pixNum.SAPLING], (ax, ay) => {
                 if (ay <= y) dead = false;
             });
-            if (!dead) dead = updateTouchingPixel(x, y, pixNum.LAVA);
+            if (!dead) dead = touchingPixel(x, y, pixNum.LAVA);
             if (dead) {
                 nextGrid[y][x] = pixNum.DIRT;
                 return;
@@ -143,7 +146,7 @@ const pixels = {
                 for (let j = Math.max(x - 1, 0); j <= Math.min(x + 1, gridWidth - 1); j++) {
                     if (grid[i][j] == pixNum.DIRT && validChangingPixel(j, i) && (i != y || j != x) && random() < 0.2) {
                         let canGrow = false;
-                        updateTouchingPixel(j, i, [pixNum.AIR, pixNum.SAPLING], function (actionX2, actionY2) {
+                        touchingPixel(j, i, [pixNum.AIR, pixNum.SAPLING], function (actionX2, actionY2) {
                             if (actionY2 <= i) canGrow = true;
                         });
                         if (canGrow) nextGrid[i][j] = pixNum.GRASS;
@@ -181,6 +184,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'grass',
         numId: 0
     },
@@ -205,9 +209,9 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (!updateTouchingPixel(x, y, pixNum.WATER)) {
+            if (!touchingPixel(x, y, pixNum.WATER)) {
                 let touchingWetStuff = 1;
-                updateTouchingPixel(x, y, [pixNum.SILT, pixNum.MUD], (ax, ay) => {
+                touchingPixel(x, y, [pixNum.SILT, pixNum.MUD], (ax, ay) => {
                     touchingWetStuff *= 2;
                 });
                 if (random() < 0.01 / touchingWetStuff) {
@@ -241,6 +245,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'mud',
         numId: 0
     },
@@ -284,6 +289,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'sand',
         numId: 0
     },
@@ -337,6 +343,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'gravel',
         numId: 0
     },
@@ -352,7 +359,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.WATER) && random() < 0.2) {
+            if (touchingPixel(x, y, pixNum.WATER) && random() < 0.2) {
                 nextGrid[y][x] = pixNum.SILT;
                 return;
             }
@@ -385,6 +392,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'clay',
         numId: 0
     },
@@ -409,9 +417,9 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (!updateTouchingPixel(x, y, pixNum.WATER)) {
+            if (!touchingPixel(x, y, pixNum.WATER)) {
                 let touchingWetStuff = 1;
-                updateTouchingPixel(x, y, [pixNum.SILT, pixNum.MUD], (ax, ay) => {
+                touchingPixel(x, y, [pixNum.SILT, pixNum.MUD], (ax, ay) => {
                     touchingWetStuff *= 2;
                 });
                 if (random() < 0.002 / touchingWetStuff) {
@@ -419,7 +427,7 @@ const pixels = {
                     return;
                 }
             }
-            updateTouchingPixel(x, y, pixNum.CLAY, (ax, ay) => {
+            touchingPixel(x, y, pixNum.CLAY, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.0001) nextGrid[ay][ax] = pixNum.SILT;
             });
             flow(x, y, isPassableFluid);
@@ -448,6 +456,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'silt',
         numId: 0
     },
@@ -497,6 +506,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'wood',
         numId: 0
     },
@@ -512,14 +522,14 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.WOOD)) return;
+            if (touchingPixel(x, y, pixNum.WOOD)) return;
             let touchingLeaves = 0;
             for (let i = -1; i <= 1; i++) {
                 for (let j = -1; j <= 1; j++) {
                     if (isOnGrid(x - j, y - i) && grid[y - i][x - j] == pixNum.WOOD || grid[y - i][x - j] == pixNum.LEAVES) touchingLeaves++;
                 }
             }
-            updateTouchingPixel(x, y, [pixNum.WOOD, pixNum.LEAVES], (x1, y1) => {
+            touchingPixel(x, y, [pixNum.WOOD, pixNum.LEAVES], (x1, y1) => {
                 touchingLeaves++;
             });
             if (touchingLeaves < 3) {
@@ -556,6 +566,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'leaves',
         numId: 0
     },
@@ -671,6 +682,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'sapling',
         numId: 0
     },
@@ -695,12 +707,12 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (!updateTouchingPixel(x, y, pixNum.STONE)) {
+            if (!touchingPixel(x, y, pixNum.STONE)) {
                 fall(x, y, 1, 1);
             }
             for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridHeight - 1); j++) {
                 for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridWidth - 1); i++) {
-                    if (grid[j][i] == pixNum.STONE && canMoveTo(i, j) && random() < 0.1 && updateTouchingPixel(i, j, pixNum.AIR)) {
+                    if (grid[j][i] == pixNum.STONE && canMoveTo(i, j) && random() < 0.1 && touchingPixel(i, j, pixNum.AIR)) {
                         nextGrid[j][i] = pixNum.MOSS;
                     }
                 }
@@ -732,6 +744,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'moss',
         numId: 0
     },
@@ -777,6 +790,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'stone',
         numId: 0
     },
@@ -818,6 +832,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'basalt',
         numId: 0
     },
@@ -860,7 +875,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             fireGrid[y][x] = false;
             nextFireGrid[y][x] = false;
-            if (updateTouchingPixel(x, y, pixNum.LAVA, (ax, ay) => {
+            if (touchingPixel(x, y, pixNum.LAVA, (ax, ay) => {
                 if (validChangingPixel(ax, ay)) {
                     if (random() < 0.8) nextGrid[y][x] = pixNum.STEAM;
                     else nextGrid[y][x] = pixNum.AIR;
@@ -899,6 +914,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'water',
         numId: 0
     },
@@ -938,7 +954,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let touchingIce = 10;
-            updateTouchingPixel(x, y, pixNum.ICE, (ax, ay) => {
+            touchingPixel(x, y, pixNum.ICE, (ax, ay) => {
                 touchingIce *= 2;
             });
             if (random() < 0.001 / touchingIce) nextGrid[y][x] = pixNum.WATER;
@@ -967,6 +983,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'ice',
         numId: 0
     },
@@ -991,7 +1008,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.WATER) && random() < 0.001) {
+            if (touchingPixel(x, y, pixNum.WATER) && random() < 0.001) {
                 nextGrid[y][x] = pixNum.WATER;
                 return;
             };
@@ -1023,6 +1040,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'snow',
         numId: 0
     },
@@ -1071,7 +1089,7 @@ const pixels = {
                 }
                 return;
             }
-            if (updateTouchingAnything(x, y, (ax, ay) => {
+            if (touchingAnything(x, y, (ax, ay) => {
                 if (grid[ay][ax] != pixNum.WATER && random() < pixelAt(ax, ay).flammability / 20) {
                     nextFireGrid[ay][ax] = true;
                     if (random() < 0.6) {
@@ -1200,6 +1218,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'steam',
         numId: 0
     },
@@ -1258,7 +1277,7 @@ const pixels = {
                     }
                 }
             };
-            updateTouchingAnything(x, y, act);
+            touchingAnything(x, y, act);
             for (let i = 0; i < 3; i++) {
                 let meltAngle = random(0, Math.PI * 2);
                 let travel = 0;
@@ -1338,6 +1357,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'lava',
         numId: 0
     },
@@ -1379,10 +1399,10 @@ const pixels = {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
                 return;
             }
-            updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
+            touchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
             });
-            let aerated = grid[y][x] == pixNum.AIR || updateTouchingPixel(x, y, pixNum.AIR);
+            let aerated = grid[y][x] == pixNum.AIR || touchingPixel(x, y, pixNum.AIR);
             if (random() < (20 - flammability) / (aerated ? 280 : 20)) {
                 nextFireGrid[y][x] = nextFireGrid[y][x] == -1 ? false : nextFireGrid[y][x];
             }
@@ -1450,6 +1470,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'fire',
         numId: 0
     },
@@ -1475,7 +1496,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let removedWater = false;
-            if (updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
+            if (touchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 if (!removedWater && validChangingPixel(ax, ay) && random() < 0.2) {
                     nextGrid[ay][ax] = pixNum.AIR;
                     teamGrid[ay][ax] = 0;
@@ -1511,6 +1532,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'ash',
         numId: 0
     },
@@ -1568,6 +1590,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'wet_ash',
         numId: 0
     },
@@ -1619,6 +1642,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'iron',
         numId: 0
     },
@@ -1669,6 +1693,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'steel',
         numId: 0
     },
@@ -1684,7 +1709,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.WATER)) {
+            if (touchingPixel(x, y, pixNum.WATER)) {
                 nextGrid[y][x] = pixNum.CONCRETE;
                 return;
             }
@@ -1719,6 +1744,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'concrete_powder',
         numId: 0
     },
@@ -1757,6 +1783,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'concrete',
         numId: 0
     },
@@ -1817,6 +1844,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'stone_bricks',
         numId: 0
     },
@@ -1878,6 +1906,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'bricks',
         numId: 0
     },
@@ -1939,6 +1968,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'glass',
         numId: 0
     },
@@ -2013,6 +2043,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'reinforced_glass',
         numId: 0
     },
@@ -2073,6 +2104,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'crate',
         numId: 0
     },
@@ -2142,6 +2174,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'steel_crate',
         numId: 0
     },
@@ -2157,11 +2190,11 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (!updateTouchingPixel(x, y, pixNum.AIR) && !updateTouchingPixel(x, y, pixNum.CONCRETE)) {
+            if (!touchingPixel(x, y, pixNum.AIR) && !touchingPixel(x, y, pixNum.CONCRETE)) {
                 nextGrid[y][x] = pixNum.WATER;
                 return;
             }
-            updateTouchingPixel(x, y, pixNum.CONCRETE, (ax, ay) => {
+            touchingPixel(x, y, pixNum.CONCRETE, (ax, ay) => {
                 if (random() < 0.1) {
                     nextGrid[y][x] = pixNum.WATER;
                     nextGrid[ay][ax] = pixNum.PLANT;
@@ -2201,6 +2234,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'plant',
         numId: 0
     },
@@ -2216,7 +2250,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
+            touchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 nextGrid[y][x] = pixNum.AIR;
                 nextGrid[ay][ax] = pixNum.SPONGE;
                 teamGrid[y][x] = 0;
@@ -2256,6 +2290,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'sponge',
         numId: 0
     },
@@ -2270,12 +2305,12 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.LAVA, (ax, ay) => {
+            touchingPixel(x, y, pixNum.LAVA, (ax, ay) => {
                 nextGrid[y][x] = pixNum.WATER;
             });
             let team = teamGrid[y][x] - 1;
             let consumeResources = teamPixelAmounts[team] !== undefined;
-            if (consumeResources || !PixSimAPI.inGame) updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+            if (consumeResources || !PixSimAPI.inGame) touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.125 && (!consumeResources || teamPixelAmounts[team].color_cyan > 0 || teamPixelAmounts[team].color_blue > 0)) {
                     nextGrid[ay][ax] = pixNum.WATER;
                     teamGrid[ay][ax] = teamGrid[y][x];
@@ -2331,6 +2366,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'pump',
         numId: 0
     },
@@ -2345,17 +2381,17 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
+            touchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 teamGrid[y][x] = 0;
                 explode(x, y, 5, true);
             });
-            updateTouchingPixel(x, y, [pixNum.SNOW, pixNum.ICE], (ax, ay) => {
+            touchingPixel(x, y, [pixNum.SNOW, pixNum.ICE], (ax, ay) => {
                 teamGrid[y][x] = 0;
                 explode(x, y, 7, true);
             });
             let team = teamGrid[y][x] - 1;
             let consumeResources = teamPixelAmounts[team] !== undefined;
-            if (consumeResources || !PixSimAPI.inGame) updateTouchingPixel(x, y, [pixNum.AIR, pixNum.STONE], (ax, ay) => {
+            if (consumeResources || !PixSimAPI.inGame) touchingPixel(x, y, [pixNum.AIR, pixNum.STONE], (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.075 && (!consumeResources || teamPixelAmounts[team].color_orange > 0 || teamPixelAmounts[team].color_red > 0)) {
                     nextGrid[ay][ax] = pixNum.LAVA;
                     teamGrid[ay][ax] = teamGrid[y][x];
@@ -2411,6 +2447,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'lava_generator',
         numId: 0
     },
@@ -2425,16 +2462,16 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.LAVA, (ax, ay) => {
+            touchingPixel(x, y, pixNum.LAVA, (ax, ay) => {
                 teamGrid[y][x] = 0;
                 explode(x, y, 7, true);
             });
-            updateTouchingPixel(x, y, pixNum.WATER, (ax, ay) => {
+            touchingPixel(x, y, pixNum.WATER, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.075) {
                     nextGrid[ay][ax] = pixNum.ICE;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.STEAM, (ax, ay) => {
+            touchingPixel(x, y, pixNum.STEAM, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.1) {
                     nextGrid[ay][ax] = pixNum.WATER;
                 }
@@ -2478,6 +2515,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'freezer',
         numId: 0
     },
@@ -2503,8 +2541,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -2543,6 +2581,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'piston_left',
         numId: 0
     },
@@ -2563,8 +2602,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -2603,6 +2642,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'piston_up',
         numId: 0
     },
@@ -2623,8 +2663,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -2663,6 +2703,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'piston_right',
         numId: 0
     },
@@ -2683,8 +2724,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -2723,6 +2764,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'piston_down',
         numId: 0
     },
@@ -2743,8 +2785,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -2784,6 +2826,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'sticky_piston_left',
         numId: 0
     },
@@ -2804,8 +2847,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -2845,6 +2888,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'sticky_piston_up',
         numId: 0
     },
@@ -2865,8 +2909,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -2906,6 +2950,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'sticky_piston_right',
         numId: 0
     },
@@ -2926,8 +2971,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -2967,6 +3012,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'sticky_piston_down',
         numId: 0
     },
@@ -2994,8 +3040,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -3036,6 +3082,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'push_piston_left',
         numId: 0
     },
@@ -3063,8 +3110,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -3105,6 +3152,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'push_piston_up',
         numId: 0
     },
@@ -3132,8 +3180,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -3174,6 +3222,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'push_piston_right',
         numId: 0
     },
@@ -3201,8 +3250,8 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA)) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
                 return;
@@ -3243,6 +3292,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'push_piston_down',
         numId: 0
     },
@@ -3256,7 +3306,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).cloneable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
                 teamGrid[y][x - 1] = teamGrid[y][x + 1];
@@ -3308,6 +3358,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'cloner_left',
         numId: 0
     },
@@ -3321,7 +3372,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).cloneable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
                 teamGrid[y - 1][x] = teamGrid[y + 1][x];
@@ -3373,6 +3424,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'cloner_up',
         numId: 0
     },
@@ -3386,7 +3438,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).cloneable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
                 teamGrid[y][x + 1] = teamGrid[y][x - 1];
@@ -3438,6 +3490,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'cloner_right',
         numId: 0
     },
@@ -3451,7 +3504,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).cloneable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
                 teamGrid[y + 1][x] = teamGrid[y - 1][x];
@@ -3503,6 +3556,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'cloner_down',
         numId: 0
     },
@@ -3516,7 +3570,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).cloneable && grid[y][x - 1] != pixNum.DELETER && canMoveTo(x - 1, y)) {
                 if (push(x, y, 0, false, true)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
@@ -3575,6 +3629,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'push_cloner_left',
         numId: 0
     },
@@ -3588,7 +3643,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).cloneable && grid[y - 1][x] != pixNum.DELETER && canMoveTo(x, y - 1)) {
                 if (push(x, y, 1, false, true)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
@@ -3647,6 +3702,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'push_cloner_up',
         numId: 0
     },
@@ -3660,7 +3716,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).cloneable && grid[y][x + 1] != pixNum.DELETER && canMoveTo(x + 1, y)) {
                 if (push(x, y, 2, false, true)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
@@ -3719,6 +3775,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'push_cloner_right',
         numId: 0
     },
@@ -3732,7 +3789,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).cloneable && grid[y + 1][x] != pixNum.DELETER && canMoveTo(x, y + 1)) {
                 if (push(x, y, 3, false, true)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
@@ -3791,6 +3848,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'push_cloner_down',
         numId: 0
     },
@@ -3848,6 +3906,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'super_cloner_left',
         numId: 0
     },
@@ -3907,6 +3966,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'super_cloner_up',
         numId: 0
     },
@@ -3964,6 +4024,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'super_cloner_right',
         numId: 0
     },
@@ -4021,6 +4082,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'super_cloner_down',
         numId: 0
     },
@@ -4041,7 +4103,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, (ax, ay) => {
+            touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -4077,6 +4139,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'rotator_left',
         numId: 0
     },
@@ -4097,7 +4160,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, (ax, ay) => {
+            touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -4133,6 +4196,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'rotator_up',
         numId: 0
     },
@@ -4153,7 +4217,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, (ax, ay) => {
+            touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -4189,6 +4253,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'rotator_right',
         numId: 0
     },
@@ -4209,7 +4274,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, (ax, ay) => {
+            touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -4245,6 +4310,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'rotator_down',
         numId: 0
     },
@@ -4258,7 +4324,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, (ax, ay) => {
+            touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -4336,6 +4402,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'rotator_clockwise',
         numId: 0
     },
@@ -4349,7 +4416,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, (ax, ay) => {
+            touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
         },
@@ -4427,6 +4494,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'rotator_counterclockwise',
         numId: 0
     },
@@ -4479,6 +4547,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'slider_horizontal',
         numId: 0
     },
@@ -4531,6 +4600,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'slider_vertical',
         numId: 0
     },
@@ -4588,12 +4658,13 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'collapsible',
         numId: 0
     },
-    cloner_deactivator: {
-        name: 'Cloner Deactivator',
-        description: 'Deactivates cloners and copiers that are touching it... and also uncollectable by collectors',
+    deactivator: {
+        name: 'Deactivator',
+        description: 'Deactivates mechanical pixels that are touching it... and also uncollectable by collectors',
         draw: function (rectangles, ctx, avoidGrid) {
             ctx.globalAlpha = 1;
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
@@ -4647,6 +4718,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'cloner_deactivator',
         numId: 0
     },
@@ -4689,6 +4761,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'slime',
         numId: 0
     },
@@ -4730,6 +4803,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'unslime',
         numId: 0
     },
@@ -4812,6 +4886,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'laser_left',
         numId: 0
     },
@@ -4892,6 +4967,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'laser_up',
         numId: 0
     },
@@ -4972,6 +5048,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'laser_right',
         numId: 0
     },
@@ -5052,6 +5129,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'laser_down',
         numId: 0
     },
@@ -5104,6 +5182,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'laser_scatterer',
         numId: 0
     },
@@ -5173,6 +5252,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'mirror_1',
         numId: 0
     },
@@ -5242,6 +5322,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'mirror_2',
         numId: 0
     },
@@ -5319,6 +5400,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'flamethrower_left',
         numId: 0
     },
@@ -5396,6 +5478,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'flamethrower_up',
         numId: 0
     },
@@ -5473,6 +5556,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'flamethrower_right',
         numId: 0
     },
@@ -5550,6 +5634,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'flamethrower_down',
         numId: 0
     },
@@ -5563,7 +5648,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, [pixNum.GUNPOWDER, pixNum.C4, pixNum.LAVA]) || fireGrid[y][x]) {
+            if (touchingPixel(x, y, [pixNum.GUNPOWDER, pixNum.C4, pixNum.LAVA]) || fireGrid[y][x]) {
                 teamGrid[y][x] = 0;
                 explode(x, y, 5);
             }
@@ -5611,6 +5696,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'detonator',
         numId: 0
     },
@@ -5635,7 +5721,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x]) {
+            if (touchingPixel(x, y, pixNum.LAVA) || fireGrid[y][x]) {
                 teamGrid[y][x] = 0;
                 explode(x, y, 5, true);
             } else fall(x, y, 1, 1, isPassableFluid);
@@ -5669,6 +5755,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'gunpowder',
         numId: 0
     },
@@ -5712,6 +5799,7 @@ const pixels = {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'c4',
         numId: 0
     },
@@ -5768,6 +5856,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'nuke_diffuser',
         numId: 0
     },
@@ -5783,8 +5872,8 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            let explosion = updateTouchingAnything(x, y);
-            let diffused = updateTouchingPixel(x, y, pixNum.NUKE_DIFFUSER);
+            let explosion = touchingAnything(x, y);
+            let diffused = touchingPixel(x, y, pixNum.NUKE_DIFFUSER);
             if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
@@ -5833,6 +5922,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'nuke',
         numId: 0
     },
@@ -5848,8 +5938,8 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            let explosion = updateTouchingAnything(x, y);
-            let diffused = updateTouchingPixel(x, y, pixNum.NUKE_DIFFUSER);
+            let explosion = touchingAnything(x, y);
+            let diffused = touchingPixel(x, y, pixNum.NUKE_DIFFUSER);
             if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
@@ -5897,6 +5987,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'huge_nuke',
         numId: 0
     },
@@ -5912,8 +6003,8 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            let explosion = updateTouchingAnything(x, y);
-            let diffused = updateTouchingPixel(x, y, pixNum.NUKE_DIFFUSER);
+            let explosion = touchingAnything(x, y);
+            let diffused = touchingPixel(x, y, pixNum.NUKE_DIFFUSER);
             if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
@@ -5962,6 +6053,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'very_huge_nuke',
         numId: 0
     },
@@ -6009,6 +6101,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'deleter',
         numId: 0
     },
@@ -6033,7 +6126,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, [pixNum.MUD, pixNum.SILT, pixNum.WET_ASH, pixNum.WATER, pixNum.ICE, pixNum.SNOW, pixNum.STEAM, pixNum.PUMP, pixNum.FREEZER])) {
+            if (touchingPixel(x, y, [pixNum.MUD, pixNum.SILT, pixNum.WET_ASH, pixNum.WATER, pixNum.ICE, pixNum.SNOW, pixNum.STEAM, pixNum.PUMP, pixNum.FREEZER])) {
                 nextGrid[y][x] = pixNum.ACTIVATED_SPONGY_RICE;
             } else fall(x, y, 1, 1, isPassableFluid);
         },
@@ -6061,6 +6154,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'spongy_rice',
         numId: 0
     },
@@ -6131,6 +6225,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'activated_spongy_rice',
         numId: 0
     },
@@ -6176,6 +6271,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'expanded_spongy_rice',
         numId: 0
     },
@@ -6196,7 +6292,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+            touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.5) {
                     nextGrid[ay][ax] = pixNum.LAG_SPIKE_GENERATOR;
                 }
@@ -6207,7 +6303,7 @@ const pixels = {
                     nextGrid[ay][ax] = pixNum.CLONER_DOWN;
                 }
             });
-            updateTouchingPixel(x, y, pixNum.LAG_SPIKE_GENERATOR, (ax, ay) => {
+            touchingPixel(x, y, pixNum.LAG_SPIKE_GENERATOR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.005) {
                     nextGrid[ay][ax] = pixNum.NUKE;
                 }
@@ -6237,6 +6333,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'lag_spike_generator',
         numId: 0
     },
@@ -6382,8 +6479,8 @@ const pixels = {
                 teamGrid[y][x] = Math.floor(random(0, 3));
                 move(Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridWidth - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridHeight - 1), Math.min(Math.max(Math.round(random(x - 5, x + 5)), 0), gridWidth - 1), Math.min(Math.max(Math.round(random(y - 5, y + 5)), 0), gridHeight - 1));
             };
-            updateTouchingPixel(x, y, pixNum.AIR, chaos);
-            updateTouchingAnything(x, y, chaos);
+            touchingPixel(x, y, pixNum.AIR, chaos);
+            touchingAnything(x, y, chaos);
             let path = getLaserPath(x, y, Math.floor(random() * 4));
             let last = path[path.length - 1];
             if (last[0] < 0 || last[0] >= gridWidth || last[1] < 0 || last[1] >= gridHeight) return;
@@ -6420,6 +6517,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'corruption',
         numId: 0
     },
@@ -6457,6 +6555,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'spin',
         numId: 0
     },
@@ -6539,6 +6638,7 @@ const pixels = {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'life',
         numId: 0
     },
@@ -6554,7 +6654,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.SAND)) {
+            if (touchingPixel(x, y, pixNum.SAND)) {
                 explode(x, y, 80, true);
                 return;
             }
@@ -6664,6 +6764,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'sand',
         numId: 0
     },
@@ -6704,6 +6805,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'placementUnRestriction',
         numId: 0
     },
@@ -6768,6 +6870,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'placementRestriction',
         numId: 0
     },
@@ -6827,6 +6930,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'monster',
         numId: 0
     },
@@ -6877,6 +6981,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'goal',
         numId: 0
     },
@@ -6932,6 +7037,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'target',
         numId: 0
     },
@@ -7035,6 +7141,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'pixelite_crystal',
         numId: 0
     },
@@ -7057,8 +7164,8 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
-            updateTouchingAnything(x, y, (ax, ay) => {
+            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            touchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible && random() < 0.1) {
                     if (grid[ay][ax] == pixNum.NUKE) explode(ax, ay, 20);
                     else if (grid[ay][ax] == pixNum.HUGE_NUKE) explode(ax, ay, 40);
@@ -7136,6 +7243,7 @@ _@    ._`],
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'collector',
         numId: 0
     },
@@ -7158,8 +7266,8 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (updateTouchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
-            updateTouchingAnything(x, y, (ax, ay) => {
+            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            touchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible) {
                     if (grid[ay][ax] == pixNum.NUKE) explode(ax, ay, 20);
                     else if (grid[ay][ax] == pixNum.HUGE_NUKE) explode(ax, ay, 40);
@@ -7238,6 +7346,7 @@ _@    ._`],
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'instant_collector',
         numId: 0
     },
@@ -7263,7 +7372,7 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingAnything(x, y, (ax, ay) => {
+            touchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && grid[ay][ax] >= pixNum.COLOR_RED && grid[ay][ax] <= pixNum.COLOR_BROWN) {
                     if (teamGrid[y][x] != 0) teamPixelAmounts[teamGrid[y][x] - 1][numPixels[grid[ay][ax]].id]++;
                     nextGrid[ay][ax] = pixNum.AIR;
@@ -7340,6 +7449,7 @@ _@    ._`],
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'color_collector',
         numId: 0
     },
@@ -7403,6 +7513,7 @@ _@    ._`],
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'collector_handle',
         numId: 0
     },
@@ -7434,7 +7545,7 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+            touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
                     nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_RED, pixNum.COLOR_BROWN + 1));
                 }
@@ -7470,6 +7581,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'generic_color_well',
         numId: 0
     },
@@ -7501,7 +7613,7 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+            touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
                     let pix = Math.floor(random(pixNum.COLOR_RED, pixNum.COLOR_LIME + 1));
                     nextGrid[ay][ax] = pix == pixNum.COLOR_LIME ? pixNum.COLOR_VIOLET : pix;
@@ -7538,6 +7650,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'warm_color_well',
         numId: 0
     },
@@ -7569,7 +7682,7 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+            touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
                     nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_LIME, pixNum.COLOR_BLUE + 1));
                 }
@@ -7605,6 +7718,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'cool_color_well',
         numId: 0
     },
@@ -7636,7 +7750,7 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+            touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && random() < 0.05) {
                     nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_GREY, pixNum.COLOR_BLACK + 1));
                 }
@@ -7671,6 +7785,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'monochrome_color_well',
         numId: 0
     },
@@ -7712,9 +7827,9 @@ _@    ._`],
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let restrictions = [];
-            if (updateTouchingPixel(x, y, pixNum.COLOR_GENERATOR_FILTER, (ax, ay) => {
-                return updateTouchingAnything(ax, ay, (bx, by) => {
-                    // probably better than supplying an array that's annoying to maintain to updateTouchingPixel
+            if (touchingPixel(x, y, pixNum.COLOR_GENERATOR_FILTER, (ax, ay) => {
+                return touchingAnything(ax, ay, (bx, by) => {
+                    // probably better than supplying an array that's annoying to maintain to touchingPixel
                     if (grid[by][bx] >= pixNum.COLOR_RED && grid[by][bx] <= pixNum.COLOR_BROWN) {
                         restrictions.push(grid[by][bx]);
                         return true;
@@ -7722,13 +7837,13 @@ _@    ._`],
                     return false;
                 });
             })) {
-                updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                     if (validChangingPixel(ax, ay) && random() < 0.02) {
                         nextGrid[ay][ax] = restrictions[Math.floor(random(0, restrictions.length))];
                     }
                 });
             } else {
-                updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                     if (validChangingPixel(ax, ay) && random() < 0.02) {
                         nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_RED, pixNum.COLOR_BROWN + 1));
                     }
@@ -7784,6 +7899,7 @@ _@    ._`],
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'passive_color_generator',
         numId: 0
     },
@@ -7899,8 +8015,8 @@ _@    ._`],
             let team = teamGrid[y][x] - 1;
             if (team == -1 || teamPixelAmounts[team].water > 0) {
                 let restrictions = [];
-                if (updateTouchingPixel(x, y, pixNum.COLOR_GENERATOR_FILTER, (ax, ay) => {
-                    return updateTouchingAnything(ax, ay, (bx, by) => {
+                if (touchingPixel(x, y, pixNum.COLOR_GENERATOR_FILTER, (ax, ay) => {
+                    return touchingAnything(ax, ay, (bx, by) => {
                         if (grid[by][bx] >= pixNum.COLOR_RED && grid[by][bx] <= pixNum.COLOR_BROWN) {
                             restrictions.push(grid[by][bx]);
                             return true;
@@ -7908,13 +8024,13 @@ _@    ._`],
                         return false;
                     });
                 })) {
-                    updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                    touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                         if (validChangingPixel(ax, ay) && random() < 0.04) {
                             nextGrid[ay][ax] = restrictions[Math.floor(random(0, restrictions.length))];
                         }
                     });
                 } else {
-                    updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+                    touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                         if (validChangingPixel(ax, ay) && random() < 0.04) {
                             nextGrid[ay][ax] = Math.floor(random(pixNum.COLOR_RED, pixNum.COLOR_BROWN + 1));
                         }
@@ -7963,6 +8079,7 @@ _@    ._`],
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'active_color_generator',
         numId: 0
     },
@@ -7989,7 +8106,7 @@ _@    ._`],
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 forEachPixel(x, y, width, height, (x2, y2) => {
                     let colors = [];
-                    if (!avoidGrid) updateTouchingAnything(x2, y2, (x3, y3) => {
+                    if (!avoidGrid) touchingAnything(x2, y2, (x3, y3) => {
                         if (grid[y3][x3] >= pixNum.COLOR_RED && grid[y3][x3] <= pixNum.COLOR_BROWN) {
                             colors.push(pixelAt(x3, y3).defaultRGB);
                         }
@@ -8044,6 +8161,7 @@ _@    ._`],
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'color_generator_filter',
         numId: 0
     },
@@ -8140,6 +8258,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'teamNone',
         numId: 0
     },
@@ -8180,6 +8299,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'teamAlpha',
         numId: 0
     },
@@ -8220,6 +8340,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'teamBeta',
         numId: 0
     },
@@ -8269,6 +8390,7 @@ _@    ._`],
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'missing',
         numId: 0
     },
@@ -8817,6 +8939,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'remove',
         numId: 0
     },
@@ -8831,10 +8954,10 @@ _@    ._`],
             });
         },
         update: function (x, y) {
-            updateTouchingAnything(x, y, (ax, ay) => {
+            touchingAnything(x, y, (ax, ay) => {
                 if (grid[ay][ax] != pixNum.RICKASTLEY && random() < 0.2 * ((21 - pixelAt(ax, ay).blastResistance) / 20)) nextGrid[ay][ax] = pixNum.RICKASTLEY;
             });
-            updateTouchingPixel(x, y, pixNum.AIR, (ax, ay) => {
+            touchingPixel(x, y, pixNum.AIR, (ax, ay) => {
                 if (grid[ay][ax] != pixNum.RICKASTLEY && random() < 0.5) nextGrid[ay][ax] = pixNum.RICKASTLEY;
             });
             if (this.rickastley) return;
@@ -8872,6 +8995,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'rickastley',
         numId: 0
     },
@@ -8914,6 +9038,7 @@ _@    ._`],
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: 'red',
         numId: 0
     }
@@ -8924,6 +9049,7 @@ const pixelAmounts = {};
 const pixelSelectors = {};
 const pixelGroups = [];
 const pixelUpdates = new Map();
+const pixelKeybinds = JSON.parse(window.localStorage.getItem('pixelKeybinds') ?? '{}');
 function resetPixelAmounts(showPixels = true) {
     for (const group of pixelGroups) {
         group.style.display = 'none';
@@ -9069,7 +9195,7 @@ function generateMusicPixel(id, data) {
             }
         },
         update: function (x, y) {
-            if (updateTouchingAnything(x, y, (ax, ay) => {
+            if (touchingAnything(x, y, (ax, ay) => {
                 if ((grid[ay][ax] >= pixNum.MUSIC_1 && grid[ay][ax] <= pixNum.MUSIC_88) || grid[ay][ax] == pixNum.MONSTER) return false;
                 return true;
             })) musicGrid[y][x] = id;
@@ -9126,6 +9252,7 @@ function generateMusicPixel(id, data) {
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: `music_${id}`,
         numId: 0
     }
@@ -9168,6 +9295,7 @@ function generateColorPixel(data) {
         pixsimPickable: true,
         generatedDescription: '',
         image: '',
+        keybind: null,
         id: `color_${data.color.toLowerCase()}`,
         numId: 0
     };
@@ -9195,25 +9323,28 @@ window.addEventListener('load', async (e) => {
         pixel.prerender();
         pixel.drawPreview(ctx2);
         pixel.image = canvas2.toDataURL('image/png');
-        pixel.generatedDescription = `<span style="font-size: 16px; font-weight: bold;">${pixel.name}</span><br>${pixel.description}<br>Blast Resistance: ${pixel.blastResistance}/20<br>Flammability: ${pixel.flammability}/20<br>Moveable: ${pixel.pushable}<br>Cloneable: ${pixel.cloneable}`;
+        pixel.generatedDescription = `<span style="font-size: 16px; font-weight: bold;">${pixel.name}</span><br>${pixel.description}<br>Blast Resistance: ${pixel.blastResistance}/20<br>Flammability: ${pixel.flammability}/20<br>Moveable: ${pixel.pushable}<br>Cloneable: ${pixel.cloneable}<br>`;
         if (pixel.pickable) {
             const box = document.createElement('div');
             box.classList.add('pickerPixel');
             box.onclick = (e) => {
+                if (reassigningPixelKeybind) return;
                 pixelSelectors[brush.pixel].box.classList.remove('pickerPixelSelected');
                 box.classList.add('pickerPixelSelected');
                 brush.pixel = id;
-                pixelPickerDescription.innerHTML = pixel.generatedDescription;
-                pixelPickerCrafting.innerHTML = '';
-                if (sandboxMode || PixSimAPI.inGame) pixelPickerCrafting.appendChild(generateCraftingHTML(id, PixSimAPI.inGame ? teamPixelAmounts[PixSimAPI.team] : pixelAmounts));
+                box.onmouseover();
             };
             box.onmouseover = (e) => {
                 pixelPickerDescription.innerHTML = pixel.generatedDescription;
+                pixelPickerDescription.appendChild(keybindChangeButton);
+                keybindChangeButton.innerText = 'Keybind: ' + (pixel.keybind ?? 'None').toUpperCase();
                 pixelPickerCrafting.innerHTML = '';
                 if (sandboxMode || PixSimAPI.inGame) pixelPickerCrafting.appendChild(generateCraftingHTML(id, PixSimAPI.inGame ? teamPixelAmounts[PixSimAPI.team] : pixelAmounts));
             };
             box.onmouseout = (e) => {
                 pixelPickerDescription.innerHTML = pixels[brush.pixel].generatedDescription;
+                pixelPickerDescription.appendChild(keybindChangeButton);
+                keybindChangeButton.innerText = 'Keybind: ' + (pixels[brush.pixel].keybind ?? 'None').toUpperCase();
                 pixelPickerCrafting.innerHTML = '';
                 if (sandboxMode || PixSimAPI.inGame) pixelPickerCrafting.appendChild(generateCraftingHTML(brush.pixel, PixSimAPI.inGame ? teamPixelAmounts[PixSimAPI.team] : pixelAmounts));
             };
@@ -9223,6 +9354,9 @@ window.addEventListener('load', async (e) => {
             const count = document.createElement('div');
             count.classList.add('pickerCount');
             box.append(count);
+            const keybind = document.createElement('div');
+            keybind.classList.add('pickerKeybind');
+            box.append(keybind);
             if (pixelGroups[pixel.group] === undefined) {
                 const group = document.createElement('div');
                 group.classList.add('pixelGroup');
@@ -9259,6 +9393,7 @@ window.addEventListener('load', async (e) => {
             pixelSelectors[id] = {
                 box: box,
                 count: count,
+                keybind: keybind,
                 parentGroup: pixelGroups[pixel.group]
             };
         }
@@ -9276,5 +9411,11 @@ window.addEventListener('load', async (e) => {
             group.children[0]._refresh();
         }
     });
+    for (let key in pixelKeybinds) {
+        if (pixels[pixelKeybinds[key]]) {
+            pixels[pixelKeybinds[key]].keybind = key;
+            pixelSelectors[pixelKeybinds[key]].keybind.innerText = (key ?? '').toUpperCase();
+        }
+    }
     pixelsResolveLoad();
 });

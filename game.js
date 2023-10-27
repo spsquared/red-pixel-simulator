@@ -584,7 +584,7 @@ function updatePixel(x, y, i) {
         numPixels[grid[y][x]].update(x, y);
     }
 };
-function updateTouchingPixel(x, y, types, action) {
+function touchingPixel(x, y, types, action) {
     types = new Set(Array.isArray(types) ? types : [types]);
     if (typeof action == 'function') {
         let touchingPixel = false;
@@ -597,7 +597,7 @@ function updateTouchingPixel(x, y, types, action) {
         return (x > 0 && types.has(grid[y][x - 1])) || (x < gridWidth - 1 && types.has(grid[y][x + 1])) || (y > 0 && types.has(grid[y - 1][x])) || (y < gridHeight - 1 && types.has(grid[y + 1][x]));
     }
 };
-function updateTouchingAnything(x, y, action) {
+function touchingAnything(x, y, action) {
     if (typeof action == 'function') {
         let touchingPixel = false;
         if (x > 0 && grid[y][x - 1] !== pixNum.AIR) touchingPixel = (action(x - 1, y) ?? true) || touchingPixel;
@@ -1073,7 +1073,7 @@ function rotatePixel(x, y) {
     if (thisPixel === undefined) return;
     let rotate = 0;
     let touchedRotators = [];
-    updateTouchingAnything(x, y, function (actionX, actionY) {
+    touchingAnything(x, y, function (actionX, actionY) {
         let pixel = grid[actionY][actionX];
         if (pixel === undefined) return;
         if (pixel == pixNum.ROTATOR_CLOCKWISE) {
@@ -2027,7 +2027,6 @@ function updateTick() {
         if (PixSimAPI.inGame && PixSimAPI.gameRunning) {
             new Promise(async (resolve, reject) => {
                 await pixsimData.scriptRunner.tick();
-                console.log('tick')
                 PixSimAPI.sendTick(grid, teamGrid, [
                     fireGrid,
                     targetGrid,
@@ -2559,6 +2558,50 @@ window.addEventListener('load', (e) => {
 });
 
 // inputs
+let reassigningPixelKeybind = false;
+const keybindChangeButton = document.createElement('button');
+keybindChangeButton.id = 'pixelPickerKeybindButton';
+const keybindScreen = document.getElementById('keybindScreen');
+const disallowedKeybinds = ['w', 'a', 's', 'd', 'r', 'f', 'g', 'i', 'j', 'k', 'l', 'p', '[', ']', 'enter', 'contro', 'shift', 'alt', 'meta', 'backspace', 'arrowup', 'arrowdown'];
+keybindChangeButton.onclick = (e) => {
+    reassigningPixelKeybind = true;
+    keybindChangeButton.style.color = '#FFAA00';
+    keybindScreen.style.opacity = 1;
+    keybindScreen.style.pointerEvents = 'all';
+        const pixel = pixels[brush.pixel];
+        document.addEventListener('keydown', async function rebind(e) {
+            const key = e.key.toLowerCase();
+            if (disallowedKeybinds.includes(key)) {
+                sounds.deny();
+                return;
+            }
+            if (key == 'escape') {
+                pixelKeybinds[pixel.keybind] = undefined;
+                pixel.keybind = null;
+                pixelSelectors[pixel.id].keybind.innerText = '';
+            } else {
+                if (pixelKeybinds[key] !== undefined) {
+                    if (!(await modal('Conflicting keybinds!', `Are you sure you want to overwrite your existing keybind for ${pixels[pixelKeybinds[key]].name}?`, true))) return;
+                    pixels[pixelKeybinds[key]].keybind = null;
+                    pixelSelectors[pixelKeybinds[key]].keybind.innerText = '';
+                }
+                pixelKeybinds[key] = pixel.id;
+                if (pixel.keybind !== null) pixelKeybinds[pixel.keybind] = undefined;
+                pixel.keybind = key;
+                pixelSelectors[pixel.id].keybind.innerText = key.toUpperCase();
+            }
+            reassigningPixelKeybind = false;
+            keybindChangeButton.style.color = '';
+            keybindScreen.style.opacity = 0;
+            keybindScreen.style.pointerEvents = '';
+            document.removeEventListener('keydown', rebind);
+            pixelSelectors[pixel.id].box.onmouseover();
+            window.localStorage.setItem('pixelKeybinds', JSON.stringify(pixelKeybinds));
+            sounds.shortDing();
+            e.preventDefault();
+        });
+    sounds.click();
+};
 window.addEventListener('DOMContentLoaded', (e) => {
     function scaleCamera(scale) {
         let cScale = camera.scale;
@@ -2580,13 +2623,11 @@ window.addEventListener('DOMContentLoaded', (e) => {
             e.preventDefault();
             e.target.blur();
         }
-        if (e.target.matches('input') || e.target.matches('textarea') || !acceptInputs || inWinScreen || inMenuScreen) return;
+        if (e.target.matches('input') || e.target.matches('textarea') || !acceptInputs || reassigningPixelKeybind || inWinScreen || inMenuScreen) return;
         const key = e.key.toLowerCase();
-        for (let i in pixels) {
-            if (pixels[i].key == key && pixels[i].pickable && (!PixSimAPI.inGame || pixels[i].pixsimPickable)) {
-                brush.pixel = i;
-                pixelSelectors[brush.pixel].box.click();
-            }
+        if (pixelKeybinds[key] !== undefined) {
+            const pixel = pixels[pixelKeybinds[key]];
+            if (pixel.pickable && (!PixSimAPI.inGame || pixel.pixsimPickable)) pixelSelectors[pixel.id].box.click();
         }
         if (key == 'arrowup') {
             if (!brush.isSelection) {
@@ -2877,7 +2918,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 if (brush.size != bsize) sounds.tick();
             }
         }
-        if (holdingControl) { e.preventDefault(); }
+        if (holdingControl || reassigningPixelKeybind) { e.preventDefault(); }
     }, { passive: false });
     hasFocus = false;
     if (typeof window.requestIdleCallback == 'function') {

@@ -244,6 +244,7 @@
     background-color: #EFEFEF;
     transition: 200ms linear opacity;
     text-align: center;
+    overflow: hidden;
 }
 #pixsimMenuConnectingPixelContainer {
     display: inline-grid;
