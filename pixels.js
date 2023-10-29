@@ -2541,7 +2541,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2602,7 +2602,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2663,7 +2663,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2724,7 +2724,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2785,7 +2785,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2847,7 +2847,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2909,7 +2909,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2971,7 +2971,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3040,7 +3040,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3110,7 +3110,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3180,7 +3180,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3250,7 +3250,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3306,7 +3306,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).cloneable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
                 teamGrid[y][x - 1] = teamGrid[y][x + 1];
@@ -3372,7 +3372,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).cloneable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
                 teamGrid[y - 1][x] = teamGrid[y + 1][x];
@@ -3438,7 +3438,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).cloneable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
                 teamGrid[y][x + 1] = teamGrid[y][x - 1];
@@ -3504,7 +3504,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).cloneable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
                 teamGrid[y + 1][x] = teamGrid[y - 1][x];
@@ -3570,7 +3570,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).cloneable && grid[y][x - 1] != pixNum.DELETER && canMoveTo(x - 1, y)) {
                 if (push(x, y, 0, false, true)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
@@ -3643,7 +3643,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).cloneable && grid[y - 1][x] != pixNum.DELETER && canMoveTo(x, y - 1)) {
                 if (push(x, y, 1, false, true)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
@@ -3716,7 +3716,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).cloneable && grid[y][x + 1] != pixNum.DELETER && canMoveTo(x + 1, y)) {
                 if (push(x, y, 2, false, true)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
@@ -3789,7 +3789,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).cloneable && grid[y + 1][x] != pixNum.DELETER && canMoveTo(x, y + 1)) {
                 if (push(x, y, 3, false, true)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
@@ -7164,7 +7164,7 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible && random() < 0.1) {
                     if (grid[ay][ax] == pixNum.NUKE) explode(ax, ay, 20);
@@ -7266,7 +7266,7 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (touchingPixel(x, y, pixNum.CLONER_DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible) {
                     if (grid[ay][ax] == pixNum.NUKE) explode(ax, ay, 20);

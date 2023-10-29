@@ -1403,7 +1403,7 @@ let fps = 60;
 const frameList = [];
 const fpsList = [];
 const timingList = [];
-const frameModulo = new Map(); // what do i name this??
+const frameModulo = new Map();
 frameModulo.set(10, 0); // yes jank
 frameModulo.set(30, 0);
 let lastFpsList = 0;
@@ -2562,7 +2562,7 @@ let reassigningPixelKeybind = false;
 const keybindChangeButton = document.createElement('button');
 keybindChangeButton.id = 'pixelPickerKeybindButton';
 const keybindScreen = document.getElementById('keybindScreen');
-const disallowedKeybinds = ['w', 'a', 's', 'd', 'r', 'f', 'g', 'i', 'j', 'k', 'l', 'p', '[', ']', 'enter', 'contro', 'shift', 'alt', 'meta', 'backspace', 'arrowup', 'arrowdown'];
+const disallowedKeybinds = ['w', 'a', 's', 'd', 'r', 'f', 'g', 'i', 'j', 'k', 'l', 'p', '[', ']', 'enter', 'control', 'shift', 'alt', 'meta', 'backspace', 'arrowup', 'arrowdown'];
 keybindChangeButton.onclick = (e) => {
     reassigningPixelKeybind = true;
     keybindChangeButton.style.color = '#FFAA00';
@@ -2570,6 +2570,7 @@ keybindChangeButton.onclick = (e) => {
     keybindScreen.style.pointerEvents = 'all';
         const pixel = pixels[brush.pixel];
         document.addEventListener('keydown', async function rebind(e) {
+            if (!acceptInputs) return;
             const key = e.key.toLowerCase();
             if (disallowedKeybinds.includes(key)) {
                 sounds.deny();
