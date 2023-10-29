@@ -7492,9 +7492,8 @@ _@    ._`],
             this.prerenderedFrames.push(toImage());
         },
         recipe: {
-            color_violet: 4,
             steel: 1,
-            slime: 1
+            unslime: 1
         },
         craftAmount: 2,
         prerenderedFrames: [],
