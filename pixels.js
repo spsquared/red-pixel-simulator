@@ -2791,9 +2791,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push((x < gridWidth - 1 && canPush(x + 1, y, 0, true)) ? x + 1 : x, y, 0)) {
-                if (y > 0 && canPush(x, y - 1, 0, true) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 0);
-                if (y < gridHeight - 1 && canPush(x, y + 1, 0, true) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 0);
+            if (push((x < gridWidth - 1 && canPush(x + 1, y, 0, 1)) ? x + 1 : x, y, 0)) {
+                if (y > 0 && canPush(x, y - 1, 0, 1) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 0);
+                if (y < gridHeight - 1 && canPush(x, y + 1, 0, 1) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 0);
             }
         },
         drawPreview: function (ctx) {
@@ -2853,9 +2853,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push(x, (y < gridHeight - 1 && canPush(x, y + 1, 1, true)) ? y + 1 : y, 1)) {
-                if (x > 0 && canPush(x - 1, y, 1, true) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 1);
-                if (x < gridWidth - 1 && canPush(x + 1, y, 1, true) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 1);
+            if (push(x, (y < gridHeight - 1 && canPush(x, y + 1, 1, 1)) ? y + 1 : y, 1)) {
+                if (x > 0 && canPush(x - 1, y, 1, 1) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 1);
+                if (x < gridWidth - 1 && canPush(x + 1, y, 1, 1) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 1);
             }
         },
         drawPreview: function (ctx) {
@@ -2915,9 +2915,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push((x > 0 && canPush(x - 1, y, 0, true)) ? x - 1 : x, y, 2)) {
-                if (y > 0 && canPush(x, y - 1, 0, true) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 2);
-                if (y < gridHeight - 1 && canPush(x, y + 1, 0, true) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 2);
+            if (push((x > 0 && canPush(x - 1, y, 2, 1)) ? x - 1 : x, y, 2)) {
+                if (y > 0 && canPush(x, y - 1, 2, 1) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 2);
+                if (y < gridHeight - 1 && canPush(x, y + 1, 2, 1) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 2);
             }
         },
         drawPreview: function (ctx) {
@@ -2977,9 +2977,9 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push(x, (y > 0 && canPush(x, y - 1, 3, true)) ? y - 1 : y, 3)) {
-                if (x > 0 && canPush(x - 1, y, 3, true) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 3);
-                if (x < gridWidth - 1 && canPush(x + 1, y, 3, true) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 3);
+            if (push(x, (y > 0 && canPush(x, y - 1, 3, 1)) ? y - 1 : y, 3)) {
+                if (x > 0 && canPush(x - 1, y, 3, 1) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 3);
+                if (x < gridWidth - 1 && canPush(x + 1, y, 3, 1) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 3);
             }
         },
         drawPreview: function (ctx) {
@@ -4103,7 +4103,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4161,7 +4161,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4219,7 +4219,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4277,7 +4277,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4328,7 +4328,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4421,7 +4421,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4773,7 +4773,7 @@ const pixels = {
     },
     unslime: {
         name: 'Unslime',
-        description: 'Not sticky purple stuff',
+        description: 'Sticky purple stuff',
         draw: function (rectangles, ctx, avoidGrid) {
             ctx.globalAlpha = 1;
             ctx.fillStyle = 'rgb(200, 20, 220)';
