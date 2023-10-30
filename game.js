@@ -515,6 +515,11 @@ window.addEventListener('load', (e) => {
             }
         }, 30000);
     }
+    window.addEventListener('beforeunload', (e) => {
+        if (sandboxMode) {
+            window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
+        }
+    });
 });
 
 // shared pixel functions
@@ -905,15 +910,18 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveX; i < x; i++) {
                     if (!canMoveTo(i, y)) return false;
                 }
+                if (moveX > 0 && grid[y][moveX - 1] == pixNum.PUSH_PISTON_RIGHT && !touchingPixel(moveX - 1, y, pixNum.DEACTIVATOR)) return false;
                 if (!movePusher) x--;
                 for (let i = moveX; i < x; i++) {
                     nextGrid[y][i] = grid[y][i + 1];
                     fireGrid[y][i] = fireGrid[y][i + 1];
                     teamGrid[y][i] = teamGrid[y][i + 1];
                 }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
-                teamGrid[y][x] = 0;
+                if (grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
+                }
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
                 }
@@ -941,15 +949,18 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveY; i < y; i++) {
                     if (!canMoveTo(x, i)) return false;
                 }
+                if (moveY > 0 && grid[moveY - 1][x] == pixNum.PUSH_PISTON_DOWN && !touchingPixel(x, moveY - 1, pixNum.DEACTIVATOR)) return false;
                 if (!movePusher) y--;
                 for (let i = moveY; i < y; i++) {
                     nextGrid[i][x] = grid[i + 1][x];
                     fireGrid[i][x] = fireGrid[i + 1][x];
                     teamGrid[i][x] = teamGrid[i + 1][x];
                 }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
-                teamGrid[y][x] = 0;
+                if (grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
+                }
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
                 }
@@ -977,15 +988,18 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveX; i > x; i--) {
                     if (!canMoveTo(i, y)) return false;
                 }
+                if (moveX < gridWidth - 1 && grid[y][moveX + 1] == pixNum.PUSH_PISTON_LEFT && !touchingPixel(moveX + 1, y, pixNum.DEACTIVATOR)) return false;
                 if (!movePusher) x++;
                 for (let i = moveX; i > x; i--) {
                     nextGrid[y][i] = grid[y][i - 1];
                     fireGrid[y][i] = fireGrid[y][i - 1];
                     teamGrid[y][i] = teamGrid[y][i - 1];
                 }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
-                teamGrid[y][x] = 0;
+                if (grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
+                }
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
                 }
@@ -1013,15 +1027,18 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 for (let i = moveY; i > y; i--) {
                     if (!canMoveTo(x, i)) return false;
                 }
+                if (moveY < gridHeight - 1 && grid[moveY + 1][x] == pixNum.PUSH_PISTON_UP && !touchingPixel(x, moveY + 1, pixNum.DEACTIVATOR)) return false;
                 if (!movePusher) y++;
                 for (let i = moveY; i > y; i--) {
                     nextGrid[i][x] = grid[i - 1][x];
                     fireGrid[i][x] = fireGrid[i - 1][x];
                     teamGrid[i][x] = teamGrid[i - 1][x];
                 }
-                nextGrid[y][x] = pixNum.AIR;
-                fireGrid[y][x] = false;
-                teamGrid[y][x] = 0;
+                if (grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER) {
+                    nextGrid[y][x] = pixNum.AIR;
+                    fireGrid[y][x] = false;
+                    teamGrid[y][x] = 0;
+                }
                 for (p of slimePushes) {
                     push(...p, dir, true, ignorePistons);
                 }
@@ -2626,7 +2643,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         }
         if (e.target.matches('input') || e.target.matches('textarea') || !acceptInputs || reassigningPixelKeybind || inWinScreen || inMenuScreen) return;
         const key = e.key.toLowerCase();
-        if (pixelKeybinds[key] !== undefined) {
+        if (pixelKeybinds[key] !== undefined && !e.ctrlKey && !e.altKey && !e.metaKey) {
             const pixel = pixels[pixelKeybinds[key]];
             if (pixel.pickable && (!PixSimAPI.inGame || pixel.pixsimPickable)) pixelSelectors[pixel.id].box.click();
         }

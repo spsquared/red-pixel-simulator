@@ -4103,6 +4103,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4160,6 +4161,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4217,6 +4219,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4274,6 +4277,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4324,6 +4328,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4416,6 +4421,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
+            if (updateTouchingPixel(x, y, pixNum.DEACTIVATOR)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
