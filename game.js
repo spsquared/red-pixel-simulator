@@ -947,6 +947,11 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     fireGrid[y][x] = false;
                     teamGrid[y][x] = 0;
                 }
+                if (grid[y][moveX] == pixNum.MONSTER) {
+                    nextGrid[y][moveX] = pixNum.AIR;
+                    fireGrid[y][moveX] = false;
+                    teamGrid[y][moveX] = 0;
+                }
                 for (p of slimePushes) push(...p, dir, true, ignorePistons);
                 for (p of unslimePushes) push(...p, dir, true, ignorePistons);
                 return true;
@@ -984,6 +989,11 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
                     teamGrid[y][x] = 0;
+                }
+                if (grid[moveY][x] == pixNum.MONSTER) {
+                    nextGrid[moveY][x] = pixNum.AIR;
+                    fireGrid[moveY][x] = false;
+                    teamGrid[moveY][x] = 0;
                 }
                 for (p of slimePushes) push(...p, dir, true, ignorePistons);
                 for (p of unslimePushes) push(...p, dir, true, ignorePistons);
@@ -1023,6 +1033,11 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     fireGrid[y][x] = false;
                     teamGrid[y][x] = 0;
                 }
+                if (grid[y][moveX] == pixNum.MONSTER) {
+                    nextGrid[y][moveX] = pixNum.AIR;
+                    fireGrid[y][moveX] = false;
+                    teamGrid[y][moveX] = 0;
+                }
                 for (p of slimePushes) push(...p, dir, true, ignorePistons);
                 for (p of unslimePushes) push(...p, dir, true, ignorePistons);
                 return true;
@@ -1060,6 +1075,11 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     nextGrid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
                     teamGrid[y][x] = 0;
+                }
+                if (grid[moveY][x] == pixNum.MONSTER) {
+                    nextGrid[moveY][x] = pixNum.AIR;
+                    fireGrid[moveY][x] = false;
+                    teamGrid[moveY][x] = 0;
                 }
                 for (p of slimePushes) push(...p, dir, true, ignorePistons);
                 for (p of unslimePushes) push(...p, dir, true, ignorePistons);

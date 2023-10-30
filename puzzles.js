@@ -425,7 +425,7 @@ const puzzles = [
             {
                 name: 'Breaking Thermodynamics',
                 description: `Instead of breaking the game, in this puzzle you'll be <h>breaking the laws of thermodynamics!</h> The pixels with blue and yellow arrows are <h>copiers</h>, and they... copy. These pixels here are special copiers called <h>cloners</h>; they are like copiers, but they can <h>push pixels</h> to make space for the mass it creates in violation of the laws of thermodynamics.<br><br><h><i>Some pixels are not cloneable, for example, goal pixels.</i></h>`,
-                saveCode: '32-32;0000;wall-33:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-2:air-30:wall-34:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-20:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-9:wall:air-9:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-2:air-10:wall:air-19:wall-33:;400:;e7:2:1e:2:ad:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:21:;141:5:b:5:b:5:b:5:1cd:2:1e:4:1c:4:1b:5:1b:6:38:;400:',
+                saveCode: '&1;32-32;0000;wall-21:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:monster-4:air-c:monster-5:air-9:wall-2:monster-4:air-c:monster-5:air-9:wall-22:air-14:wall:air-9:wall-2:air-14:wall:air-9:wall-2:air-14:wall:air-9:wall-2:air-14:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-2:monster-2:air-6:wall:air-13:wall-2:air-2:monster-4:air-4:wall:air-13:wall-2:air-2:monster-4:air-4:wall:air-13:wall-2:air:monster-5:air-4:wall:air-13:wall-2:air:monster-6:air-3:wall:air-13:wall-33:;400:;88:2:1e:2:10c:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:21:;400:',
                 backgroundColor: '#ffffff',
                 inventory: {
                     concrete: 3,
@@ -435,7 +435,7 @@ const puzzles = [
                     push_cloner_down: 3,
                     slider_horizontal: 3
                 },
-                id: 'f25ad0d1-6cda-4113-a42f-95a886ecf81e'
+                id: '388f65f4-65d6-4427-9342-861b0eefb47b'
             },
             {
                 name: 'Targets',
