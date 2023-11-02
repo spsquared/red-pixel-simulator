@@ -898,7 +898,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 case 3:
                     while (y > 0 && isUnslime(x, y)) y--;
-                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.SLIME) x++;
+                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.SLIME) y++;
                     break;
             }
         }
