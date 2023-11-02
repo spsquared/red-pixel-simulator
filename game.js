@@ -850,7 +850,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
         visitedPixels.add(y * gridWidth + x);
     };
     let isSlime = (x, y) => {
-        return grid[y][x] == pixNum.SLIME || (grid[y][x] >= pixNum.STICKY_PISTON_LEFT && grid[y][x] <= pixNum.STICKY_PISTON_DOWN);
+        return grid[y][x] == pixNum.SLIME;
+        //  || (grid[y][x] >= pixNum.STICKY_PISTON_LEFT && grid[y][x] <= pixNum.STICKY_PISTON_DOWN)
     };
     let isUnslime = (x, y) => {
         return grid[y][x] == pixNum.UNSLIME;
