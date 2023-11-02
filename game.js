@@ -839,7 +839,7 @@ function canPush(x, y, dir, stickPush = 0, ignorePistons = false) {
     return false;
 };
 function push(x, y, dir, movePusher = true, ignorePistons = false) {
-    if (!validChangingPixel(x, y)) return;
+    if (!validChangingPixel(x, y)) return false;
     const pushes = [];
     const deletions = [];
     const visitedPixels = new Set();
@@ -876,7 +876,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 case 3:
                     while (y > 0 && isSlime(x, y)) y--;
-                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.UNSLIME) x++;
+                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.UNSLIME) y++;
                     break;
             }
         }
@@ -922,6 +922,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     };
     let addPush = () => { };
     const pushStack = [];
+    let pistonOverride = grid[y][x] == pixNum.PUSH_PISTON_LEFT || grid[y][x] == pixNum.PUSH_PISTON_UP;
     switch (dir) {
         case 0:
             addPush = (x, y, movePusher) => {
@@ -949,7 +950,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveX !== -1) {
                     for (let i = moveX; i < x; i++) if (!canMoveTo(i, y)) return false;
-                    if (moveX > 0 && grid[y][moveX - 1] == pixNum.PUSH_PISTON_RIGHT && !touchingPixel(moveX - 1, y, pixNum.DEACTIVATOR)) return false;
+                    if (pistonOverride && moveX > 0 && grid[y][moveX - 1] == pixNum.PUSH_PISTON_RIGHT && !touchingPixel(moveX - 1, y, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) x--;
                     for (let i = moveX; i < x; i++) pushes.push([i, y]);
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
@@ -973,9 +974,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     }
                     if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
                     if (isSlime(x, i) && x > 0 && !visited(x - 1, i) && !isAir(x - 1, i) && canPush(x - 1, i, 1, 1, ignorePistons)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
-                    if (isSlime(x, i) && x < gridHeight - 1 && !visited(x + 1, i) && !isAir(x + 1, i) && canPush(x + 1, i, 1, 1, ignorePistons)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
+                    if (isSlime(x, i) && x < gridWidth - 1 && !visited(x + 1, i) && !isAir(x + 1, i) && canPush(x + 1, i, 1, 1, ignorePistons)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
                     if (isUnslime(x, i) && x > 0 && !visited(x - 1, i) && !isAir(x - 1, i) && canPush(x - 1, i, 1, 2, ignorePistons)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
-                    if (isUnslime(x, i) && x < gridHeight - 1 && !visited(x + 1, i) && !isAir(x + 1, i) && canPush(x + 1, i, 1, 2, ignorePistons)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
+                    if (isUnslime(x, i) && x < gridWidth - 1 && !visited(x + 1, i) && !isAir(x + 1, i) && canPush(x + 1, i, 1, 2, ignorePistons)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
                     if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x > 0 && !visited(x - 1, i) && isCollector(x - 1, i)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
                     if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x < gridWidth - 1 && !visited(x + 1, i) && isCollector(x + 1, i)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
                     if (!canPush(x, i, 1, 0, ignorePistons)) break;
@@ -985,7 +986,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveY !== -1) {
                     for (let i = moveY; i < y; i++) if (!canMoveTo(x, i)) return false;
-                    if (moveY > 0 && grid[moveY - 1][x] == pixNum.PUSH_PISTON_DOWN && !touchingPixel(x, moveY - 1, pixNum.DEACTIVATOR)) return false;
+                    if (pistonOverride && moveY > 0 && grid[moveY - 1][x] == pixNum.PUSH_PISTON_DOWN && !touchingPixel(x, moveY - 1, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) y--;
                     for (let i = moveY; i < y; i++) pushes.push([x, i]);
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
@@ -1021,7 +1022,6 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveX != -1) {
                     for (let i = moveX; i > x; i--) if (!canMoveTo(i, y)) return false;
-                    if (moveX < gridWidth - 1 && grid[y][moveX + 1] == pixNum.PUSH_PISTON_LEFT && !touchingPixel(moveX + 1, y, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) x++;
                     for (let i = moveX; i > x; i--) pushes.push([i, y]);
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
@@ -1045,9 +1045,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     }
                     if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
                     if (isSlime(x, i) && x > 0 && !visited(x - 1, i) && !isAir(x - 1, i) && canPush(x - 1, i, 3, 1, ignorePistons)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
-                    if (isSlime(x, i) && x < gridHeight - 1 && !visited(x + 1, i) && !isAir(x + 1, i) && canPush(x + 1, i, 3, 1, ignorePistons)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
+                    if (isSlime(x, i) && x < gridWidth - 1 && !visited(x + 1, i) && !isAir(x + 1, i) && canPush(x + 1, i, 3, 1, ignorePistons)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
                     if (isUnslime(x, i) && x > 0 && !visited(x - 1, i) && !isAir(x - 1, i) && canPush(x - 1, i, 3, 2, ignorePistons)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
-                    if (isUnslime(x, i) && x < gridHeight - 1 && !visited(x + 1, i) && !isAir(x + 1, i) && canPush(x + 1, i, 3, 2, ignorePistons)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
+                    if (isUnslime(x, i) && x < gridWidth - 1 && !visited(x + 1, i) && !isAir(x + 1, i) && canPush(x + 1, i, 3, 2, ignorePistons)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
                     if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x > 0 && !visited(x - 1, i) && isCollector(x - 1, i)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
                     if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x < gridWidth - 1 && !visited(x + 1, i) && isCollector(x + 1, i)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
                     if (!canPush(x, i, 3, 0, ignorePistons)) break;
@@ -1057,7 +1057,6 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveY !== -1) {
                     for (let i = moveY; i > y; i--) if (!canMoveTo(x, i)) return false;
-                    if (moveY < gridHeight - 1 && grid[moveY + 1][x] == pixNum.PUSH_PISTON_UP && !touchingPixel(x, moveY + 1, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) y++;
                     for (let i = moveY; i > y; i--) pushes.push([x, i]);
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
@@ -1925,7 +1924,7 @@ function drawUI() {
     let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(1)}ms/${averageTickTime.toFixed(1)}ms)` : ''}`;
     let brushPixelText = (brush.isSelection && selection.grid[0] !== undefined) ? `Brush: Paste` : `Brush Pixel: ${pixels[brush.pixel].name}`;
     let brushSizeText = `Brush Size: ${(brush.isSelection && selection.grid[0] !== undefined) ? '-' : brush.size * 2 - 1}`;
-    let brushLocationText = `(${Math.max(0, Math.min(gridWidth - 1, mXGrid))}, ${Math.max(0, Math.min(gridHeight - 1, mYGrid))})`;
+    let brushLocationText = `(${Math.max(camera.viewport.xmin, Math.min(camera.viewport.xmax, mXGrid))}, ${Math.max(camera.viewport.ymin, Math.min(camera.viewport.ymax, mYGrid))})`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
     ctx.fillStyle = '#FFF5';
     ctx.fillRect(4, 4, ctx.measureText(fpsText).width + 4, 20);
