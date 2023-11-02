@@ -2609,7 +2609,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 0,
-        stickable: true,
+        stickable: false,
         collectible: true,
         group: 1,
         updateStage: 3,
@@ -2671,7 +2671,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 1,
-        stickable: true,
+        stickable: false,
         collectible: true,
         group: 1,
         updateStage: 1,
@@ -2733,7 +2733,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 2,
-        stickable: true,
+        stickable: false,
         collectible: true,
         group: 1,
         updateStage: 4,
@@ -2795,7 +2795,7 @@ const pixels = {
         cloneable: true,
         rotateable: true,
         rotation: 3,
-        stickable: true,
+        stickable: false,
         collectible: true,
         group: 1,
         updateStage: 2,
@@ -3344,6 +3344,394 @@ const pixels = {
         image: '',
         keybind: null,
         id: 'push_piston_down',
+        numId: 0
+    },
+    fan_left: {
+        name: 'Fan (Left)',
+        description: 'Weakly pushes pixels in front of it without moving',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            if (noAnimations) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                });
+            } else if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        if (touchingPixel(x2, y2, pixNum.DEACTIVATOR)) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                    });
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            push(x, y, 0, false);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(25, 0, 25, 50);
+            ctx.fillStyle = 'rgb(200, 200, 200)';
+            ctx.fillRect(0, 125 / 6, 25, 25 / 3);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(5, 0, 50 / 3, 125 / 6);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(5, 175 / 6, 50 / 3, 125 / 6);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(60);
+            for (let i = 0; i < 15; i++) {
+                clearPixels(0, 0, 1, 1);
+                ctx.fillStyle = 'rgb(100, 100, 100)';
+                fillPixels(1 / 2, 0, 1 / 2, 1);
+                let h = Math.cos(i * Math.PI / 15) / 2;
+                ctx.fillStyle = 'rgb(0, 125, 255)';
+                fillPixels(1 / 10, h >= 0 ? 7 / 12 : 5 / 12, 1 / 3, h * (5 / 6));
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                fillPixels(0, 5 / 12, 1 / 2, 1 / 6);
+                ctx.fillStyle = 'rgb(75, 255, 255)';
+                fillPixels(1 / 10, (1 / 2) - (h / 6), 1 / 3, -h * (5 / 6));
+                this.prerenderedFrames.push(toImage());
+            }
+            for (let i = 0; i < 15; i++) {
+                clearPixels(0, 0, 1, 1);
+                ctx.fillStyle = 'rgb(100, 100, 100)';
+                fillPixels(1 / 2, 0, 1 / 2, 1);
+                let h = Math.cos(i * Math.PI / 15) / 2;
+                ctx.fillStyle = 'rgb(75, 255, 255)';
+                fillPixels(1 / 10, h >= 0 ? 7 / 12 : 5 / 12, 1 / 3, h * (5 / 6));
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                fillPixels(0, 5 / 12, 1 / 2, 1 / 6);
+                ctx.fillStyle = 'rgb(0, 125, 255)';
+                fillPixels(1 / 10, (1 / 2) - (h / 6), 1 / 3, -h * (5 / 6));
+                this.prerenderedFrames.push(toImage());
+            }
+        },
+        recipe: {
+            color_cyan: 1,
+            concrete: 1,
+            iron: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 14,
+        flammability: 2,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 0,
+        stickable: false,
+        collectible: true,
+        group: 1,
+        updateStage: 3,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        keybind: null,
+        id: 'fan_left',
+        numId: 0
+    },
+    fan_up: {
+        name: 'Fan (Up)',
+        description: 'Weakly pushes pixels in front of it without moving',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            if (noAnimations) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                });
+            } else if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        if (touchingPixel(x2, y2, pixNum.DEACTIVATOR)) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                    });
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            push(x, y, 1, false);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 25, 50, 25);
+            ctx.fillStyle = 'rgb(200, 200, 200)';
+            ctx.fillRect(125 / 6, 0, 25 / 3, 25);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(175 / 6, 5, 125 / 6, 50 / 3);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(0, 5, 125 / 6, 50 / 3);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(60);
+            for (let i = 0; i < 15; i++) {
+                clearPixels(0, 0, 1, 1);
+                ctx.fillStyle = 'rgb(100, 100, 100)';
+                fillPixels(0, 1 / 2, 1, 1 / 2);
+                let h = Math.cos(i * Math.PI / 15) / 2;
+                ctx.fillStyle = 'rgb(0, 125, 255)';
+                fillPixels(h <= 0 ? 7 / 12 : 5 / 12, 1 / 10, -h * (5 / 6), 1 / 3);
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                fillPixels(5 / 12, 0, 1 / 6, 1 / 2);
+                ctx.fillStyle = 'rgb(75, 255, 255)';
+                fillPixels((1 / 2) + (h / 6), 1 / 10, h * (5 / 6), 1 / 3);
+                this.prerenderedFrames.push(toImage());
+            }
+            for (let i = 0; i < 15; i++) {
+                clearPixels(0, 0, 1, 1);
+                ctx.fillStyle = 'rgb(100, 100, 100)';
+                fillPixels(0, 1 / 2, 1, 1 / 2);
+                let h = Math.cos(i * Math.PI / 15) / 2;
+                ctx.fillStyle = 'rgb(75, 255, 255)';
+                fillPixels(h <= 0 ? 7 / 12 : 5 / 12, 1 / 10, -h * (5 / 6), 1 / 3);
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                fillPixels(5 / 12, 0, 1 / 6, 1 / 2);
+                ctx.fillStyle = 'rgb(0, 125, 255)';
+                fillPixels((1 / 2) + (h / 6), 1 / 10, h * (5 / 6), 1 / 3);
+                this.prerenderedFrames.push(toImage());
+            }
+        },
+        recipe: {
+            color_cyan: 1,
+            concrete: 1,
+            iron: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 14,
+        flammability: 2,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 1,
+        stickable: false,
+        collectible: true,
+        group: 1,
+        updateStage: 3,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        keybind: null,
+        id: 'fan_up',
+        numId: 0
+    },
+    fan_right: {
+        name: 'Fan (Right)',
+        description: 'Weakly pushes pixels in front of it without moving',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            if (noAnimations) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                });
+            } else if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        if (touchingPixel(x2, y2, pixNum.DEACTIVATOR)) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                    });
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            push(x, y, 2, false);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 25, 50);
+            ctx.fillStyle = 'rgb(200, 200, 200)';
+            ctx.fillRect(25, 125 / 6, 25, 25 / 3);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(85 / 3, 0, 50 / 3, 125 / 6);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(85 / 3, 175 / 6, 50 / 3, 125 / 6);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(60);
+            for (let i = 0; i < 15; i++) {
+                clearPixels(0, 0, 1, 1);
+                ctx.fillStyle = 'rgb(100, 100, 100)';
+                fillPixels(0, 0, 1 / 2, 1);
+                let h = Math.cos(i * Math.PI / 15) / 2;
+                ctx.fillStyle = 'rgb(0, 125, 255)';
+                fillPixels(17 / 30, h <= 0 ? 7 / 12 : 5 / 12, 1 / 3, -h * (5 / 6));
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                fillPixels(1 / 2, 5 / 12, 1 / 2, 1 / 6);
+                ctx.fillStyle = 'rgb(75, 255, 255)';
+                fillPixels(17 / 30, (1 / 2) + (h / 6), 1 / 3, h * (5 / 6));
+                this.prerenderedFrames.push(toImage());
+            }
+            for (let i = 0; i < 15; i++) {
+                clearPixels(0, 0, 1, 1);
+                ctx.fillStyle = 'rgb(100, 100, 100)';
+                fillPixels(0, 0, 1 / 2, 1);
+                let h = Math.cos(i * Math.PI / 15) / 2;
+                ctx.fillStyle = 'rgb(75, 255, 255)';
+                fillPixels(17 / 30, h <= 0 ? 7 / 12 : 5 / 12, 1 / 3, -h * (5 / 6));
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                fillPixels(1 / 2, 5 / 12, 1 / 2, 1 / 6);
+                ctx.fillStyle = 'rgb(0, 125, 255)';
+                fillPixels(17 / 30, (1 / 2) + (h / 6), 1 / 3, h * (5 / 6));
+                this.prerenderedFrames.push(toImage());
+            }
+        },
+        recipe: {
+            color_cyan: 1,
+            concrete: 1,
+            iron: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 14,
+        flammability: 2,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 2,
+        stickable: false,
+        collectible: true,
+        group: 1,
+        updateStage: 3,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        keybind: null,
+        id: 'fan_right',
+        numId: 0
+    },
+    fan_down: {
+        name: 'Fan (Down)',
+        description: 'Weakly pushes pixels in front of it without moving',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            if (noAnimations) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+                });
+            } else if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    clearPixels(x, y, width, height, ctx);
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        if (touchingPixel(x2, y2, pixNum.DEACTIVATOR)) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                    });
+                });
+            }
+        },
+        update: function (x, y) {
+            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            push(x, y, 3, false);
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 0, 50, 25);
+            ctx.fillStyle = 'rgb(200, 200, 200)';
+            ctx.fillRect(125 / 6, 25, 25 / 3, 25);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
+            ctx.fillRect(175 / 6, 85 / 3, 125 / 6, 50 / 3);
+            ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(0, 85 / 3, 125 / 6, 50 / 3);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(60);
+            for (let i = 0; i < 15; i++) {
+                clearPixels(0, 0, 1, 1);
+                ctx.fillStyle = 'rgb(100, 100, 100)';
+                fillPixels(0, 0, 1, 1 / 2);
+                let h = Math.cos(i * Math.PI / 15) / 2;
+                ctx.fillStyle = 'rgb(0, 125, 255)';
+                fillPixels(h >= 0 ? 7 / 12 : 5 / 12, 17 / 30, h * (5 / 6), 1 / 3);
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                fillPixels(5 / 12, 1 / 2, 1 / 6, 1 / 2);
+                ctx.fillStyle = 'rgb(75, 255, 255)';
+                fillPixels((1 / 2) - (h / 6), 17 / 30, -h * (5 / 6), 1 / 3);
+                this.prerenderedFrames.push(toImage());
+            }
+            for (let i = 0; i < 15; i++) {
+                clearPixels(0, 0, 1, 1);
+                ctx.fillStyle = 'rgb(100, 100, 100)';
+                fillPixels(0, 0, 1, 1 / 2);
+                let h = Math.cos(i * Math.PI / 15) / 2;
+                ctx.fillStyle = 'rgb(75, 255, 255)';
+                fillPixels(h >= 0 ? 7 / 12 : 5 / 12, 17 / 30, h * (5 / 6), 1 / 3);
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                fillPixels(5 / 12, 1 / 2, 1 / 6, 1 / 2);
+                ctx.fillStyle = 'rgb(0, 125, 255)';
+                fillPixels((1 / 2) - (h / 6), 17 / 30, -h * (5 / 6), 1 / 3);
+                this.prerenderedFrames.push(toImage());
+            }
+        },
+        recipe: {
+            color_cyan: 1,
+            concrete: 1,
+            iron: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 14,
+        flammability: 2,
+        pushable: true,
+        cloneable: true,
+        rotateable: true,
+        rotation: 3,
+        stickable: false,
+        collectible: true,
+        group: 1,
+        updateStage: 3,
+        animatedNoise: false,
+        animated: true,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        keybind: null,
+        id: 'fan_down',
         numId: 0
     },
     cloner_left: {
@@ -4463,6 +4851,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        rotation: 0,
         stickable: true,
         collectible: true,
         group: 1,
@@ -4557,6 +4946,7 @@ const pixels = {
         pushable: true,
         cloneable: true,
         rotateable: false,
+        rotation: 1,
         stickable: true,
         collectible: true,
         group: 1,
@@ -7198,7 +7588,7 @@ _@    ._`],
         },
         prerender: function () {
             const { ctx, fillPixels, toImage } = new PreRenderer(90);
-            let addRender = (angle) => {
+            for (let i = 0; i < 24; i++) {
                 ctx.fillStyle = 'rgb(200, 200, 200)';
                 fillPixels(0, 0, 1, 1);
                 ctx.fillStyle = 'rgb(0, 0, 0)';
@@ -7217,9 +7607,9 @@ _@    ._`],
                 ctx.fillRect(80, 5, 5, 5);
                 ctx.fillRect(80, 80, 5, 5);
                 ctx.fillRect(5, 80, 5, 5);
-                let gradient = ctx.createConicGradient(angle, 45, 45);
-                for (let i = 0; i <= 18; i++) {
-                    gradient.addColorStop(i / 18, `hsl(${i * 20}, 80%, 50%)`);
+                let gradient = ctx.createConicGradient(Math.PI * i / 12, 45, 45);
+                for (let j = 0; j <= 18; j++) {
+                    gradient.addColorStop(j / 18, `hsl(${j * 20}, 80%, 50%)`);
                 }
                 ctx.fillStyle = gradient;
                 ctx.beginPath();
@@ -7230,9 +7620,6 @@ _@    ._`],
                 ctx.arc(45, 45, 15, 0, 2 * Math.PI);
                 ctx.fill();
                 this.prerenderedFrames.push(toImage());
-            };
-            for (let i = 0; i < 24; i++) {
-                addRender(Math.PI * i / 12);
             }
         },
         recipe: {},
@@ -9449,6 +9836,9 @@ window.addEventListener('load', async (e) => {
     const ctx2 = canvas2.getContext('2d');
     canvas2.width = 50;
     canvas2.height = 50;
+    ctx2.imageSmoothingEnabled = false;
+    ctx2.webkitImageSmoothingEnabled = false;
+    const promiseList = [];
     const groupNames = ['General', 'Mechanical', 'Lasers', 'Destruction', 'Music', 'Puzzles', 'Multiplayer'];
     for (const id in pixels) {
         const pixel = pixels[id];
@@ -9456,6 +9846,12 @@ window.addEventListener('load', async (e) => {
         pixel.drawPreview(ctx2);
         pixel.image = canvas2.toDataURL('image/png');
         pixel.generatedDescription = `<span style="font-size: 16px; font-weight: bold;">${pixel.name}</span><br>${pixel.description}<br>Blast Resistance: ${pixel.blastResistance}/20<br>Flammability: ${pixel.flammability}/20<br>Moveable: ${pixel.pushable}<br>Stickable: ${pixel.stickable}<br>Cloneable: ${pixel.cloneable}<br>`;
+        for (let img of pixel.prerenderedFrames) {
+            if (img.complete) continue;
+            promiseList.push(new Promise((resolve, reject) => {
+                img.onload = resolve;
+            }));
+        }
         if (pixel.pickable) {
             const box = document.createElement('div');
             box.classList.add('pickerPixel');
@@ -9482,6 +9878,7 @@ window.addEventListener('load', async (e) => {
             };
             const img = new Image(50, 50);
             img.src = pixel.image;
+            img.style.imageRendering = 'pixelated';
             box.appendChild(img);
             const count = document.createElement('div');
             count.classList.add('pickerCount');
@@ -9548,6 +9945,9 @@ window.addEventListener('load', async (e) => {
             pixels[pixelKeybinds[key]].keybind = key;
             pixelSelectors[pixelKeybinds[key]].keybind.innerText = (key ?? '').toUpperCase();
         }
+    }
+    for (let promise of promiseList) {
+        await promise;
     }
     pixelsResolveLoad();
 });

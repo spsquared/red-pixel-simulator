@@ -224,10 +224,10 @@ window.addEventListener('load', async (e) => {
     promiseList.push(setAudio('./assets/sound/monsterDeath.mp3', (buf) => addAudioQueue(buf, 'monsterDeath', 200)));
     promiseList.push(setAudio('./assets/sound/targetFilled.mp3', (buf) => addAudioQueue(buf, 'targetFill')));
     promiseList.push(setAudio('./assets/sound/win.mp3', (buf) => addAudioQueue(buf, 'win')));
-    promiseList.push(setAudio('./assets/sound/menu.mp3', (buf) => {
-        musicBuffers.set('menu', buf);
-    }));
     promiseList.push(setAudio('./assets/sound/null.mp3', (buf) => addAudioQueue(buf, 'rickroll')));
+    setAudio('./assets/sound/menu.mp3', (buf) => {
+        musicBuffers.set('menu', buf);
+    });
     promiseList.push(addMusicPixelSound(1));
     promiseList.push(addMusicPixelSound(2));
     promiseList.push(addMusicPixelSound(3));

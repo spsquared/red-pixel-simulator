@@ -923,7 +923,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     };
     let addPush = () => { };
     const pushStack = [];
-    let pistonOverride = grid[y][x] == pixNum.PUSH_PISTON_LEFT || grid[y][x] == pixNum.PUSH_PISTON_UP;
+    let pistonOverride = grid[y][x] == pixNum.PUSH_PISTON_LEFT || grid[y][x] == pixNum.PUSH_PISTON_UP || (grid[y][x] >= pixNum.FAN_LEFT && grid[y][x] <= pixNum.FAN_DOWN);
     switch (dir) {
         case 0:
             addPush = (x, y, movePusher) => {
@@ -1023,6 +1023,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveX != -1) {
                     for (let i = moveX; i > x; i--) if (!canMoveTo(i, y)) return false;
+                    if (pistonOverride && moveX < gridWidth - 1 && grid[y][moveX + 1] == pixNum.PUSH_PISTON_LEFT && !touchingPixel(moveX + 1, y, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) x++;
                     for (let i = moveX; i > x; i--) pushes.push([i, y]);
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
@@ -1058,6 +1059,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveY !== -1) {
                     for (let i = moveY; i > y; i--) if (!canMoveTo(x, i)) return false;
+                    if (pistonOverride && moveY < gridHeight - 1 && grid[moveY + 1][x] == pixNum.PUSH_PISTON_UP && !touchingPixel(x, moveY + 1, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) y++;
                     for (let i = moveY; i > y; i--) pushes.push([x, i]);
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
@@ -1145,7 +1147,9 @@ function rayTrace(x1, y1, x2, y2, cb) {
     }
 };
 function possibleRotations(id) {
-    return (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2) ? 2 : 4;
+    if (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2 || id == pixNum.ROTATOR_CLOCKWISE || id == pixNum.ROTATOR_COUNTERCLOCKWISE) return 2;
+    if ((id >= pixNum.PISTON_LEFT && id <= pixNum.ROTATOR_DOWN) || (id >= pixNum.LASER_LEFT && id <= pixNum.LASER_DOWN) || (id >= pixNum.FLAMETHROWER_LEFT && id <= pixNum.FLAMETHROWER_DOWN)) return 4;
+    return 0;
 };
 function rotatePixel(x, y) {
     if (nextGrid[y][x] != -1) return;
