@@ -923,7 +923,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     };
     let addPush = () => { };
     const pushStack = [];
-    let weakPush = grid[y][x] >= pixNum.FAN_LEFT && grid[y][x] <= pixNum.FAN_DOWN;
+    let pistonOverride = grid[y][x] == pixNum.PUSH_PISTON_LEFT || grid[y][x] == pixNum.PUSH_PISTON_UP || (grid[y][x] >= pixNum.FAN_LEFT && grid[y][x] <= pixNum.FAN_DOWN);
     switch (dir) {
         case 0:
             addPush = (x, y, movePusher) => {
@@ -951,7 +951,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveX !== -1) {
                     for (let i = moveX; i < x; i++) if (!canMoveTo(i, y)) return false;
-                    if (weakPush && moveX > 0 && grid[y][moveX - 1] == pixNum.PUSH_PISTON_RIGHT && !touchingPixel(moveX - 1, y, pixNum.DEACTIVATOR)) return false;
+                    if (pistonOverride && moveX > 0 && grid[y][moveX - 1] == pixNum.PUSH_PISTON_RIGHT && !touchingPixel(moveX - 1, y, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) x--;
                     for (let i = moveX; i < x; i++) pushes.push([i, y]);
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
@@ -987,7 +987,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveY !== -1) {
                     for (let i = moveY; i < y; i++) if (!canMoveTo(x, i)) return false;
-                    if (weakPush && moveY > 0 && grid[moveY - 1][x] == pixNum.PUSH_PISTON_DOWN && !touchingPixel(x, moveY - 1, pixNum.DEACTIVATOR)) return false;
+                    if (pistonOverride && moveY > 0 && grid[moveY - 1][x] == pixNum.PUSH_PISTON_DOWN && !touchingPixel(x, moveY - 1, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) y--;
                     for (let i = moveY; i < y; i++) pushes.push([x, i]);
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
@@ -1023,7 +1023,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveX != -1) {
                     for (let i = moveX; i > x; i--) if (!canMoveTo(i, y)) return false;
-                    if (weakPush && moveX < gridWidth - 1 && grid[y][moveX + 1] == pixNum.PUSH_PISTON_LEFT && !touchingPixel(moveX + 1, y, pixNum.DEACTIVATOR)) return false;
+                    if (pistonOverride && moveX < gridWidth - 1 && grid[y][moveX + 1] == pixNum.PUSH_PISTON_LEFT && !touchingPixel(moveX + 1, y, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) x++;
                     for (let i = moveX; i > x; i--) pushes.push([i, y]);
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
@@ -1059,7 +1059,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveY !== -1) {
                     for (let i = moveY; i > y; i--) if (!canMoveTo(x, i)) return false;
-                    if (weakPush && moveY < gridHeight - 1 && grid[moveY + 1][x] == pixNum.PUSH_PISTON_UP && !touchingPixel(x, moveY + 1, pixNum.DEACTIVATOR)) return false;
+                    if (pistonOverride && moveY < gridHeight - 1 && grid[moveY + 1][x] == pixNum.PUSH_PISTON_UP && !touchingPixel(x, moveY + 1, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) y++;
                     for (let i = moveY; i > y; i--) pushes.push([x, i]);
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
