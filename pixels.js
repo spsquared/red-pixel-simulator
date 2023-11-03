@@ -3575,9 +3575,9 @@ const pixels = {
             ctx.fillRect(0, 0, 25, 50);
             ctx.fillStyle = 'rgb(200, 200, 200)';
             ctx.fillRect(25, 125 / 6, 25, 25 / 3);
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            ctx.fillRect(85 / 3, 0, 50 / 3, 125 / 6);
             ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(85 / 3, 0, 50 / 3, 125 / 6);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(85 / 3, 175 / 6, 50 / 3, 125 / 6);
         },
         prerender: function () {
@@ -3672,9 +3672,9 @@ const pixels = {
             ctx.fillRect(0, 0, 50, 25);
             ctx.fillStyle = 'rgb(200, 200, 200)';
             ctx.fillRect(125 / 6, 25, 25 / 3, 25);
-            ctx.fillStyle = 'rgb(75, 255, 255)';
-            ctx.fillRect(175 / 6, 85 / 3, 125 / 6, 50 / 3);
             ctx.fillStyle = 'rgb(0, 125, 255)';
+            ctx.fillRect(175 / 6, 85 / 3, 125 / 6, 50 / 3);
+            ctx.fillStyle = 'rgb(75, 255, 255)';
             ctx.fillRect(0, 85 / 3, 125 / 6, 50 / 3);
         },
         prerender: function () {
@@ -8003,7 +8003,7 @@ _@    ._`],
         blastResistance: 10,
         flammability: 4,
         pushable: true,
-        cloneable: false,
+        cloneable: true,
         rotateable: false,
         stickable: true,
         collectible: false,

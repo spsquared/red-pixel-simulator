@@ -413,6 +413,14 @@ rpGHInput.onkeydown = (e) => {
         sounds.click();
     }
 };
+rpGWInput.onblur = (e) => {
+    resizeRPGrid(parseInt(rpGWInput.value), rpGridHeight);
+    sounds.click();
+};
+rpGHInput.onblur = (e) => {
+    resizeRPGrid(rpGridWidth, parseInt(rpGHInput.value));
+    sounds.click();
+}
 document.getElementById('importRedprint').onclick = (e) => {
     if (selection.grid.length == 0) return;
     modal('Copy to RedPrint Editor?', 'Any unsaved work will be lost!', true).then((success) => {

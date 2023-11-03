@@ -922,6 +922,8 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
         return [x, y, startsSlime, startsUnslime, startsCollectorHandle];
     };
     let addPush = () => { };
+    let stationaryX = movePusher ? -1 : x;
+    let stationaryY = movePusher ? -1 : y;
     const pushStack = [];
     let pistonOverride = grid[y][x] == pixNum.PUSH_PISTON_LEFT || grid[y][x] == pixNum.PUSH_PISTON_UP || (grid[y][x] >= pixNum.FAN_LEFT && grid[y][x] <= pixNum.FAN_DOWN);
     switch (dir) {
@@ -953,7 +955,10 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     for (let i = moveX; i < x; i++) if (!canMoveTo(i, y)) return false;
                     if (pistonOverride && moveX > 0 && grid[y][moveX - 1] == pixNum.PUSH_PISTON_RIGHT && !touchingPixel(moveX - 1, y, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) x--;
-                    for (let i = moveX; i < x; i++) pushes.push([i, y]);
+                    for (let i = moveX; i < x; i++) {
+                        if (i == stationaryX && y == stationaryY) return false;
+                        pushes.push([i, y]);
+                    }
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
                     if (grid[y][moveX] == pixNum.MONSTER) deletions.push([moveX, y]);
                     return true;
@@ -989,7 +994,10 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     for (let i = moveY; i < y; i++) if (!canMoveTo(x, i)) return false;
                     if (pistonOverride && moveY > 0 && grid[moveY - 1][x] == pixNum.PUSH_PISTON_DOWN && !touchingPixel(x, moveY - 1, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) y--;
-                    for (let i = moveY; i < y; i++) pushes.push([x, i]);
+                    for (let i = moveY; i < y; i++) {
+                        if (x == stationaryX && i == stationaryY) return false;
+                        pushes.push([x, i]);
+                    }
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
                     if (grid[moveY][x] == pixNum.MONSTER) deletions.push([x, moveY]);
                     return true;
@@ -1025,7 +1033,10 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     for (let i = moveX; i > x; i--) if (!canMoveTo(i, y)) return false;
                     if (pistonOverride && moveX < gridWidth - 1 && grid[y][moveX + 1] == pixNum.PUSH_PISTON_LEFT && !touchingPixel(moveX + 1, y, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) x++;
-                    for (let i = moveX; i > x; i--) pushes.push([i, y]);
+                    for (let i = moveX; i > x; i--) {
+                        if (i == stationaryX && y == stationaryY) return false;
+                        pushes.push([i, y]);
+                    }
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
                     if (grid[y][moveX] == pixNum.MONSTER) deletions.push([moveX, y]);
                     return true;
@@ -1061,7 +1072,10 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     for (let i = moveY; i > y; i--) if (!canMoveTo(x, i)) return false;
                     if (pistonOverride && moveY < gridHeight - 1 && grid[moveY + 1][x] == pixNum.PUSH_PISTON_UP && !touchingPixel(x, moveY + 1, pixNum.DEACTIVATOR)) return false;
                     if (!movePusher) y++;
-                    for (let i = moveY; i > y; i--) pushes.push([x, i]);
+                    for (let i = moveY; i > y; i--) {
+                        if (x == stationaryX && i == stationaryY) return false;
+                        pushes.push([x, i]);
+                    }
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
                     if (grid[moveY][x] == pixNum.MONSTER) deletions.push([x, moveY]);
                     return true;
@@ -1149,7 +1163,7 @@ function rayTrace(x1, y1, x2, y2, cb) {
 function possibleRotations(id) {
     if (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2 || id == pixNum.ROTATOR_CLOCKWISE || id == pixNum.ROTATOR_COUNTERCLOCKWISE) return 2;
     if ((id >= pixNum.PISTON_LEFT && id <= pixNum.ROTATOR_DOWN) || (id >= pixNum.LASER_LEFT && id <= pixNum.LASER_DOWN) || (id >= pixNum.FLAMETHROWER_LEFT && id <= pixNum.FLAMETHROWER_DOWN)) return 4;
-    return 0;
+    return 1;
 };
 function rotatePixel(x, y) {
     if (nextGrid[y][x] != -1) return;
