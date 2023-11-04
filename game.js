@@ -81,8 +81,6 @@ const pixelPicker = document.getElementById('pixelPicker');
 const pixelPickerDescription = document.getElementById('pixelPickerDescription');
 const pixelPickerCrafting = document.getElementById('pixelPickerCrafting');
 const saveCodeText = document.getElementById('saveCode');
-const gridWidthText = document.getElementById('gridWidth');
-const gridHeightText = document.getElementById('gridHeight');
 canvasContainer.addEventListener('contextmenu', e => e.preventDefault());
 pixelPicker.addEventListener('contextmenu', e => e.preventDefault());
 pixelPicker.addEventListener('wheel', (e) => { if (e.deltaY >= 0 && Math.ceil(pixelPicker.scrollTop + pixelPicker.clientHeight) >= pixelPicker.scrollHeight) e.preventDefault(); });
@@ -238,8 +236,6 @@ function createGrid(width = 100, height = 100) {
             noisectx.fillRect(j, i, 1, 1);
         }
     }
-    gridWidthText.value = gridWidth;
-    gridHeightText.value = gridHeight;
     PixSimAPI.gridSize = { width: gridWidth, height: gridHeight };
     createPixSimGrid();
 };
@@ -2602,8 +2598,6 @@ PixSimAPI.onGameStart = () => {
         generateSaveButton.disabled = true;
         uploadSaveButton.disabled = true;
         downloadSaveButton.disabled = true;
-        gridWidthText.disabled = true;
-        gridHeightText.disabled = true;
         document.getElementById('premadeSaves').style.display = 'none';
         resetPixelAmounts();
         // animate the camera and useless glitch text thing
@@ -3120,16 +3114,6 @@ const resetButton = document.getElementById('reset');
 const restartButton = document.getElementById('restart');
 saveCodeText.oninput = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    let i1 = saveCodeText.value.indexOf(';');
-    let i2 = saveCodeText.value.indexOf('-');
-    if (i1 > 0) {
-        if (i2 < i1) {
-            gridWidthText.value = saveCodeText.value.substring(0, i2);
-            gridHeightText.value = saveCodeText.value.substring(i2 + 1, i1);
-        } else {
-            gridWidthText.value = saveCodeText.value.substring(0, i1);
-        }
-    }
     saveCode = saveCodeText.value.replace('\n', '');
     clearTimeout(writeSaveTimeout);
     writeSaveTimeout = setTimeout(() => {
@@ -3207,18 +3191,6 @@ restartButton.onclick = async (e) => {
         window.localStorage.removeItem(`challenge-${currentPuzzleId}`);
         loadPuzzle(currentPuzzleSection, currentPuzzleLevel);
     }
-};
-gridWidthText.oninput = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    gridWidthText.value = Math.max(1, Math.min(parseInt(gridWidthText.value.replace('e', '')), 500));
-    if (gridWidthText.value != '') saveCode = gridWidthText.value + saveCode.substring(saveCode.indexOf('-'));
-    saveCodeText.value = saveCode;
-};
-gridHeightText.oninput = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    gridHeightText.value = Math.max(1, Math.min(parseInt(gridHeightText.value.replace('e', '')), 500));
-    if (gridHeightText.value != '') saveCode = saveCode.substring(0, saveCode.indexOf('-') + 1) + gridHeightText.value + saveCode.substring(saveCode.indexOf(';'));
-    saveCodeText.value = saveCode;
 };
 
 // settings

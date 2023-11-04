@@ -3359,14 +3359,14 @@ const pixels = {
             } else if (avoidGrid) {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     clearPixels(x, y, width, height, ctx);
-                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 6) % 10], ctx);
                 });
             } else {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     clearPixels(x, y, width, height, ctx);
                     forEachPixel(x, y, width, height, (x2, y2) => {
                         if (touchingPixel(x2, y2, pixNum.DEACTIVATOR)) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
-                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 6) % 10], ctx);
                     });
                 });
             }
@@ -3388,11 +3388,11 @@ const pixels = {
         },
         prerender: function () {
             const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(60);
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 5; i++) {
                 clearPixels(0, 0, 1, 1);
                 ctx.fillStyle = 'rgb(100, 100, 100)';
                 fillPixels(1 / 2, 0, 1 / 2, 1);
-                let h = Math.cos(i * Math.PI / 15) / 2;
+                let h = Math.cos(i * Math.PI / 5) / 2;
                 ctx.fillStyle = 'rgb(0, 125, 255)';
                 fillPixels(1 / 10, h >= 0 ? 7 / 12 : 5 / 12, 1 / 3, h * (5 / 6));
                 ctx.fillStyle = 'rgb(200, 200, 200)';
@@ -3401,11 +3401,11 @@ const pixels = {
                 fillPixels(1 / 10, (1 / 2) - (h / 6), 1 / 3, -h * (5 / 6));
                 this.prerenderedFrames.push(toImage());
             }
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 5; i++) {
                 clearPixels(0, 0, 1, 1);
                 ctx.fillStyle = 'rgb(100, 100, 100)';
                 fillPixels(1 / 2, 0, 1 / 2, 1);
-                let h = Math.cos(i * Math.PI / 15) / 2;
+                let h = Math.cos(i * Math.PI / 5) / 2;
                 ctx.fillStyle = 'rgb(75, 255, 255)';
                 fillPixels(1 / 10, h >= 0 ? 7 / 12 : 5 / 12, 1 / 3, h * (5 / 6));
                 ctx.fillStyle = 'rgb(200, 200, 200)';
@@ -3456,14 +3456,14 @@ const pixels = {
             } else if (avoidGrid) {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     clearPixels(x, y, width, height, ctx);
-                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 6) % 10], ctx);
                 });
             } else {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     clearPixels(x, y, width, height, ctx);
                     forEachPixel(x, y, width, height, (x2, y2) => {
                         if (touchingPixel(x2, y2, pixNum.DEACTIVATOR)) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
-                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 6) % 10], ctx);
                     });
                 });
             }
@@ -3485,11 +3485,11 @@ const pixels = {
         },
         prerender: function () {
             const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(60);
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 5; i++) {
                 clearPixels(0, 0, 1, 1);
                 ctx.fillStyle = 'rgb(100, 100, 100)';
                 fillPixels(0, 1 / 2, 1, 1 / 2);
-                let h = Math.cos(i * Math.PI / 15) / 2;
+                let h = Math.cos(i * Math.PI / 5) / 2;
                 ctx.fillStyle = 'rgb(0, 125, 255)';
                 fillPixels(h <= 0 ? 7 / 12 : 5 / 12, 1 / 10, -h * (5 / 6), 1 / 3);
                 ctx.fillStyle = 'rgb(200, 200, 200)';
@@ -3498,11 +3498,11 @@ const pixels = {
                 fillPixels((1 / 2) + (h / 6), 1 / 10, h * (5 / 6), 1 / 3);
                 this.prerenderedFrames.push(toImage());
             }
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 5; i++) {
                 clearPixels(0, 0, 1, 1);
                 ctx.fillStyle = 'rgb(100, 100, 100)';
                 fillPixels(0, 1 / 2, 1, 1 / 2);
-                let h = Math.cos(i * Math.PI / 15) / 2;
+                let h = Math.cos(i * Math.PI / 5) / 2;
                 ctx.fillStyle = 'rgb(75, 255, 255)';
                 fillPixels(h <= 0 ? 7 / 12 : 5 / 12, 1 / 10, -h * (5 / 6), 1 / 3);
                 ctx.fillStyle = 'rgb(200, 200, 200)';
@@ -3553,14 +3553,14 @@ const pixels = {
             } else if (avoidGrid) {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     clearPixels(x, y, width, height, ctx);
-                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 6) % 10], ctx);
                 });
             } else {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     clearPixels(x, y, width, height, ctx);
                     forEachPixel(x, y, width, height, (x2, y2) => {
                         if (touchingPixel(x2, y2, pixNum.DEACTIVATOR)) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
-                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 6) % 10], ctx);
                     });
                 });
             }
@@ -3582,11 +3582,11 @@ const pixels = {
         },
         prerender: function () {
             const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(60);
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 5; i++) {
                 clearPixels(0, 0, 1, 1);
                 ctx.fillStyle = 'rgb(100, 100, 100)';
                 fillPixels(0, 0, 1 / 2, 1);
-                let h = Math.cos(i * Math.PI / 15) / 2;
+                let h = Math.cos(i * Math.PI / 5) / 2;
                 ctx.fillStyle = 'rgb(0, 125, 255)';
                 fillPixels(17 / 30, h <= 0 ? 7 / 12 : 5 / 12, 1 / 3, -h * (5 / 6));
                 ctx.fillStyle = 'rgb(200, 200, 200)';
@@ -3595,11 +3595,11 @@ const pixels = {
                 fillPixels(17 / 30, (1 / 2) + (h / 6), 1 / 3, h * (5 / 6));
                 this.prerenderedFrames.push(toImage());
             }
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 5; i++) {
                 clearPixels(0, 0, 1, 1);
                 ctx.fillStyle = 'rgb(100, 100, 100)';
                 fillPixels(0, 0, 1 / 2, 1);
-                let h = Math.cos(i * Math.PI / 15) / 2;
+                let h = Math.cos(i * Math.PI / 5) / 2;
                 ctx.fillStyle = 'rgb(75, 255, 255)';
                 fillPixels(17 / 30, h <= 0 ? 7 / 12 : 5 / 12, 1 / 3, -h * (5 / 6));
                 ctx.fillStyle = 'rgb(200, 200, 200)';
@@ -3650,14 +3650,14 @@ const pixels = {
             } else if (avoidGrid) {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     clearPixels(x, y, width, height, ctx);
-                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                    imagePixels(x, y, width, height, this.prerenderedFrames[Math.floor(deltaTime / 6) % 10], ctx);
                 });
             } else {
                 forRectangles(rectangles, (x, y, width, height, redrawing) => {
                     clearPixels(x, y, width, height, ctx);
                     forEachPixel(x, y, width, height, (x2, y2) => {
                         if (touchingPixel(x2, y2, pixNum.DEACTIVATOR)) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
-                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 2) % 30], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[Math.floor(deltaTime / 6) % 10], ctx);
                     });
                 });
             }
@@ -3679,11 +3679,11 @@ const pixels = {
         },
         prerender: function () {
             const { ctx, fillPixels, clearPixels, toImage } = new PreRenderer(60);
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 5; i++) {
                 clearPixels(0, 0, 1, 1);
                 ctx.fillStyle = 'rgb(100, 100, 100)';
                 fillPixels(0, 0, 1, 1 / 2);
-                let h = Math.cos(i * Math.PI / 15) / 2;
+                let h = Math.cos(i * Math.PI / 5) / 2;
                 ctx.fillStyle = 'rgb(0, 125, 255)';
                 fillPixels(h >= 0 ? 7 / 12 : 5 / 12, 17 / 30, h * (5 / 6), 1 / 3);
                 ctx.fillStyle = 'rgb(200, 200, 200)';
@@ -3692,11 +3692,11 @@ const pixels = {
                 fillPixels((1 / 2) - (h / 6), 17 / 30, -h * (5 / 6), 1 / 3);
                 this.prerenderedFrames.push(toImage());
             }
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 5; i++) {
                 clearPixels(0, 0, 1, 1);
                 ctx.fillStyle = 'rgb(100, 100, 100)';
                 fillPixels(0, 0, 1, 1 / 2);
-                let h = Math.cos(i * Math.PI / 15) / 2;
+                let h = Math.cos(i * Math.PI / 5) / 2;
                 ctx.fillStyle = 'rgb(75, 255, 255)';
                 fillPixels(h >= 0 ? 7 / 12 : 5 / 12, 17 / 30, h * (5 / 6), 1 / 3);
                 ctx.fillStyle = 'rgb(200, 200, 200)';

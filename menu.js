@@ -320,8 +320,6 @@ sandboxButton.onclick = (e) => {
     generateSaveButton.disabled = false;
     uploadSaveButton.disabled = false;
     downloadSaveButton.disabled = false;
-    gridWidthText.disabled = false;
-    gridHeightText.disabled = false;
     document.getElementById('premadeSaves').style.display = '';
     sandboxMode = true;
     backgroundColor = '#ffffff';
@@ -391,8 +389,6 @@ function selectPuzzle() {
     generateSaveButton.disabled = true;
     uploadSaveButton.disabled = true;
     downloadSaveButton.disabled = true;
-    gridWidthText.disabled = true;
-    gridHeightText.disabled = true;
     document.getElementById('premadeSaves').style.display = 'none';
     sandboxMode = false;
     levelSelect.style.transform = '';
