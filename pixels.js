@@ -2579,7 +2579,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2641,7 +2641,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2703,7 +2703,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2765,7 +2765,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2827,7 +2827,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2890,7 +2890,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -2953,7 +2953,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3016,7 +3016,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3086,7 +3086,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3157,7 +3157,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3228,7 +3228,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3299,7 +3299,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (touchingPixel(x, y, pixNum.LAVA)) {
                 nextGrid[y][x] = pixNum.ASH;
                 teamGrid[y][x] = 0;
@@ -3372,7 +3372,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             push(x, y, 0, false);
         },
         drawPreview: function (ctx) {
@@ -3469,7 +3469,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             push(x, y, 1, false);
         },
         drawPreview: function (ctx) {
@@ -3566,7 +3566,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             push(x, y, 2, false);
         },
         drawPreview: function (ctx) {
@@ -3663,7 +3663,7 @@ const pixels = {
             }
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y) || touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             push(x, y, 3, false);
         },
         drawPreview: function (ctx) {
@@ -3744,7 +3744,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).cloneable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
                 teamGrid[y][x - 1] = teamGrid[y][x + 1];
@@ -3811,7 +3811,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).cloneable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
                 teamGrid[y - 1][x] = teamGrid[y + 1][x];
@@ -3878,7 +3878,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).cloneable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
                 teamGrid[y][x + 1] = teamGrid[y][x - 1];
@@ -3945,7 +3945,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).cloneable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
                 teamGrid[y + 1][x] = teamGrid[y - 1][x];
@@ -4012,7 +4012,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).cloneable && grid[y][x - 1] != pixNum.DELETER && canMoveTo(x - 1, y)) {
                 if (push(x, y, 0, false, true)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
@@ -4086,7 +4086,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).cloneable && grid[y - 1][x] != pixNum.DELETER && canMoveTo(x, y - 1)) {
                 if (push(x, y, 1, false, true)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
@@ -4160,7 +4160,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).cloneable && grid[y][x + 1] != pixNum.DELETER && canMoveTo(x + 1, y)) {
                 if (push(x, y, 2, false, true)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
@@ -4234,7 +4234,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).cloneable && grid[y + 1][x] != pixNum.DELETER && canMoveTo(x, y + 1)) {
                 if (push(x, y, 3, false, true)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
@@ -4553,7 +4553,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4612,7 +4612,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4671,7 +4671,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4730,7 +4730,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4782,7 +4782,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -4877,7 +4877,7 @@ const pixels = {
             });
         },
         update: function (x, y) {
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (pixelAt(ax, ay).rotateable) rotatePixel(ax, ay);
             });
@@ -5070,6 +5070,577 @@ const pixels = {
         id: 'slider_vertical',
         numId: 0
     },
+    comparator_left: {
+        name: 'Comparator (Left)',
+        description: 'Checks if non-air pixels on the three inputs are equal and deactivates the pixel to the left of it',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                // dont worry about it
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    let activated = true;
+                    let touchingPixel = -1;
+                    let active1 = false, active2 = false, active3 = false;
+                    let pixelCount = 0;
+                    if (isOnGrid(x2, y2 - 1) && !isAir(x2, y2 - 1)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2 - 1][x2];
+                        if (grid[y2 - 1][x2] != touchingPixel) activated = false;
+                        active1 = true;
+                        pixelCount++;
+                    }
+                    if (isOnGrid(x2 + 1, y2) && !isAir(x2 + 1, y2)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 + 1];
+                        if (grid[y2][x2 + 1] != touchingPixel) activated = false;
+                        active2 = true;
+                        pixelCount++;
+                    }
+                    if (isOnGrid(x2, y2 + 1) && !isAir(x2, y2 + 1)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2 + 1][x2];
+                        if (grid[y2 + 1][x2] != touchingPixel) activated = false;
+                        active3 = true;
+                        pixelCount++;
+                    }
+                    if (pixelCount < 2) activated = false;
+                    if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                    else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                    ctx.fillStyle = 'rgb(255, 0, 0)';
+                    if (active1) fillPixels(x2 + 5 / 12, y2, 1 / 6, 1 / 3, ctx);
+                    if (active2) fillPixels(x2 + 2 / 3, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                    if (active3) fillPixels(x2 + 5 / 12, y2 + 2 / 3, 1 / 6, 1 / 3, ctx);
+                });
+            });
+        },
+        update: function (x, y) { },
+        isActivated: function (x, y) {
+            let touchingPixel = -1;
+            let pixelCount = 0;
+            if (isOnGrid(x, y - 1) && !isAir(x, y - 1)) {
+                if (touchingPixel == -1) touchingPixel = grid[y - 1][x];
+                if (grid[y - 1][x] != touchingPixel) return false;
+                pixelCount++;
+            }
+            if (isOnGrid(x + 1, y) && !isAir(x + 1, y)) {
+                if (touchingPixel == -1) touchingPixel = grid[y][x + 1];
+                if (grid[y][x + 1] != touchingPixel) return false;
+                pixelCount++;
+            }
+            if (isOnGrid(x, y + 1) && !isAir(x, y + 1)) {
+                if (touchingPixel == -1) touchingPixel = grid[y + 1][x];
+                if (grid[y + 1][x] != touchingPixel) return false;
+                pixelCount++;
+            }
+            if (pixelCount >= 2) {
+                return true;
+            }
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50);
+            ctx.fillRect(25 / 3, 25 / 3, 100 / 3, 100 / 3);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(0, 125 / 6, 50, 25 / 3);
+            ctx.fillRect(125 / 6, 0, 25 / 3, 50);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(0, 125 / 6, 50 / 3, 25 / 3);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(12);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 1 / 3, 1, 1 / 3);
+            fillPixels(1 / 3, 0, 1 / 3, 1);
+            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            ctx.fillStyle = 'rgb(150, 0, 0)';
+            fillPixels(0, 5 / 12, 1, 1 / 6);
+            fillPixels(5 / 12, 0, 1 / 6, 1);
+            ctx.fillStyle = 'rgb(200, 200, 0)';
+            fillPixels(0, 5 / 12, 1 / 2, 1 / 6);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 1 / 3, 2 / 3, 1 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            fillPixels(0, 5 / 12, 1 / 2, 1 / 6);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            deactivator: 1,
+            rotator_left: 1,
+            cloner_left: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 15,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        rotation: 0,
+        stickable: true,
+        collectible: true,
+        group: 1,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: true,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        keybind: null,
+        id: 'comparator_left',
+        numId: 0
+    },
+    comparator_up: {
+        name: 'Comparator (Up)',
+        description: 'Checks if non-air pixels on the three inputs are equal and deactivates the pixel above it',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                // dont worry about it
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    let activated = true;
+                    let touchingPixel = -1;
+                    let active1 = false, active2 = false, active3 = false;
+                    let pixelCount = 0;
+                    if (isOnGrid(x2 - 1, y2) && !isAir(x2 - 1, y2)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 - 1];
+                        if (grid[y2][x2 - 1] != touchingPixel) activated = false;
+                        active1 = true;
+                        pixelCount++;
+                    }
+                    if (isOnGrid(x2, y2 + 1) && !isAir(x2, y2 + 1)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2 + 1][x2];
+                        if (grid[y2 + 1][x2] != touchingPixel) activated = false;
+                        active2 = true;
+                        pixelCount++;
+                    }
+                    if (isOnGrid(x2 + 1, y2) && !isAir(x2 + 1, y2)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 + 1];
+                        if (grid[y2][x2 + 1] != touchingPixel) activated = false;
+                        active3 = true;
+                        pixelCount++;
+                    }
+                    if (pixelCount < 2) activated = false;
+                    if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                    else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                    ctx.fillStyle = 'rgb(255, 0, 0)';
+                    if (active1) fillPixels(x2, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                    if (active2) fillPixels(x2 + 5 / 12, y2 + 2 / 3, 1 / 6, 1 / 3, ctx);
+                    if (active3) fillPixels(x2 + 2 / 3, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                });
+            });
+        },
+        update: function (x, y) { },
+        isActivated: function (x, y) {
+            let touchingPixel = -1;
+            let pixelCount = 0;
+            if (isOnGrid(x - 1, y) && !isAir(x - 1, y)) {
+                if (touchingPixel == -1) touchingPixel = grid[y][x - 1];
+                if (grid[y][x - 1] != touchingPixel) return false;
+                pixelCount++;
+            }
+            if (isOnGrid(x, y + 1) && !isAir(x, y + 1)) {
+                if (touchingPixel == -1) touchingPixel = grid[y + 1][x];
+                if (grid[y + 1][x] != touchingPixel) return false;
+                pixelCount++;
+            }
+            if (isOnGrid(x + 1, y) && !isAir(x + 1, y)) {
+                if (touchingPixel == -1) touchingPixel = grid[y][x + 1];
+                if (grid[y][x + 1] != touchingPixel) return false;
+                pixelCount++;
+            }
+            return pixelCount >= 2;
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50);
+            ctx.fillRect(25 / 3, 25 / 3, 100 / 3, 100 / 3);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(0, 125 / 6, 50, 25 / 3);
+            ctx.fillRect(125 / 6, 0, 25 / 3, 50);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(125 / 6, 0, 25 / 3, 50 / 3);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(12);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 1 / 3, 1, 1 / 3);
+            fillPixels(1 / 3, 0, 1 / 3, 1);
+            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            ctx.fillStyle = 'rgb(150, 0, 0)';
+            fillPixels(0, 5 / 12, 1, 1 / 6);
+            fillPixels(5 / 12, 0, 1 / 6, 1);
+            ctx.fillStyle = 'rgb(200, 200, 0)';
+            fillPixels(5 / 12, 0, 1 / 6, 1 / 2);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 1 / 3, 2 / 3, 1 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            fillPixels(5 / 12, 0, 1 / 6, 1 / 2);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            deactivator: 1,
+            rotator_up: 1,
+            cloner_up: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 15,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        rotation: 1,
+        stickable: true,
+        collectible: true,
+        group: 1,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: true,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        keybind: null,
+        id: 'comparator_up',
+        numId: 0
+    },
+    comparator_right: {
+        name: 'Comparator (Right)',
+        description: 'Checks if non-air pixels on the three inputs are equal and deactivates the pixel to the right of it',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                // dont worry about it
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    let activated = true;
+                    let touchingPixel = -1;
+                    let active1 = false, active2 = false, active3 = false;
+                    let pixelCount = 0;
+                    if (isOnGrid(x2, y2 - 1) && !isAir(x2, y2 - 1)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2 - 1][x2];
+                        if (grid[y2 - 1][x2] != touchingPixel) activated = false;
+                        active1 = true;
+                        pixelCount++;
+                    }
+                    if (isOnGrid(x2 - 1, y2) && !isAir(x2 - 1, y2)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 - 1];
+                        if (grid[y2][x2 - 1] != touchingPixel) activated = false;
+                        active2 = true;
+                        pixelCount++;
+                    }
+                    if (isOnGrid(x2, y2 + 1) && !isAir(x2, y2 + 1)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2 + 1][x2];
+                        if (grid[y2 + 1][x2] != touchingPixel) activated = false;
+                        active3 = true;
+                        pixelCount++;
+                    }
+                    if (pixelCount < 2) activated = false;
+                    if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                    else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                    ctx.fillStyle = 'rgb(255, 0, 0)';
+                    if (active1) fillPixels(x2 + 5 / 12, y2, 1 / 6, 1 / 3, ctx);
+                    if (active2) fillPixels(x2, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                    if (active3) fillPixels(x2 + 5 / 12, y2 + 2 / 3, 1 / 6, 1 / 3, ctx);
+                });
+            });
+        },
+        update: function (x, y) { },
+        isActivated: function (x, y) {
+            let touchingPixel = -1;
+            let pixelCount = 0;
+            if (isOnGrid(x, y - 1) && !isAir(x, y - 1)) {
+                if (touchingPixel == -1) touchingPixel = grid[y - 1][x];
+                if (grid[y - 1][x] != touchingPixel) return false;
+                pixelCount++;
+            }
+            if (isOnGrid(x - 1, y) && !isAir(x - 1, y)) {
+                if (touchingPixel == -1) touchingPixel = grid[y][x - 1];
+                if (grid[y][x - 1] != touchingPixel) return false;
+                pixelCount++;
+            }
+            if (isOnGrid(x, y + 1) && !isAir(x, y + 1)) {
+                if (touchingPixel == -1) touchingPixel = grid[y + 1][x];
+                if (grid[y + 1][x] != touchingPixel) return false;
+                pixelCount++;
+            }
+            return pixelCount >= 2;
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50);
+            ctx.fillRect(25 / 3, 25 / 3, 100 / 3, 100 / 3);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(0, 125 / 6, 50, 25 / 3);
+            ctx.fillRect(125 / 6, 0, 25 / 3, 50);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(100 / 3, 125 / 6, 50 / 3, 25 / 3);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(12);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 1 / 3, 1, 1 / 3);
+            fillPixels(1 / 3, 0, 1 / 3, 1);
+            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            ctx.fillStyle = 'rgb(150, 0, 0)';
+            fillPixels(0, 5 / 12, 1, 1 / 6);
+            fillPixels(5 / 12, 0, 1 / 6, 1);
+            ctx.fillStyle = 'rgb(200, 200, 0)';
+            fillPixels(2 / 3, 5 / 12, 1 / 2, 1 / 6);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(1 / 3, 1 / 3, 2 / 3, 1 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            fillPixels(2 / 3, 5 / 12, 1 / 2, 1 / 6);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            deactivator: 1,
+            rotator_right: 1,
+            cloner_right: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 15,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        rotation: 2,
+        stickable: true,
+        collectible: true,
+        group: 1,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: true,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        keybind: null,
+        id: 'comparator_right',
+        numId: 0
+    },
+    comparator_down: {
+        name: 'Comparator (Down)',
+        description: 'Checks if non-air pixels on the three inputs are equal and deactivates the pixel below it',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                // dont worry about it
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    let activated = true;
+                    let touchingPixel = -1;
+                    let active1 = false, active2 = false, active3 = false;
+                    let pixelCount = 0;
+                    if (isOnGrid(x2 - 1, y2) && !isAir(x2 - 1, y2)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 - 1];
+                        if (grid[y2][x2 - 1] != touchingPixel) activated = false;
+                        active1 = true;
+                        pixelCount++;
+                    }
+                    if (isOnGrid(x2, y2 - 1) && !isAir(x2, y2 - 1)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2 - 1][x2];
+                        if (grid[y2 - 1][x2] != touchingPixel) activated = false;
+                        active2 = true;
+                        pixelCount++;
+                    }
+                    if (isOnGrid(x2 + 1, y2) && !isAir(x2 + 1, y2)) {
+                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 + 1];
+                        if (grid[y2][x2 + 1] != touchingPixel) activated = false;
+                        active3 = true;
+                        pixelCount++;
+                    }
+                    if (pixelCount < 2) activated = false;
+                    if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                    else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                    ctx.fillStyle = 'rgb(255, 0, 0)';
+                    if (active1) fillPixels(x2, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                    if (active2) fillPixels(x2 + 5 / 12, y2, 1 / 6, 1 / 3, ctx);
+                    if (active3) fillPixels(x2 + 2 / 3, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                });
+            });
+        },
+        update: function (x, y) { },
+        isActivated: function (x, y) {
+            let touchingPixel = -1;
+            let pixelCount = 0;
+            if (isOnGrid(x - 1, y) && !isAir(x - 1, y)) {
+                if (touchingPixel == -1) touchingPixel = grid[y][x - 1];
+                if (grid[y][x - 1] != touchingPixel) return false;
+                pixelCount++;
+            }
+            if (isOnGrid(x, y - 1) && !isAir(x, y - 1)) {
+                if (touchingPixel == -1) touchingPixel = grid[y - 1][x];
+                if (grid[y - 1][x] != touchingPixel) return false;
+                pixelCount++;
+            }
+            if (isOnGrid(x + 1, y) && !isAir(x + 1, y)) {
+                if (touchingPixel == -1) touchingPixel = grid[y][x + 1];
+                if (grid[y][x + 1] != touchingPixel) return false;
+                pixelCount++;
+            }
+            return pixelCount >= 2;
+        },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50);
+            ctx.fillRect(25 / 3, 25 / 3, 100 / 3, 100 / 3);
+            ctx.fillStyle = 'rgb(255, 0, 0)';
+            ctx.fillRect(0, 125 / 6, 50, 25 / 3);
+            ctx.fillRect(125 / 6, 0, 25 / 3, 50);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(125 / 6, 100 / 3, 25 / 3, 50 / 3);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(12);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 1 / 3, 1, 1 / 3);
+            fillPixels(1 / 3, 0, 1 / 3, 1);
+            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            ctx.fillStyle = 'rgb(150, 0, 0)';
+            fillPixels(0, 5 / 12, 1, 1 / 6);
+            fillPixels(5 / 12, 0, 1 / 6, 1);
+            ctx.fillStyle = 'rgb(200, 200, 0)';
+            fillPixels(5 / 12, 2 / 3, 1 / 6, 1 / 2);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 1 / 3, 2 / 3, 1 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            fillPixels(5 / 12, 2 / 3, 1 / 6, 1 / 2);
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            deactivator: 1,
+            rotator_down: 1,
+            cloner_down: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 5,
+        flammability: 15,
+        pushable: true,
+        cloneable: true,
+        rotateable: false,
+        rotation: 3,
+        stickable: true,
+        collectible: true,
+        group: 1,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: true,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        keybind: null,
+        id: 'comparator_down',
+        numId: 0
+    },
+    deactivator: {
+        name: 'Deactivator',
+        description: 'Deactivates mechanical pixels that are touching it... and also uncollectable by collectors',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
+            ctx.fillRect(50 / 3, 0, 50 / 3, 50);
+            ctx.fillRect(25 / 3, 25 / 3, 100 / 3, 100 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
+            ctx.fillRect(0, 125 / 6, 50, 25 / 3);
+            ctx.fillRect(125 / 6, 0, 25 / 3, 50);
+        },
+        prerender: function () {
+            const { ctx, fillPixels, toImage } = new PreRenderer(12);
+            ctx.fillStyle = 'rgb(180, 40, 255)';
+            fillPixels(0, 0, 1, 1);
+            ctx.fillStyle = 'rgb(100, 100, 100)';
+            fillPixels(0, 1 / 3, 1, 1 / 3);
+            fillPixels(1 / 3, 0, 1 / 3, 1);
+            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
+            fillPixels(0, 5 / 12, 1, 1 / 6);
+            fillPixels(5 / 12, 0, 1 / 6, 1);
+            this.prerenderedFrames.push(toImage());
+        },
+        recipe: {
+            color_violet: 2,
+            color_yellow: 1,
+            concrete: 1,
+            wood: 1
+        },
+        craftAmount: 1,
+        prerenderedFrames: [],
+        blastResistance: 4,
+        flammability: 15,
+        pushable: true,
+        cloneable: false,
+        rotateable: false,
+        stickable: true,
+        collectible: true,
+        group: 1,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: true,
+        generatedDescription: '',
+        image: '',
+        keybind: null,
+        id: 'cloner_deactivator',
+        numId: 0
+    },
     collapsible: {
         name: 'Collapsible Box',
         description: 'A box that will disintegrate when squished',
@@ -5127,67 +5698,6 @@ const pixels = {
         image: '',
         keybind: null,
         id: 'collapsible',
-        numId: 0
-    },
-    deactivator: {
-        name: 'Deactivator',
-        description: 'Deactivates mechanical pixels that are touching it... and also uncollectable by collectors',
-        draw: function (rectangles, ctx, avoidGrid) {
-            ctx.globalAlpha = 1;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
-            });
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(180, 40, 255)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            ctx.fillRect(0, 50 / 3, 50, 50 / 3);
-            ctx.fillRect(50 / 3, 0, 50 / 3, 50);
-            ctx.fillRect(25 / 3, 25 / 3, 100 / 3, 100 / 3);
-            ctx.fillStyle = 'rgb(255, 255, 0)';
-            ctx.fillRect(50 / 3, 50 / 3, 50 / 3, 50 / 3);
-        },
-        prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(6);
-            ctx.fillStyle = 'rgb(180, 40, 255)';
-            fillPixels(0, 0, 1, 1);
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixels(0, 1 / 3, 1, 1 / 3);
-            fillPixels(1 / 3, 0, 1 / 3, 1);
-            fillPixels(1 / 6, 1 / 6, 2 / 3, 2 / 3);
-            ctx.fillStyle = 'rgb(255, 255, 0)';
-            fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
-            this.prerenderedFrames.push(toImage());
-        },
-        recipe: {
-            color_violet: 2,
-            color_yellow: 1,
-            concrete: 1,
-            wood: 1
-        },
-        craftAmount: 1,
-        prerenderedFrames: [],
-        blastResistance: 2,
-        flammability: 15,
-        pushable: true,
-        cloneable: false,
-        rotateable: false,
-        stickable: true,
-        collectible: true,
-        group: 1,
-        updateStage: -1,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        pixsimPickable: true,
-        generatedDescription: '',
-        image: '',
-        keybind: null,
-        id: 'cloner_deactivator',
         numId: 0
     },
     slime: {
@@ -7663,8 +8173,7 @@ _@    ._`],
             }
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible && random() < 0.1) {
                     if (grid[ay][ax] == pixNum.NUKE) explode(ax, ay, 20);
@@ -7766,8 +8275,7 @@ _@    ._`],
             }
         },
         update: function (x, y) {
-            if (!validChangingPixel(x, y)) return;
-            if (touchingPixel(x, y, pixNum.DEACTIVATOR)) return;
+            if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
             touchingAnything(x, y, (ax, ay) => {
                 if (validChangingPixel(ax, ay) && pixelAt(ax, ay).collectible) {
                     if (grid[ay][ax] == pixNum.NUKE) explode(ax, ay, 20);

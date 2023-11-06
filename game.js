@@ -865,15 +865,15 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     break;
                 case 1:
                     while (y < gridHeight - 1 && isSlime(x, y)) y++;
-                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.UNSLIME) y--;
+                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable || grid[y][x] == pixNum.UNSLIME) y--;
                     break;
                 case 2:
                     while (x > 0 && isSlime(x, y)) x--;
-                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.UNSLIME) x++;
+                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable || grid[y][x] == pixNum.UNSLIME) x++;
                     break;
                 case 3:
                     while (y > 0 && isSlime(x, y)) y--;
-                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.UNSLIME) y++;
+                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable || grid[y][x] == pixNum.UNSLIME) y++;
                     break;
             }
         }
@@ -882,19 +882,19 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
             switch (dir) {
                 case 0:
                     while (x < gridWidth - 1 && isUnslime(x, y)) x++;
-                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.SLIME) x--;
+                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable || grid[y][x] == pixNum.SLIME) x--;
                     break;
                 case 1:
                     while (y < gridHeight - 1 && isUnslime(x, y)) y++;
-                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.SLIME) y--;
+                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable || grid[y][x] == pixNum.SLIME) y--;
                     break;
                 case 2:
                     while (x > 0 && isUnslime(x, y)) x--;
-                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.SLIME) x++;
+                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable || grid[y][x] == pixNum.SLIME) x++;
                     break;
                 case 3:
                     while (y > 0 && isUnslime(x, y)) y--;
-                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable  || grid[y][x] == pixNum.SLIME) y++;
+                    if (isAir(x, y) || !pixelAt(x, y).pushable || !pixelAt(x, y).stickable || grid[y][x] == pixNum.SLIME) y++;
                     break;
             }
         }
@@ -1277,6 +1277,9 @@ function drawLaserPath(path) {
         else abovectx.lineTo((last[0] + 0.5) * drawScale - camera.x, (last[1] + 1) * drawScale - camera.y);
     }
     abovectx.stroke();
+};
+function isDeactivated(x, y) {
+    return touchingPixel(x, y, pixNum.DEACTIVATOR) || (isOnGrid(x - 1, y) && grid[y][x - 1] == pixNum.COMPARATOR_RIGHT && numPixels[pixNum.COMPARATOR_RIGHT].isActivated(x - 1, y)) || (isOnGrid(x, y - 1) && grid[y - 1][x] == pixNum.COMPARATOR_DOWN && numPixels[pixNum.COMPARATOR_DOWN].isActivated(x, y - 1)) || (isOnGrid(x + 1, y) && grid[y][x + 1] == pixNum.COMPARATOR_LEFT && numPixels[pixNum.COMPARATOR_LEFT].isActivated(x + 1, y)) || (isOnGrid(x, y + 1) && grid[y + 1][x] == pixNum.COMPARATOR_UP && numPixels[pixNum.COMPARATOR_UP].isActivated(x, y + 1));
 };
 function explode(x1, y1, size, defer) {
     if (defer) {
