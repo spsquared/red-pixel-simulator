@@ -1942,7 +1942,7 @@ function drawUI() {
     let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(1)}ms/${averageTickTime.toFixed(1)}ms)` : ''}`;
     let brushPixelText = (brush.isSelection && selection.grid[0] !== undefined) ? `Brush: Paste` : `Brush Pixel: ${pixels[brush.pixel].name}`;
     let brushSizeText = `Brush Size: ${(brush.isSelection && selection.grid[0] !== undefined) ? '-' : brush.size * 2 - 1}`;
-    let brushLocationText = `(${Math.max(camera.viewport.xmin, Math.min(camera.viewport.xmax, mXGrid))}, ${Math.max(camera.viewport.ymin, Math.min(camera.viewport.ymax, mYGrid))})`;
+    let brushLocationText = `${pixelAt(Math.max(camera.viewport.xmin, Math.min(camera.viewport.xmax, mXGrid)), Math.max(camera.viewport.ymin, Math.min(camera.viewport.ymax, mYGrid))).name} (${Math.max(camera.viewport.xmin, Math.min(camera.viewport.xmax, mXGrid))}, ${Math.max(camera.viewport.ymin, Math.min(camera.viewport.ymax, mYGrid))})`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
     ctx.fillStyle = '#FFF5';
     ctx.fillRect(4, 4, ctx.measureText(fpsText).width + 4, 20);

@@ -137,7 +137,7 @@ const pixels = {
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
             let dead = random() < 0.1;
-            if (dead) touchingPixel(x, y, [pixNum.AIR, pixNum.SAPLING], (ax, ay) => {
+            if (dead) touchingPixel(x, y, [pixNum.AIR, pixNum.SAPLING, pixNum.MONSTER], (ax, ay) => {
                 if (ay <= y) dead = false;
             });
             if (!dead) dead = touchingPixel(x, y, pixNum.LAVA);
@@ -149,7 +149,7 @@ const pixels = {
                 for (let j = Math.max(x - 1, 0); j <= Math.min(x + 1, gridWidth - 1); j++) {
                     if (grid[i][j] == pixNum.DIRT && validChangingPixel(j, i) && (i != y || j != x) && random() < 0.2) {
                         let canGrow = false;
-                        touchingPixel(j, i, [pixNum.AIR, pixNum.SAPLING], function (actionX2, actionY2) {
+                        touchingPixel(j, i, [pixNum.AIR, pixNum.SAPLING, pixNum.MONSTER], function (actionX2, actionY2) {
                             if (actionY2 <= i) canGrow = true;
                         });
                         if (canGrow) nextGrid[i][j] = pixNum.GRASS;
