@@ -1020,7 +1020,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 [x, y, startsSlime, startsUnslime, startsCollectorHandle] = adjustPosition(x, y);
                 let maxX = gridWidth - 1;
                 if (collapsiblable) {
-                    for (let i = x - !(startsSlime || startsUnslime || startsCollectorHandle); i < gridWidth; i++) {
+                    for (let i = x + !(startsSlime || startsUnslime || startsCollectorHandle); i < gridWidth; i++) {
                         if (isAir(i, y)) break;
                         if (grid[y][i] == pixNum.COLLAPSIBLE) {
                             maxX = i;
