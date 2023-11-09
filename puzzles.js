@@ -5,12 +5,13 @@ const puzzles = [
         levels: [
             {
                 name: 'A Grid of Numbers',
-                description: `Welcome to <h style="color: red;">Red Pixel Simulator</h>!<br>&emsp;<h style="color: red;">Red Pixel Simulator</h> is a sandbox-puzzle game based solely on interactions between some numbers in a grid. (Almost) everything is completely deterministic based on simple interactions between pixels. For the purposes of the puzzles, your goal is to <h>defeat all the monsters</h> (the red things with faces) by destroying them using other pixels and to <h>move the goal pixels</h> <h>to the targets</h>. For now, we will stick with just monsters.<br><br>&emsp;On the <h>left of your screen is the grid</h>. <h>On the right is the sidebar</h>, which contains all of the game controls. At the top, there is the <h>Pixel Picker</h>. Here you can see what and how many pixels you can place; you can <h>select them by clicking on them</h>. Below that, there are controls for your <h>brush size (up and down arrows)</h> and <h>simulation control</h>: You can <h>pause</h>, <h>warp</h>, and <h>step</h> the simulation. You can also turn on <h>slowmode</h>, which is useful in puzzles where things move so fast you can't see them.<br><br>&emsp;In sandbox mode, the text box allows you to transfer and edit save codes. Below that the small buttons are a few settings, they're pretty self-explainatory.<br><h>&emsp;At the bottom you can find all the controls available.</h><br><br>&emsp;The levels after the following tutorial levels were <h>designed to be challenging</h>. They take the taught mechanics of the simulation and stretch them to their limits. <h>If you ever get stuck, just try a different level or section</h>, as there's not set difficulty curve to these.<br><br><h>Let's get started! Go down and press the <b>run</b> button (it looks like a play button) to begin.</h>`,
+                description: `Welcome to <h style="color: red;">Red Pixel Simulator</h>!<br>&emsp;<h style="color: red;">Red Pixel Simulator</h> is a sandbox-puzzle game based solely on interactions between some numbers in a grid. (Almost) everything is completely deterministic based on simple interactions between pixels. For the purposes of the puzzles, your goal is to <h>defeat all the monsters</h> (the red things with faces) by destroying them using other pixels and to <h>move the goal pixels</h> <h>to the targets</h>. For now, we will stick with just monsters.<br><br>&emsp;On the <h>left of your screen is the grid</h>. <h>On the right is the sidebar</h>, which contains all of the game controls. At the top, there is the <h>Pixel Picker</h>. Here you can see what and how many pixels you can place; you can <h>select them by clicking on them</h>. Below that, there are controls for your <h>brush size (up and down arrows)</h> and <h>simulation control</h>: You can <h>pause</h>, <h>warp</h>, and <h>step</h> the simulation. You can also turn on <h>slowmode</h>, which is useful in puzzles where things move so fast you can't see them.<br><br>&emsp;At the bottom you can find all the controls available.</h><br><br>&emsp;The levels after the following tutorial levels were <h>designed to be challenging</h>. They take the taught mechanics of the simulation and stretch them to their limits. <h>If you ever get stuck, just try a different level or section</h>, as there's not set difficulty curve to these.<br><br><h>Let's get started! Go down and press the <b>run</b> button (it looks like a play button) to begin.</h>`,
                 saveCode: '20;0000;air-259:sand:air-19:grass:air-19:grass:water-12:mud:grass-6:dirt:water-8:mud-4:dirt-8:mud-2:water-3:mud-3:dirt-14:mud-3:dirt-35:;190:;190:;12a:1:65:',
                 backgroundColor: '#e0f0ff',
                 inventory: {
                     air: 0
                 },
+                difficulty: 'Tutorial',
                 id: '212c7cd9-1ea3-4d1e-a2a8-6a287b06b1a5'
             },
             {
@@ -23,16 +24,18 @@ const puzzles = [
                     sand: 1,
                     water: 1
                 },
+                difficulty: 'Tutorial',
                 id: 'aa79ddcd-da13-4459-8a23-02050d22e2cf'
             },
             {
                 name: 'Mudslide',
                 description: `Oh no! Your only pixels are <h>wood</h>, which doesn't fall. Don't worry, though, because you can use that wood to <h>redirect the water</h>. It may seem like this challenge is impossible, but there is another way.<br><br><h>Water turns dirt into mud when it touches it</h> - you can use this to your advantage by <h>creating a mudslide</h>.`,
-                saveCode: '25;000d;air-128:water:air-154:dirt:air-23:dirt-3:air-21:dirt-4:air-21:dirt-5:air-10:leaves-3:air-6:dirt-7:air-8:leaves-5:air-5:dirt-7:concrete:air-7:leaves-2:wood:leaves-2:air-4:dirt-8:concrete:air-9:wood:air-2:water-4:dirt-8:concrete:air-9:wood:air-2:mud-4:dirt-8:concrete:air-2:grass-2:air-3:grass-2:dirt:grass-2:dirt-12:concrete-5:grass:air:grass:dirt-22:grass:air:grass:dirt-23:grass:dirt-56:;271:;7:8:11:8:11:8:11:8:11:8:11:8:a:f:a:f:a:f:a:f:a:f:168:;21f:1:51:',
+                saveCode: '25;0000;air-128:water:air-154:dirt:air-23:dirt-3:air-21:dirt-4:air-21:dirt-5:air-10:leaves-3:air-6:dirt-7:air-8:leaves-5:air-5:dirt-7:concrete:air-7:leaves-2:wood:leaves-2:air-4:dirt-8:concrete:air-9:wood:air-2:water-4:dirt-8:concrete:air-9:wood:air-2:mud-4:dirt-8:concrete:air-2:grass-2:air-3:grass-2:dirt:grass-2:dirt-12:concrete-5:grass:air:grass:dirt-22:grass:air:grass:dirt-23:grass:dirt-56:;271:;7:8:11:8:11:8:11:8:11:8:11:8:a:f:a:f:a:f:a:f:a:f:168:;21f:1:51:',
                 backgroundColor: '#e0f0ff',
                 inventory: {
                     wood: 8
                 },
+                difficulty: 'Easy',
                 id: '90bbdef9-1f44-4d9b-a085-082189b71dfe'
             },
             {
@@ -43,6 +46,7 @@ const puzzles = [
                 inventory: {
                     lava: 1
                 },
+                difficulty: 'Tutorial',
                 id: '3bf72052-af2f-4e43-ab64-bff7008be1bc'
             },
             {
@@ -54,6 +58,7 @@ const puzzles = [
                     plant: 1,
                     sponge: 3
                 },
+                difficulty: 'Easy',
                 id: '470e4351-390f-4767-a415-006e8e7daf13'
             },
             {
@@ -67,6 +72,7 @@ const puzzles = [
                     wood: 10,
                     water: 1
                 },
+                difficulty: 'Easy',
                 id: '36855769-ee54-47f6-9ad2-874bdec25a6f'
             },
             {
@@ -81,6 +87,7 @@ const puzzles = [
                     moss: 1,
                     water: 1
                 },
+                difficulty: 'Easy',
                 id: 'b6e8d92d-5d93-44cd-9b59-9d302a1ec5f3'
             },
             {
@@ -94,6 +101,7 @@ const puzzles = [
                     water: 8,
                     concrete_powder: 9
                 },
+                difficulty: '🙂',
                 id: 'f6dd5428-9db5-4e69-8ffb-148d3733a88d'
             },
             {
@@ -104,6 +112,7 @@ const puzzles = [
                 inventory: {
                     leaves: 20
                 },
+                difficulty: 'Easy',
                 id: '6cce9076-6c41-4b5b-926b-69044c4f1696'
             },
             {
@@ -114,6 +123,7 @@ const puzzles = [
                 inventory: {
                     air: 0
                 },
+                difficulty: 'Medium',
                 id: 'a2007b54-3709-4b64-a254-0f8b617ffc55'
             }
         ]
@@ -132,6 +142,7 @@ const puzzles = [
                     water: 3,
                     gunpowder: 5
                 },
+                difficulty: 'Medium',
                 id: '7f2a3ce0-3227-48cd-9d83-ed2e741cc4f4'
             },
             {
@@ -147,6 +158,7 @@ const puzzles = [
                     water: 2,
                     lava: 1
                 },
+                difficulty: 'Medium',
                 id: 'b4a9c1d2-9e7e-4294-a58e-d9a874f1195d'
             },
             {
@@ -162,6 +174,7 @@ const puzzles = [
                     gunpowder: 4,
                     c4: 4,
                 },
+                difficulty: 'Easy',
                 id: '902b5892-ed7d-489b-a04a-70dbc6ab27c7'
             },
             {
@@ -181,6 +194,7 @@ const puzzles = [
                     gunpowder: 5,
                     c4: 5
                 },
+                difficulty: 'Easy',
                 id: '59c66923-7f80-4f05-9206-6f4b475f917f'
             },
             {
@@ -198,6 +212,7 @@ const puzzles = [
                     piston_down: 2,
                     slider_vertical: 1
                 },
+                difficulty: 'Medium',
                 id: 'cff125a2-a61e-44bd-a0dd-698dd6b531a8'
             }
         ]
@@ -215,6 +230,7 @@ const puzzles = [
                     concrete_powder: 2,
                     crate: 8
                 },
+                difficulty: 'Medium',
                 id: '6e7b58c7-9a0e-4dd5-a359-ab5450178965'
             },
             {
@@ -229,6 +245,7 @@ const puzzles = [
                     concrete: 3,
                     crate: 8
                 },
+                difficulty: 'Medium',
                 id: '51c7bb61-4226-48de-9095-3d03506ee03c'
             },
             {
@@ -241,6 +258,7 @@ const puzzles = [
                     concrete_powder: 6,
                     concrete: 10
                 },
+                difficulty: 'Easy',
                 id: '0da30021-7356-436f-aaec-3f364fdfd758'
             },
             {
@@ -257,6 +275,7 @@ const puzzles = [
                     gunpowder: 5,
                     c4: 5
                 },
+                difficulty: 'Medium',
                 id: '86f12e16-2bd8-4d2d-a787-b2c12e4e4b1a'
             },
             {
@@ -273,6 +292,7 @@ const puzzles = [
                     sponge: 1,
                     pump: 1
                 },
+                difficulty: 'Easy',
                 id: '2951e639-97bb-41dd-bbc8-5a9ed635090e'
             },
             {
@@ -287,6 +307,7 @@ const puzzles = [
                     concrete_powder: 6,
                     concrete: 10
                 },
+                difficulty: 'Easy',
                 id: '80a0397c-eb7c-44cd-9cf3-bc8baf5da6b5'
             },
             {
@@ -298,6 +319,7 @@ const puzzles = [
                     concrete: 11,
                     flamethrower_down: 5
                 },
+                difficulty: 'Easy',
                 id: '4a2c21a2-f473-443c-a970-8b3d94e0ee56'
             },
             {
@@ -316,6 +338,7 @@ const puzzles = [
                     concrete: 40,
                     sponge: 1
                 },
+                difficulty: 'Easy',
                 id: '485e8eb6-ec91-44a3-9df9-b0718191c248'
             },
             {
@@ -331,6 +354,7 @@ const puzzles = [
                     rotator_counterclockwise: 2,
                     flamethrower_up: 1
                 },
+                difficulty: 'Medium',
                 id: '5eef19d7-265d-43fa-85dc-f5832ca0ca3c'
             },
             {
@@ -356,6 +380,7 @@ const puzzles = [
                     crate: 2,
 
                 },
+                difficulty: 'Medium',
                 id: '420b583a-98e4-4c0b-9fc1-a22bd5ebaead'
             },
         ]
@@ -374,6 +399,7 @@ const puzzles = [
                     piston_right: 2,
                     piston_down: 1
                 },
+                difficulty: 'Tutorial',
                 id: '61263f9d-0719-44e9-8f1f-f514468f9556'
             },
             {
@@ -387,6 +413,7 @@ const puzzles = [
                     rotator_right: 3,
                     rotator_clockwise: 3
                 },
+                difficulty: 'Medium',
                 id: 'f1f004fe-fac1-482d-866c-bead1f9c6057'
             },
             {
@@ -406,6 +433,7 @@ const puzzles = [
                     slider_horizontal: 5,
                     slider_vertical: 2
                 },
+                difficulty: 'Medium',
                 id: 'eec8026b-0182-47e2-a9aa-5803deaa757e'
             },
             {
@@ -420,6 +448,7 @@ const puzzles = [
                     slider_horizontal: 2,
                     laser_scatterer: 3
                 },
+                difficulty: 'Easy',
                 id: '592a78ca-5f9e-4845-a6db-37a16e37a2b9'
             },
             {
@@ -435,6 +464,7 @@ const puzzles = [
                     push_cloner_down: 3,
                     slider_horizontal: 3
                 },
+                difficulty: 'Medium',
                 id: '388f65f4-65d6-4427-9342-861b0eefb47b'
             },
             {
@@ -449,6 +479,7 @@ const puzzles = [
                     piston_right: 4,
                     slider_horizontal: 4
                 },
+                difficulty: 'Medium',
                 id: '47fa079a-cc83-4435-bba4-bc0288c3b60c'
             },
             {
@@ -470,6 +501,7 @@ const puzzles = [
                     rotator_counterclockwise: 1,
                     slider_horizontal: 8
                 },
+                difficulty: 'Hard',
                 id: '091325da-7cb3-4b75-95e5-897d3540cbc7'
             },
             {
@@ -497,6 +529,7 @@ const puzzles = [
                     slider_horizontal: 7,
                     slider_vertical: 8
                 },
+                difficulty: 'Hard',
                 id: 'b5c42f2a-fae1-4795-a77f-a4c4a15bc538'
             },
             {
@@ -519,6 +552,7 @@ const puzzles = [
                     slider_vertical: 8,
                     collapsible: 6
                 },
+                difficulty: 'Hard',
                 id: '07b13db3-090e-44ff-96b9-5829bfc4569d'
             },
             {
@@ -538,6 +572,7 @@ const puzzles = [
                     mirror_1: 1,
                     mirror_2: 1
                 },
+                difficulty: 'Easy',
                 id: '549382d2-999f-41dd-a945-1afb4f3047d6'
             }
         ]
@@ -626,7 +661,7 @@ function loadPuzzle(section, level) {
         glitchTextTransition('', `${parseInt(section) + 1}-${parseInt(level) + 1} ${puzzle.name}`, (text) => {
             levelName.innerText = text;
         }, 100);
-        levelDescription.innerHTML = puzzle.description;
+        levelDescription.innerHTML = `${puzzle.description}<br><br><i>Difficulty: ${puzzle.difficulty}</i>`;
         saveCode = puzzle.saveCode;
         let savedData = window.localStorage.getItem(`challenge-${currentPuzzleId}`);
         if (savedData !== null) try { savedData = JSON.parse(savedData); } catch { savedData = JSON.parse(LZString.decompressFromBase64(savedData)); }
@@ -675,11 +710,12 @@ function loadPuzzle(section, level) {
 };
 
 window.addEventListener('DOMContentLoaded', (e) => {
+    let puzzleIndex = 0;
     for (let section in puzzles) {
         const block = document.createElement('div');
         block.classList.add('levelGroup');
         const title = document.createElement('h1');
-        title.innerText = puzzles[section].name;
+        title.innerText = `${++puzzleIndex} - ${puzzles[section].name}`;
         block.appendChild(title);
         let col = 0;
         for (let level in puzzles[section].levels) {
@@ -728,5 +764,3 @@ window.addEventListener('DOMContentLoaded', (e) => {
         key = window.localStorage.key(i);
     }
 });
-
-// puzzle streak wher you have 1 attempt and tehn it goes to next one and oof

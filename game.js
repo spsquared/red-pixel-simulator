@@ -838,6 +838,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     if (!validChangingPixel(x, y)) return false;
     const pushes = [];
     const deletions = [];
+    const deletions2 = [];
     const visitedPixels = new Set();
     let visited = (x, y) => {
         return visitedPixels.has(y * gridWidth + x);
@@ -845,6 +846,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     let addVisit = (x, y) => {
         visitedPixels.add(y * gridWidth + x);
     };
+    let collapsiblable = false;
     let isSlime = (x, y) => {
         return grid[y][x] == pixNum.SLIME;
         //  || (grid[y][x] >= pixNum.STICKY_PISTON_LEFT && grid[y][x] <= pixNum.STICKY_PISTON_DOWN)
@@ -926,16 +928,24 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
         case 0:
             addPush = (x, y, movePusher) => {
                 let moveX = -1;
-                let lastCollapsible = -1;
                 let startsSlime, startsUnslime, startsCollectorHandle;
                 [x, y, startsSlime, startsUnslime, startsCollectorHandle] = adjustPosition(x, y);
-                for (let i = x - !(startsSlime || startsUnslime || startsCollectorHandle); i >= 0; i--) {
-                    if (isAir(i, y)) {
+                let minX = 0;
+                if (collapsiblable) {
+                    for (let i = x - !(startsSlime || startsUnslime || startsCollectorHandle); i >= 0; i--) {
+                        if (isAir(i, y)) break;
+                        if (grid[y][i] == pixNum.COLLAPSIBLE) {
+                            minX = i;
+                        }
+                    }
+                    if (minX == 0) return false;
+                }
+                for (let i = x - !(startsSlime || startsUnslime || startsCollectorHandle); i >= minX; i--) {
+                    if (isAir(i, y) || (collapsiblable && i == minX)) {
                         moveX = i;
                         if (grid[y][i] == pixNum.DELETER) moveX++;
                         break;
                     }
-                    if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
                     if (isSlime(i, y) && y > 0 && !visited(i, y - 1) && !isAir(i, y - 1) && canPush(i, y - 1, 0, 1, ignorePistons)) { addVisit(i, y - 1); pushStack.push([i, y - 1]); }
                     if (isSlime(i, y) && y < gridHeight - 1 && !visited(i, y + 1) && !isAir(i, y + 1) && canPush(i, y + 1, 0, 1, ignorePistons)) { addVisit(i, y + 1); pushStack.push([i, y + 1]); }
                     if (isUnslime(i, y) && y > 0 && !visited(i, y - 1) && !isAir(i, y - 1) && canPush(i, y - 1, 0, 2, ignorePistons)) { addVisit(i, y - 1); pushStack.push([i, y - 1]); }
@@ -943,9 +953,6 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     if (grid[y][i] == pixNum.COLLECTOR_HANDLE && y > 0 && !visited(i, y - 1) && isCollector(i, y - 1)) { addVisit(i, y - 1); pushStack.push([i, y - 1]); }
                     if (grid[y][i] == pixNum.COLLECTOR_HANDLE && y < gridHeight - 1 && !visited(i, y + 1) && isCollector(i, y + 1)) { addVisit(i, y + 1); pushStack.push([i, y + 1]); }
                     if (!canPush(i, y, 0, 0, ignorePistons)) break;
-                }
-                if (moveX === -1 && lastCollapsible !== -1) {
-                    moveX = lastCollapsible;
                 }
                 if (moveX !== -1) {
                     for (let i = moveX; i < x; i++) if (!canMoveTo(i, y)) return false;
@@ -956,7 +963,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                         pushes.push([i, y]);
                     }
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
-                    if (grid[y][moveX] == pixNum.MONSTER) deletions.push([moveX, y]);
+                    if (grid[y][moveX] == pixNum.MONSTER) deletions2.push([moveX, y]);
                     return true;
                 }
                 return false;
@@ -965,16 +972,24 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
         case 1:
             addPush = (x, y, movePusher) => {
                 let moveY = -1;
-                let lastCollapsible = -1;
                 let startsSlime, startsUnslime, startsCollectorHandle;
                 [x, y, startsSlime, startsUnslime, startsCollectorHandle] = adjustPosition(x, y);
-                for (let i = y - !(startsSlime || startsUnslime || startsCollectorHandle); i >= 0; i--) {
-                    if (isAir(x, i)) {
+                let minY = 0;
+                if (collapsiblable) {
+                    for (let i = y - !(startsSlime || startsUnslime || startsCollectorHandle); i >= 0; i--) {
+                        if (isAir(x, i)) break;
+                        if (grid[i][x] == pixNum.COLLAPSIBLE) {
+                            minY = i;
+                        }
+                    }
+                    if (minY == 0) return false;
+                }
+                for (let i = y - !(startsSlime || startsUnslime || startsCollectorHandle); i >= minY; i--) {
+                    if (isAir(x, i) || (collapsiblable && i == minY)) {
                         moveY = i;
                         if (grid[i][x] == pixNum.DELETER) moveY++;
                         break;
                     }
-                    if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
                     if (isSlime(x, i) && x > 0 && !visited(x - 1, i) && !isAir(x - 1, i) && canPush(x - 1, i, 1, 1, ignorePistons)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
                     if (isSlime(x, i) && x < gridWidth - 1 && !visited(x + 1, i) && !isAir(x + 1, i) && canPush(x + 1, i, 1, 1, ignorePistons)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
                     if (isUnslime(x, i) && x > 0 && !visited(x - 1, i) && !isAir(x - 1, i) && canPush(x - 1, i, 1, 2, ignorePistons)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
@@ -982,9 +997,6 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x > 0 && !visited(x - 1, i) && isCollector(x - 1, i)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
                     if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x < gridWidth - 1 && !visited(x + 1, i) && isCollector(x + 1, i)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
                     if (!canPush(x, i, 1, 0, ignorePistons)) break;
-                }
-                if (moveY === -1 && lastCollapsible !== -1) {
-                    moveY = lastCollapsible;
                 }
                 if (moveY !== -1) {
                     for (let i = moveY; i < y; i++) if (!canMoveTo(x, i)) return false;
@@ -995,7 +1007,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                         pushes.push([x, i]);
                     }
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
-                    if (grid[moveY][x] == pixNum.MONSTER) deletions.push([x, moveY]);
+                    if (grid[moveY][x] == pixNum.MONSTER) deletions2.push([x, moveY]);
                     return true;
                 }
                 return false;
@@ -1004,16 +1016,24 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
         case 2:
             addPush = (x, y, movePusher) => {
                 let moveX = -1;
-                let lastCollapsible = -1;
                 let startsSlime, startsUnslime, startsCollectorHandle;
                 [x, y, startsSlime, startsUnslime, startsCollectorHandle] = adjustPosition(x, y);
-                for (let i = x + !(startsSlime || startsUnslime || startsCollectorHandle); i < gridWidth; i++) {
-                    if (isAir(i, y)) {
+                let maxX = gridWidth - 1;
+                if (collapsiblable) {
+                    for (let i = x - !(startsSlime || startsUnslime || startsCollectorHandle); i < gridWidth; i++) {
+                        if (isAir(i, y)) break;
+                        if (grid[y][i] == pixNum.COLLAPSIBLE) {
+                            maxX = i;
+                        }
+                    }
+                    if (maxX == gridWidth - 1) return false;
+                }
+                for (let i = x + !(startsSlime || startsUnslime || startsCollectorHandle); i <= maxX; i++) {
+                    if (isAir(i, y) || (collapsiblable && i == maxX)) {
                         moveX = i;
                         if (grid[y][i] == pixNum.DELETER) moveX--;
                         break;
                     }
-                    if (grid[y][i] == pixNum.COLLAPSIBLE) lastCollapsible = i;
                     if (isSlime(i, y) && y > 0 && !visited(i, y - 1) && !isAir(i, y - 1) && canPush(i, y - 1, 2, 1, ignorePistons)) { addVisit(i, y - 1); pushStack.push([i, y - 1]); }
                     if (isSlime(i, y) && y < gridHeight - 1 && !visited(i, y + 1) && !isAir(i, y + 1) && canPush(i, y + 1, 2, 1, ignorePistons)) { addVisit(i, y + 1); pushStack.push([i, y + 1]); }
                     if (isUnslime(i, y) && y > 0 && !visited(i, y - 1) && !isAir(i, y - 1) && canPush(i, y - 1, 2, 2, ignorePistons)) { addVisit(i, y - 1); pushStack.push([i, y - 1]); }
@@ -1021,9 +1041,6 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     if (grid[y][i] == pixNum.COLLECTOR_HANDLE && y > 0 && !visited(i, y - 1) && isCollector(i, y - 1)) { addVisit(i, y - 1); pushStack.push([i, y - 1]); }
                     if (grid[y][i] == pixNum.COLLECTOR_HANDLE && y < gridHeight - 1 && !visited(i, y + 1) && isCollector(i, y + 1)) { addVisit(i, y + 1); pushStack.push([i, y + 1]); }
                     if (!canPush(i, y, 2, 0, ignorePistons)) break;
-                }
-                if (moveX === -1 && lastCollapsible !== -1) {
-                    moveX = lastCollapsible;
                 }
                 if (moveX != -1) {
                     for (let i = moveX; i > x; i--) if (!canMoveTo(i, y)) return false;
@@ -1034,7 +1051,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                         pushes.push([i, y]);
                     }
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
-                    if (grid[y][moveX] == pixNum.MONSTER) deletions.push([moveX, y]);
+                    if (grid[y][moveX] == pixNum.MONSTER) deletions2.push([moveX, y]);
                     return true;
                 }
                 return false;
@@ -1043,16 +1060,24 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
         case 3:
             addPush = (x, y, movePusher) => {
                 let moveY = -1;
-                let lastCollapsible = -1;
                 let startsSlime, startsUnslime, startsCollectorHandle;
                 [x, y, startsSlime, startsUnslime, startsCollectorHandle] = adjustPosition(x, y);
-                for (let i = y + !(startsSlime || startsUnslime || startsCollectorHandle); i < gridHeight; i++) {
-                    if (isAir(x, i)) {
+                let maxY = gridHeight - 1;
+                if (collapsiblable) {
+                    for (let i = y + !(startsSlime || startsUnslime || startsCollectorHandle); i < gridHeight; i++) {
+                        if (isAir(x, i)) break;
+                        if (grid[i][x] == pixNum.COLLAPSIBLE) {
+                            maxY = i;
+                        }
+                    }
+                    if (maxY == gridHeight - 1) return false;
+                }
+                for (let i = y + !(startsSlime || startsUnslime || startsCollectorHandle); i <= maxY; i++) {
+                    if (isAir(x, i) || (collapsiblable && i == maxY)) {
                         moveY = i;
                         if (grid[i][x] == pixNum.DELETER) moveY--;
                         break;
                     }
-                    if (grid[i][x] == pixNum.COLLAPSIBLE) lastCollapsible = i;
                     if (isSlime(x, i) && x > 0 && !visited(x - 1, i) && !isAir(x - 1, i) && canPush(x - 1, i, 3, 1, ignorePistons)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
                     if (isSlime(x, i) && x < gridWidth - 1 && !visited(x + 1, i) && !isAir(x + 1, i) && canPush(x + 1, i, 3, 1, ignorePistons)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
                     if (isUnslime(x, i) && x > 0 && !visited(x - 1, i) && !isAir(x - 1, i) && canPush(x - 1, i, 3, 2, ignorePistons)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
@@ -1060,9 +1085,6 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                     if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x > 0 && !visited(x - 1, i) && isCollector(x - 1, i)) { addVisit(x - 1, i); pushStack.push([x - 1, i]); }
                     if (grid[i][x] == pixNum.COLLECTOR_HANDLE && x < gridWidth - 1 && !visited(x + 1, i) && isCollector(x + 1, i)) { addVisit(x + 1, i); pushStack.push([x + 1, i]); }
                     if (!canPush(x, i, 3, 0, ignorePistons)) break;
-                }
-                if (moveY === -1 && lastCollapsible !== -1) {
-                    moveY = lastCollapsible;
                 }
                 if (moveY !== -1) {
                     for (let i = moveY; i > y; i--) if (!canMoveTo(x, i)) return false;
@@ -1073,7 +1095,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                         pushes.push([x, i]);
                     }
                     if (grid[y][x] != pixNum.DELETER) deletions.push([x, y]);
-                    if (grid[moveY][x] == pixNum.MONSTER) deletions.push([x, moveY]);
+                    if (grid[moveY][x] == pixNum.MONSTER) deletions2.push([x, moveY]);
                     return true;
                 }
                 return false;
@@ -1082,9 +1104,24 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
         default:
             return false;
     }
-    if (!addPush(x, y, movePusher)) return false;
-    while (pushStack.length > 0) {
-        if (!addPush(...pushStack.pop(), true)) return false;
+    let tryCollapse = false;
+    if (!addPush(x, y, movePusher)) tryCollapse = true;
+    else while (pushStack.length > 0) {
+        if (!addPush(...pushStack.pop(), true)) {
+            tryCollapse = true;
+            break;
+        };
+    }
+    if (tryCollapse) {
+        collapsiblable = true;
+        visitedPixels.clear();
+        pushStack.length = 0;
+        deletions.length = 0;
+        deletions2.length = 0;
+        if (!addPush(x, y, movePusher)) return false;
+        while (pushStack.length > 0) {
+            if (!addPush(...pushStack.pop(), true)) return false;
+        }
     }
     for (let [x, y] of deletions) {
         nextGrid[y][x] = pixNum.AIR;
@@ -1120,6 +1157,11 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 teamGrid[y][x] = teamGrid[y - 1][x];
             }
             break;
+    }
+    for (let [x, y] of deletions2) {
+        nextGrid[y][x] = pixNum.AIR;
+        fireGrid[y][x] = false;
+        teamGrid[y][x] = 0;
     }
     return true;
 };
@@ -2303,7 +2345,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 });
             } else {
                 act(function (x, y) {
-                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN) && (grid[y][x] < pixNum.GENERIC_COLOR_WELL || grid[y][x] > pixNum.GENERIC_COLOR_WELL)))) {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN) && (grid[y][x] < pixNum.GENERIC_COLOR_WELL || grid[y][x] > pixNum.GENERIC_COLOR_WELL)))) {
                         let pixel = pixelAt(x, y).id;
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
                         inventory[pixel]++;
@@ -2376,7 +2418,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 modifiedPixelCounts[clickPixelNum] = true;
                 if (inventory[placePixel] <= 0) skipToEnd = true;
                 else if (act(function (x, y) {
-                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != clickPixelNum && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN)))) {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER && grid[y][x] != clickPixelNum && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN)))) {
                         modifiedPixelCounts[grid[y][x]] = true;
                         let pixel = pixelAt(x, y).id;
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
@@ -2768,6 +2810,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
                                 musicPixel(musicGrid[y][x], false);
                                 musicGrid[y][x] = 0;
                             }
+                        } else {
+                            selection.grid[y - ymin][x - xmin] = pixNum.AIR;
                         }
                     }
                 }
@@ -2819,9 +2863,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 for (let y = ymin; y <= ymax; y++) {
                     selection.grid[y - ymin] = [];
                     for (let x = xmin; x <= xmax; x++) {
-                        if (sandboxMode || placeableGrid[y][x]) {
-                            selection.grid[y - ymin][x - xmin] = grid[y][x];
-                        }
+                        selection.grid[y - ymin][x - xmin] = grid[y][x];
                     }
                 }
                 selection.show = false;

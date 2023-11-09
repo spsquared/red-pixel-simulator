@@ -3418,7 +3418,7 @@ const pixels = {
         recipe: {
             color_cyan: 1,
             concrete: 1,
-            iron: 1
+            steel: 1
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -3436,7 +3436,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimPickable: true,
+        pixsimPickable: false,
         generatedDescription: '',
         image: '',
         keybind: null,
@@ -3515,7 +3515,7 @@ const pixels = {
         recipe: {
             color_cyan: 1,
             concrete: 1,
-            iron: 1
+            steel: 1
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -3533,7 +3533,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimPickable: true,
+        pixsimPickable: false,
         generatedDescription: '',
         image: '',
         keybind: null,
@@ -3612,7 +3612,7 @@ const pixels = {
         recipe: {
             color_cyan: 1,
             concrete: 1,
-            iron: 1
+            steel: 1
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -3630,7 +3630,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimPickable: true,
+        pixsimPickable: false,
         generatedDescription: '',
         image: '',
         keybind: null,
@@ -3709,7 +3709,7 @@ const pixels = {
         recipe: {
             color_cyan: 1,
             concrete: 1,
-            iron: 1
+            steel: 1
         },
         craftAmount: 1,
         prerenderedFrames: [],
@@ -3727,7 +3727,7 @@ const pixels = {
         animated: true,
         alwaysRedraw: false,
         pickable: true,
-        pixsimPickable: true,
+        pixsimPickable: false,
         generatedDescription: '',
         image: '',
         keybind: null,

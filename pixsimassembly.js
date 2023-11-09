@@ -106,6 +106,7 @@ function moveCamera(x, y, s, t) {
     checkArgType(x, 'number');
     checkArgType(y, 'number');
     checkArgType(s, 'number');
+    if (s <= 0) throw new PXASMArgumentError('"scale" must be a non-zero positive number');
     sendCommand('moveCamera', x, y, s, t);
 };
 function shakeCamera(x, y, t) {

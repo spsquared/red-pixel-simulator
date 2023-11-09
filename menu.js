@@ -165,7 +165,7 @@ function transitionToGame(cb) {
     transitionBarTop.style.transform = 'translateY(60vh)';
     transitionBarBottom.style.transform = 'translateY(-60vh)';
     setTransitionTimeout(async () => {
-        if (cb) await cb();
+        if (typeof cb == 'function') await cb();
         menuScreen.style.backgroundColor = 'transparent';
         clearInterval(loadingTipInterval);
         loadingTip.style.opacity = '0';
@@ -201,7 +201,7 @@ function transitionToMenu(cb) {
     transitionBarBottom.style.transform = 'translateY(-60vh)';
     restoreMenuScreen();
     setTransitionTimeout(async () => {
-        if (cb) await cb();
+        if (typeof cb == 'function') await cb();
         menuScreen.style.transitionDuration = '';
         menuScreen.style.backgroundColor = '';
         clearInterval(loadingTipInterval);
@@ -226,7 +226,7 @@ function transitionWithinGame(cb) {
     transitionBarTop.style.transform = 'translateY(60vh)';
     transitionBarBottom.style.transform = 'translateY(-60vh)';
     setTransitionTimeout(async () => {
-        if (cb) await cb();
+        if (typeof cb == 'function') await cb();
         clearInterval(loadingTipInterval);
         loadingTip.style.opacity = '0';
         transitionBarTop.style.transform = '';
@@ -361,7 +361,7 @@ multiplayerButton.onclick = (e) => {
     }, (err) => {
         clearInterval(glitch);
         clearInterval(loadingTip);
-        modal('Could not connect to PixSim API:', `<span style="color: red;">${err.message}</span>`).then(() => pixsimMenuClose.click());
+        if (pixsimMenu._open) modal('Could not connect to PixSim API:', `<span style="color: red;">${err.message}</span>`).then(() => pixsimMenuClose.click());
     });
 };
 levelSelectClose.onclick = (e) => {
