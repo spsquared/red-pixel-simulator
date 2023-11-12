@@ -324,7 +324,7 @@ const puzzles = [
             },
             {
                 name: 'Mountain Rafting', // earthen fortress? i am bad at poem
-                description: `<i>Who guards this fortress of earth and stone?<br>What treasure lies deep unfound within?</i><br><br>Maybe some Ialite; if you know, you know. I like to say I like poetry. I was't supposed to say that part! AUHGSLAGUHD MONSTER!`,
+                description: `<i>Who guards this fortress of earth and stone?<br>What treasure lies deep unfound within?</i><br><br>Maybe some Ialite; if you know, you know. I like to say I like poetry. I wasn't supposed to say that part! AUHGSLAGUHD MONSTER!`,
                 saveCode: '50-50;0000;air-550:grass-3:air-47:stone-3:air-47:stone-3:air-47:stone-4:air-46:stone-4:air-46:stone-4:air-46:stone-4:air-46:stone-4:air-46:stone-5:air-45:stone-5:air-45:stone-5:air-45:stone-5:air-45:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:air-44:stone-6:grass:air-43:stone-7:air-43:stone-7:grass:air-42:stone-2:color_violet:stone-5:air-42:color_violet:stone-7:grass:air-41:stone-3:color_violet:stone-5:grass:air-40:stone-9:dirt:grass-6:air-34:stone-10:dirt-6:grass:air-33:stone-17:air-16:gunpowder:air-16:stone-17:air-13:crate-3:wood-2:air-15:stone-17:water-33:stone-17:water-33:stone-17:water-33:basalt-4:stone-14:water-32:basalt-8:stone-12:water-27:stone-3:basalt-16:stone-34:basalt-150:;9c4:;12c:3:2f:3:2f:3:2f:3:2f:3:387:b:27:b:27:b:28:a:28:a:29:9:29:9:2a:8:2b:7:31:1:279:;78b:2:30:2:205:;9c4:',
                 backgroundColor: '#33a1b1',
                 inventory: {
@@ -403,7 +403,7 @@ const puzzles = [
                 id: '61263f9d-0719-44e9-8f1f-f514468f9556'
             },
             {
-                name: 'Spinny Rotator',
+                name: 'Spinny Rotators',
                 description: `Oh cool, we can rotate stuff now. Well, I already knew that. Anyways, you only have <h>rightwards pushers</h>, <h>clockwise rotators</h>, and <h>rightwards rotators</h>. And a <h>wall</h>, which is immovable. <i>Use the existing rotators to your advantage.</i><br><br><h>The rotators with spinning textures will rotate pixels in their direction, and the static ones will rotate pixels to face the same way as them.</h>`,
                 saveCode: '40;0000;wall-17:air-3:wall-21:air-15:wall:air-3:wall:air-12:rotator_left:air-5:wall-2:air-15:wall:air-3:wall:air-3:rotator_counterclockwise:air-14:wall-2:air-15:wall:air-3:wall:air-18:wall-2:air-15:wall:air-3:wall:rotator_down:air-11:piston_left:air-5:wall-2:air-15:wall:air-3:wall:air-5:wall-6:air-7:wall-2:air-15:wall:air-3:wall:air-10:wall:air-7:wall-2:air-15:wall:lava-3:wall:air-10:wall:air-7:wall-2:air-19:wall:air-10:wall:air-7:wall-2:air-18:piston_left:wall:air-10:wall:air-7:wall-2:air-9:wall-4:air-6:wall:air-10:wall:air-7:wall-2:air-12:wall-13:air-5:wall:air-7:wall-2:rotator_counterclockwise:air-29:wall:air-7:wall-2:air-30:wall:air-7:wall-2:air-12:wall-11:air-3:rotator_left:air-3:wall:air-7:wall-2:air-30:wall:air-7:wall-2:air-30:rotator_left:air-7:wall-2:air-9:wall-22:air-7:wall-2:air-16:wall:air-21:wall-2:air-16:wall:air-21:wall-2:air-5:wall:air-10:wall:air-4:piston_right:air-11:rotator_up:air-4:wall-2:air-5:wall:air-10:wall:air-21:wall-2:air-5:wall:air-10:wall:air-21:wall-2:air-5:wall:air-10:wall-24:air-2:gunpowder-3:wall:air-32:wall-2:gunpowder-5:wall:air-32:wall-2:gunpowder-5:wall:air-31:rotator_down:wall-8:wood-2:air-29:rotator_down:wall-2:air-30:wall:air-7:wall-2:air-30:wall-4:air-4:wall-2:air-14:wall-3:air-7:rotator_left:wall-6:air:wall-2:air-4:wall-2:air-14:wall:rotator_counterclockwise:air-8:rotator_left:wall:air-4:wall:air-7:wall-2:air-10:rotator_up:concrete:piston_left:air:wall:air-9:rotator_left:wall:air-4:wall:air-4:wall:air-2:wall-17:air-9:rotator_left:wall:air-4:wall:rotator_up:air-2:rotator_clockwise:wall:air-2:wall-2:air-24:wall-2:air-4:wall-6:air-2:wall-2:air-24:wall-2:air-9:wall:air-2:wall-2:air-16:rotator_left:air-7:concrete:rotator_down:air:wall:air-10:wall-6:air-20:wall-2:air-12:wall-6:air-20:wall-2:air-10:rotator_left-2:wall-41:;640:;105:a:1e:a:16:7:1:a:1e:a:1e:a:122:10:18:10:18:5:1:a:18:5:1:a:18:5:1:a:1e:a:18:2:4:1d:b:1d:d:1b:d:1b:5:6:8:10:1:4:5:6:8:10:a:6:b:7:10:6:a:8:10:6:a:8:20:8:20:8:20:8:21:7:1f:9:1f:9:37:;174:1:11d:1:109:1:7a:2:b7:1:d0:1:69:1:34:;640:',
                 backgroundColor: '#ffffff',
@@ -413,7 +413,7 @@ const puzzles = [
                     rotator_right: 3,
                     rotator_clockwise: 3
                 },
-                difficulty: 'Medium',
+                difficulty: 'Easy',
                 id: 'f1f004fe-fac1-482d-866c-bead1f9c6057'
             },
             {
@@ -468,7 +468,7 @@ const puzzles = [
                 id: '388f65f4-65d6-4427-9342-861b0eefb47b'
             },
             {
-                name: 'Targets',
+                name: 'Target Practice',
                 description: `Hmmm, you have <h>multiple goals</h> to deliver now, but they all have to be moved at the same time? <i>This one's a tricky one, I'll give you that.</i>`,
                 saveCode: '40;0000;wall-41:air-38:wall-2:air-38:wall-2:air-38:wall-2:air-38:wall-2:air-38:wall-14:air-26:wall-2:sand-4:air-7:wall:air-26:wall-2:sand-6:air-5:wall:air-26:wall-2:piston_right:sand-6:air-4:wall:air-26:wall-10:air-3:wall:air-26:wall-2:air-4:wood:air-2:wood:air-3:wall:air-26:wall-2:air-4:wood:lava-2:wood:air-3:wall:air-26:wall-2:air-5:wood-2:air-4:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:air-11:wall:air-26:wall-2:wood:air-4:wood:air-5:wall:air-26:wall-2:wood:gunpowder-4:wood:air-5:wall:air-26:wall-2:wood:gunpowder-4:wood:air-5:wall:air-26:wall-2:wood:gunpowder-4:wood:air-5:wall:air-26:wall-2:wood-6:air-5:wall:air-26:wall-22:air-18:wall-2:air-38:wall-2:air-38:wall-2:air-8:goal:air-23:wall:air-5:wall-2:air-8:goal:air-23:wall:water-5:wall-2:air-8:goal:air-23:wall:water-5:wall-2:air-32:wall:water-5:wall-2:air-32:wall:water-5:wall-2:air-32:wall:water-5:wall-2:air-32:wall:water-5:wall-41:;640:;3e:11:17:11:17:11:17:11:17:11:17:11:17:11:372:12:16:12:16:8:1:9:16:8:1:9:16:8:1:9:16:12:16:12:16:12:16:12:3d:;399:1:cf:2:1d5:;2d:1:293:1:254:1:129:',
                 backgroundColor: '#ffffff',
@@ -479,7 +479,7 @@ const puzzles = [
                     piston_right: 4,
                     slider_horizontal: 4
                 },
-                difficulty: 'Medium',
+                difficulty: 'Easy',
                 id: '47fa079a-cc83-4435-bba4-bc0288c3b60c'
             },
             {
@@ -534,7 +534,7 @@ const puzzles = [
             },
             {
                 name: 'Danger Zone',
-                description: `Careful! Those purple glowy thingies are <h>deleters</h>- They delete stuff! One wrong move and everything is gone. Well, you can always <h>restart if that happens</h>.<br>The orange-ish boxes with a diagonal are <h>collapsible boxes, they can be crushed when pushed into something</h>.`,
+                description: `Careful! Those purple glowy thingies are <h>deleters</h>- They delete stuff! One wrong move and everything is gone. Well, you can always <h>reset if that happens</h>.<br>The orange-ish boxes with a diagonal are <h>collapsible boxes, they can be crushed when pushed into something</h>.`,
                 saveCode: '40;0000;wall:deleter-10:wall-11:deleter-17:wall:slider_horizontal:air-20:deleter:air-17:deleter:wall:air-20:deleter:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:deleter:air-17:deleter:wall:air-20:deleter:air-17:deleter:wall:air-10:wall-3:air-5:wall-3:deleter-11:air:deleter-5:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-9:goal:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:concrete:air-7:concrete:wall:air-17:wall-2:air-10:wall:concrete-2:air-5:concrete-2:wall:air-17:wall-2:air-10:wall:concrete-3:air-3:concrete-3:wall:air-17:wall-2:air-10:wall-29:;640:;3e:11:17:11:17:11:17:11:17:11:17:11:17:11:17:11:17:11:52:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:9:1f:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1d:;588:1:26:3:25:4:24:3:3e:;521:1:11e:',
                 backgroundColor: '#ffffff',
                 inventory: {
@@ -556,7 +556,7 @@ const puzzles = [
                 id: '07b13db3-090e-44ff-96b9-5829bfc4569d'
             },
             {
-                name: 'Laser Pointers but Stronger',
+                name: 'Reflection',
                 description: `Ah, a simple puzzle. Makes for a nice break from the brain-breaking machines. Anyways, those diagonal thingies are <h>mirrors</h>. <h>Mirrors reflect lasers</h>, so you can use this to redirect them to your targets. More interesting is that you have even numbers of everything (except mirrors).<br><br>Alright, I'm off to work on the PixSim API and think about the faults of society. And maybe make some music too.`,
                 saveCode: '40;0000;wall-41:concrete:wall:air-36:wall-2:laser_right:glass:air-28:mirror_2:air-7:wall-2:concrete:wall:air-36:wall-2:rotator_counterclockwise:wall:air-3:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-8:wall-2:rotator_counterclockwise:wall:air-3:wood:gunpowder-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:gunpowder-2:wood:air-8:wall-2:concrete:wall:air-3:wood:gunpowder-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air:wall:wood:gunpowder-2:wood:air-8:wall-42:air-3:wall:air-28:slider_vertical:air-5:wall-2:air-3:wall:air-28:slider_vertical:air-5:wall-2:air-3:wall:air-28:slider_vertical:air-5:wall-2:air-3:glass:air-28:slider_vertical:air-5:wall-2:air-3:glass:air-28:slider_vertical:air-5:wall-6:air-26:wall-5:air-3:wall-2:mirror_1:air-2:glass:air-26:glass:laser_left:laser_right:glass:mirror_2:air-3:wall-2:air-3:wall:air-26:wall-4:glass:air-3:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:mirror_2:air-2:glass:air-4:mirror_2:air-16:mirror_2:air-12:wall-2:air-3:wall:air-7:collapsible:air-26:wall-2:air-3:wall:air-7:wall:air-26:wall-2:air-3:wall:air-2:mirror_1:air:mirror_1:air-2:wall:air-26:wall-2:air-3:wall:air-7:wall:air-26:wall-8:glass:wall-18:air-13:wall-2:air-3:glass:air-5:wall:air-14:wall:air-13:wall-2:wood:sand:wood:glass:air-5:wall:air-14:wall:air-13:wall-2:air:wood:air:glass:air-2:mirror_1:air-2:wall:air-14:wall:air-13:wall-2:air-3:glass:air-5:wall:air-14:wall:air-7:laser_scatterer:glass-3:air-2:wall-2:air-3:glass:air-5:wall:air-14:wall:air-13:wall-2:air-3:wall:air-5:wall:air-14:wall:air-13:wall-2:air-3:wall:air-5:wall:air-2:dirt-6:air-6:wall:air-13:wall-2:air-3:wall:air-5:wall:dirt-11:air-3:wall:air-13:wall-2:air-3:wall:air-5:wall:dirt-11:air-3:glass:air-13:wall-3:push_cloner_down:wall-2:air-5:wall:dirt-12:air-2:glass:air-7:mirror_1:air-5:wall-2:air:piston_right:wall-2:air-5:wall:dirt-13:air:wall:air-3:wood:gunpowder-7:wood:air:wall-2:air-9:wall:dirt-14:wall:air-3:wood:gunpowder-7:wood:air:wall-41:;640:;48:7:21:7:21:7:21:7:21:7:21:7:2e:1c:1:5:6:1c:1:5:6:1c:1:5:6:1c:1:5:6:1c:1:5:6:1a:5:3:6:1a:5:3:6:1a:5:3:6:22:6:22:6:22:6:22:6:22:6:4:1:10:1:c:6:7:1:1a:6:7:1:1a:6:2:1:1:1:2:1:1a:6:7:1:1a:1b:d:1b:d:1b:d:1b:d:1b:7:4:2:1b:d:1b:d:1b:d:f1:;ae:1:26:2:7:2:1b:1:1:2:1:2:2:1:1:2:1:2:d7:1:32b:1:1:1:1:1:28:1:ba:1:49:;640:',
                 backgroundColor: '#ffffff',

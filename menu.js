@@ -114,7 +114,7 @@ const loadingTips = [
     'Active generators produce an average of 0.04 colors per tick',
     'Use color generator filters to increase production for a particular color',
     'According to all known laws<br>of aviation,<br>there is no way a bee<br>should be able to fly.<br>Its wings are too small to get<br>its fat little body off the ground.<br>The bee, of course, flies anyway<br>because bees don\'t care<br>what humans think is impossible.<br><br>Yellow, black. Yellow, black.<br>Yellow, black. Yellow, black.<br>Ooh, black and yellow!<br>Let\'s shake it up a little.<br><br>Barry! Breakfast is ready!<br><br>Coming!',
-    
+    'Puzzle difficulties are relative to other puzzles in the same section'
 ];
 const loadingTip = document.getElementById('loadingTip');
 function setLoadingTipInterval(tipDiv) {

@@ -1814,6 +1814,57 @@ const pixels = {
         id: 'concrete',
         numId: 0
     },
+    rubber: {
+        name: 'Rubber',
+        description: 'Soft stuff that doesn\'t move',
+        draw: function (rectangles, ctx, avoidGrid) {
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = 'rgb(60, 60, 60)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                fillPixels(x, y, width, height, ctx);
+            });
+            ctx.fillStyle = 'rgb(80, 60, 100)';
+            forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                forEachPixel(x, y, width, height, (x2, y2) => {
+                    fillPixels(x2 + 1 / 6, y2 + 1 / 6, 2 / 3, 2 / 3, ctx);
+                });
+            });
+        },
+        update: function (x, y) { },
+        drawPreview: function (ctx) {
+            ctx.clearRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(60, 60, 60)';
+            ctx.fillRect(0, 0, 50, 50);
+            ctx.fillStyle = 'rgb(80, 60, 100)';
+            ctx.fillRect(25 / 3, 25 / 3, 100 / 3, 100 / 3);
+        },
+        prerender: function () { },
+        recipe: {
+            slime: 3,
+            concrete_powder: 1
+        },
+        craftAmount: 3,
+        prerenderedFrames: [],
+        blastResistance: 15,
+        flammability: 1,
+        pushable: false,
+        cloneable: true,
+        rotateable: false,
+        stickable: true,
+        collectible: true,
+        group: 0,
+        updateStage: -1,
+        animatedNoise: false,
+        animated: false,
+        alwaysRedraw: false,
+        pickable: true,
+        pixsimPickable: false,
+        generatedDescription: '',
+        image: '',
+        keybind: null,
+        id: 'rubber',
+        numId: 0
+    },
     stone_bricks: {
         name: 'Stone Bricks',
         description: 'Simple bricks made of cut stone',
@@ -2833,7 +2884,7 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push((x < gridWidth - 1 && canPush(x + 1, y, 0, 1)) ? x + 1 : x, y, 0)) {
+            if (push((x < gridWidth - 1 && canPush(x + 1, y, 0, 1)) ? x + 1 : x, y, 0) || push(x, y, 0)) {
                 if (y > 0 && canPush(x, y - 1, 0, 1) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 0);
                 if (y < gridHeight - 1 && canPush(x, y + 1, 0, 1) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 0);
             }
@@ -2896,7 +2947,7 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push(x, (y < gridHeight - 1 && canPush(x, y + 1, 1, 1)) ? y + 1 : y, 1)) {
+            if (push(x, (y < gridHeight - 1 && canPush(x, y + 1, 1, 1)) ? y + 1 : y, 1) || push(x, y, 1)) {
                 if (x > 0 && canPush(x - 1, y, 1, 1) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 1);
                 if (x < gridWidth - 1 && canPush(x + 1, y, 1, 1) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 1);
             }
@@ -2959,7 +3010,7 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push((x > 0 && canPush(x - 1, y, 2, 1)) ? x - 1 : x, y, 2)) {
+            if (push((x > 0 && canPush(x - 1, y, 2, 1)) ? x - 1 : x, y, 2) || push(x, y, 2)) {
                 if (y > 0 && canPush(x, y - 1, 2, 1) && grid[y - 1][x] != pixNum.AIR) push(x, y - 1, 2);
                 if (y < gridHeight - 1 && canPush(x, y + 1, 2, 1) && grid[y + 1][x] != pixNum.AIR) push(x, y + 1, 2);
             }
@@ -3022,7 +3073,7 @@ const pixels = {
                 teamGrid[y][x] = 0;
                 return;
             }
-            if (push(x, (y > 0 && canPush(x, y - 1, 3, 1)) ? y - 1 : y, 3)) {
+            if (push(x, (y > 0 && canPush(x, y - 1, 3, 1)) ? y - 1 : y, 3) || push(x, y, 3)) {
                 if (x > 0 && canPush(x - 1, y, 3, 1) && grid[y][x - 1] != pixNum.AIR) push(x - 1, y, 3);
                 if (x < gridWidth - 1 && canPush(x + 1, y, 3, 1) && grid[y][x + 1] != pixNum.AIR) push(x + 1, y, 3);
             }
@@ -7349,7 +7400,7 @@ const pixels = {
             // oh wait it's supposed to be bad so it lags
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 forEachPixel(x, y, width, height, (x2, y2) => {
-                    camera.shakeIntensity += random(0, 0.1);
+                    camera.shakeIntensity += random(0, 0.01);
                     let randiter = random(0, 5);
                     for (let i = 0; i < randiter; i++) {
                         // this code is borken lol
@@ -7475,6 +7526,12 @@ const pixels = {
                 }
                 if (validChangingPixel(ax, ay) && random() < 0.001) {
                     nextGrid[ay][ax] = pixNum.SPIN;
+                }
+                if (validChangingPixel(ax, ay) && random() < 0.001) {
+                    nextGrid[ay][ax] = pixNum.RED;
+                }
+                if (validChangingPixel(ax, ay) && random() < 0.001) {
+                    nextGrid[ay][ax] = pixNum.RICKASTLEY;
                 }
                 if (random() < 0.1) {
                     nextFireGrid[ay][ax] = true;
