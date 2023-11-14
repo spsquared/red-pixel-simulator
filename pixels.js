@@ -5214,8 +5214,6 @@ const pixels = {
             fillPixels(0, 5 / 12, 1 / 2, 1 / 6);
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixels(0, 1 / 3, 2 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             fillPixels(0, 5 / 12, 1 / 2, 1 / 6);
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
@@ -5340,8 +5338,6 @@ const pixels = {
             fillPixels(5 / 12, 0, 1 / 6, 1 / 2);
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixels(0, 1 / 3, 2 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             fillPixels(5 / 12, 0, 1 / 6, 1 / 2);
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
@@ -5466,8 +5462,6 @@ const pixels = {
             fillPixels(2 / 3, 5 / 12, 1 / 2, 1 / 6);
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixels(1 / 3, 1 / 3, 2 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             fillPixels(2 / 3, 5 / 12, 1 / 2, 1 / 6);
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
@@ -5592,8 +5586,6 @@ const pixels = {
             fillPixels(5 / 12, 2 / 3, 1 / 6, 1 / 2);
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
             this.prerenderedFrames.push(toImage());
-            ctx.fillStyle = 'rgb(100, 100, 100)';
-            fillPixels(0, 1 / 3, 2 / 3, 1 / 3);
             ctx.fillStyle = 'rgb(255, 255, 0)';
             fillPixels(5 / 12, 2 / 3, 1 / 6, 1 / 2);
             fillPixels(1 / 3, 1 / 3, 1 / 3, 1 / 3);
@@ -7588,8 +7580,8 @@ const pixels = {
         draw: function (rectangles, ctx, avoidGrid) {
             forRectangles(rectangles, (x, y, width, height, redrawing) => {
                 forEachPixel(x, y, width, height, (x2, y2) => {
-                    ctx.translate((x2 + 1 / 2) * drawScale - camera.x, (y2 + 1 / 2) * drawScale - camera.y);
-                    ctx.rotate(random(0, 2 * Math.PI));
+                    gamectx.translate((x2 + 1 / 2) * drawScale - camera.x, (y2 + 1 / 2) * drawScale - camera.y);
+                    gamectx.rotate(random(0, 2 * Math.PI));
                 });
             });
         },

@@ -821,16 +821,16 @@ function flow(x, y, isPassable = isAir) {
     }
 };
 function canPush(x, y, dir, stickPush = 0, ignorePistons = false) {
-    if (!validChangingPixel(x, y) || !pixelAt(x, y).pushable || (stickPush != 0 && !pixelAt(x, y).stickable) || (stickPush == 1 && grid[y][x] == pixNum.UNSLIME) || (stickPush == 2 && grid[y][x] == pixNum.SLIME) || (grid[y][x] == pixNum.GOAL && targetGrid[y][x])) return false;
+    if (!validChangingPixel(x, y) || !pixelAt(x, y).pushable || (stickPush != 0 && !pixelAt(x, y).stickable) || (stickPush == 1 && grid[y][x] == pixNum.UNSLIME) || (stickPush == 2 && grid[y][x] == pixNum.SLIME) || (grid[y][x] == pixNum.GOAL && targetGrid[y][x]) || isDeactivated(x, y)) return false;
     switch (dir) {
         case 0:
-            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_RIGHT && grid[y][x] != pixNum.STICKY_PISTON_RIGHT && grid[y][x] != pixNum.PUSH_PISTON_RIGHT) || touchingPixel(x, y, pixNum.DEACTIVATOR));
+            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_RIGHT && grid[y][x] != pixNum.STICKY_PISTON_RIGHT && grid[y][x] != pixNum.PUSH_PISTON_RIGHT));
         case 1:
-            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_DOWN && grid[y][x] != pixNum.STICKY_PISTON_DOWN && grid[y][x] != pixNum.PUSH_PISTON_DOWN) || touchingPixel(x, y, pixNum.DEACTIVATOR));
+            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_DOWN && grid[y][x] != pixNum.STICKY_PISTON_DOWN && grid[y][x] != pixNum.PUSH_PISTON_DOWN));
         case 2:
-            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_LEFT && grid[y][x] != pixNum.STICKY_PISTON_LEFT && grid[y][x] != pixNum.PUSH_PISTON_LEFT) || touchingPixel(x, y, pixNum.DEACTIVATOR));
+            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_LEFT && grid[y][x] != pixNum.STICKY_PISTON_LEFT && grid[y][x] != pixNum.PUSH_PISTON_LEFT));
         case 3:
-            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_UP && grid[y][x] != pixNum.STICKY_PISTON_UP && grid[y][x] != pixNum.PUSH_PISTON_UP) || touchingPixel(x, y, pixNum.DEACTIVATOR));
+            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_UP && grid[y][x] != pixNum.STICKY_PISTON_UP && grid[y][x] != pixNum.PUSH_PISTON_UP));
     }
     return false;
 };
@@ -949,7 +949,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (moveX == -1 && firstCollapsible != -1) moveX = firstCollapsible;
                 if (moveX != -1) {
                     for (let i = moveX; i < x; i++) if (!canMoveTo(i, y)) return false;
-                    if (pistonOverride && moveX > 0 && grid[y][moveX - 1] == pixNum.PUSH_PISTON_RIGHT && !touchingPixel(moveX - 1, y, pixNum.DEACTIVATOR)) return false;
+                    if (pistonOverride && moveX > 0 && grid[y][moveX - 1] == pixNum.PUSH_PISTON_RIGHT && !isDeactivated(moveX - 1, y)) return false;
                     if (!movePusher) x--;
                     for (let i = moveX; i < x; i++) {
                         if (i == stationaryX && y == stationaryY) return false;
@@ -988,7 +988,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (moveY == -1 && firstCollapsible != -1) moveY = firstCollapsible;
                 if (moveY != -1) {
                     for (let i = moveY; i < y; i++) if (!canMoveTo(x, i)) return false;
-                    if (pistonOverride && moveY > 0 && grid[moveY - 1][x] == pixNum.PUSH_PISTON_DOWN && !touchingPixel(x, moveY - 1, pixNum.DEACTIVATOR)) return false;
+                    if (pistonOverride && moveY > 0 && grid[moveY - 1][x] == pixNum.PUSH_PISTON_DOWN && !isDeactivated(x, moveY - 1)) return false;
                     if (!movePusher) y--;
                     for (let i = moveY; i < y; i++) {
                         if (x == stationaryX && i == stationaryY) return false;
@@ -1505,7 +1505,8 @@ let simulationPaused = true;
 let slowSimulation = false;
 let fastSimulation = false;
 let runTicks = 0;
-let fps = 60;
+let fps = parseInt(window.localStorage.getItem('fps') ?? 60);
+let targetFps = fps;
 const frameList = [];
 const fpsList = [];
 const timingList = [];
@@ -1527,7 +1528,10 @@ timingGradient.addColorStop(0.7, '#0F0');
 timingGradient.addColorStop(1, '#0F0');
 let forceDrawTeamGrid = false;
 function draw() {
-    if (inMenuScreen) return;
+    if (inMenuScreen || document.hidden) {
+        targetFps = 2;
+        return;
+    } else targetFps = fps;
 
     // reset stuff
     ctx.resetTransform();
@@ -1735,7 +1739,7 @@ function drawFrame() {
 
     drawBrush();
 
-    if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && Math.round(deltaTime) % 6 != 0)) {
+    if (simulationPaused && runTicks <= 0 || (!simulationPaused && !fastSimulation && slowSimulation && performance.now() - lastTick < 100)) {
         frameList.push(performance.now());
     }
 
@@ -2163,7 +2167,7 @@ async function startDrawLoop() {
         await new Promise((resolve, reject) => {
             window.requestAnimationFrame(() => {
                 draw();
-                setTimeout(resolve, ~~(1000 / fps - (performance.now() - start) - 1));
+                setTimeout(resolve, ~~(1000 / targetFps - (performance.now() - start) - 1));
             });
         });
     }
