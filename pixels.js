@@ -5126,40 +5126,46 @@ const pixels = {
         description: 'Checks if non-air pixels on the three inputs are equal and deactivates the pixel to the left of it',
         draw: function (rectangles, ctx, avoidGrid) {
             ctx.globalAlpha = 1;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                // dont worry about it
-                forEachPixel(x, y, width, height, (x2, y2) => {
-                    let activated = true;
-                    let touchingPixel = -1;
-                    let active1 = false, active2 = false, active3 = false;
-                    let pixelCount = 0;
-                    if (isOnGrid(x2, y2 - 1) && !isAir(x2, y2 - 1)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2 - 1][x2];
-                        if (grid[y2 - 1][x2] != touchingPixel) activated = false;
-                        active1 = true;
-                        pixelCount++;
-                    }
-                    if (isOnGrid(x2 + 1, y2) && !isAir(x2 + 1, y2)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 + 1];
-                        if (grid[y2][x2 + 1] != touchingPixel) activated = false;
-                        active2 = true;
-                        pixelCount++;
-                    }
-                    if (isOnGrid(x2, y2 + 1) && !isAir(x2, y2 + 1)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2 + 1][x2];
-                        if (grid[y2 + 1][x2] != touchingPixel) activated = false;
-                        active3 = true;
-                        pixelCount++;
-                    }
-                    if (pixelCount < 2) activated = false;
-                    if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
-                    else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
-                    ctx.fillStyle = 'rgb(255, 0, 0)';
-                    if (active1) fillPixels(x2 + 5 / 12, y2, 1 / 6, 1 / 3, ctx);
-                    if (active2) fillPixels(x2 + 2 / 3, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
-                    if (active3) fillPixels(x2 + 5 / 12, y2 + 2 / 3, 1 / 6, 1 / 3, ctx);
+            if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
                 });
-            });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    // dont worry about it
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        let activated = true;
+                        let touchingPixel = -1;
+                        let active1 = false, active2 = false, active3 = false;
+                        let pixelCount = 0;
+                        if (isOnGrid(x2, y2 - 1) && !isAir(x2, y2 - 1)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2 - 1][x2];
+                            if (grid[y2 - 1][x2] != touchingPixel) activated = false;
+                            active1 = true;
+                            pixelCount++;
+                        }
+                        if (isOnGrid(x2 + 1, y2) && !isAir(x2 + 1, y2)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2][x2 + 1];
+                            if (grid[y2][x2 + 1] != touchingPixel) activated = false;
+                            active2 = true;
+                            pixelCount++;
+                        }
+                        if (isOnGrid(x2, y2 + 1) && !isAir(x2, y2 + 1)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2 + 1][x2];
+                            if (grid[y2 + 1][x2] != touchingPixel) activated = false;
+                            active3 = true;
+                            pixelCount++;
+                        }
+                        if (pixelCount < 2) activated = false;
+                        if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                        ctx.fillStyle = 'rgb(255, 0, 0)';
+                        if (active1) fillPixels(x2 + 5 / 12, y2, 1 / 6, 1 / 3, ctx);
+                        if (active2) fillPixels(x2 + 2 / 3, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                        if (active3) fillPixels(x2 + 5 / 12, y2 + 2 / 3, 1 / 6, 1 / 3, ctx);
+                    });
+                });
+            }
         },
         update: function (x, y) { },
         isActivated: function (x, y) {
@@ -5230,7 +5236,7 @@ const pixels = {
         flammability: 15,
         pushable: true,
         cloneable: true,
-        rotateable: false,
+        rotateable: true,
         rotation: 0,
         stickable: true,
         collectible: true,
@@ -5252,40 +5258,46 @@ const pixels = {
         description: 'Checks if non-air pixels on the three inputs are equal and deactivates the pixel above it',
         draw: function (rectangles, ctx, avoidGrid) {
             ctx.globalAlpha = 1;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                // dont worry about it
-                forEachPixel(x, y, width, height, (x2, y2) => {
-                    let activated = true;
-                    let touchingPixel = -1;
-                    let active1 = false, active2 = false, active3 = false;
-                    let pixelCount = 0;
-                    if (isOnGrid(x2 - 1, y2) && !isAir(x2 - 1, y2)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 - 1];
-                        if (grid[y2][x2 - 1] != touchingPixel) activated = false;
-                        active1 = true;
-                        pixelCount++;
-                    }
-                    if (isOnGrid(x2, y2 + 1) && !isAir(x2, y2 + 1)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2 + 1][x2];
-                        if (grid[y2 + 1][x2] != touchingPixel) activated = false;
-                        active2 = true;
-                        pixelCount++;
-                    }
-                    if (isOnGrid(x2 + 1, y2) && !isAir(x2 + 1, y2)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 + 1];
-                        if (grid[y2][x2 + 1] != touchingPixel) activated = false;
-                        active3 = true;
-                        pixelCount++;
-                    }
-                    if (pixelCount < 2) activated = false;
-                    if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
-                    else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
-                    ctx.fillStyle = 'rgb(255, 0, 0)';
-                    if (active1) fillPixels(x2, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
-                    if (active2) fillPixels(x2 + 5 / 12, y2 + 2 / 3, 1 / 6, 1 / 3, ctx);
-                    if (active3) fillPixels(x2 + 2 / 3, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+            if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
                 });
-            });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    // dont worry about it
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        let activated = true;
+                        let touchingPixel = -1;
+                        let active1 = false, active2 = false, active3 = false;
+                        let pixelCount = 0;
+                        if (isOnGrid(x2 - 1, y2) && !isAir(x2 - 1, y2)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2][x2 - 1];
+                            if (grid[y2][x2 - 1] != touchingPixel) activated = false;
+                            active1 = true;
+                            pixelCount++;
+                        }
+                        if (isOnGrid(x2, y2 + 1) && !isAir(x2, y2 + 1)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2 + 1][x2];
+                            if (grid[y2 + 1][x2] != touchingPixel) activated = false;
+                            active2 = true;
+                            pixelCount++;
+                        }
+                        if (isOnGrid(x2 + 1, y2) && !isAir(x2 + 1, y2)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2][x2 + 1];
+                            if (grid[y2][x2 + 1] != touchingPixel) activated = false;
+                            active3 = true;
+                            pixelCount++;
+                        }
+                        if (pixelCount < 2) activated = false;
+                        if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                        ctx.fillStyle = 'rgb(255, 0, 0)';
+                        if (active1) fillPixels(x2, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                        if (active2) fillPixels(x2 + 5 / 12, y2 + 2 / 3, 1 / 6, 1 / 3, ctx);
+                        if (active3) fillPixels(x2 + 2 / 3, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                    });
+                });
+            }
         },
         update: function (x, y) { },
         isActivated: function (x, y) {
@@ -5354,7 +5366,7 @@ const pixels = {
         flammability: 15,
         pushable: true,
         cloneable: true,
-        rotateable: false,
+        rotateable: true,
         rotation: 1,
         stickable: true,
         collectible: true,
@@ -5376,40 +5388,46 @@ const pixels = {
         description: 'Checks if non-air pixels on the three inputs are equal and deactivates the pixel to the right of it',
         draw: function (rectangles, ctx, avoidGrid) {
             ctx.globalAlpha = 1;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                // dont worry about it
-                forEachPixel(x, y, width, height, (x2, y2) => {
-                    let activated = true;
-                    let touchingPixel = -1;
-                    let active1 = false, active2 = false, active3 = false;
-                    let pixelCount = 0;
-                    if (isOnGrid(x2, y2 - 1) && !isAir(x2, y2 - 1)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2 - 1][x2];
-                        if (grid[y2 - 1][x2] != touchingPixel) activated = false;
-                        active1 = true;
-                        pixelCount++;
-                    }
-                    if (isOnGrid(x2 - 1, y2) && !isAir(x2 - 1, y2)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 - 1];
-                        if (grid[y2][x2 - 1] != touchingPixel) activated = false;
-                        active2 = true;
-                        pixelCount++;
-                    }
-                    if (isOnGrid(x2, y2 + 1) && !isAir(x2, y2 + 1)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2 + 1][x2];
-                        if (grid[y2 + 1][x2] != touchingPixel) activated = false;
-                        active3 = true;
-                        pixelCount++;
-                    }
-                    if (pixelCount < 2) activated = false;
-                    if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
-                    else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
-                    ctx.fillStyle = 'rgb(255, 0, 0)';
-                    if (active1) fillPixels(x2 + 5 / 12, y2, 1 / 6, 1 / 3, ctx);
-                    if (active2) fillPixels(x2, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
-                    if (active3) fillPixels(x2 + 5 / 12, y2 + 2 / 3, 1 / 6, 1 / 3, ctx);
+            if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
                 });
-            });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    // dont worry about it
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        let activated = true;
+                        let touchingPixel = -1;
+                        let active1 = false, active2 = false, active3 = false;
+                        let pixelCount = 0;
+                        if (isOnGrid(x2, y2 - 1) && !isAir(x2, y2 - 1)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2 - 1][x2];
+                            if (grid[y2 - 1][x2] != touchingPixel) activated = false;
+                            active1 = true;
+                            pixelCount++;
+                        }
+                        if (isOnGrid(x2 - 1, y2) && !isAir(x2 - 1, y2)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2][x2 - 1];
+                            if (grid[y2][x2 - 1] != touchingPixel) activated = false;
+                            active2 = true;
+                            pixelCount++;
+                        }
+                        if (isOnGrid(x2, y2 + 1) && !isAir(x2, y2 + 1)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2 + 1][x2];
+                            if (grid[y2 + 1][x2] != touchingPixel) activated = false;
+                            active3 = true;
+                            pixelCount++;
+                        }
+                        if (pixelCount < 2) activated = false;
+                        if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                        ctx.fillStyle = 'rgb(255, 0, 0)';
+                        if (active1) fillPixels(x2 + 5 / 12, y2, 1 / 6, 1 / 3, ctx);
+                        if (active2) fillPixels(x2, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                        if (active3) fillPixels(x2 + 5 / 12, y2 + 2 / 3, 1 / 6, 1 / 3, ctx);
+                    });
+                });
+            }
         },
         update: function (x, y) { },
         isActivated: function (x, y) {
@@ -5478,7 +5496,7 @@ const pixels = {
         flammability: 15,
         pushable: true,
         cloneable: true,
-        rotateable: false,
+        rotateable: true,
         rotation: 2,
         stickable: true,
         collectible: true,
@@ -5500,40 +5518,46 @@ const pixels = {
         description: 'Checks if non-air pixels on the three inputs are equal and deactivates the pixel below it',
         draw: function (rectangles, ctx, avoidGrid) {
             ctx.globalAlpha = 1;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                // dont worry about it
-                forEachPixel(x, y, width, height, (x2, y2) => {
-                    let activated = true;
-                    let touchingPixel = -1;
-                    let active1 = false, active2 = false, active3 = false;
-                    let pixelCount = 0;
-                    if (isOnGrid(x2 - 1, y2) && !isAir(x2 - 1, y2)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 - 1];
-                        if (grid[y2][x2 - 1] != touchingPixel) activated = false;
-                        active1 = true;
-                        pixelCount++;
-                    }
-                    if (isOnGrid(x2, y2 - 1) && !isAir(x2, y2 - 1)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2 - 1][x2];
-                        if (grid[y2 - 1][x2] != touchingPixel) activated = false;
-                        active2 = true;
-                        pixelCount++;
-                    }
-                    if (isOnGrid(x2 + 1, y2) && !isAir(x2 + 1, y2)) {
-                        if (touchingPixel == -1) touchingPixel = grid[y2][x2 + 1];
-                        if (grid[y2][x2 + 1] != touchingPixel) activated = false;
-                        active3 = true;
-                        pixelCount++;
-                    }
-                    if (pixelCount < 2) activated = false;
-                    if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
-                    else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
-                    ctx.fillStyle = 'rgb(255, 0, 0)';
-                    if (active1) fillPixels(x2, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
-                    if (active2) fillPixels(x2 + 5 / 12, y2, 1 / 6, 1 / 3, ctx);
-                    if (active3) fillPixels(x2 + 2 / 3, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+            if (avoidGrid) {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
                 });
-            });
+            } else {
+                forRectangles(rectangles, (x, y, width, height, redrawing) => {
+                    // dont worry about it
+                    forEachPixel(x, y, width, height, (x2, y2) => {
+                        let activated = true;
+                        let touchingPixel = -1;
+                        let active1 = false, active2 = false, active3 = false;
+                        let pixelCount = 0;
+                        if (isOnGrid(x2 - 1, y2) && !isAir(x2 - 1, y2)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2][x2 - 1];
+                            if (grid[y2][x2 - 1] != touchingPixel) activated = false;
+                            active1 = true;
+                            pixelCount++;
+                        }
+                        if (isOnGrid(x2, y2 - 1) && !isAir(x2, y2 - 1)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2 - 1][x2];
+                            if (grid[y2 - 1][x2] != touchingPixel) activated = false;
+                            active2 = true;
+                            pixelCount++;
+                        }
+                        if (isOnGrid(x2 + 1, y2) && !isAir(x2 + 1, y2)) {
+                            if (touchingPixel == -1) touchingPixel = grid[y2][x2 + 1];
+                            if (grid[y2][x2 + 1] != touchingPixel) activated = false;
+                            active3 = true;
+                            pixelCount++;
+                        }
+                        if (pixelCount < 2) activated = false;
+                        if (activated) imagePixels(x2, y2, 1, 1, this.prerenderedFrames[1], ctx);
+                        else imagePixels(x2, y2, 1, 1, this.prerenderedFrames[0], ctx);
+                        ctx.fillStyle = 'rgb(255, 0, 0)';
+                        if (active1) fillPixels(x2, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                        if (active2) fillPixels(x2 + 5 / 12, y2, 1 / 6, 1 / 3, ctx);
+                        if (active3) fillPixels(x2 + 2 / 3, y2 + 5 / 12, 1 / 3, 1 / 6, ctx);
+                    });
+                });
+            }
         },
         update: function (x, y) { },
         isActivated: function (x, y) {
@@ -5602,7 +5626,7 @@ const pixels = {
         flammability: 15,
         pushable: true,
         cloneable: true,
-        rotateable: false,
+        rotateable: true,
         rotation: 3,
         stickable: true,
         collectible: true,

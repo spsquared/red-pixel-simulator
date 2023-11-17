@@ -821,16 +821,16 @@ function flow(x, y, isPassable = isAir) {
     }
 };
 function canPush(x, y, dir, stickPush = 0, ignorePistons = false) {
-    if (!validChangingPixel(x, y) || !pixelAt(x, y).pushable || (stickPush != 0 && !pixelAt(x, y).stickable) || (stickPush == 1 && grid[y][x] == pixNum.UNSLIME) || (stickPush == 2 && grid[y][x] == pixNum.SLIME) || (grid[y][x] == pixNum.GOAL && targetGrid[y][x]) || isDeactivated(x, y)) return false;
+    if (!validChangingPixel(x, y) || !pixelAt(x, y).pushable || (stickPush != 0 && !pixelAt(x, y).stickable) || (stickPush == 1 && grid[y][x] == pixNum.UNSLIME) || (stickPush == 2 && grid[y][x] == pixNum.SLIME) || (grid[y][x] == pixNum.GOAL && targetGrid[y][x])) return false;
     switch (dir) {
         case 0:
-            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_RIGHT && grid[y][x] != pixNum.STICKY_PISTON_RIGHT && grid[y][x] != pixNum.PUSH_PISTON_RIGHT));
+            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_RIGHT && grid[y][x] != pixNum.STICKY_PISTON_RIGHT && grid[y][x] != pixNum.PUSH_PISTON_RIGHT) || isDeactivated(x, y));
         case 1:
-            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_DOWN && grid[y][x] != pixNum.STICKY_PISTON_DOWN && grid[y][x] != pixNum.PUSH_PISTON_DOWN));
+            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_DOWN && grid[y][x] != pixNum.STICKY_PISTON_DOWN && grid[y][x] != pixNum.PUSH_PISTON_DOWN) || isDeactivated(x, y));
         case 2:
-            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_LEFT && grid[y][x] != pixNum.STICKY_PISTON_LEFT && grid[y][x] != pixNum.PUSH_PISTON_LEFT));
+            return grid[y][x] != pixNum.SLIDER_VERTICAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_LEFT && grid[y][x] != pixNum.STICKY_PISTON_LEFT && grid[y][x] != pixNum.PUSH_PISTON_LEFT) || isDeactivated(x, y));
         case 3:
-            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_UP && grid[y][x] != pixNum.STICKY_PISTON_UP && grid[y][x] != pixNum.PUSH_PISTON_UP));
+            return grid[y][x] != pixNum.SLIDER_HORIZONTAL && (ignorePistons || (grid[y][x] != pixNum.PISTON_UP && grid[y][x] != pixNum.STICKY_PISTON_UP && grid[y][x] != pixNum.PUSH_PISTON_UP) || isDeactivated(x, y));
     }
     return false;
 };
@@ -1027,7 +1027,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (moveX == -1 && firstCollapsible != -1) moveX = firstCollapsible;
                 if (moveX != -1) {
                     for (let i = moveX; i > x; i--) if (!canMoveTo(i, y)) return false;
-                    if (pistonOverride && moveX < gridWidth - 1 && grid[y][moveX + 1] == pixNum.PUSH_PISTON_LEFT && !touchingPixel(moveX + 1, y, pixNum.DEACTIVATOR)) return false;
+                    if (pistonOverride && moveX < gridWidth - 1 && grid[y][moveX + 1] == pixNum.PUSH_PISTON_LEFT && !isDeactivated(moveX + 1, y)) return false;
                     if (!movePusher) x++;
                     for (let i = moveX; i > x; i--) {
                         if (i == stationaryX && y == stationaryY) return false;
@@ -1066,7 +1066,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 if (moveY == -1 && firstCollapsible != -1) moveY = firstCollapsible;
                 if (moveY != -1) {
                     for (let i = moveY; i > y; i--) if (!canMoveTo(x, i)) return false;
-                    if (pistonOverride && moveY < gridHeight - 1 && grid[moveY + 1][x] == pixNum.PUSH_PISTON_UP && !touchingPixel(x, moveY + 1, pixNum.DEACTIVATOR)) return false;
+                    if (pistonOverride && moveY < gridHeight - 1 && grid[moveY + 1][x] == pixNum.PUSH_PISTON_UP && !isDeactivated(x, moveY + 1)) return false;
                     if (!movePusher) y++;
                     for (let i = moveY; i > y; i--) {
                         if (x == stationaryX && i == stationaryY) return false;
@@ -1169,7 +1169,7 @@ function rayTrace(x1, y1, x2, y2, cb) {
 };
 function possibleRotations(id) {
     if (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2 || id == pixNum.ROTATOR_CLOCKWISE || id == pixNum.ROTATOR_COUNTERCLOCKWISE) return 2;
-    if ((id >= pixNum.PISTON_LEFT && id <= pixNum.ROTATOR_DOWN) || (id >= pixNum.LASER_LEFT && id <= pixNum.LASER_DOWN) || (id >= pixNum.FLAMETHROWER_LEFT && id <= pixNum.FLAMETHROWER_DOWN)) return 4;
+    if ((id >= pixNum.PISTON_LEFT && id <= pixNum.ROTATOR_DOWN) || (id >= pixNum.COMPARATOR_LEFT && id <= pixNum.COMPARATOR_DOWN) || (id >= pixNum.LASER_LEFT && id <= pixNum.LASER_DOWN) || (id >= pixNum.FLAMETHROWER_LEFT && id <= pixNum.FLAMETHROWER_DOWN)) return 4;
     return 1;
 };
 function rotatePixel(x, y) {
