@@ -164,9 +164,6 @@ function transitionToGame(cb) {
     loadingTip.style.opacity = '1';
     transitionBarTop.style.transform = 'translateY(60vh)';
     transitionBarBottom.style.transform = 'translateY(-60vh)';
-    setTransitionTimeout(() => {
-        inMenuScreen = false;
-    }, 500);
     setTransitionTimeout(async () => {
         if (typeof cb == 'function') await cb();
         menuScreen.style.backgroundColor = 'transparent';
@@ -227,6 +224,9 @@ function transitionWithinGame(cb) {
     loadingTip.style.opacity = '1';
     transitionBarTop.style.transform = 'translateY(60vh)';
     transitionBarBottom.style.transform = 'translateY(-60vh)';
+    setTransitionTimeout(() => {
+        inMenuScreen = false;
+    }, 500);
     setTransitionTimeout(async () => {
         if (typeof cb == 'function') await cb();
         clearInterval(loadingTipInterval);
@@ -234,7 +234,6 @@ function transitionWithinGame(cb) {
         transitionBarTop.style.transform = '';
         transitionBarBottom.style.transform = '';
         document.getElementById('sidebar').scrollTo(0, 0);
-        inMenuScreen = false;
         setTransitionTimeout(() => {
             menuScreen.style.visibility = 'hidden';
             menuScreen.style.transitionDuration = '';

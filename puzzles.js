@@ -214,6 +214,90 @@ const puzzles = [
                 },
                 difficulty: 'Medium',
                 id: 'cff125a2-a61e-44bd-a0dd-698dd6b531a8'
+            },
+            {
+                name: 'Secret Waterfall',
+                description: `Well that's a pleasant surprise! An underground... waterfall. Close enough. The only problem here is that monster way up in that box. Well, you have a source of lava, at least.<br><br><i>Level credit: sp</i>`,
+                saveCode: '&1;50-50;0000;basalt-13:stone-8:basalt-29:stone-2:wood-6:stone:basalt-29:stone-2:wood:air-4:wood:stone:basalt-29:stone-2:wood:clay:air:monster:air:wood:stone-3:basalt-26:stone-3:wood-6:stone-3:basalt-26:stone-c:basalt-f:stone-4:basalt-13:stone-d:basalt-c:stone-8:basalt-10:stone-e:basalt-b:stone-3:gravel-3:stone-3:basalt-d:stone-11:basalt-a:stone-4:gravel-4:stone-2:basalt-c:stone-12:basalt-9:stone-5:gravel-4:stone-2:basalt-9:stone-16:basalt-4:stone-8:gravel-6:stone:basalt-4:stone-27:gravel-6:stone:basalt-3:stone-29:gravel-2:stone-4:basalt-3:stone-2f:basalt:stone-2b:air:gunpowder-2:air-3:stone-1c:air-11:gunpowder-2:air-3:stone-16:air-1c:stone-13:air-1f:stone-f:air-23:stone-7:air-87:basalt:crate-2:air-5:monster:air-29:basalt:water-7:wood-4:air-26:basalt:water-7:air:wood:air-28:cloner_left:water-7:wood:air-29:basalt-3:water-5:air-2b:basalt-3:water-4:air-2b:basalt-7:air-2c:basalt-6:air-2f:basalt-3:air-30:basalt-2:air-31:basalt:air-31:basalt:air-31:basalt:air-31:basalt:air-30:basalt-2:water-3:stone-2:air-27:wood-2:air-2:basalt-2:water-3:stone-7:air-21:wood-4:air:basalt-2:water-2:stone-a:air-17:wood:air:wood-2:air-4:wood:air:monster:wood:basalt-3:stone-e:air-14:wood:air:wood:air:wood-2:air-2:wood-2:monster-2:basalt-4:stone-10:air-12:stone-5:basalt:deleter-2:basalt-8:stone-13:air-e:basalt-2:stone-3:basalt-d:stone-13:basalt:lava-a:basalt-4:stone-2:basalt-f:stone-12:basalt-2:lava-9:basalt-16:stone-10:basalt-3:lava-7:basalt-1a:stone-e:basalt-6:lava-3:basalt-1c:stone-b:basalt-29:stone-7:basalt-135:;9c4:;31:1:2b6:1:2:3:2b:2:2:3:2b:7:2b:7:39:3:28:a:28:a:29:9:2c:6:2a:8:29:9:28:a:28:a:28:a:28:a:28:a:3de:;9c4:',
+                backgroundColor: '#808080',
+                inventory: {
+                    wood: 6,
+                    moss: 1,
+                    stone: 40
+                },
+                difficulty: 'Easy',
+                id: '0a66b866-4181-4a02-ba41-1df0b48c12ed'
+            },
+            {
+                name: '(Nuclear) Lush Caves',
+                description: `Wow, who would have guess that <i>this</i> was behind that waterfall? Hold on, something's wrong... Why are there nukes? And why is there concrete?<br><br><i>Level credit: sp</i>`,
+                saveCode: '&1;40-40;0000;stone-4:steel_crate:stone-e:moss:air-a:moss:stone-d:cloner_down:stone-f:moss:air-9:moss:stone-9:moss-3:stone-11:moss:monster:air-6:monster:air:moss:stone-9:air-3:moss-4:stone-e:moss:air:monster:air:monster-2:air:moss-2:stone-a:air-5:plant:air:moss-3:stone-c:moss-6:stone-c:air-5:plant:air-4:moss-2:stone-19:moss-3:air-5:plant:air-5:plant:moss-2:stone-15:moss-2:air:plant:air-6:nuke:air-5:plant:air-2:moss-3:stone-10:moss-2:air-3:plant:air-6:nuke_diffuser:air-5:plant:air-5:moss-3:stone-9:moss-4:air-5:plant:air-c:plant:air-5:plant:air-2:moss-9:air-2:plant:air-6:plant:air-c:plant:air-5:plant:air-6:plant:air-6:plant:air-6:plant:air-c:nuke:air-5:plant:air-6:plant:air-6:plant:air-6:nuke:air-c:nuke_diffuser:air-5:nuke:air-6:plant:air-6:nuke:air-6:nuke_diffuser:air-12:nuke_diffuser:air-6:plant:air-6:nuke_diffuser:air-20:plant:air-27:nuke:air-27:nuke_diffuser:air-65:moss-6:air-21:moss:stone-6:moss:air-20:moss:stone-7:moss:air-1f:concrete:stone-7:moss:air-1f:concrete-2:stone-7:moss:air-13:crate:water-5:air-4:concrete-3:stone-7:moss:air-f:crate:water-3:mud:silt-5:moss-4:concrete-4:stone-7:moss:air-a:crate:water-3:mud:silt-3:mud-3:silt-2:mud:stone-4:concrete-5:stone-7:moss-2:air-4:crate:water-3:mud:silt-4:mud-9:stone-3:concrete-7:stone-8:moss:silt:water-2:silt-4:mud:silt-3:mud-a:stone-2:concrete-9:stone-8:mud:silt-5:mud-f:stone:concrete-a:stone-8:mud-15:concrete-c:stone-7:mud-15:concrete-d:stone-7:mud-f:stone-5:concrete-e:stone-a:mud-8:stone-8:concrete-8:air-3:concrete-3:stone-1a:concrete-6:air-5:concrete-4:stone-19:concrete-5:moss:air-6:concrete-5:stone-17:concrete-6:moss:monster:air-4:moss:concrete-6:stone-15:concrete-7:moss:air:monster:air:moss:concrete-10:stone-c:concrete-8:moss-3:concrete-13:stone-a:concrete-40:;640:;117:1:27:1:27:1:27:1:27:1:27:1:27:1:26:2:26:2:26:2:26:2:26:2:26:2:26:2:26:2:26:2:26:2:2a8:;640:',
+                backgroundColor: '#8cbe8c',
+                inventory: {
+                    lava: 1,
+                    concrete: 4,
+                    piston_left: 1,
+                    piston_up: 4,
+                    rotator_left: 1,
+                    nuke: 4
+                },
+                difficulty: 'Hard',
+                id: 'c9175af1-0b42-4f31-8118-aaf920fc8569'
+            },
+            {
+                name: 'That\'s Deep',
+                description: `What?<br><br><i>Level credit: sp</i>`,
+                saveCode: '&1;50-50;0000;basalt-14:stone-5:basalt-12:stone-7:basalt-15:stone-5:basalt-13:stone-5:basalt-15:stone:gravel-2:stone-2:basalt-15:stone-3:basalt-16:stone-3:basalt-17:stone-2:basalt-16:stone-2:monster:basalt-18:stone:basalt-15:air:crate:gunpowder:basalt-24:air-4:basalt-5:air-3:basalt-21:air-9:basalt-4:air-7:basalt-9:air-2:monster:basalt-3:air:basalt-9:air-f:basalt-3:air-9:basalt-4:air-5:basalt-4:air-2:basalt-8:air-f:basalt-2:air-a:basalt-3:air-6:basalt-4:air-4:basalt-6:air-10:basalt:air-a:basalt-3:air-7:basalt-3:air-1a:basalt:air-b:basalt-2:air-7:basalt-3:air-1a:basalt:air-b:basalt:air-8:basalt-2:air-27:basalt:air-8:basalt-2:air-31:basalt:air-31:basalt:air-31:basalt:air-105:basalt-4:air-2e:basalt-4:air-2e:basalt-5:air-2d:basalt-5:air-2d:basalt-5:air-2d:basalt-5:air-2d:basalt-5:air-2d:basalt-6:air-2c:basalt-7:air-29:basalt-a:air-f:basalt:stone:air-3:stone:basalt:air-e:basalt-f:lava-e:basalt-2:stone:air-2:basalt-2:lava-c:basalt-12:lava-e:basalt:stone:air:stone:basalt-2:lava-c:basalt-12:lava-d:basalt-2:stone-3:basalt:lava-c:basalt-14:lava-b:basalt-3:stone:air:stone:basalt:lava-b:basalt-17:lava-5:basalt-7:stone:air:stone:basalt:lava-6:basalt-28:stone:air:stone:basalt-2:lava:basalt-2c:stone:air:stone:basalt-2f:stone:air:stone-2:basalt-2d:stone:air-2:stone-2:basalt-14:stone:basalt-15:stone-4:air-3:stone-2:basalt-13:stone-4:basalt-11:stone-4:air-5:stone-2:basalt-11:stone-6:basalt-10:stone-2:air-8:stone:basalt-10:stone-8:basalt-f:stone:air-a:stone:basalt-f:stone-9:basalt-f:stone:air-2:monster:air-6:monster:basalt-f:stone-9:basalt-10:monster:air:monster-2:air-3:monster:air:basalt-f:stone-c:basalt-f:monster-4:air:monster-3:basalt-d:stone-f:basalt-e:monster-5:basalt-e:stone-13:basalt-1e:stone-9:;9c4:;190:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:31:1:31:1:541:;9c4:',
+                backgroundColor: '#ffa082',
+                inventory: {
+                    wood: 1,
+                    moss: 1,
+                    stone: 10,
+                    sponge: 1,
+                    pump: 1,
+                    piston_right: 3
+                },
+                difficulty: 'Medium',
+                id: '31172f98-4365-4944-855e-9b6f28663f18'
+            },
+            {
+                name: 'Oh (Underground) Well',
+                description: `Again? Not sure why this is here, but it's in our - sorry, <i>your</i> - way, but at least you have actual useful stuff this time. I think.<br><br><i>Level credits: sp</i>`,
+                saveCode: '&1;50-50;0000;air-18a:sand-6:air-2b:sand-7:air-20:concrete:water:concrete:air-7:sand-8:air-20:concrete:water:concrete:air-5:sand-14:air-6:sand-10:concrete:water:concrete:sand-1a:monster:sand-14:concrete:water:concrete:sand-2f:concrete:water:concrete:sand-2f:concrete:water:concrete:sand-2f:concrete:water:concrete:sand-2f:concrete:water:concrete:sand-2f:concrete:water:concrete:sand-2f:concrete:water:concrete:sand-2f:concrete:water:concrete:sand-28:steel_crate-7:concrete:water:concrete:sand-1b:steel_crate-d:stone-7:concrete:water:concrete:sand-8:stone-7:steel_crate-c:stone-14:concrete:water:concrete:sand-2:stone-2d:concrete:water:concrete:stone-2f:concrete:water:concrete:stone-2f:concrete:water:concrete:stone-27:gravel-3:stone-5:concrete:water:concrete:stone-12:basalt-4:stone-8:basalt-3:stone-4:gravel-7:stone:basalt-2:concrete:water:concrete:basalt-4:stone-a:ash:stone:basalt-6:stone-3:basalt-a:stone:basalt:gravel-7:basalt-2:bricks-2:water:bricks-2:basalt-4:stone-6:ash-4:basalt-10:air-3:basalt-4:gravel-4:basalt-2:bricks-3:ice-3:bricks-3:basalt-5:ash-7:air-14:basalt-7:bricks-3:ice-7:bricks-3:basalt-4:ash-6:air-19:bricks-3:ice-b:bricks-3:basalt-3:ash-5:air-17:bricks-3:ice-f:bricks-3:basalt:ash-5:air-15:bricks-3:concrete:ice-11:concrete:bricks-3:ash-4:air-13:bricks-3:ice:concrete:ice-13:concrete:ice:bricks-3:ash-2:air-11:bricks-3:ice-2:concrete:ice-15:concrete:ice-2:bricks-3:air-11:bricks:ice-3:concrete:ice-17:concrete:ice-3:bricks:air-11:concrete:ice-2:concrete:ice-19:concrete:ice-2:concrete:air-11:concrete:ice:concrete:ice-1b:concrete:ice:concrete:air-11:concrete-2:ice-1d:concrete-2:air-11:concrete:ice-1f:concrete:basalt-4:air-d:concrete:ice-1f:concrete:basalt-7:air-a:concrete:ice-1f:concrete:basalt-8:air-9:concrete:ice-1f:concrete:basalt-a:air-7:concrete:ice-1f:concrete:basalt-c:air-5:concrete:ice-4:basalt-b:ice-10:concrete:basalt-25:ice-6:basalt-7:stone-3:basalt-2f:stone-5:basalt-2d:stone-5:basalt-45:;9c4:;5dc:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:2d:5:31:1:1bd:;9c4:',
+                backgroundColor: '#808080',
+                inventory: {
+                    concrete: 10,
+                    piston_up: 1,
+                    copier_left: 1,
+                    copier_up: 3,
+                    copier_right: 1,
+                    rotator_left: 1,
+                    rotator_up: 1,
+                    rotator_right: 1,
+                    rotator_down: 1,
+                    collapsible: 2,
+                    detonator: 4,
+                    gunpowder: 4,
+                    c4: 4
+                },
+                difficulty: 'Medium',
+                id: '61250451-ba8a-466a-b965-810fa404a959'
+            },
+            {
+                name: 'Monstrous Cave Lair',
+                description: `WOAH! We've gotten a <i>LOT</i> more than we bargained for here! Well, just you, I keep forgetting that I'm not actually involved in any of your stuff. Ah, well, just blow this place up and get it over with then.<br><br><i>Level credits: sp</i>`,
+                saveCode: '&1;80-80;0000;stone-c:basalt-38:stone-8:air-2:stone-d:basalt-39:stone-8:air-2:stone-d:basalt-39:stone-8:air-2:stone-a:basalt-3d:stone-7:air-2:stone-8:basalt-41:stone-5:air-2:stone-7:basalt-43:stone-4:air-2:stone-6:basalt-2b:air:basalt-19:stone-3:air-2:stone-5:basalt-29:air-6:basalt-19:stone:air-2:stone-5:basalt-27:air-a:basalt-18:air-2:stone-4:basalt-26:air-f:basalt-15:air-2:stone-2:basalt-24:air:concrete:air-13:basalt-13:air-2:basalt:stone:basalt-22:air-3:concrete:air-14:basalt-12:air-2:basalt-1f:air-8:concrete:air-14:basalt-12:air-2:basalt-e:air-5:concrete:air-7:concrete:air-b:concrete:air-15:basalt-11:air-2:basalt-c:air-6:concrete:air-8:concrete:air-b:concrete:air-16:basalt-10:air-2:basalt-c:air-5:concrete:air-9:concrete:air-b:concrete:air-16:basalt-10:air-2:basalt-b:air-5:concrete:air-a:concrete:air-a:wood-3:air-15:basalt-10:air-2:basalt-b:air-4:concrete:air-b:concrete:air-7:wood-3:air-18:basalt-10:air-2:basalt-a:concrete:air-3:concrete:air-c:concrete:air-4:wood-3:air-1c:basalt-f:air-2:basalt-a:concrete:air-2:concrete:air-d:concrete:air:wood-3:air-1f:basalt-f:air-2:basalt-9:air:concrete:air:concrete:air-d:wood-3:air-23:basalt-e:air-2:basalt-9:air:concrete-2:air-25:stone_bricks-3:air-c:concrete:air-4:basalt-9:air-2:basalt-9:air:concrete:air-22:stone_bricks-5:laser_scatterer:stone_bricks-5:air-9:concrete:air-5:basalt-7:air-2:basalt-9:air:concrete:air-21:stone_bricks-2:air:wood-2:air:laser_scatterer:air:wood-2:air:stone_bricks-2:air-9:concrete:air-4:basalt-7:air-2:basalt-9:air:concrete:air-20:stone_bricks-2:air-5:goal:air-5:stone_bricks-2:air-9:concrete:air-5:basalt-5:air-2:basalt-8:air-2:concrete:air-1e:stone_bricks-3:air-d:stone_bricks-3:air-8:concrete:air-4:concrete:basalt-4:air-2:basalt-8:air-2:concrete:air-4:laser_scatterer:air-1a:wood:air-f:wood:air-a:concrete:air-3:concrete:air:basalt-3:air-2:basalt-8:concrete:air:concrete:air-4:laser_scatterer:air-1a:wood:air-8:monster:air:monster:air-4:wood:air-b:concrete:air-2:concrete:air-2:basalt-2:air-2:basalt-7:air-2:concrete-2:air-4:laser_scatterer:air-18:monster:air:wood:air-7:crate-4:air-3:monster:wood:air-3:monster:air-8:concrete:air:concrete:air-2:basalt-2:air-2:basalt-7:air-3:concrete:air-4:laser_scatterer:air-18:stone_bricks-2:basalt-2:water-d:basalt-6:air-9:concrete-2:air-2:basalt-2:air-2:basalt-7:air-3:concrete:air-4:laser_scatterer:air-17:stone_bricks-2:basalt-4:water-b:basalt-5:air-c:concrete:air-2:basalt-2:air-2:basalt-7:air-3:concrete:air-3:laser_scatterer:steel:laser_scatterer:air-15:stone_bricks-2:air-2:basalt-4:water-a:basalt-4:air-d:concrete:air-2:basalt-2:air-2:basalt-7:air-3:concrete:air-3:steel:laser_scatterer:steel:air-14:stone_bricks-2:air-4:basalt-4:water-9:basalt-4:air-d:concrete:air-2:basalt-2:air-2:basalt-7:concrete:air-2:concrete:air-3:laser_scatterer:steel:laser_scatterer:air-13:stone_bricks-2:air-6:basalt-7:water-4:basalt-5:air-d:concrete:air-2:basalt-2:air-2:basalt-7:air:concrete:air:concrete:air-2:laser_scatterer:air-3:laser_scatterer:air-11:stone_bricks-2:air-b:basalt-4:water-3:basalt-5:air-d:concrete:air:concrete:basalt-2:air-2:basalt-7:air-2:concrete-2:air-2:laser_scatterer:air-3:laser_scatterer:air-10:stone_bricks-2:air-d:basalt-4:water-2:basalt-4:air-e:concrete-2:air:basalt-2:air-2:basalt-8:air-2:concrete:air-2:laser_scatterer:air:clay:air:laser_scatterer:air-f:stone_bricks-2:air-f:basalt-8:air-f:concrete:air-2:basalt-2:air-2:basalt-8:air-2:concrete:air-2:laser_scatterer:air:laser_scatterer:monster:laser_scatterer:air-e:stone_bricks-2:air-11:basalt-5:air-11:concrete:air-2:basalt-2:air-2:basalt-8:air-2:concrete:air:laser_scatterer:steel-5:laser_scatterer:air-c:stone_bricks-2:air-28:concrete:air-2:basalt-2:air-2:basalt-8:air-2:concrete:air:laser_scatterer:air-5:laser_scatterer:air-b:stone_bricks-2:air-29:concrete:air-2:basalt-2:air-2:basalt-8:air-2:concrete:air:laser_scatterer:air-5:laser_scatterer:air-a:stone_bricks-2:air-2a:concrete:air-2:basalt-2:air-2:basalt-9:air:concrete:air:laser_scatterer:air-2:deleter:air-2:laser_scatterer:air-9:stone_bricks-2:air-3:monster:air-27:concrete:air-2:basalt-2:air-2:basalt-b:air:laser_scatterer:monster:air:laser_scatterer:air-2:laser_scatterer:air-8:stone_bricks-2:air:wood:plant:wood-2:air-27:concrete:air:concrete:basalt-2:air-2:basalt-b:air:laser_scatterer:monster-2:laser_scatterer:monster-2:laser_scatterer:air-4:monster:air-2:stone_bricks-2:air-3:wood:air-29:concrete-2:air:basalt-2:air-2:basalt-15:stone_bricks-c:air-28:concrete:air-2:basalt-2:air-2:basalt-17:air:stone_bricks:air-2:stone_bricks:air-2:stone_bricks:air:stone_bricks-2:air-20:stone_bricks-4:air-3:concrete:air:basalt-3:air-2:basalt-18:stone_bricks:air-2:stone_bricks:air-2:stone_bricks:air-2:stone_bricks-2:air-f:stone_bricks:air-e:stone_bricks-2:air-2:stone_bricks-2:air-2:concrete:air:basalt-3:air-2:basalt-1a:air:stone_bricks:air-2:stone_bricks:air-3:stone_bricks-2:air-c:stone_bricks-5:air-b:stone_bricks-2:air-4:stone_bricks-2:air:concrete:air:basalt-3:air-2:basalt-1b:stone_bricks:air-2:stone_bricks:air-4:stone_bricks-2:monster:air-6:stone_bricks-5:wood-3:stone_bricks-2:air-b:wood:air-4:wood:air-2:concrete-5:steel-2:concrete-2:basalt-1a:air-2:stone_bricks:air-5:stone_bricks-2:air-7:wood:air-2:wood:air-3:wood:air-c:wood:air-4:wood:air-2:reinforced_glass:air-3:reinforced_glass:air-2:reinforced_glass:air:basalt-1c:stone_bricks:air-6:stone_bricks-2:air-6:wood:air-2:wood:air-3:wood:air-6:crate:air-5:wood:air-4:wood:air-2:reinforced_glass:air-3:reinforced_glass:air-2:reinforced_glass:air:basalt-1d:air-7:stone_bricks-2:air-5:wood:air-2:wood:air:monster:air:wood:air-5:crate-2:air-5:wood:air:monster:air-2:wood:air:monster:reinforced_glass:monster:air-2:reinforced_glass:air-2:reinforced_glass:air:basalt-1d:air-8:stone_bricks-2:air-3:steel-9:air-3:monster:air:crate-2:air-2:monster:air:stone_bricks:basalt-6:stone_bricks-7:steel-2:stone_bricks-2:basalt-1d:air-9:stone_bricks-4:basalt-8:wet_ash-a:stone_bricks-2:basalt-d:stone_bricks-4:basalt-1e:air-9:basalt-b:wet_ash-b:basalt-31:air-9:basalt-10:wet_ash-5:basalt-32:air-9:basalt-46:air-a:basalt-45:air-b:basalt-44:concrete:air-b:basalt-43:concrete-3:air-a:basalt-42:concrete-4:air-b:basalt-3f:concrete-6:air-c:basalt-3c:concrete-8:air-e:basalt-3a:concrete-9:air-8:steel-8:wet_ash:basalt-35:concrete-a:air-9:wood:ice-4:wood:wet_ash-3:basalt-33:concrete-4:monster:concrete-6:air-9:wood:ice:c4-2:ice:wood:wet_ash-3:basalt-33:concrete-b:air-9:wood:ice:monster:steel:ice:wood:wet_ash-3:basalt-34:concrete-a:air-9:wood:ice-4:wood:wet_ash-4:basalt-36:concrete-8:air-6:stone_bricks:steel-8:wet_ash-3:basalt-3d:concrete-2:air-4:stone_bricks:basalt-3:wet_ash-a:basalt-3e:stone_bricks-4:basalt-6:wet_ash-8:basalt-4b:wet_ash-4:basalt-592:;1900:;344:2:4c:4:47:9:36:6:7:d:34:7:8:d:34:6:9:d:33:6:a:b:35:5:b:8:38:4:c:5:3b:3:d:2:3e:2:4e:1:34:5:4c:6:37:4:1:4:b:5:36:5:1:5:b:6:33:d:b:5:31:11:a:4:31:9:1:1:1:5:b:3:31:8:4:3:1:1:c:2:4f:1:4d6:1:4f:2:4e:3:4d:4:4c:5:4b:6:4a:7:49:8:48:9:47:9:47:9:7aa:;1900:',
+                backgroundColor: '#808080',
+                inventory: {
+                    ash: 10,
+                    piston_down: 2,
+                    cloner_down: 3,
+                    flamethrower_right: 6,
+                    gunpowder: 10,
+                    c4: 4
+                },
+                difficulty: 'Hard',
+                id: '39b39752-f74a-40fc-b32b-12b02959a3f6'
             }
         ]
     },
@@ -297,7 +381,7 @@ const puzzles = [
             },
             {
                 name: 'Explosive Rafting',
-                description: `Is it even correct to call <i>that</i> a raft? Is that explosives I see?<br><br><i>Level credits: Billiam</i>`,
+                description: `Is it even correct to call <i>that</i> a raft? Is that explosives I see?<br><br><i>Level credit: Billiam</i>`,
                 saveCode: '50-50;0000;air-1039:wood:air-49:wood:air-49:wood:air-49:wood:air-49:wood:air-6:wood:air-42:wood:air-6:wood:air-42:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-35:wood:air-6:wood:air-6:wood:air-12:wood:air-5:wood:air-16:wood:air-6:wood:air-4:wood-6:concrete-7:wood-10:air-7:wood-4:air-4:wood:air-6:wood:air-3:wood:air-5:glass:concrete-7:air-2:wood:air-5:wood:air-11:wood-23:concrete-7:air-2:wood:air-5:wood:air-14:wood:gunpowder-10:c4-8:wood:concrete-7:air-2:wood:air-5:wood:air-15:wood:gunpowder-8:c4-8:wood:air:concrete-7:water-2:wood:water-5:wood:water-16:wood-2:gunpowder-4:c4-8:wood-2:water-2:concrete-7:sand-2:wood:water-5:wood:water-18:wood-12:water-4:concrete-7:sand-2:wood:sand-2:water-3:wood:water-34:concrete-7:sand-2:wood:sand-3:water-2:wood:water-34:concrete-7:sand-2:wood:sand-5:wood:sand:water-33:concrete-7:sand-2:wood:sand-5:wood:sand-3:water-31:concrete-7:sand-2:wood:sand-5:wood:sand-5:water-29:;9c4:;44c:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:11:21:9:1:5:1:1:247:;27:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:31:1:ce:1:87:1:232:1:1c:1:37:1:3:1:2:1:3:1:5:2:1f5:;9c4:',
                 backgroundColor: '#65b7c7',
                 inventory: {
@@ -437,21 +521,6 @@ const puzzles = [
                 id: 'eec8026b-0182-47e2-a9aa-5803deaa757e'
             },
             {
-                name: 'Green Lasers',
-                description: `Green lasers are bad for your health, and they're especially bad for pixels. Luckily, you have <h>laser scatterers, which scatters the laser beam into harmless green light</h>. Give it a try.`,
-                saveCode: '25;0000;wall-26:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-3:laser_down-3:air-11:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-9:wood-8:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-20:air-5:wall-2:air-23:wall-2:air-23:wall-2:air-23:wall-2:air-3:goal:air-19:wall-2:air-23:wall-2:air-23:wall-2:air-23:wall-8:laser_up-4:wall-14:;271:;1a:11:8:11:8:11:8:3:3:b:8:11:8:11:8:11:8:11:8:11:8:11:8:a:1:4:1:1:8:9:10:a:6:1:8:a:6:1:8:a:6:1:21:6:13:6:13:6:13:3:1:2:13:6:13:6:13:6:2b:;16b:2:17:3:ea:;110:1:160:',
-                backgroundColor: '#ffffff',
-                inventory: {
-                    concrete: 1,
-                    piston_up: 1,
-                    piston_right: 8,
-                    slider_horizontal: 2,
-                    laser_scatterer: 3
-                },
-                difficulty: 'Easy',
-                id: '592a78ca-5f9e-4845-a6db-37a16e37a2b9'
-            },
-            {
                 name: 'Breaking Thermodynamics',
                 description: `Instead of breaking the game, in this puzzle you'll be <h>breaking the laws of thermodynamics!</h> The pixels with blue and yellow arrows are <h>copiers</h>, and they... copy. These pixels here are special copiers called <h>cloners</h>; they are like copiers, but they can <h>push pixels</h> to make space for the mass it creates in violation of the laws of thermodynamics.<br><br><h><i>Some pixels are not cloneable, for example, goal pixels.</i></h>`,
                 saveCode: '&1;32-32;0000;wall-21:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:air-1e:wall-2:monster-4:air-c:monster-5:air-9:wall-2:monster-4:air-c:monster-5:air-9:wall-22:air-14:wall:air-9:wall-2:air-14:wall:air-9:wall-2:air-14:wall:air-9:wall-2:air-14:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-a:wall:air-9:wall:air-9:wall-2:air-2:monster-2:air-6:wall:air-13:wall-2:air-2:monster-4:air-4:wall:air-13:wall-2:air-2:monster-4:air-4:wall:air-13:wall-2:air:monster-5:air-4:wall:air-13:wall-2:air:monster-6:air-3:wall:air-13:wall-33:;400:;88:2:1e:2:10c:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:17:9:21:;400:',
@@ -483,26 +552,19 @@ const puzzles = [
                 id: '47fa079a-cc83-4435-bba4-bc0288c3b60c'
             },
             {
-                name: 'Chaos',
-                description: `Oh wow, that's a lot of stuff. You've got <h>copiers</h> now, too. Well... good luck, this one took me a while to figure out. It's a messy one.`,
-                saveCode: '20;0000;wall-2:air:wall-17:piston_right-2:slider_vertical:air-16:wall-2:air-2:wall-17:air-13:piston_down:air-5:wall-2:air:piston_up:air-16:wall-2:air-18:wall:air-11:wall:air-7:wall:air-19:wall:air-19:wall:air:rotator_up:air:cloner_left:air-10:sand-5:wall-2:concrete-7:air-4:sand-7:wall-2:air-2:wall-2:air-6:sand-8:wall-4:air-7:concrete-9:wall-2:air-12:wall-2:air-4:wall-2:air-10:rotator_up:air-3:wall-2:air-2:wall-2:air-2:goal:air:wall:air-11:wall-4:air-2:push_cloner_up:air:wall:air-8:goal:air-4:wall-2:air-4:wall:air-13:wall-2:air-4:wall:air-13:wall-21:;190:;17:10:2:2:11:d:1:5:2:1:1:10:2:12:1:b:1:7:1:8:c:8:5d:c:8:a:1:3:6:2:1:1:1:b:4:2:1:1:1:8:1:4:2:4:1:d:2:4:1:d:15:;b8:1:d7:;26:1:c2:1:a6:',
+                name: 'Green Lasers',
+                description: `Green lasers are bad for your health, and they're especially bad for pixels. Luckily, you have <h>laser scatterers, which scatters the laser beam into harmless green light</h>. Give it a try.`,
+                saveCode: '25;0000;wall-26:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-3:laser_down-3:air-11:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-17:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-9:wood-8:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-2:air-10:wood:air-4:wood:air:wall:air-5:wall-20:air-5:wall-2:air-23:wall-2:air-23:wall-2:air-23:wall-2:air-3:goal:air-19:wall-2:air-23:wall-2:air-23:wall-2:air-23:wall-8:laser_up-4:wall-14:;271:;1a:11:8:11:8:11:8:3:3:b:8:11:8:11:8:11:8:11:8:11:8:11:8:a:1:4:1:1:8:9:10:a:6:1:8:a:6:1:8:a:6:1:21:6:13:6:13:6:13:3:1:2:13:6:13:6:13:6:2b:;16b:2:17:3:ea:;110:1:160:',
                 backgroundColor: '#ffffff',
                 inventory: {
-                    concrete: 4,
-                    cloner_left: 2,
-                    piston_left: 1,
-                    piston_up: 2,
-                    piston_right: 2,
-                    rotator_left: 1,
-                    rotator_up: 1,
-                    rotator_right: 1,
-                    rotator_down: 2,
-                    rotator_clockwise: 3,
-                    rotator_counterclockwise: 1,
-                    slider_horizontal: 8
+                    concrete: 1,
+                    piston_up: 1,
+                    piston_right: 8,
+                    slider_horizontal: 2,
+                    laser_scatterer: 3
                 },
-                difficulty: 'Hard',
-                id: '091325da-7cb3-4b75-95e5-897d3540cbc7'
+                difficulty: 'Easy',
+                id: '592a78ca-5f9e-4845-a6db-37a16e37a2b9'
             },
             {
                 name: 'Placement Test',
@@ -533,29 +595,6 @@ const puzzles = [
                 id: 'b5c42f2a-fae1-4795-a77f-a4c4a15bc538'
             },
             {
-                name: 'Danger Zone',
-                description: `Careful! Those purple glowy thingies are <h>deleters</h>- They delete stuff! One wrong move and everything is gone. Well, you can always <h>reset if that happens</h>.<br>The orange-ish boxes with a diagonal are <h>collapsible boxes, they can be crushed when pushed into something</h>.`,
-                saveCode: '40;0000;wall:deleter-10:wall-11:deleter-17:wall:slider_horizontal:air-20:deleter:air-17:deleter:wall:air-20:deleter:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:wood:air-17:deleter:wall:air-20:deleter:air-17:deleter:wall:air-20:deleter:air-17:deleter:wall:air-10:wall-3:air-5:wall-3:deleter-11:air:deleter-5:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-9:goal:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:air-9:wall:air-17:wall-2:air-10:wall:concrete:air-7:concrete:wall:air-17:wall-2:air-10:wall:concrete-2:air-5:concrete-2:wall:air-17:wall-2:air-10:wall:concrete-3:air-3:concrete-3:wall:air-17:wall-2:air-10:wall-29:;640:;3e:11:17:11:17:11:17:11:17:11:17:11:17:11:17:11:17:11:52:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:9:1f:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1d:;588:1:26:3:25:4:24:3:3e:;521:1:11e:',
-                backgroundColor: '#ffffff',
-                inventory: {
-                    sand: 1,
-                    concrete: 40,
-                    cloner_right: 7,
-                    push_cloner_up: 1,
-                    piston_up: 17,
-                    piston_right: 2,
-                    rotator_left: 6,
-                    rotator_down: 4,
-                    rotator_clockwise: 1,
-                    rotator_counterclockwise: 5,
-                    slider_horizontal: 8,
-                    slider_vertical: 8,
-                    collapsible: 6
-                },
-                difficulty: 'Hard',
-                id: '07b13db3-090e-44ff-96b9-5829bfc4569d'
-            },
-            {
                 name: 'Reflection',
                 description: `Ah, a simple puzzle. Makes for a nice break from the brain-breaking machines. Anyways, those diagonal thingies are <h>mirrors</h>. <h>Mirrors reflect lasers</h>, so you can use this to redirect them to your targets. More interesting is that you have even numbers of everything (except mirrors).<br><br>Alright, I'm off to work on the PixSim API and think about the faults of society. And maybe make some music too.`,
                 saveCode: '40;0000;wall-41:concrete:wall:air-36:wall-2:laser_right:glass:air-28:mirror_2:air-7:wall-2:concrete:wall:air-36:wall-2:rotator_counterclockwise:wall:air-3:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-8:wall-2:rotator_counterclockwise:wall:air-3:wood:gunpowder-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:gunpowder-2:wood:air-8:wall-2:concrete:wall:air-3:wood:gunpowder-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air-2:wood:air:wall:wood:gunpowder-2:wood:air-8:wall-42:air-3:wall:air-28:slider_vertical:air-5:wall-2:air-3:wall:air-28:slider_vertical:air-5:wall-2:air-3:wall:air-28:slider_vertical:air-5:wall-2:air-3:glass:air-28:slider_vertical:air-5:wall-2:air-3:glass:air-28:slider_vertical:air-5:wall-6:air-26:wall-5:air-3:wall-2:mirror_1:air-2:glass:air-26:glass:laser_left:laser_right:glass:mirror_2:air-3:wall-2:air-3:wall:air-26:wall-4:glass:air-3:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:air-3:wall:air-34:wall-2:mirror_2:air-2:glass:air-4:mirror_2:air-16:mirror_2:air-12:wall-2:air-3:wall:air-7:collapsible:air-26:wall-2:air-3:wall:air-7:wall:air-26:wall-2:air-3:wall:air-2:mirror_1:air:mirror_1:air-2:wall:air-26:wall-2:air-3:wall:air-7:wall:air-26:wall-8:glass:wall-18:air-13:wall-2:air-3:glass:air-5:wall:air-14:wall:air-13:wall-2:wood:sand:wood:glass:air-5:wall:air-14:wall:air-13:wall-2:air:wood:air:glass:air-2:mirror_1:air-2:wall:air-14:wall:air-13:wall-2:air-3:glass:air-5:wall:air-14:wall:air-7:laser_scatterer:glass-3:air-2:wall-2:air-3:glass:air-5:wall:air-14:wall:air-13:wall-2:air-3:wall:air-5:wall:air-14:wall:air-13:wall-2:air-3:wall:air-5:wall:air-2:dirt-6:air-6:wall:air-13:wall-2:air-3:wall:air-5:wall:dirt-11:air-3:wall:air-13:wall-2:air-3:wall:air-5:wall:dirt-11:air-3:glass:air-13:wall-3:push_cloner_down:wall-2:air-5:wall:dirt-12:air-2:glass:air-7:mirror_1:air-5:wall-2:air:piston_right:wall-2:air-5:wall:dirt-13:air:wall:air-3:wood:gunpowder-7:wood:air:wall-2:air-9:wall:dirt-14:wall:air-3:wood:gunpowder-7:wood:air:wall-41:;640:;48:7:21:7:21:7:21:7:21:7:21:7:2e:1c:1:5:6:1c:1:5:6:1c:1:5:6:1c:1:5:6:1c:1:5:6:1a:5:3:6:1a:5:3:6:1a:5:3:6:22:6:22:6:22:6:22:6:22:6:4:1:10:1:c:6:7:1:1a:6:7:1:1a:6:2:1:1:1:2:1:1a:6:7:1:1a:1b:d:1b:d:1b:d:1b:d:1b:7:4:2:1b:d:1b:d:1b:d:f1:;ae:1:26:2:7:2:1b:1:1:2:1:2:2:1:1:2:1:2:d7:1:32b:1:1:1:1:1:28:1:ba:1:49:;640:',
@@ -574,7 +613,169 @@ const puzzles = [
                 },
                 difficulty: 'Easy',
                 id: '549382d2-999f-41dd-a945-1afb4f3047d6'
-            }
+            },
+            {
+                name: 'Chaos',
+                description: `Oh wow, that's a lot of stuff. You've got <h>copiers</h> now, too. Well... good luck, this one took me a while to figure out. It's a messy one.`,
+                saveCode: '20;0000;wall-2:air:wall-17:piston_right-2:slider_vertical:air-16:wall-2:air-2:wall-17:air-13:piston_down:air-5:wall-2:air:piston_up:air-16:wall-2:air-18:wall:air-11:wall:air-7:wall:air-19:wall:air-19:wall:air:rotator_up:air:cloner_left:air-10:sand-5:wall-2:concrete-7:air-4:sand-7:wall-2:air-2:wall-2:air-6:sand-8:wall-4:air-7:concrete-9:wall-2:air-12:wall-2:air-4:wall-2:air-10:rotator_up:air-3:wall-2:air-2:wall-2:air-2:goal:air:wall:air-11:wall-4:air-2:push_cloner_up:air:wall:air-8:goal:air-4:wall-2:air-4:wall:air-13:wall-2:air-4:wall:air-13:wall-21:;190:;17:10:2:2:11:d:1:5:2:1:1:10:2:12:1:b:1:7:1:8:c:8:5d:c:8:a:1:3:6:2:1:1:1:b:4:2:1:1:1:8:1:4:2:4:1:d:2:4:1:d:15:;b8:1:d7:;26:1:c2:1:a6:',
+                backgroundColor: '#ffffff',
+                inventory: {
+                    concrete: 4,
+                    cloner_left: 2,
+                    piston_left: 1,
+                    piston_up: 2,
+                    piston_right: 2,
+                    rotator_left: 1,
+                    rotator_up: 1,
+                    rotator_right: 1,
+                    rotator_down: 2,
+                    rotator_clockwise: 3,
+                    rotator_counterclockwise: 1,
+                    slider_horizontal: 8
+                },
+                difficulty: 'Hard',
+                id: '091325da-7cb3-4b75-95e5-897d3540cbc7'
+            },
+            {
+                name: 'Danger Zone',
+                description: `Careful! Those purple glowy thingies are <h>deleters</h>- They delete stuff! One wrong move and everything is gone. Well, you can always <h>reset if that happens</h>.<br>The orange-ish boxes with a diagonal are <h>collapsible boxes, they can be crushed when pushed into something</h>.`,
+                saveCode: '&1;40-40;0000;wall:deleter-a:wall-b:deleter-11:wall:slider_horizontal:air-14:deleter:air-11:deleter:wall:air-14:deleter:air-11:deleter:wall:air-14:wood:air-11:deleter:wall:air-14:wood:air-5:concrete:air-6:slider_horizontal:air-4:deleter:wall:air-14:wood:air-11:deleter:wall:air-14:wood:air-11:deleter:wall:air-14:wood:air-4:slider_vertical:air-6:slider_horizontal:air-5:deleter:wall:air-14:deleter:air-11:deleter:wall:air-14:deleter:air-11:deleter:wall:air-a:wall-3:air-5:wall-3:deleter-b:air:deleter-5:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-8:concrete:goal:wall:air-9:wall:air-11:wall-2:air-9:concrete:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-5:slider_horizontal-3:air-2:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-9:sand:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-9:wall:air-11:wall-2:air-a:wall:air-4:monster:air-4:wall:air-11:wall-2:air-a:wall:concrete:air-2:monster-3:air-2:concrete:wall:air-11:wall-2:piston_right:air-9:wall:concrete-2:air:monster-4:concrete-2:wall:air-11:wall-2:air-a:wall:concrete-3:monster-3:concrete-3:wall:air-11:wall-2:air-a:wall-29:;640:;3e:11:17:11:17:11:17:5:1:6:1:4:17:11:17:11:17:4:1:6:1:5:17:11:17:11:52:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:a:1e:8:20:9:1f:a:1e:a:1e:a:1e:5:3:2:1e:a:1e:a:1e:a:1e:9:1f:a:1e:a:1e:a:1e:a:1e:a:1e:a:1f:9:1e:a:1e:a:1d:;521:1:11e:',
+                backgroundColor: '#ffffff',
+                inventory: {
+                    concrete: 37,
+                    cloner_right: 7,
+                    push_cloner_up: 1,
+                    piston_up: 17,
+                    piston_right: 1,
+                    rotator_left: 6,
+                    rotator_down: 4,
+                    rotator_clockwise: 1,
+                    rotator_counterclockwise: 5,
+                    slider_horizontal: 3,
+                    slider_vertical: 7,
+                    collapsible: 6
+                },
+                difficulty: 'Literally impossible (its borked lol)',
+                id: '4dc2f242-0cf3-465c-b265-25c7ed2b06c2'
+            },
+            {
+                name: 'Pushy Pistons',
+                description: `Wasn't this the original name for the first level?<br><br><i>Level credit: sp</i>`,
+                saveCode: '&1;25-25;0000;wall-1a:air-c:wood:air-2:wall:air:push_piston_down:push_piston_left:air-4:wall-2:air-c:wood:air:monster:deleter:concrete:slider_horizontal:air-5:wall-2:air-d:wood-2:wall:concrete:reinforced_glass-6:wall-2:air-17:wall-2:air-2:crate:air-14:wall-2:air-2:crate-2:air-13:wall-2:air-2:crate-4:air-3:glass-3:wall:air-a:wall-2:air:crate-5:air-6:wall:air-a:wall-2:grass:dirt-3:grass-2:air-6:wall:air-a:wall-2:dirt-5:grass-2:air-5:wall:air-a:wall-b:air-3:wall:air-a:wall-2:air:wood:air-3:wood:air-2:wall:air-3:wall:air-a:wall-2:air:wood:monster:air:monster:wood:air-2:wall:air-3:wall:air-a:wall-2:air-2:wood-3:air-3:wall:air-3:wall:air-a:wall-2:air-8:wall:air-3:wall:air-a:wall-2:air-8:wall:air-3:wall:air-a:wall-2:air-8:wall:air-3:wall:air-a:wall-2:air-8:wall:monster:air-2:wall:lava-3:wall:air-6:wall-2:air-8:wall:crate-2:air:wall:lava-3:wall:air-2:wood:air-3:wall-2:air-8:wall:water-3:wall:lava-3:wall:air:wood-5:wall-2:air-8:wall:water-3:wall:steel-3:wall:air-2:wood:water-3:wall-2:air-8:wall:water-3:wall:air-3:wall:air-2:wood:water-3:wall-2:air-3:piston_up:air-2:piston_up:air:wall:water-3:wall:air-3:wall:air-2:wood:water-3:wall-26:;271:;2d:4:14:5:1b:9:10:2:1:6:10:2:2:5:10:2:4:3:10:1:5:3:16:3:17:2:8d:8:11:8:11:8:11:8:11:8:11:8:1e:3:16:3:21:;271:',
+                backgroundColor: '#ffffff',
+                inventory: {
+                    push_piston_left: 3,
+                    push_piston_up: 2,
+                    push_piston_right: 3
+                },
+                difficulty: 'Easy',
+                id: 'c94ee67e-18a6-4680-87cb-570878654a3f'
+            },
+            {
+                name: 'Sticky Slime',
+                description: `Well, I guess we have <h>slime</h> now...<br>Buh. This looks impossible. Oh well, good luck lol<br><br><i>Level credit: sp</i>`,
+                saveCode: '&1;50-50;0000;wall-33:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-20:steel_crate:air-f:wall-2:air-a:wall-17:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:concrete-5:air-a:wall-2:air-20:wall:air-2:concrete:air-9:monster:air-2:wall-2:air-20:wall:air:concrete:air-7:concrete-6:wall-2:air-20:wall:concrete:air-a:concrete:air-3:wall-2:air-20:wall:air-c:concrete:air-2:wall-2:air-20:wall:air-d:concrete:air:wall-2:air-20:wall:air-e:concrete:wall-2:air-20:wall:air-f:wall-2:air-5:wood:air-5:wood:air-14:wall:air-8:crate:air-6:wall-2:air-4:wood-9:air-2:stone_bricks:air:stone_bricks:air:stone_bricks:air-c:wall:air-6:crate-3:air-6:wall-2:air-5:wood:air-5:wood:air-3:stone_bricks-5:air-c:wall:air-5:slider_horizontal-5:air-5:wall-2:grass-2:air-3:wood:air-2:monster:air-2:wood:air-4:stone_bricks-3:air-d:wall:air-5:fan_down:air-3:fan_down:air-5:wall-2:dirt-2:grass-3:wood:air:monster-2:air-2:wood:grass-4:stone_bricks-3:air-d:wall:air-f:wall-2:dirt-5:wood:monster-4:air:wood:dirt-4:stone_bricks-3:air-d:wall:air-f:wall-15:air-d:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-8:air-1a:wall:air-f:wall-2:goal:air-1f:wall:air-f:wall-8:air-1a:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-2:air-20:wall:air-f:wall-51:;9c4:;33:d:25:d:25:d:25:d:25:d:25:d:25:d:25:d:25:d:25:d:25:d:25:d:25:d:25:d:25:d:40d:13:1f:13:1f:13:1f:13:1f:13:25:d:25:d:25:d:1f:13:1f:13:1f:13:1f:13:1f:13:50:;85d:1:166:',
+                backgroundColor: '#ffffff',
+                inventory: {
+                    water: 5,
+                    lava: 1,
+                    concrete: 50,
+                    piston_left: 4,
+                    piston_up: 4,
+                    piston_right: 4,
+                    piston_down: 4,
+                    sticky_piston_left: 3,
+                    sticky_piston_up: 2,
+                    sticky_piston_right: 3,
+                    sticky_piston_down: 2,
+                    push_cloner_right: 1,
+                    rotator_left: 5,
+                    rotator_up: 5,
+                    rotator_right: 5,
+                    rotator_down: 5,
+                    rotator_clockwise: 3,
+                    rotator_counterclockwise: 3,
+                    slider_horizontal: 4,
+                    slider_vertical: 8,
+                    collapsible: 7,
+                    slime: 50,
+                    detonator: 1,
+                    c4: 10
+                },
+                difficulty: 'Hard',
+                id: 'bd3db856-6431-4f0b-9af5-f34c86d22e38'
+            },
+            {
+                name: 'Puzzle Deactivated',
+                description: '410: Gone<br>The requested level has been permanently removed. Do not reattempt the request.<br><br>Wait why are there fish tanks??<br><br><i>Level credit: sp</i>',
+                saveCode: '&1;40-40;0000;wall-2:deleter-24:rotator_left:wall-2:monster:air-25:deleter:wall-16:fan_up:wall-c:fan_up:wall-2:air:deleter:wall:water-c:wall-8:air-2:wall:piston_right:slider_horizontal:rotator_clockwise:steel:air-6:slider_horizontal:deactivator:air:wall:air:deleter:wall:water-2:push_piston_left:cloner_right:water-8:wall-5:slime-2:unslime:deactivator:air:wall-b:air:wall-3:air:deleter:wall:water-6:rotator_left:push_piston_right:water-4:wall-5:slime:air:wall:push_piston_up:wall-2:air-7:wall:air-5:wall:air:deleter:wall:reinforced_glass-c:wall-2:rotator_down:wall-2:slime:air:wall-4:air-7:wall:air-5:wall:air:deleter:air-e:slider_horizontal:deactivator:air-2:slime:air:wall-4:air-7:wall:air-5:wall:air:deleter:wall:air-d:wall-a:air-7:wall:air-5:wall:air:deleter:wall:air-16:wall:air-d:wall:air:deleter:wall:air-16:wall:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-7:wall-3:air:wall-3:air:deleter:wall:air-16:reinforced_glass:air-7:wall:air:cloner_up:air:wall-3:air:deleter:wall:air-16:reinforced_glass:air-7:wall:cloner_left:rotator_clockwise:wall:deactivator:air:fan_right:air:deleter:wall:air-11:goal:air-4:wall:air-7:wall:air:push_cloner_up:goal:slime:air:wall:air:deleter:wall:air-16:wall-a:rotator_left:wall-4:air:deleter:wall:air-16:wall:air-7:wall:air-5:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-7:wall:air-5:wall:air:deleter:wall:air-16:reinforced_glass:air-7:wall:ice-5:wall:air:deleter:wall:air-16:wall:air-7:wall:ice-5:wall:air:deleter:wall:air-16:wall-f:air:deleter:wall:air-21:steel:slime:air:wall:air:deleter:wall:air-21:steel:slime:air:wall:air:deleter:wall:air-21:steel:slime:air:wall:air:deleter:wall:air-4:slime:air-2:slime:air-9:slime:air-3:slime-3:air-9:steel:slime:air:wall:air:deleter:wall-5:slime:wall-2:slime:air:wall-2:reinforced_glass-5:wall:slime:wall-3:air:slime:wall-4:reinforced_glass-6:wall:slime:air:wall:air:deleter:wall-4:deactivator:slime:wall:slime-3:air:wall:water-5:wall:slime:deactivator:wall:air:slime-3:wall:life-2:cloner_right:push_cloner_right:water-4:wall:deactivator:air:fan_right:air:deleter:wall-4:air-2:wall-2:deactivator:air:wall-2:water-2:sticky_piston_left:slime:water:wall:air-2:push_piston_right:air:deactivator:wall-3:life-2:water-6:wall-4:air:deleter:wall-4:fan_down:wall-3:fan_down-2:wall-b:fan_down:wall-10:air:deleter:wall:piston_right:air-25:rotator_up:wall-2:deleter-25:wall:;640:;e0:7:21:7:9:e:a:7:a:d:a:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:11:1:4:1:7:a:16:12:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:16:2:189:;127:1:1cb:1:34c:',
+                backgroundColor: '#fffffe',
+                inventory: {
+                    concrete: 50,
+                    glass: 2,
+                    reinforced_glass: 4,
+                    piston_left: 2,
+                    piston_up: 2,
+                    piston_right: 2,
+                    piston_down: 2,
+                    sticky_piston_left: 2,
+                    sticky_piston_up: 4,
+                    sticky_piston_right: 4,
+                    sticky_piston_down: 2,
+                    push_piston_left: 1,
+                    push_piston_up: 2,
+                    push_piston_right: 1,
+                    push_piston_down: 1,
+                    cloner_left: 2,
+                    cloner_right: 2,
+                    push_cloner_left: 2,
+                    push_cloner_up: 2,
+                    push_cloner_right: 2,
+                    push_cloner_down: 2,
+                    rotator_left: 6,
+                    rotator_up: 4,
+                    rotator_right: 6,
+                    rotator_down: 4,
+                    rotator_clockwise: 4,
+                    slider_horizontal: 4,
+                    slider_vertical: 8,
+                    deactivator: 1,
+                    collapsible: 10,
+                    slime: 18
+                },
+                difficulty: 'Hard',
+                id: 'ed84626a-5924-4134-b1ff-940f8ae70bee'
+            },
+            {
+                name: 'Chaos 2: Electric Boogaloo (Déjà vu?)',
+                description: `Oh no, not this one again! It's like that other one but even worse! And there's clay blocking the final tunnel! Well, those <h>sticky pushers</i> will probably come in handy.<br><br><i>Level credit: sp</i>`,
+                saveCode: '&1;20-20;0000;rotator_right-2:air:deleter-4:wall-d:sticky_piston_right:piston_right:slider_vertical:air-7:clay:air-8:wall:deleter:air-6:wall-e:air:slider_horizontal:air-10:wall-2:air-5:collapsible:air-c:wall-2:air:piston_up:air-2:goal:slider_vertical:air-c:wall-2:air-3:bricks-3:air-9:steel_crate:air-2:wall-2:water-3:bricks:monster:bricks:air-9:steel_crate-2:goal:wall-2:water-3:bricks-3:air-7:push_cloner_left:steel_crate-4:wall-2:concrete-5:air-4:rotator_left:air-3:concrete-5:wall-2:air-2:concrete:air-c:concrete:air-2:wall-2:air:concrete:air-e:concrete:air:wall-2:concrete:air-10:concrete:wall-2:air-4:mirror_2:air-d:wall-2:air-4:mirror_2-2:air-c:wall-2:air:monster:air-e:goal:air:wall-2:monster:glass:monster:air-3:goal:air:collapsible:rotator_left:air-8:wall-2:monster-3:air-f:wall-2:monster:glass:monster:air:reinforced_glass-2:air-c:wall-6:laser_up-2:wall-13:;190:;17:5:d:6:e:1:1:d:5:5:1:9:5:1:1:2:2:9:5:3:3:9:b:9:b:6:e:3:1:2:e:6:e:6:e:6:e:6:e:6:e:6:f:1:2:2:e:6:e:6:1b:;26:1:4d:1:68:1:64:1:4d:',
+                backgroundColor: '#ffffff',
+                inventory: {
+                    concrete: 4,
+                    glass: 4,
+                    reinforced_glass: 4,
+                    piston_left: 4,
+                    piston_right: 4,
+                    sticky_piston_left: 4,
+                    sticky_piston_up: 4,
+                    sticky_piston_right: 4,
+                    sticky_piston_down: 4,
+                    push_piston_right: 4,
+                    cloner_down: 4,
+                    rotator_left: 4,
+                    rotator_up: 4,
+                    rotator_right: 4,
+                    rotator_down: 4,
+                    slider_horizontal: 4,
+                    slider_vertical: 4,
+                    collapsible: 4,
+                    slime: 4
+                },
+                difficulty: 'Very Hard',
+                id: 'c86adee3-5653-4ed9-ad28-ced12e02751b'
+            },
+            // something
         ]
     }
 ];

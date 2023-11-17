@@ -1093,7 +1093,6 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
     for (let [x, y] of deletions) {
         nextGrid[y][x] = pixNum.AIR;
         fireGrid[y][x] = false;
-        teamGrid[y][x] = 0;
     }
     switch (dir) {
         case 0:
@@ -1124,6 +1123,9 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 teamGrid[y][x] = teamGrid[y - 1][x];
             }
             break;
+    }
+    for (let [x, y] of deletions) {
+        teamGrid[y][x] = 0;
     }
     for (let [x, y] of deletions2) {
         nextGrid[y][x] = pixNum.AIR;
@@ -1529,7 +1531,7 @@ timingGradient.addColorStop(1, '#0F0');
 let forceDrawTeamGrid = false;
 function draw() {
     if (inMenuScreen || document.hidden) {
-        targetFps = 2;
+        targetFps = 5;
         return;
     } else targetFps = fps;
 
@@ -1682,33 +1684,30 @@ function drawFrame() {
             gridnoisectx.globalCompositeOperation = 'source-over';
         }
         if (drawTeamGrid) {
-            if (noNoise) {
-                teamsctx.globalAlpha = 0.3;
-                teamsctx.fillStyle = '#FF0099';
-                forRectangles(teamPixelRects[0], (x, y, width, height) => {
-                    fillPixels(x, y, width, height, teamsctx);
-                });
-                teamsctx.fillStyle = '#3C70FF';
-                forRectangles(teamPixelRects[1], (x, y, width, height) => {
-                    fillPixels(x, y, width, height, teamsctx);
-                });
-            } else {
-                bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
-                bufferctx.globalAlpha = 1;
-                bufferctx.fillStyle = '#FF0099';
-                forRectangles(teamPixelRects[0], (x, y, width, height) => {
-                    fillPixels(x, y, width, height, bufferctx);
-                });
-                bufferctx.fillStyle = '#3C70FF';
-                forRectangles(teamPixelRects[1], (x, y, width, height) => {
-                    fillPixels(x, y, width, height, bufferctx);
-                });
-                bufferctx.globalCompositeOperation = 'destination-in';
-                bufferctx.globalAlpha = 0.5;
-                bufferctx.drawImage(noiseBufferCanvas, 0, 0);
-                bufferctx.globalCompositeOperation = 'source-over';
-                teamsctx.drawImage(bufferCanvas, 0, 0);
-            }
+            teamsctx.globalAlpha = 0.3;
+            teamsctx.fillStyle = '#FF0099';
+            forRectangles(teamPixelRects[0], (x, y, width, height) => {
+                fillPixels(x, y, width, height, teamsctx);
+            });
+            teamsctx.fillStyle = '#3C70FF';
+            forRectangles(teamPixelRects[1], (x, y, width, height) => {
+                fillPixels(x, y, width, height, teamsctx);
+            });
+            // bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
+            // bufferctx.globalAlpha = 1;
+            // bufferctx.fillStyle = '#FF0099';
+            // forRectangles(teamPixelRects[0], (x, y, width, height) => {
+            //     fillPixels(x, y, width, height, bufferctx);
+            // });
+            // bufferctx.fillStyle = '#3C70FF';
+            // forRectangles(teamPixelRects[1], (x, y, width, height) => {
+            //     fillPixels(x, y, width, height, bufferctx);
+            // });
+            // bufferctx.globalCompositeOperation = 'destination-in';
+            // bufferctx.globalAlpha = 0.5;
+            // bufferctx.drawImage(noiseBufferCanvas, 0, 0);
+            // bufferctx.globalCompositeOperation = 'source-over';
+            // teamsctx.drawImage(bufferCanvas, 0, 0);
         }
 
         // copy layers
@@ -2401,7 +2400,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                         }
                         inventory[placePixel]--;
                         if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_88) musicGrid[y][x] = 0;
-                        teamGrid[y][x] = pxteam + 1;
+                        if (PixSimAPI.inGame) teamGrid[y][x] = pxteam + 1;
                     }
                     return inventory[placePixel] <= 0;
                 })) skipToEnd = true;

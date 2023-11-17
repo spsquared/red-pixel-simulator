@@ -186,3 +186,6 @@ if (Math.random() < 0.001) {
     document.getElementById('t_redpixel').style.backgroundImage = 'url(' + coverCanvas.toDataURL('image/png') + ')';
     document.getElementById('t_redpixel').style.backgroundSize = 'contain';
 }
+
+// stupid fix for stupid problem (user agent thinks the text should be black because it's light mode and therefore white text becomes black)
+document.getElementById('copyrightNotice').style.color = 'white';
