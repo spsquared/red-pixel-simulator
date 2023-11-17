@@ -1814,11 +1814,11 @@ function drawBrush() {
             ctx.lineJoin = 'miter';
             ctx.strokeRect(x1 * drawScale - camera.x, y1 * drawScale - camera.y, (x2 - x1 + 1) * drawScale, (y2 - y1 + 1) * drawScale);
         } else if (brush.lineMode && !brush.startsInRPE) {
-            const clickPixelNum = (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
+            const placePixelNum = (brush.mouseButton == 2 || removing) ? pixNum.REMOVE : pixels[brush.pixel].numId;
             bufferctx.clearRect(0, 0, canvasResolution, canvasResolution);
             bufferctx.globalCompositeOperation = 'source-over';
             brushActionLine(brush.lineStartX, brush.lineStartY, mXGrid, mYGrid, brush.size, (rect) => {
-                drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], bufferctx, true);
+                drawPixels(placePixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], bufferctx, true);
             });
             ctx.globalAlpha = 0.5;
             ctx.drawImage(bufferCanvas, 0, 0, canvasResolution, canvasResolution);
@@ -2202,11 +2202,13 @@ function updateBrush() {
             if (brush.isSelection && selection.grid[0] !== undefined && (!PixSimAPI.inGame || !PixSimAPI.spectating)) {
                 let offsetX = Math.ceil(mXGrid - selection.grid[0].length / 2);
                 let offsetY = Math.ceil(mYGrid - selection.grid.length / 2);
+                const inventory = PixSimAPI.inGame ? (pxteam ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
+                const placeable = PixSimAPI.inGame ? (pxteam ? teamPlaceableGrids[1] : teamPlaceableGrids[0]) : placeableGrid;
                 let modifiedPixelCounts = [];
                 for (let y = 0; y < selection.grid.length; y++) {
                     if (y + offsetY >= 0 && y + offsetY < gridHeight) for (let x = 0; x < selection.grid[y].length; x++) {
                         if (x + offsetX >= 0 && x + offsetX < gridWidth) {
-                            if (sandboxMode || (placeableGrid[y + offsetY][x + offsetX] && grid[y + offsetY][x + offsetX] != pixNum.DELETER)) {
+                            if (sandboxMode || (placeable[y + offsetY][x + offsetX] && grid[y + offsetY][x + offsetX] != pixNum.DELETER)) {
                                 if (!sandboxMode) {
                                     let pid = pixelData(selection.grid[y][x]).id;
                                     if (inventory[pid] <= 0) continue;
@@ -2226,7 +2228,7 @@ function updateBrush() {
                     }
                 }
                 for (let pixelType in modifiedPixelCounts) {
-                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id,);
+                    if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id, inventory);
                 }
                 if (!sandboxMode && !PixSimAPI.inGame) {
                     saveCode = generateSaveCode();
@@ -2290,7 +2292,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
     const inventory = PixSimAPI.inGame ? (pxteam ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
     const placeable = PixSimAPI.inGame ? (pxteam ? teamPlaceableGrids[1] : teamPlaceableGrids[0]) : placeableGrid;
     let modifiedPixelCounts = [];
-    let clickPixelNum = pixels[placePixel].numId;
+    let placePixelNum = pixels[placePixel].numId;
     let skipToEnd = false;
     brushActionLine(x1, y1, x2, y2, size, (rect) => {
         if (skipToEnd) return;
@@ -2304,10 +2306,15 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
         };
         if (remove) {
             if (sandboxMode) {
-                act(function (x, y) {
+                if (placePixel == 'target') act((x, y) =>  {
+                    targetGrid[y][x] = false;
+                });
+                else if (placePixel == 'placementRestriction') act((x, y) => {
+                    placeable[y][x] = true;
+                });
+                else act((x, y) =>  {
                     grid[y][x] = pixNum.AIR;
                     fireGrid[y][x] = false;
-                    targetGrid[y][x] = false;
                     if (musicGrid[y][x]) {
                         musicPixel(musicGrid[y][x], false);
                         musicGrid[y][x] = 0;
@@ -2336,13 +2343,13 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
             }
         } else if (placePixel == 'fire') {
             if (sandboxMode) {
-                act(function (x, y) {
+                act((x, y) =>  {
                     fireGrid[y][x] = true;
                 });
             } else {
-                modifiedPixelCounts[clickPixelNum] = true;
+                modifiedPixelCounts[placePixelNum] = true;
                 if (inventory[placePixel] <= 0) skipToEnd = true;
-                else if (act(function (x, y) {
+                else if (act((x, y) =>  {
                     if (placeable[y][x] && grid[y][x] != pixNum.DELETER && !fireGrid[y][x]) {
                         fireGrid[y][x] = true;
                         inventory[placePixel]--;
@@ -2350,56 +2357,52 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                     return inventory[placePixel] <= 0;
                 })) skipToEnd = true;
             }
-        } else if (placePixel == 'placementRestriction') {
-            if (sandboxMode) act(function (x, y) {
-                placeable[y][x] = false;
-            });
         } else if (placePixel == 'teamNone') {
-            if (sandboxMode) act(function (x, y) {
+            if (sandboxMode) act((x, y) =>  {
                 teamGrid[y][x] = 0;
             });
         } else if (placePixel == 'teamAlpha') {
-            if (sandboxMode) act(function (x, y) {
+            if (sandboxMode) act((x, y) =>  {
                 teamGrid[y][x] = 1;
             });
         } else if (placePixel == 'teamBeta') {
-            if (sandboxMode) act(function (x, y) {
+            if (sandboxMode) act((x, y) =>  {
                 teamGrid[y][x] = 2;
             });
-        } else if (placePixel == 'placementUnRestriction') {
-            if (sandboxMode) act(function (x, y) {
-                placeable[y][x] = true;
+        } else if (placePixel == 'placementRestriction') {
+            if (sandboxMode) act((x, y) =>  {
+                placeable[y][x] = false;
             });
         } else if (placePixel == 'target') {
-            if (sandboxMode) act(function (x, y) {
+            if (sandboxMode) act((x, y) =>  {
                 targetGrid[y][x] = true;
             });
         } else {
             if (sandboxMode) {
-                act(function (x, y) {
-                    grid[y][x] = clickPixelNum;
+                act((x, y) =>  {
+                    grid[y][x] = placePixelNum;
                     if (musicGrid[y][x]) {
                         musicPixel(musicGrid[y][x], false);
                         musicGrid[y][x] = 0;
                     }
-                    if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_88) musicGrid[y][x] = 0;
+                    if (placePixelNum >= pixNum.MUSIC_1 && placePixelNum <= pixNum.MUSIC_88) musicGrid[y][x] = 0;
                 });
             } else {
-                modifiedPixelCounts[clickPixelNum] = true;
+                modifiedPixelCounts[placePixelNum] = true;
                 if (inventory[placePixel] <= 0) skipToEnd = true;
-                else if (act(function (x, y) {
-                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER && grid[y][x] != clickPixelNum && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN)))) {
+                else if (act((x, y) =>  {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER && grid[y][x] != placePixelNum && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN)))) {
                         modifiedPixelCounts[grid[y][x]] = true;
                         let pixel = pixelAt(x, y).id;
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
                         inventory[pixel]++;
-                        grid[y][x] = clickPixelNum;
+                        grid[y][x] = placePixelNum;
                         if (musicGrid[y][x]) {
                             musicPixel(musicGrid[y][x], false);
                             musicGrid[y][x] = 0;
                         }
                         inventory[placePixel]--;
-                        if (clickPixelNum >= pixNum.MUSIC_1 && clickPixelNum <= pixNum.MUSIC_88) musicGrid[y][x] = 0;
+                        if (placePixelNum >= pixNum.MUSIC_1 && placePixelNum <= pixNum.MUSIC_88) musicGrid[y][x] = 0;
                         if (PixSimAPI.inGame) teamGrid[y][x] = pxteam + 1;
                     }
                     return inventory[placePixel] <= 0;
@@ -2411,7 +2414,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
         if (pixelType != pixNum.AIR) updatePixelAmount(numPixels[pixelType].id, inventory);
     }
     if (PixSimAPI.inGame && PixSimAPI.gameRunning && !PixSimAPI.isHost) {
-        PixSimAPI.sendInput(0, { x1: x1, y1: y1, x2: x2, y2: y2, size: brush.size, pixel: remove ? -1 : clickPixelNum });
+        PixSimAPI.sendInput(0, { x1: x1, y1: y1, x2: x2, y2: y2, size: brush.size, pixel: remove ? -1 : placePixelNum });
     }
     if (!sandboxMode && !PixSimAPI.inGame) {
         saveCode = generateSaveCode();

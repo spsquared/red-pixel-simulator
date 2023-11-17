@@ -7848,48 +7848,6 @@ _@    ._`],
         id: 'sand',
         numId: 0
     },
-    placementUnRestriction: {
-        name: 'Allow Placement',
-        description: 'Allow modification of a region within puzzles and multiplayer',
-        draw: function (rectangles, ctx, avoidGrid) {
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = 'rgb(255, 255, 255)';
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                fillPixels(x, y, width, height, ctx);
-            });
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(220, 220, 220)';
-            ctx.fillRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(255, 255, 255)';
-            ctx.fillRect(5, 5, 40, 40);
-        },
-        prerender: function () { },
-        recipe: {},
-        craftAmount: 0,
-        prerenderedFrames: [],
-        blastResistance: 0,
-        flammability: 0,
-        pushable: false,
-        cloneable: false,
-        rotateable: false,
-        stickable: false,
-        collectible: false,
-        group: 5,
-        updateStage: -1,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: false,
-        pickable: true,
-        pixsimPickable: false,
-        generatedDescription: '',
-        image: '',
-        keybind: null,
-        id: 'placementUnRestriction',
-        numId: 0
-    },
     placementRestriction: {
         name: 'Prevent Placement',
         description: 'Restrict modification of a region in puzzles and multiplayer',
