@@ -18,6 +18,7 @@ const gridCanvas = createCanvas2();
 const gridNoiseCanvas = createCanvas2();
 const aboveCanvas = createCanvas2();
 const fireCanvas = createCanvas2();
+const railCanvas = createCanvas2();
 const targetCanvas = createCanvas2();
 const placeableCanvas = createCanvas2();
 const noiseCanvas = createCanvas2();
@@ -30,6 +31,7 @@ const gridctx = gridCanvas.getContext('2d');
 const gridnoisectx = gridNoiseCanvas.getContext('2d');
 const abovectx = aboveCanvas.getContext('2d');
 const firectx = fireCanvas.getContext('2d');
+const railctx = railCanvas.getContext('2d');
 const targetctx = targetCanvas.getContext('2d');
 const placeablectx = placeableCanvas.getContext('2d');
 const noisectx = noiseCanvas.getContext('2d');
@@ -53,6 +55,8 @@ function resetCanvases() {
     abovectx.webkitImageSmoothingEnabled = false;
     firectx.imageSmoothingEnabled = false;
     firectx.webkitImageSmoothingEnabled = false;
+    railctx.imageSmoothingEnabled = false;
+    railctx.webkitImageSmoothingEnabled = false;
     targetctx.imageSmoothingEnabled = false;
     targetctx.webkitImageSmoothingEnabled = false;
     placeablectx.imageSmoothingEnabled = false;
@@ -100,6 +104,7 @@ const nextGrid = [];
 const fireGrid = [];
 const lastFireGrid = [];
 const nextFireGrid = [];
+const railGrid = [];
 const targetGrid = [];
 const musicGrid = [];
 const lastMusicGrid = [];
@@ -201,6 +206,7 @@ function createGrid(width = 100, height = 100) {
     fireGrid.length = 0;
     lastFireGrid.length = 0;
     nextFireGrid.length = 0;
+    railGrid.length = 0;
     targetGrid.length = 0;
     musicGrid.length = 0;
     lastMusicGrid.length = 0;
@@ -215,6 +221,7 @@ function createGrid(width = 100, height = 100) {
         fireGrid[i] = new Array(gridWidth);
         lastFireGrid[i] = new Array(gridWidth);
         nextFireGrid[i] = new Array(gridWidth);
+        railGrid[i] = new Array(gridWidth);
         targetGrid[i] = new Array(gridWidth);
         musicGrid[i] = new Array(gridWidth);
         lastMusicGrid[i] = new Array(gridWidth);
@@ -227,6 +234,7 @@ function createGrid(width = 100, height = 100) {
             fireGrid[i][j] = false;
             lastFireGrid[i][j] = false;
             nextFireGrid[i][j] = -1;
+            railGrid[i][j] = false;
             targetGrid[i][j] = false;
             musicGrid[i][j] = 0;
             lastMusicGrid[i][j] = 0;
@@ -239,7 +247,8 @@ function createGrid(width = 100, height = 100) {
     PixSimAPI.gridSize = { width: gridWidth, height: gridHeight };
     createPixSimGrid();
 };
-function loadSaveCode() {
+function loadSaveCode(code = saveCode) {
+    saveCode = code;
     if (saveCode.length > 0) {
         simulationPaused = true;
         fastSimulation = false;
@@ -255,14 +264,13 @@ function loadSaveCode() {
             const loopedPixels = [];
             function addPixels(pixel, amount) {
                 let pixelTypeNum = pixNum[pixel.toUpperCase()];
-                while (amount > 0) {
+                for (let j = 0; j < amount; j++) {
                     grid[y][x++] = pixelTypeNum;
                     if (x == gridWidth) {
                         y++;
                         x = 0;
                         if (y == gridHeight) return true;
                     }
-                    amount--;
                 }
                 return false;
             };
@@ -319,28 +327,23 @@ function loadSaveCode() {
                 }
             }
         };
-        function parseBooleanCode(grid, code) {
+        function parseBooleanCode(grid, code, base) {
             let x = 0;
             let y = 0;
             let i = 0;
-            function addPixels(pixel, amount) {
-                while (amount > 0) {
+            let pixel = false;
+            place: while (i < code.length) {
+                let next = code.indexOf(':', i);
+                if (next == -1) break;
+                let amount = parseInt(code.substring(i, next), base);
+                for (let j = 0; j < amount; j++) {
                     grid[y][x++] = pixel;
                     if (x == gridWidth) {
                         y++;
                         x = 0;
-                        if (y == gridHeight) return true;
+                        if (y == gridHeight) break place;
                     }
-                    amount--;
                 }
-                return false;
-            };
-            let pixel = false;
-            while (i < code.length) {
-                let next = code.indexOf(':', i);
-                if (next == -1) break;
-                let amount = parseInt(code.substring(i, next), 16);
-                if (addPixels(pixel, amount)) break;
                 pixel = !pixel;
                 i = next + 1;
             }
@@ -351,16 +354,17 @@ function loadSaveCode() {
             if (sections[0]) createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
             if (sections[1]) ticks = parseInt(sections[1], 16);
             if (sections[2]) parseSaveCode(sections[2], 16);
-            if (sections[3]) parseBooleanCode(fireGrid, sections[3]);
-            if (sections[4]) parseBooleanCode(placeableGrid, sections[4]);
-            if (sections[5]) parseBooleanCode(targetGrid, sections[5]);
+            if (sections[3]) parseBooleanCode(fireGrid, sections[3], 16);
+            if (sections[4]) parseBooleanCode(placeableGrid, sections[4], 16);
+            if (sections[5]) parseBooleanCode(targetGrid, sections[5], 16);
+            if (sections[6]) parseBooleanCode(railGrid, sections[6], 16);
         } else {
             if (isNaN(parseInt(sections[0]))) return;
             if (sections[0]) createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
             if (sections[1]) ticks = parseInt(sections[1], 16);
             if (sections[2]) parseSaveCode(sections[2], 10);
-            if (sections[3]) parseBooleanCode(fireGrid, sections[3]);
-            if (sections[4]) parseBooleanCode(placeableGrid, sections[4]);
+            if (sections[3]) parseBooleanCode(fireGrid, sections[3], 16);
+            if (sections[4]) parseBooleanCode(placeableGrid, sections[4], 16);
             if (sections[5]) {
                 let x = 0;
                 let y = 0;
@@ -388,7 +392,7 @@ function loadSaveCode() {
                     i = next + 1;
                 }
             }
-            if (sections[6]) parseBooleanCode(targetGrid, sections[6]);
+            if (sections[6]) parseBooleanCode(targetGrid, sections[6], 16);
         }
         updateTimeControlButtons();
         camera.x = Math.max(0, Math.min(camera.x, (canvasResolution * (gridWidth / Math.min(gridWidth, gridHeight)) * camera.scale) - canvasResolution));
@@ -435,13 +439,7 @@ function generateSaveCode() {
             for (let j = 0; j < gridWidth; j++) {
                 amount++;
                 if (grid[i][j] != pixel) {
-                    if (amount != 0) {
-                        if (amount == 1) {
-                            saveCode += `1:`;
-                        } else {
-                            saveCode += `${amount.toString(16)}:`;
-                        }
-                    }
+                    saveCode += `${amount.toString(16)}:`;
                     pixel = grid[i][j];
                     amount = 0;
                 }
@@ -457,6 +455,7 @@ function generateSaveCode() {
     createBooleanCode(fireGrid);
     createBooleanCode(placeableGrid);
     createBooleanCode(targetGrid);
+    createBooleanCode(railGrid);
     return saveCode;
 };
 async function loadPremade(id) {
@@ -466,9 +465,8 @@ async function loadPremade(id) {
     if (await modal('Confirm load?', 'Your current red simulation will be overwritten!', true)) {
         document.querySelectorAll('save').forEach(e => {
             if (e.getAttribute('save-id') == id) {
-                saveCode = e.innerHTML;
-                saveCodeText.value = saveCode;
-                loadSaveCode();
+                saveCodeText.value = e.innerHTML;
+                loadSaveCode(e.innerHTML);
                 window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
                 window.localStorage.setItem('saveCodeText', LZString.compressToBase64(saveCodeText.value));
             }
@@ -1168,7 +1166,7 @@ function rayTrace(x1, y1, x2, y2, cb) {
     }
 };
 function possibleRotations(id) {
-    if (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2 || id == pixNum.ROTATOR_CLOCKWISE || id == pixNum.ROTATOR_COUNTERCLOCKWISE) return 2;
+    if (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2 || id == pixNum.ROTATOR_CLOCKWISE || id == pixNum.ROTATOR_COUNTERCLOCKWISE || id == pixNum.CARRIAGE_HORIZONTAL || id == pixNum.CARRIAGE_VERTICAL) return 2;
     if ((id >= pixNum.PISTON_LEFT && id <= pixNum.ROTATOR_DOWN) || (id >= pixNum.COMPARATOR_LEFT && id <= pixNum.COMPARATOR_DOWN) || (id >= pixNum.LASER_LEFT && id <= pixNum.LASER_DOWN) || (id >= pixNum.FLAMETHROWER_LEFT && id <= pixNum.FLAMETHROWER_DOWN)) return 4;
     return 1;
 };
@@ -1530,7 +1528,7 @@ timingGradient.addColorStop(0.7, '#0F0');
 timingGradient.addColorStop(1, '#0F0');
 let forceDrawTeamGrid = false;
 function draw() {
-    if (inMenuScreen || document.hidden) {
+    if ((inMenuScreen || document.hidden) && !PixSimAPI.inGame) {
         targetFps = 5;
         return;
     } else targetFps = fps;
@@ -1542,6 +1540,7 @@ function draw() {
     gridnoisectx.resetTransform();
     abovectx.resetTransform();
     firectx.resetTransform();
+    railctx.resetTransform();
     targetctx.resetTransform();
     placeablectx.resetTransform();
     teamsctx.resetTransform();
@@ -1552,6 +1551,7 @@ function draw() {
     gridnoisectx.globalAlpha = 1;
     abovectx.globalAlpha = 1;
     firectx.globalAlpha = 1;
+    railctx.globalAlpha = 1;
     targetctx.globalAlpha = 1;
     placeablectx.globalAlpha = 1;
     teamsctx.globalAlpha = 1;
@@ -1675,6 +1675,7 @@ function drawFrame() {
         }
         drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
         drawBooleanGrid(targetGrid, targetGrid, pixNum.TARGET, targetctx);
+        drawBooleanGrid(railGrid, railGrid, pixNum.RAIL, railctx);
         if (!PixSimAPI.inGame) drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         else drawBooleanGrid(PixSimAPI.team ? teamPlaceableGrids[1] : teamPlaceableGrids[0], lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         if (!noNoise) {
@@ -1716,6 +1717,7 @@ function drawFrame() {
         gridctx.drawImage(gridNoiseCanvas, 0, 0);
         gamectx.drawImage(gridCanvas, 0, 0);
         gamectx.drawImage(aboveCanvas, 0, 0);
+        gamectx.drawImage(railCanvas, 0, 0);
         gamectx.drawImage(targetCanvas, 0, 0);
         gamectx.drawImage(fireCanvas, 0, 0);
         gamectx.drawImage(teamsCanvas, 0, 0);
@@ -2000,6 +2002,7 @@ function drawUI() {
     }
     if (PixSimAPI.inGame) drawPixSimUI();
 };
+// TODO: Decouple ticking from drawing
 function updateTick() {
     let tickStart = performance.now();
     if ((!PixSimAPI.inGame || PixSimAPI.isHost) && ((!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && performance.now() - lastTick >= 100))) {
@@ -2009,12 +2012,10 @@ function updateTick() {
             /*
             update priority:
             -: fire
-            0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers, spongy rice, lag
-            1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers
-            5: gravity solids, stone, ice, rotators, saplings
+            0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers, spongy rice, lag, music pixels
+            1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers, carriages
+            5: gravity solids, stone, ice, rotators, saplings, monsters
             6: water, lava, steam, leaves, pumps, lava generators, freezers, wells, color wells, color generators, color collectors
-            7: monsters, music pixels
-            -: music pixels
             */
             let monsterCount = 0;
             let fulfilledTargetCount = 0;
@@ -2048,7 +2049,7 @@ function updateTick() {
                     musicGrid[y][x] = 0;
                 }
             }
-            for (let updateStage = 0; updateStage <= 7; updateStage++) {
+            for (let updateStage = 0; updateStage <= 6; updateStage++) {
                 switch (updateStage) {
                     case 1:
                         for (let y = gridHeight - 1; y >= 0; y--) {
@@ -2139,6 +2140,7 @@ function updateTick() {
         if (PixSimAPI.inGame && PixSimAPI.gameRunning) {
             new Promise(async (resolve, reject) => {
                 await pixsimData.scriptRunner.tick();
+                if (pixsimData.scriptEvents.tick !== undefined) await pixsimData.scriptRunner.run(pixsimData.scriptEvents.tick);
                 PixSimAPI.sendTick(grid, teamGrid, [
                     fireGrid,
                     targetGrid,
@@ -2309,6 +2311,9 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 if (placePixel == 'target') act((x, y) =>  {
                     targetGrid[y][x] = false;
                 });
+                else if (placePixel == 'rail') act((x, y) =>  {
+                    railGrid[y][x] = false;
+                });
                 else if (placePixel == 'placementRestriction') act((x, y) => {
                     placeable[y][x] = true;
                 });
@@ -2321,7 +2326,15 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                     }
                 });
             } else {
-                act(function (x, y) {
+                if (placePixel == 'rail') act((x, y) => {
+                    if (placeable[y][x] && railGrid[y][x]) {
+                        if (inventory[placePixel] == -Infinity) inventory[placePixel] = 0;
+                        inventory[placePixel]++;
+                        modifiedPixelCounts[placePixelNum] = true;
+                        railGrid[y][x] = false;
+                    }
+                });
+                else act((x, y) =>  {
                     if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN) && (grid[y][x] < pixNum.GENERIC_COLOR_WELL || grid[y][x] > pixNum.GENERIC_COLOR_WELL)))) {
                         let pixel = pixelAt(x, y).id;
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
@@ -2352,6 +2365,22 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 else if (act((x, y) =>  {
                     if (placeable[y][x] && grid[y][x] != pixNum.DELETER && !fireGrid[y][x]) {
                         fireGrid[y][x] = true;
+                        inventory[placePixel]--;
+                    }
+                    return inventory[placePixel] <= 0;
+                })) skipToEnd = true;
+            }
+        } else if (placePixel == 'rail') {
+            if (sandboxMode) {
+                act((x, y) =>  {
+                    railGrid[y][x] = true;
+                });
+            } else {
+                modifiedPixelCounts[placePixelNum] = true;
+                if (inventory[placePixel] <= 0) skipToEnd = true;
+                else if (act((x, y) =>  {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && !railGrid[y][x]) {
+                        railGrid[y][x] = true;
                         inventory[placePixel]--;
                     }
                     return inventory[placePixel] <= 0;
@@ -2391,7 +2420,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                 modifiedPixelCounts[placePixelNum] = true;
                 if (inventory[placePixel] <= 0) skipToEnd = true;
                 else if (act((x, y) =>  {
-                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER && grid[y][x] != placePixelNum && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN)))) {
+                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER && grid[y][x] != placePixelNum && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN) && (placePixelNum < pixNum.COLOR_RED || placePixelNum > pixNum.COLOR_BROWN)))) {
                         modifiedPixelCounts[grid[y][x]] = true;
                         let pixel = pixelAt(x, y).id;
                         if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
@@ -2484,7 +2513,8 @@ const teamPixelAmounts = [{}, {}];
 const pixsimData = {
     gameStart: 0,
     pixeliteCounts: [0, 0],
-    scriptRunner: null
+    scriptRunner: null,
+    scriptEvents: { }
 };
 function resetPixSimPixelAmounts() {
     for (const id in pixels) {
@@ -2583,11 +2613,32 @@ PixSimAPI.onGameStart = () => {
     transitionToGame(async () => {
         resetPixSimPixelAmounts();
         if (PixSimAPI.isHost) {
-            // const map = await PixSimAPI.getMap();
-            pixsimData.gameStart = Date.now(); // game timer
+            const map = await PixSimAPI.getMap();
+            loadSaveCode(`&1;${map.width}-${map.height};0000;${map.data}`);
+            loadTeamCode(map.teamData);
+            for (let i = 0; i <= 1; i++) {
+                let data = map.placeableData[i].split(':');
+                let x = 0;
+                let y = 0;
+                let placeable = false;
+                place: for (let j in data) {
+                    let amount = parseInt(data[j], 16);
+                    for (let k = 0; k < amount; k++) {
+                        teamPlaceableGrids[i][y][x++] = placeable;
+                        if (x == gridWidth) {
+                            y++;
+                            x = 0;
+                            if (y == gridHeight) break place;
+                        }
+                    }
+                    placeable = !placeable;
+                }
+            }
             pixsimData.scriptRunner = new PXASMRunner();
-            pixsimData.scriptRunner.run('while(1){await awaitTick();}');
-            // load scripts and run them
+            pixsimData.scriptEvents = {};
+            if (map.scripts.load !== undefined) pixsimData.scriptRunner.run(await PixSimAPI.getScript(map.scripts.load));
+            if (map.scripts.tick !== undefined) pixsimData.scriptEvents.tick = await PixSimAPI.getScript(map.scripts.tick);
+            pixsimData.gameStart = Date.now(); // game timer
         }
         pixsimMenu._open = false;
         pixsimMenu.style.transform = '';
@@ -2613,6 +2664,7 @@ PixSimAPI.onGameStart = () => {
         resetButton.disabled = true;
         restartButton.disabled = true;
         saveCodeText.disabled = true;
+        saveCodeText.value = '';
         generateSaveButton.disabled = true;
         uploadSaveButton.disabled = true;
         downloadSaveButton.disabled = true;
@@ -3195,8 +3247,7 @@ resetButton.onclick = async (e) => {
     fastSimulation = false;
     updateTimeControlButtons();
     if (await modal('Reset?', 'Your current red simulation will be overwritten!', true)) {
-        saveCode = saveCodeText.value.replace('\n', '');
-        loadSaveCode();
+        loadSaveCode(saveCodeText.value.replace('\n', ''));
         inResetState = true;
     }
 };

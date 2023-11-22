@@ -607,6 +607,7 @@ function handleJoinGame(status) {
         modal('Could not join game', status == 1 ? 'Game does not exist or already started!' : 'Banned by game host!');
     }
 };
+const pixsimJoinBackButton = document.getElementById('pixsimJoinBackButton');
 function loadPublicGameList(spectating) {
     PixSimAPI.spectating = spectating;
     pixsimJoinGameCodeCode.value = '';
@@ -620,8 +621,10 @@ function loadPublicGameList(spectating) {
     stopRefreshLoop = () => {
         clearInterval(refreshLoop);
         pixsimMenuClose.removeEventListener('click', stopRefreshLoop);
+        pixsimJoinBackButton.removeEventListener('click', stopRefreshLoop);
     };
     pixsimMenuClose.addEventListener('click', stopRefreshLoop);
+    pixsimJoinBackButton.addEventListener('click', stopRefreshLoop);
     PixSimAPI.getPublicGames('all').then(refreshGameList, stopRefreshLoop);
 };
 function stopRefreshLoop() { };

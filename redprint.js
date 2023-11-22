@@ -229,7 +229,7 @@ function rpDraw() {
     rpDrawBrush();
 };
 // copy + paste & history
-const rpUnplaceablePixels = ['fire', 'placementUnRestriction', 'placementRestriction', 'monster', 'target', 'remove', 'teamNone', 'teamAlpna', 'teamBeta'];
+const rpUnplaceablePixels = ['fire', 'rail', 'placementRestriction', 'monster', 'target', 'remove', 'teamNone', 'teamAlpna', 'teamBeta'];
 let lastMouseButton = brush.mouseButton;
 function rpUpdateMouseControls() {
     if (rpUnplaceablePixels.indexOf(brush.pixel) == -1 && acceptInputs && rpMX >= 0 && rpMX < rpCanvasRes && rpMY >= 0 && rpMY < rpCanvasRes) {

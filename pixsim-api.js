@@ -40,7 +40,7 @@ socket.on('pong', () => {
     let prevPing = ping;
     ping = performance.now() - pingSend;
     if (prevPing == -1) prevPing = ping;
-    jitter = Math.abs(ping - prevPing) * 0.5 + jitter * 0.5;
+    jitter = Math.abs(ping - prevPing) * 0.5 + jitter * 0.5; // not actually jitter but ok
     pingReceived = true;
     if (ping > 300 || jitter > 200) {
         highPingWarning.style.display = 'block';
@@ -48,6 +48,9 @@ socket.on('pong', () => {
     } else {
         highPingWarning.style.display = '';
     }
+});
+socket.on('disconnect', () => {
+    highPingWarning.style.display = '';
 });
 
 // reusable wrapper interface (ignore the stuff above)
@@ -228,15 +231,15 @@ class PixSimAPI {
     }
 
     static async getMap() {
-        // request list of maps for game mode and pick one to load
         // allow player-decided map loading in the future?
         return await new Promise(async (resolve, reject) => {
-            const maplist = await this.#httpGET('/pixsim-api/maps/list/' + this.#gameModes[this.#gameMode].id);
-            // oh wait, it's borken
+            const maplist = JSON.parse(await this.#httpGET('/pixsim-api/maps/list/' + this.#gameModes[this.#gameMode].id));
+            const map = await this.#httpGET(`/pixsim-api/maps/${this.#gameModes[this.#gameMode].id}/${maplist[Math.floor(Math.random() * maplist.length)]}?format=rps`);
+            resolve(JSON.parse(map));
         });
     }
     static async getScript(scriptPath) {
-        return await this.#httpGET('/pixsim-api/controllers/' + (scriptPath[0] == '/' ? scriptPath.substring(1) : scriptPath) + '?format=rps');;
+        return await this.#httpGET('/pixsim-api/scripts/' + (scriptPath[0] == '/' ? scriptPath.substring(1) : scriptPath) + '?format=rps');;
     }
 
     static set onUpdateTeamList(cb) {
@@ -613,6 +616,7 @@ class PXASMRunner {
                 case 'setAmount':
                     if (pixels[dat[0]] != undefined) {
                         teamPixelAmounts[dat[1]][dat[0]] = dat[2];
+                        queueUpdatePixelAmount(dat[0], teamPixelAmounts[dat[1]]);
                         this.#worker.postMessage([0]);
                     }
                     break;
@@ -623,15 +627,18 @@ class PXASMRunner {
                     break;
                 case 'moveCamera':
                     moveCamera(dat[0], dat[1], dat[2], dat[3] ?? 0, camera.animation.timingFunctions.ease);
+                    PixSimAPI.triggerGameEvent('moveCamera', [dat[0], dat[1], dat[2], dat[3] ?? 0]);
                     break;
                 case 'shakeCamera':
                     cameraShake(dat[0], dat[1], dat[2]);
+                    PixSimAPI.triggerGameEvent('shakeCamera', dat);
                     break;
                 case 'triggerWin':
                     // oof
                     break;
                 case 'playSound':
                     // not implemented
+                    PixSimAPI.triggerGameEvent('playSound', [dat[0], dat[1], dat[2], dat[3] ?? 1]);
                     break;
                 case 'startSim':
                     simulationPaused = true;
