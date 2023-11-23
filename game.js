@@ -3189,11 +3189,11 @@ advanceTickButton.onclick = (e) => {
     if (simulationPaused) runTicks = 1;
 };
 quicksaveButton.onclick = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs) return;
+    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
     quicksave = generateSaveCode();
 };
 quickloadButton.onclick = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs) return;
+    if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
     if (quicksave != null) loadSaveCode(quicksave);
 };
 
@@ -3246,6 +3246,7 @@ uploadSaveButton.onclick = (e) => {
                 saveCodeText.value = saveCode;
                 loadSaveCode();
                 window.localStorage.setItem('saveCodeText', LZString.compressToBase64(saveCode));
+                quicksave = null;
             }
         };
         reader.readAsText(files[0]);
@@ -3271,6 +3272,7 @@ resetButton.onclick = async (e) => {
     if (await modal('Reset?', 'Your current red simulation will be overwritten!', true)) {
         loadSaveCode(saveCodeText.value.replace('\n', ''));
         inResetState = true;
+        quicksave = null;
     }
 };
 restartButton.onclick = async (e) => {
@@ -3281,6 +3283,7 @@ restartButton.onclick = async (e) => {
     if (await modal('Restart?', 'Your solution will be removed!', true)) {
         window.localStorage.removeItem(`challenge-${currentPuzzleId}`);
         loadPuzzle(currentPuzzleSection, currentPuzzleLevel);
+        quicksave = null;
     }
 };
 
