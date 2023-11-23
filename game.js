@@ -2608,6 +2608,7 @@ function drawPixSimUI() {
             break;
     }
 };
+// oh no sound design
 PixSimAPI.onGameStart = () => {
     sandboxMode = false;
     transitionToGame(async () => {
@@ -2673,8 +2674,13 @@ PixSimAPI.onGameStart = () => {
         // animate the camera and useless glitch text thing
     });
 };
+PixSimAPI.onGameRound = (winner) => {
+    // sort of like win screen
+    // wow round stuff next round after timer
+};
 PixSimAPI.onGameEnd = (winner) => {
     // win screen like level win screen but more graphics (color of winning team as accent)
+    // statistics and stuff
     // option to go back to lobby or quit to menu
 };
 PixSimAPI.onNewGridSize = createGrid;

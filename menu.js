@@ -252,6 +252,7 @@ function clearMenuScreen() {
     clearInterval(titleBobController);
     titleContainer.style.transitionDuration = '';
     titleContainer.style.transform = 'translateY(-165vh)';
+    stopAllMusic();
     setTransitionTimeout(() => {
         multiplayerButton.style.transform = '';
     }, 200);
@@ -263,7 +264,6 @@ function clearMenuScreen() {
     }, 400);
     setTransitionTimeout(() => {
         inMenuScreen = false;
-        stopAllMusic();
     }, 500);
 };
 function restoreMenuScreen() {
@@ -837,4 +837,7 @@ copyrightNotice.onclick = (e) => {
             creditsAnimation.style.animationName = '';
         }, 3000);
     };
+    setTimeout(() => {
+        playMusic('credits');
+    }, 500);
 };

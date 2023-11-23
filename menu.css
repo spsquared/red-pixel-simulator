@@ -711,7 +711,7 @@
     left: 0px;
     width: 100vw;
     font-size: 1vw;
-    animation: 100s linear;
+    animation: 118s linear;
     animation-delay: 2s;
     /* temp */
     /* top: 0;
@@ -788,8 +788,8 @@
 #creditsMusicTable {
     display: grid;
     grid-template-columns: [s] 45fr [m] 55fr [e];
-    width: 50%;
-    margin-left: 25%;
+    width: 70%;
+    margin-left: 15%;
 }
 #creditsMusicTable p {
     margin: 1vw 1vw;

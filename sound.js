@@ -228,6 +228,9 @@ window.addEventListener('load', async (e) => {
     setAudio('./assets/sound/menu.mp3', (buf) => {
         musicBuffers.set('menu', buf);
     });
+    setAudio('./assets/sound/credits.mp3', (buf) => {
+        musicBuffers.set('credits', buf);
+    });
     promiseList.push(addMusicPixelSound(1));
     promiseList.push(addMusicPixelSound(2));
     promiseList.push(addMusicPixelSound(3));

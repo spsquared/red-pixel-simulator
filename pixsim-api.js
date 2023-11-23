@@ -100,6 +100,7 @@ class PixSimAPI {
         this.onUpdateTeamList = () => { };
         this.onGameModeChange = () => { };
         this.onGameStart = () => { };
+        this.onGameRound = () => { };
         this.onGameEnd = () => { };
         this.onGameKicked = () => { };
         this.onGameClosed = () => { };
@@ -270,7 +271,13 @@ class PixSimAPI {
             socket.emit('ready');
         });
     }
-    // ADD ROUNDS!!!!
+    static set onGameRound(cb) {
+        if (typeof cb != 'function') return;
+        socket.off('gameRound');
+        socket.on('gameRound', async (winner) => {
+            cb(winner);
+        });
+    }
     static set onGameEnd(cb) {
         if (typeof cb != 'function') return;
         socket.off('gameEnd');
@@ -472,6 +479,9 @@ class PixSimAPI {
         socket.on('inputBatch', (inputs) => {
             for (let input of inputs) handleInput(input);
         });
+    }
+    static triggerGameEvent(event, data) {
+        // oof
     }
 
     static set teamSize(size) {
