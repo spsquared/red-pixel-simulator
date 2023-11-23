@@ -6,6 +6,7 @@
     height: var(--canvas-size);
     scroll-snap-align: start;
     scroll-snap-stop: always;
+    text-align: center;
 }
 #canvas {
     position: fixed;
@@ -16,6 +17,13 @@
     border: 2px solid black;
     background-color: white;
     cursor: none;
+}
+.canvasContainerVertical {
+    position: absolute !important;
+    width: 100vw !important;
+}
+.canvasContainerVertical #canvas {
+    left: calc((100vw - var(--canvas-size)) / 2) !important;
 }
 
 #sidebar {
@@ -30,15 +38,10 @@
     scroll-snap-stop: always;
     user-select: none;
 }
-
-@media (orientation: portrait) {
-    body {
-        --max-widebar-width: 100vw;
-    }
-    #sidebar {
-        top: var(--canvas-size);
-        width: 100vw;
-    }
+.sidebarVertical {
+    top: var(--canvas-size) !important;
+    width: 100vw !important;
+    height: calc(100vh - var(--canvas-size)) !important;
 }
 
 #levelName {
@@ -236,27 +239,26 @@
 #gameControls {
     width: 100%;
 }
-#sizeUp, #sizeDown {
-    width: 42px;
+
+#simulationControlsContainer {
+    position: sticky;
+    top: 4px;
+    bottom: 4px;
+    max-width: 600px;
+    padding: 4px 4px;
+    border: 2px solid black;
+    background-color: white;
+    margin-right: 12px;
+    /* this doesnt work buh */
+}
+#simulationControls {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+}
+#pause, #fastSimulation, #slowSimulation, #advanceTick, #quicksave, #quickload {
     height: 40px;
-    font-size: 20px;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 50%;
-}
-#sizeUp {
-    background-image: url(/assets/svg/sizeUp.svg);
-}
-#sizeDown {
-    background-image: url(/assets/svg/sizeDown.svg);
-}
-#simulateSlowLabel {
-    font-size: 18px;
-    margin-left: 8px;
-}
-#pause, #fastSimulation, #advanceTick {
-    width: 100px;
-    height: 40px;
+    margin: 0px 0px;
     background-position: center;
     background-repeat: no-repeat;
     background-size: 50% 50%;
@@ -269,14 +271,50 @@
     background-color: gray;
     background-image: url(/assets/svg/simulate.svg);
 }
+#slowSimulation {
+    background-color: lime;
+    background-image: url(/assets/svg/slowmode.svg);
+    background-size: 80% 80%;
+}
 #advanceTick {
     background-image: url(/assets/svg/advanceTick.svg);
 }
 
+#savecodeControls {
+    display: grid;
+    grid-template-columns: 100px 1fr 100px;
+    grid-template-rows: repeat(3, 1fr);
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    margin-right: 12px;
+}
+#backToMenu, #reset, #restart, #generateSave, #uploadSave, #downloadSave {
+    margin: 0px 0px;
+}
+#backToMenu {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100px;
+    height: 40px;
+}
+#reset, #restart {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100px;
+    height: 40px;
+    background-color: red;
+}
+#restart {
+    grid-column: 1;
+    grid-row: 3;
+}
 #saveCode {
-    margin-top: 10px;
-    width: calc(100% - 8px);
-    height: 150px;
+    grid-column: 2;
+    grid-row: 1 / 4;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
     resize: none;
     word-wrap: break-word;
     word-break: break-all;
@@ -287,31 +325,17 @@
     height: 50px;
     font-size: 12px;
 }
+#generateSave {
+    grid-column: 3;
+    grid-row: 1;
+}
+#uploadSave {
+    grid-column: 3;
+    grid-row: 2;
+}
 #downloadSave {
-    margin-right: 12px;
-}
-#reset, #restart {
-    width: 100px;
-    height: 40px;
-    background-color: red;
-}
-#backToMenu {
-    width: 100px;
-    height: 40px;
-}
-#gridWidthLabel, #gridHeightLabel {
-    margin-top: 8px;
-    margin-left: 8px;
-    font-size: 18px;
-}
-#gridWidth, #gridHeight {
-    margin-top: 8px;
-    font-size: 18px;
-}
-#screenshot {
-    width: 100px;
-    height: 40px;
-    font-size: 14px;
+    grid-column: 3;
+    grid-row: 3;
 }
 #noNoise, #noAnimation, #fadeEffect, #cameraShake, #changeResolution {
     margin-left: unset;
@@ -322,16 +346,6 @@
     background-color: lime;
 }
 #fadeEffect {
-    background-color: lime;
-}
-.save {
-    font-weight: 300;
-}
-.loadSave {
-    font-size: 12px;
-    border-width: 3px;
-    font: 14px Arial;
-    padding: 2px 4px;
     background-color: lime;
 }
 
@@ -526,6 +540,17 @@
     font-weight: 300;
 }
 
+.save {
+    font-weight: 300;
+}
+.loadSave {
+    font-size: 12px;
+    border-width: 3px;
+    font: 14px Arial;
+    padding: 2px 4px;
+    background-color: lime;
+}
+
 #keybindScreen {
     display: inline-block;
     position: fixed;
@@ -601,7 +626,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    #levelName, #levelDescription, #pixelPicker, .pixelGroup, .pixelGroupContents, #pixelPickerDescription, #pixelPickerCrafting, .pickerPixel:hover {
+    #simulationControlsContainer {
+        background-color: #333;
+    }
+    #levelName, #levelDescription, #pixelPicker, .pixelGroup, .pixelGroupContents, #pixelPickerDescription, #pixelPickerCrafting, .pickerPixel:hover, #simulationControlsContainer {
         border-color: white;
     }
     #pixelPicker::after {

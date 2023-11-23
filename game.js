@@ -250,9 +250,6 @@ function createGrid(width = 100, height = 100) {
 function loadSaveCode(code = saveCode) {
     saveCode = code;
     if (saveCode.length > 0) {
-        simulationPaused = true;
-        fastSimulation = false;
-        updateTimeControlButtons();
         runTicks = 0;
         ticks = 0;
         stopAllMusicPixels();
@@ -2653,14 +2650,13 @@ PixSimAPI.onGameStart = () => {
         camera.scale = 1;
         camera.x = 0;
         camera.y = 0;
-        simulateSlowButton.checked = true;
         updateTimeControlButtons();
         levelDetails.style.display = 'none';
         pixelPickerCrafting.style.display = '';
         restartButton.style.display = '';
         pauseButton.disabled = true;
         fastSimulationButton.disabled = true;
-        simulateSlowButton.disabled = true;
+        slowSimulationButton.disabled = true;
         advanceTickButton.disabled = true;
         resetButton.disabled = true;
         restartButton.disabled = true;
@@ -2732,6 +2728,7 @@ window.addEventListener('load', (e) => {
 let reassigningPixelKeybind = false;
 const keybindChangeButton = document.createElement('button');
 keybindChangeButton.id = 'pixelPickerKeybindButton';
+keybindChangeButton.title = 'Change keybind';
 const keybindScreen = document.getElementById('keybindScreen');
 const disallowedKeybinds = ['w', 'a', 's', 'd', 'r', 'f', 'g', 'i', 'j', 'k', 'l', 'p', '[', ']', 'enter', 'control', 'shift', 'alt', 'meta', 'backspace', 'arrowup', 'arrowdown'];
 keybindChangeButton.onclick = (e) => {
@@ -3131,35 +3128,45 @@ window.addEventListener('DOMContentLoaded', (e) => {
 });
 
 // game control buttons
+let quicksave = null;
 const pauseButton = document.getElementById('pause');
-const simulateSlowButton = document.getElementById('simulateSlow');
 const fastSimulationButton = document.getElementById('fastSimulation');
+const slowSimulationButton = document.getElementById('slowSimulation');
 const advanceTickButton = document.getElementById('advanceTick');
+const quicksaveButton = document.getElementById('quicksave');
+const quickloadButton = document.getElementById('quickload');
 function updateTimeControlButtons() {
     if (simulationPaused) {
         pauseButton.style.backgroundColor = 'red';
         pauseButton.style.backgroundImage = 'url(/assets/svg/play.svg)';
+        pauseButton.title = 'Play';
         fastSimulationButton.style.backgroundColor = '';
+        fastSimulationButton.title = 'Disabled while paused';
         fastSimulationButton.disabled = true;
         advanceTickButton.disabled = false;
         pauseMusicPixels();
     } else {
         pauseButton.style.backgroundColor = 'lime';
         pauseButton.style.backgroundImage = 'url(/assets/svg/pause.svg)';
-        if (fastSimulation) fastSimulationButton.style.backgroundColor = 'lime';
-        else fastSimulationButton.style.backgroundColor = 'red';
+        pauseButton.title = 'Pause';
+        if (fastSimulation) {
+            fastSimulationButton.style.backgroundColor = 'lime';
+            fastSimulationButton.title = 'Stop Simulation warp';
+        } else {
+            fastSimulationButton.style.backgroundColor = 'red';
+            fastSimulationButton.title = 'Start Simulation warp';
+        }
         fastSimulationButton.disabled = false;
         advanceTickButton.disabled = true;
         resumeMusicPixels();
     }
-};
-document.getElementById('sizeUp').onclick = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    brush.size = Math.min(Math.ceil(Math.max(gridWidth, gridHeight) / 2 + 1), brush.size + 1);
-};
-document.getElementById('sizeDown').onclick = (e) => {
-    if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    if (!brush.isSelection) brush.size = Math.max(1, brush.size - 1);
+    if (slowSimulation) {
+        slowSimulationButton.style.backgroundColor = 'red';
+        slowSimulationButton.title = 'Disable slow-mode';
+    } else {
+        slowSimulationButton.style.backgroundColor = 'lime';
+        slowSimulationButton.title = 'Enable slow-mode';
+    }
 };
 pauseButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
@@ -3167,9 +3174,10 @@ pauseButton.onclick = (e) => {
     fastSimulation = false;
     updateTimeControlButtons();
 };
-simulateSlowButton.onclick = (e) => {
+slowSimulationButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    slowSimulation = simulateSlowButton.checked;
+    slowSimulation = !slowSimulation;
+    updateTimeControlButtons();
 };
 fastSimulationButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
@@ -3179,6 +3187,14 @@ fastSimulationButton.onclick = (e) => {
 advanceTickButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
     if (simulationPaused) runTicks = 1;
+};
+quicksaveButton.onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
+    quicksave = generateSaveCode();
+};
+quickloadButton.onclick = (e) => {
+    if (inMenuScreen || inWinScreen || !acceptInputs) return;
+    if (quicksave != null) loadSaveCode(quicksave);
 };
 
 // save code inputs
@@ -3363,7 +3379,16 @@ window.onresize = (e) => {
     canvasScale = canvasResolution / canvasSize;
     resetCanvases();
     let pickerWidth = (Math.round((window.innerWidth - canvasSize - 20) / 62) - 1) * 62 + 1;
-    if (window.innerWidth / window.innerHeight <= 1) pickerWidth = (Math.round((window.innerWidth) / 62) - 1) * 62 + 1;
+    if ((window.innerWidth - 249) / window.innerHeight <= 1) {
+        pickerWidth = (Math.round((window.innerWidth) / 62) - 1) * 62 + 1;
+        document.body.classList.add('bodyVertical');
+        sidebar.classList.add('sidebarVertical');
+        canvasContainer.classList.add('canvasContainerVertical');
+    } else {
+        document.body.classList.remove('bodyVertical');
+        sidebar.classList.remove('sidebarVertical');
+        canvasContainer.classList.remove('canvasContainerVertical');
+    }
     pixelPicker.style.width = pickerWidth + 2 + 'px';
     pixelPickerDescription.style.width = pickerWidth - 14 + 'px';
     pixelPickerCrafting.style.width = pickerWidth + 2 + 'px';

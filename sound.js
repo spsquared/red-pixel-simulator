@@ -59,7 +59,7 @@ const musicVolume = audioContext.createGain();
 musicVolume.connect(globalVolume);
 const musicBuffers = new Map();
 const activeMusic = [];
-function playMusic(id) {
+function playMusic(id, loop = true) {
     if (musicBuffers.has(id)) {
         const gain = audioContext.createGain();
         const source = audioContext.createBufferSource();
@@ -71,7 +71,7 @@ function playMusic(id) {
         gain.gain.setValueAtTime(0, audioContext.currentTime);
         gain.connect(musicVolume);
         source.buffer = musicBuffers.get(id);
-        source.loop = true;
+        source.loop = loop;
         source.connect(gain);
         source.start();
         gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 1);

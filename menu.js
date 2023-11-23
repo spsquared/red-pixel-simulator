@@ -313,7 +313,7 @@ sandboxButton.onclick = (e) => {
     restartButton.style.display = 'none';
     pauseButton.disabled = false;
     fastSimulationButton.disabled = false;
-    simulateSlowButton.disabled = false;
+    slowSimulationButton.disabled = false;
     advanceTickButton.disabled = false;
     resetButton.disabled = false;
     restartButton.disabled = false;
@@ -382,7 +382,7 @@ function selectPuzzle() {
     restartButton.style.display = '';
     pauseButton.disabled = false;
     fastSimulationButton.disabled = false;
-    simulateSlowButton.disabled = false;
+    slowSimulationButton.disabled = false;
     advanceTickButton.disabled = false;
     resetButton.disabled = false;
     restartButton.disabled = false;
@@ -838,6 +838,6 @@ copyrightNotice.onclick = (e) => {
         }, 3000);
     };
     setTimeout(() => {
-        playMusic('credits');
+        playMusic('credits', false);
     }, 500);
 };

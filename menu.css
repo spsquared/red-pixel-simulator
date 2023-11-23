@@ -156,6 +156,9 @@
     font: 12px 'Source Code Pro';
     color: white !important;
 }
+#copyrightNotice a {
+    color: white !important;
+}
 
 #levelSelectClose, #pixsimMenuClose {
     position: absolute;

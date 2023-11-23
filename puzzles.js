@@ -5,7 +5,7 @@ const puzzles = [
         levels: [
             {
                 name: 'A Grid of Numbers',
-                description: `Welcome to <h style="color: red;">Red Pixel Simulator</h>!<br>&emsp;<h style="color: red;">Red Pixel Simulator</h> is a sandbox-puzzle game based solely on interactions between some numbers in a grid. (Almost) everything is completely deterministic based on simple interactions between pixels. For the purposes of the puzzles, your goal is to <h>defeat all the monsters</h> (the red things with faces) by destroying them using other pixels and to <h>move the goal pixels</h> <h>to the targets</h>. For now, we will stick with just monsters.<br><br>&emsp;On the <h>left of your screen is the grid</h>. <h>On the right is the sidebar</h>, which contains all of the game controls. At the top, there is the <h>Pixel Picker</h>. Here you can see what and how many pixels you can place; you can <h>select them by clicking on them</h>. Below that, there are controls for your <h>brush size (up and down arrows)</h> and <h>simulation control</h>: You can <h>pause</h>, <h>warp</h>, and <h>step</h> the simulation. You can also turn on <h>slowmode</h>, which is useful in puzzles where things move so fast you can't see them.<br><br>&emsp;At the bottom you can find all the controls available.</h><br><br>&emsp;The levels after the following tutorial levels were <h>designed to be challenging</h>. They take the taught mechanics of the simulation and stretch them to their limits. <h>If you ever get stuck, just try a different level or section</h>, as there's not set difficulty curve to these.<br><br><h>Let's get started! Go down and press the <b>run</b> button (it looks like a play button) to begin.</h>`,
+                description: `Welcome to <h style="color: red;">Red Pixel Simulator</h>!<br>&emsp;<h style="color: red;">Red Pixel Simulator</h> is a sandbox-puzzle game based solely on interactions between some numbers in a grid. (Almost) everything is completely deterministic based on simple interactions between pixels. For the purposes of the puzzles, your goal is to <h>defeat all the monsters</h> (the red things with faces) by destroying them using other pixels and to <h>move the goal pixels</h> <h>to the targets</h>. For now, we will stick with just monsters.<br><br>&emsp;On the <h>left of your screen is the grid</h>. <h>On the right is the sidebar</h>, which contains all of the game controls. At the top, there is the <h>Pixel Picker</h>. Here you can see what and how many pixels you can place; you can <h>select them by clicking on them</h>. Below that, there are controls for your <h>brush size (up and down arrows)</h> and <h>simulation control</h>: You can <h>pause</h>, <h>warp</h>, and <h>step</h> the simulation. You can also turn on <h>slowmode</h>, which is useful in puzzles where things move so fast you can't see them.<br><br>&emsp;At the bottom of the sidebar (scroll ALL THE WAY DOWN) you can find all the controls available.</h><br><br>&emsp;The levels after the following tutorial levels were <h>designed to be challenging</h>. They take the taught mechanics of the simulation and stretch them to their limits. <h>If you ever get stuck, don't worry. Just try a different level or section</h>, as there's no set difficulty progression.<br><br><h>Let's get started! Go down and press the <b>run</b> button (it looks like a play button) to begin.</h>`,
                 saveCode: '20;0000;air-259:sand:air-19:grass:air-19:grass:water-12:mud:grass-6:dirt:water-8:mud-4:dirt-8:mud-2:water-3:mud-3:dirt-14:mud-3:dirt-35:;190:;190:;12a:1:65:',
                 backgroundColor: '#e0f0ff',
                 inventory: {
@@ -40,7 +40,7 @@ const puzzles = [
             },
             {
                 name: 'Lava',
-                description: `It appears that the monsters are learning. They've built a barrier of wood to protect themselves from falling pixels. However, they failed to neglect the fact that you have been given lava for the purposes of these levels.<br><br><h>Lava can set stuff on fire, use it to burn through their barriers.</h>`,
+                description: `It appears that the monsters are learning. They've built a barrier of wood to protect themselves from falling pixels. However, they failed to neglect the fact that you have rather conveniently been given lava for this puzzle.<br><br><h>Lava can set stuff on fire, use it to burn through their barriers.</h>`,
                 saveCode: '25;0000;air-367:wood-8:air-17:wood:air-6:wood:air-17:wood:air-6:wood:air-17:wood:air-6:wood:grass-15:air-2:wood:air-6:wood:dirt-15:grass-2:dirt:grass-6:dirt-126:;271:;0:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:9:10:18:1:9f:;1d5:1:2:2:97:',
                 backgroundColor: '#e0f0ff',
                 inventory: {
@@ -869,6 +869,9 @@ function loadPuzzle(section, level) {
         saveCodeText.value = saveCode;
         loadSaveCode();
         backgroundColor = puzzle.backgroundColor;
+        simulationPaused = true;
+        fastSimulation = false;
+        updateTimeControlButtons();
         inResetState = true;
         resetPixelAmounts(false);
         if (savedData !== null) {

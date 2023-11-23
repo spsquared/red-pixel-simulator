@@ -24,6 +24,10 @@ body {
 body::-webkit-scrollbar {
     width: 0px;
 }
+.bodyVertical {
+    --max-sidebar-width: 100vw !important;
+    --canvas-size: min(100vw, 75vh) !important;
+}
 
 ::selection {
     background-color: #F55;

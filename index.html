@@ -106,83 +106,35 @@
             <div id="pixelPickerDescription"></div>
             <div id="pixelPickerCrafting"></div>
             <br>
-            <table><tbody>
-                <tr>
-                    <td>
-                        <button id="sizeUp" class="btick"></button>
-                        <button id="sizeDown" class="btick"></button>
-                    </td>
-                    <td colspan="2">
-                        <label for="simulateSlow" id="simulateSlowLabel">Slowmode:</label>
-                        <label class="toggle">
-                            <input type="checkbox" id="simulateSlow" class="toggleInput bclick">
-                            <span class="toggleSlider"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button id="pause" class="bclick"></button>
-                    </td>
-                    <td>
-                        <button id="fastSimulation" class="bclick"></button>
-                    </td>
-                    <td>
-                        <button id="advanceTick" class="btick"></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button id="reset" class="bclick">Reset</button>
-                    </td>
-                    <td>
-                        <button id="restart" class="bclick">Restart</button>
-                    </td>
-                    <td>
-                        <button id="backToMenu" class="bclick">
-                            <div style="display: inline-block; vertical-align: middle; height: 100%; padding-top: 1px;"><img src="/assets/svg/backToMenu.svg" style="height: 20px;"></div>
-                            <div style="display: inline-block; vertical-align: middle; height: 100%; padding-top: 3px;">Menu</div>
-                        </button>
-                    </td>
-                </tr>
-            </tbody></table>
-            <table><tbody>
-                <tr>
-                    <td style="width: 100%">
-                        <textarea id="saveCode"></textarea>
-                    </td>
-                    <td style="vertical-align: top;">
-                        <table><tbody>
-                            <tr>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button id="generateSave" class="bclick">GENERATE<br>SAVE CODE</button>
-                                </td>
-                                <td>
-                                    <button id="uploadSave" class="bclick"><img src="/assets/svg/upload.svg" style="height: 30px; margin-top: -6px; margin-bottom: -8px;"><br>UPLOAD</button>
-                                </td>
-                                <td>
-                                    <button id="downloadSave" class="bclick"><img src="/assets/svg/download.svg" style="height: 30px; margin-top: -6px; margin-bottom: -8px;"><br>DOWNLOAD</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                    <button id="noNoise" class="bclick">Noise</button>
-                                    <button id="noAnimation" class="bclick">Animations</button>
-                                    <button id="fadeEffect" class="bclick">Blur</button>
-                                    <button id="cameraShake" class="bclick">Camera Shake</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                    <button id="changeResolution" class="bclick">Change resolution (requires reload)</button>
-                                </td>
-                            </tr>
-                        </tbody></table>
-                    </td>
-                </tr>
-            </tbody></table>
+            <div id="simulationControlsContainer">
+                <div id="simulationControls">
+                    <button id="pause" class="bclick" title="Play"></button>
+                    <button id="fastSimulation" class="bclick" title="Start Simulation warp"></button>
+                    <button id="slowSimulation" class="bclick" title="Enable slow-mode"></button>
+                    <button id="advanceTick" class="btick" title="Advance one tick"></button>
+                    <button id="quicksave" class="bclick" title="Quicksave">QS</button>
+                    <button id="quickload" class="bclick" title="Quickload">QL</button>
+                </div>
+            </div>
+            <div id="savecodeControls">
+                <button id="backToMenu" class="bclick">
+                    <div style="display: inline-block; vertical-align: middle; height: 100%; padding-top: 1px;"><img src="/assets/svg/backToMenu.svg" style="height: 20px;"></div>
+                    <div style="display: inline-block; vertical-align: middle; height: 100%; padding-top: 3px;">Menu</div>
+                </button>
+                <button id="reset" class="bclick">Reset</button>
+                <button id="restart" class="bclick">Restart</button>
+                <textarea id="saveCode"></textarea>
+                <button id="generateSave" class="bclick">GENERATE<br>SAVE CODE</button>
+                <button id="uploadSave" class="bclick"><img src="/assets/svg/upload.svg" style="height: 30px; margin-top: -6px; margin-bottom: -8px;"><br>UPLOAD</button>
+                <button id="downloadSave" class="bclick"><img src="/assets/svg/download.svg" style="height: 30px; margin-top: -6px; margin-bottom: -8px;"><br>DOWNLOAD</button>
+            </div>
+            <div id="options">
+                <button id="noNoise" class="bclick">Noise</button>
+                <button id="noAnimation" class="bclick">Animations</button>
+                <button id="fadeEffect" class="bclick">Blur</button>
+                <button id="cameraShake" class="bclick">Camera Shake</button>
+                <button id="changeResolution" class="bclick">Change resolution (requires reload)</button>
+            </div>
         </div>
         <div id="redprintEditor">
             <canvas id="rpCanvas"></canvas>
