@@ -3,7 +3,7 @@ const redPrints = new Function(`try { return JSON.parse(window.localStorage.getI
 // canvas
 const rpCanvasRes = 500;
 const rpCanvas = document.getElementById('rpCanvas');
-const rpDCanvas = createCanvas2();
+const rpDCanvas = createCanvas();
 const rpCtx = rpCanvas.getContext('2d');
 const rpDCtx = rpDCanvas.getContext('2d');
 function rpResetCanvases() {

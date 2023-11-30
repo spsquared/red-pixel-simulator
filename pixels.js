@@ -569,7 +569,7 @@ const pixels = {
         stickable: true,
         collectible: true,
         group: 0,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -593,7 +593,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && validChangingPixel(x, y + 1)) move(x, y, x, y + 1);
             else {
                 if (y == gridHeight - 1 || (grid[y + 1][x] != pixNum.DIRT && grid[y + 1][x] != pixNum.MUD && grid[y + 1][x] != pixNum.GRASS)) {
                     if (random() < 0.001) nextGrid[y][x] = pixNum.LEAVES;
@@ -627,7 +627,7 @@ const pixels = {
                             if (random() < 0.2 || !forcedBranch) branch(x2, y2, angle - random(0.6, 1.6) - (((Math.PI / 2) - angle) * 0.2), size * random(0.2, 0.6), length * random(0.5, 1));
                         } else {
                             fillEllipse((x3, y3) => {
-                                if (isOnGrid(x3, y3) && (grid[y3][x3] == pixNum.AIR || grid[y3][x3] == pixNum.STEAM) && canMoveTo(x3, y3)) {
+                                if (isOnGrid(x3, y3) && (grid[y3][x3] == pixNum.AIR || grid[y3][x3] == pixNum.STEAM) && validChangingPixel(x3, y3)) {
                                     nextGrid[y3][x3] = pixNum.LEAVES;
                                     teamGrid[y3][x3] = teamGrid[y][x];
                                 }
@@ -724,7 +724,7 @@ const pixels = {
             }
             for (let j = Math.max(y - 1, 0); j <= Math.min(y + 1, gridHeight - 1); j++) {
                 for (let i = Math.max(x - 1, 0); i <= Math.min(x + 1, gridWidth - 1); i++) {
-                    if (grid[j][i] == pixNum.STONE && canMoveTo(i, j) && random() < 0.1 && touchingPixel(i, j, pixNum.AIR)) {
+                    if (grid[j][i] == pixNum.STONE && validChangingPixel(i, j) && random() < 0.1 && touchingPixel(i, j, pixNum.AIR)) {
                         nextGrid[j][i] = pixNum.MOSS;
                     }
                 }
@@ -773,7 +773,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (y > 0 && grid[y - 1][x] == pixNum.LAVA && canMoveTo(x, y - 1) && random() < 0.25) {
+            if (y > 0 && grid[y - 1][x] == pixNum.LAVA && validChangingPixel(x, y - 1) && random() < 0.25) {
                 move(x, y - 1, x, y);
             }
         },
@@ -922,7 +922,7 @@ const pixels = {
         stickable: false,
         collectible: true,
         group: 0,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: true,
         animated: true,
         alwaysRedraw: false,
@@ -1130,7 +1130,7 @@ const pixels = {
                 return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.DELETER;
             };
             if (isNotSteamAir(x, y - 1)) {
-                if (canMoveTo(x, y - 1)) {
+                if (validChangingPixel(x, y - 1)) {
                     move(x, y, x, y - 1);
                 }
             } else {
@@ -1140,8 +1140,8 @@ const pixels = {
                 let slideRight = 0;
                 let foundLeftDrop = false;
                 let foundRightDrop = false;
-                let incrementLeft = canMoveTo(x - 1, y) && isNotSteamAir(x - 1, y);
-                let incrementRight = canMoveTo(x + 1, y) && isNotSteamAir(x + 1, y);
+                let incrementLeft = validChangingPixel(x - 1, y) && isNotSteamAir(x - 1, y);
+                let incrementRight = validChangingPixel(x + 1, y) && isNotSteamAir(x + 1, y);
                 while (incrementLeft) {
                     left--;
                     if (!isNotSteamAir(left, y)) {
@@ -1232,7 +1232,7 @@ const pixels = {
         stickable: false,
         collectible: true,
         group: 0,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: true,
         animated: true,
         alwaysRedraw: false,
@@ -1327,15 +1327,15 @@ const pixels = {
                 flow(x, y);
             } else if (y > 0) {
                 if (random() < 0.125) {
-                    let left = x > 0 && grid[y][x - 1] == pixNum.STONE && canMoveTo(x - 1, y);
-                    let right = x < gridWidth - 1 && grid[y][x + 1] == pixNum.STONE && canMoveTo(x + 1, y);
+                    let left = x > 0 && grid[y][x - 1] == pixNum.STONE && validChangingPixel(x - 1, y);
+                    let right = x < gridWidth - 1 && grid[y][x + 1] == pixNum.STONE && validChangingPixel(x + 1, y);
                     if (left || (left && right && random() < 0.5)) {
                         move(x, y, x - 1, y);
                     } else if (right) {
                         move(x, y, x + 1, y);
                     }
                 }
-                if ((y == gridHeight - 1 || grid[y + 1][x] == pixNum.LAVA) && grid[y - 1][x] == pixNum.STONE && canMoveTo(x, y - 1) && random() < 0.5) {
+                if ((y == gridHeight - 1 || grid[y + 1][x] == pixNum.LAVA) && grid[y - 1][x] == pixNum.STONE && validChangingPixel(x, y - 1) && random() < 0.5) {
                     move(x, y, x, y - 1);
                 }
             }
@@ -1360,7 +1360,7 @@ const pixels = {
         stickable: false,
         collectible: true,
         group: 0,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: true,
         animated: true,
         alwaysRedraw: false,
@@ -2131,8 +2131,8 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (y < gridHeight - 1 && isAir(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
-            else if (y > 0 && grid[y - 1][x] == pixNum.WATER && canMoveTo(x, y - 1)) move(x, y, x, y - 1);
+            if (y < gridHeight - 1 && isAir(x, y + 1) && validChangingPixel(x, y + 1)) move(x, y, x, y + 1);
+            else if (y > 0 && grid[y - 1][x] == pixNum.WATER && validChangingPixel(x, y - 1)) move(x, y, x, y - 1);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2193,7 +2193,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) move(x, y, x, y + 1);
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && validChangingPixel(x, y + 1)) move(x, y, x, y + 1);
         },
         drawPreview: function (ctx) {
             ctx.clearRect(0, 0, 50, 50);
@@ -2275,7 +2275,7 @@ const pixels = {
                     nextGrid[ay][ax] = pixNum.PLANT;
                 }
             });
-            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1) && ((grid[y + 1][x] == pixNum.WATER) ? random() < 0.5 : true)) {
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && validChangingPixel(x, y + 1) && ((grid[y + 1][x] == pixNum.WATER) ? random() < 0.5 : true)) {
                 move(x, y, x, y + 1);
             }
         },
@@ -2333,7 +2333,7 @@ const pixels = {
                 teamGrid[ay][ax] = 0;
             });
             if (y < gridHeight - 1) {
-                if (isPassableFluid(x, y + 1) && (grid[y + 1][x] != pixNum.LAVA || random() < 0.25) && canMoveTo(x, y + 1)) {
+                if (isPassableFluid(x, y + 1) && (grid[y + 1][x] != pixNum.LAVA || random() < 0.25) && validChangingPixel(x, y + 1)) {
                     move(x, y, x, y + 1);
                 }
             }
@@ -2436,7 +2436,7 @@ const pixels = {
         stickable: true,
         collectible: true,
         group: 0,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -2518,7 +2518,7 @@ const pixels = {
         stickable: true,
         collectible: true,
         group: 0,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -2587,7 +2587,7 @@ const pixels = {
         stickable: true,
         collectible: true,
         group: 0,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: false,
         alwaysRedraw: false,
@@ -3787,7 +3787,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
-            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).cloneable && grid[y][x - 1] == pixNum.AIR && canMoveTo(x - 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).cloneable && grid[y][x - 1] == pixNum.AIR && validChangingPixel(x - 1, y)) {
                 nextGrid[y][x - 1] = grid[y][x + 1];
                 teamGrid[y][x - 1] = teamGrid[y][x + 1];
             }
@@ -3854,7 +3854,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
-            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).cloneable && grid[y - 1][x] == pixNum.AIR && canMoveTo(x, y - 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).cloneable && grid[y - 1][x] == pixNum.AIR && validChangingPixel(x, y - 1)) {
                 nextGrid[y - 1][x] = grid[y + 1][x];
                 teamGrid[y - 1][x] = teamGrid[y + 1][x];
             }
@@ -3921,7 +3921,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
-            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).cloneable && grid[y][x + 1] == pixNum.AIR && canMoveTo(x + 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).cloneable && grid[y][x + 1] == pixNum.AIR && validChangingPixel(x + 1, y)) {
                 nextGrid[y][x + 1] = grid[y][x - 1];
                 teamGrid[y][x + 1] = teamGrid[y][x - 1];
             }
@@ -3988,7 +3988,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
-            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).cloneable && grid[y + 1][x] == pixNum.AIR && canMoveTo(x, y + 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).cloneable && grid[y + 1][x] == pixNum.AIR && validChangingPixel(x, y + 1)) {
                 nextGrid[y + 1][x] = grid[y - 1][x];
                 teamGrid[y + 1][x] = teamGrid[y - 1][x];
             }
@@ -4055,7 +4055,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
-            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).cloneable && grid[y][x - 1] != pixNum.DELETER && canMoveTo(x - 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x + 1] != pixNum.AIR && pixelAt(x + 1, y).cloneable && grid[y][x - 1] != pixNum.DELETER && validChangingPixel(x - 1, y)) {
                 if (push(x, y, 0, false, true)) {
                     nextGrid[y][x - 1] = grid[y][x + 1];
                     teamGrid[y][x - 1] = teamGrid[y][x + 1];
@@ -4129,7 +4129,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
-            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).cloneable && grid[y - 1][x] != pixNum.DELETER && canMoveTo(x, y - 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y + 1][x] != pixNum.AIR && pixelAt(x, y + 1).cloneable && grid[y - 1][x] != pixNum.DELETER && validChangingPixel(x, y - 1)) {
                 if (push(x, y, 1, false, true)) {
                     nextGrid[y - 1][x] = grid[y + 1][x];
                     teamGrid[y - 1][x] = teamGrid[y + 1][x];
@@ -4203,7 +4203,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
-            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).cloneable && grid[y][x + 1] != pixNum.DELETER && canMoveTo(x + 1, y)) {
+            if (x > 0 && x < gridWidth - 1 && grid[y][x - 1] != pixNum.AIR && pixelAt(x - 1, y).cloneable && grid[y][x + 1] != pixNum.DELETER && validChangingPixel(x + 1, y)) {
                 if (push(x, y, 2, false, true)) {
                     nextGrid[y][x + 1] = grid[y][x - 1];
                     teamGrid[y][x + 1] = teamGrid[y][x - 1];
@@ -4277,7 +4277,7 @@ const pixels = {
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y) || isDeactivated(x, y)) return;
-            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).cloneable && grid[y + 1][x] != pixNum.DELETER && canMoveTo(x, y + 1)) {
+            if (y > 0 && y < gridHeight - 1 && grid[y - 1][x] != pixNum.AIR && pixelAt(x, y - 1).cloneable && grid[y + 1][x] != pixNum.DELETER && validChangingPixel(x, y + 1)) {
                 if (push(x, y, 3, false, true)) {
                     nextGrid[y + 1][x] = grid[y - 1][x];
                     teamGrid[y + 1][x] = teamGrid[y - 1][x];
@@ -5845,8 +5845,8 @@ const pixels = {
         id: 'unslime',
         numId: 0
     },
-    carriage_horizontal: {
-        name: 'Linear Carriage (Horizontal)',
+    carriage_left: {
+        name: 'Linear Carriage (Left)',
         description: 'A carriage. It moves on linear rails, like the name implies...',
         draw: function (rectangles, ctx, avoidGrid) {
             ctx.globalAlpha = 1;
@@ -5894,45 +5894,7 @@ const pixels = {
         generatedDescription: '',
         image: '',
         keybind: null,
-        id: 'carriage_horizontal',
-        numId: 0
-    },
-    carriage_down: {
-        name: 'Linear Carriage (Vertical)',
-        description: 'A carriage. It moves on linear rails, like the name implies...',
-        draw: function (rectangles, ctx, avoidGrid) {
-            ctx.globalAlpha = 1;
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-        },
-        prerender: function () { },
-        recipe: {
-            steel: 2,
-            slider_horizontal: 1,
-        },
-        craftAmount: 1,
-        prerenderedFrames: [],
-        blastResistance: 17,
-        flammability: 0,
-        pushable: false,
-        cloneable: true,
-        rotateable: true,
-        rotation: 0,
-        stickable: true,
-        collectible: true,
-        group: 1,
-        updateStage: 2,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: true,
-        pickable: false,
-        pixsimPickable: false,
-        generatedDescription: '',
-        image: '',
-        keybind: null,
-        id: 'carriage_vertical',
+        id: 'carriage_left',
         numId: 0
     },
     rail: {
@@ -5987,7 +5949,7 @@ const pixels = {
         animatedNoise: false,
         animated: false,
         alwaysRedraw: true,
-        pickable: false,
+        pickable: true,
         pixsimPickable: false,
         generatedDescription: '',
         image: '',
@@ -7086,7 +7048,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             let explosion = touchingAnything(x, y);
             let diffused = touchingPixel(x, y, pixNum.NUKE_DIFFUSER);
-            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && validChangingPixel(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
             if (y < gridHeight - 1) {
@@ -7153,7 +7115,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             let explosion = touchingAnything(x, y);
             let diffused = touchingPixel(x, y, pixNum.NUKE_DIFFUSER);
-            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && validChangingPixel(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
             if (y < gridHeight - 1) {
@@ -7219,7 +7181,7 @@ const pixels = {
             if (!validChangingPixel(x, y)) return;
             let explosion = touchingAnything(x, y);
             let diffused = touchingPixel(x, y, pixNum.NUKE_DIFFUSER);
-            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && canMoveTo(x, y + 1)) {
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && validChangingPixel(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
             if (y < gridHeight - 1) {
@@ -8077,7 +8039,7 @@ _@    ._`],
         },
         update: function (x, y) {
             if (!validChangingPixel(x, y)) return;
-            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && grid[y + 1][x] != pixNum.MONSTER && canMoveTo(x, y + 1)) {
+            if (y < gridHeight - 1 && isPassableFluid(x, y + 1) && grid[y + 1][x] != pixNum.MONSTER && validChangingPixel(x, y + 1)) {
                 move(x, y, x, y + 1);
             }
         },
@@ -8640,7 +8602,7 @@ _@    ._`],
         stickable: true,
         collectible: true,
         group: 6,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -8773,7 +8735,7 @@ _@    ._`],
         stickable: false,
         collectible: false,
         group: 6,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -8843,7 +8805,7 @@ _@    ._`],
         stickable: false,
         collectible: false,
         group: 6,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -8912,7 +8874,7 @@ _@    ._`],
         stickable: false,
         collectible: false,
         group: 6,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -8980,7 +8942,7 @@ _@    ._`],
         stickable: false,
         collectible: false,
         group: 6,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -9095,7 +9057,7 @@ _@    ._`],
         stickable: false,
         collectible: false,
         group: 6,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: false,
@@ -9276,7 +9238,7 @@ _@    ._`],
         stickable: false,
         collectible: false,
         group: 6,
-        updateStage: 6,
+        updateStage: 5,
         animatedNoise: false,
         animated: true,
         alwaysRedraw: true,
@@ -10642,8 +10604,6 @@ window.addEventListener('load', async (e) => {
             pixelSelectors[pixelKeybinds[key]].keybind.innerText = (key ?? '').toUpperCase();
         }
     }
-    for (let promise of promiseList) {
-        await promise;
-    }
+    await Promise.all(promiseList);
     pixelsResolveLoad();
 });

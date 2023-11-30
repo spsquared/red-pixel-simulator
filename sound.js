@@ -57,49 +57,70 @@ let musicMuted = window.localStorage.getItem('musicMuted') == '1';
 const musicMuteButton = document.getElementById('musicMuteButton');
 const musicVolume = audioContext.createGain();
 musicVolume.connect(globalVolume);
-const musicBuffers = new Map();
-const activeMusic = [];
-function playMusic(id, loop = true) {
-    if (musicBuffers.has(id)) {
+const musicBuffers = {};
+const musicPlayers = [];
+function addMusic(buf, id) {
+    if (musicBuffers[id] === undefined) musicBuffers[id] = [];
+    musicBuffers[id].push(buf);
+};
+function startMusic(id, volume = 1, loop = true, shuffle = false) {
+    if (musicBuffers[id] !== undefined) {
         const gain = audioContext.createGain();
+        gain.gain.setValueAtTime(0, audioContext.currentTime);
+        gain.connect(musicVolume);
+        let i = shuffle ? Math.floor(Math.random() * musicBuffers[id].length) : 0;
         const source = audioContext.createBufferSource();
-        activeMusic.push({
+        source.buffer = musicBuffers[id][i];
+        source.loop = !shuffle && loop && musicBuffers[id].length == 1;
+        source.connect(gain);
+        source.start();
+        gain.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 1);
+        const player = {
             id: id,
             source: source,
             gain: gain
-        });
-        gain.gain.setValueAtTime(0, audioContext.currentTime);
-        gain.connect(musicVolume);
-        source.buffer = musicBuffers.get(id);
-        source.loop = loop;
-        source.connect(gain);
-        source.start();
-        gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 1);
+        };
+        if (loop) {
+            let playNext = () => {
+                setTimeout(() => {
+                    player.source.disconnect();
+                    const source2 = audioContext.createBufferSource();
+                    i = shuffle ? Math.floor(Math.random() * musicBuffers[id].length) : (i + 1) % musicBuffers[id].length;
+                    source2.buffer = musicBuffers[id][i];
+                    source2.connect(gain);
+                    source2.start();
+                    player.source = source2;
+                    source2.addEventListener('ended', playNext);
+                }, Math.random() * 10000 + 5000);
+            };
+            source.addEventListener('ended', playNext);
+        }
+        musicPlayers.push(player);
         return true;
     }
     return false;
 };
 function stopMusic(id) {
-    const music = activeMusic.find(n => n.id === id);
-    if (music !== undefined) {
-        music.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
+    const player = musicPlayers.find(n => n.id === id);
+    if (player !== undefined) {
+        player.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
         setTimeout(() => {
-            music.source.stop();
-            music.source.disconnect();
-            music.gain.disconnect();
+            player.source.stop();
+            player.source.disconnect();
+            player.gain.disconnect();
         }, 1000);
     }
 };
 function stopAllMusic() {
-    for (const music of activeMusic) {
-        music.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
+    for (const player of musicPlayers) {
+        player.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
         setTimeout(() => {
-            music.source.stop();
-            music.source.disconnect();
-            music.gain.disconnect();
+            player.source.stop();
+            player.source.disconnect();
+            player.gain.disconnect();
         }, 1000);
     }
-    activeMusic.length = 0;
+    musicPlayers.length = 0;
 };
 function toggleMusic() {
     musicMuted = !musicMuted;
@@ -152,7 +173,7 @@ async function addMusicPixelOscillator(id, type, pitch) {
     gain.connect(globalVolume);
     const oscillator = audioContext.createOscillator();
     oscillator.type = type;
-    oscillator.frequency.setValueAtTime(pitch, audioContext.currentTime);
+    oscillator.frequency.value = pitch;
     oscillator.connect(gain);
     oscillator.start();
     let activePixels = 0;
@@ -225,12 +246,10 @@ window.addEventListener('load', async (e) => {
     promiseList.push(setAudio('./assets/sound/targetFilled.mp3', (buf) => addAudioQueue(buf, 'targetFill')));
     promiseList.push(setAudio('./assets/sound/win.mp3', (buf) => addAudioQueue(buf, 'win')));
     promiseList.push(setAudio('./assets/sound/null.mp3', (buf) => addAudioQueue(buf, 'rickroll')));
-    setAudio('./assets/sound/menu.mp3', (buf) => {
-        musicBuffers.set('menu', buf);
-    });
-    setAudio('./assets/sound/credits.mp3', (buf) => {
-        musicBuffers.set('credits', buf);
-    });
+    setAudio('./assets/sound/menu.mp3', (buf) => addMusic(buf, 'menu'));
+    setAudio('./assets/sound/credits.mp3', (buf) => addMusic(buf, 'credits'));
+    setAudio('./assets/sound/background1.mp3', (buf) => addMusic(buf, 'background'));
+    setAudio('./assets/sound/background2.mp3', (buf) => addMusic(buf, 'background'));
     promiseList.push(addMusicPixelSound(1));
     promiseList.push(addMusicPixelSound(2));
     promiseList.push(addMusicPixelSound(3));
@@ -285,17 +304,15 @@ window.addEventListener('load', async (e) => {
     globalVolume.gain.setValueAtTime(volume / 100, audioContext.currentTime);
     volumeDisp.style.backgroundImage = `url(/assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
     volumeSlider.value = volume;
-    for (let promise of promiseList) {
-        await promise;
-    }
+    await Promise.all(promiseList);
     soundsResolveLoad();
 });
 if (navigator.userActivation) {
     let waitForInteraction = setInterval(() => {
         if (navigator.userActivation.hasBeenActive) {
             audioContext.resume();
-            if (inMenuScreen && !playMusic('menu')) setTimeout(function wait() {
-                if (inMenuScreen && !playMusic('menu')) setTimeout(wait, 1000);
+            if (inMenuScreen && !startMusic('menu')) setTimeout(function wait() {
+                if (inMenuScreen && !startMusic('menu')) setTimeout(wait, 1000);
             }, 1000);
             clearInterval(waitForInteraction);
         }
@@ -304,8 +321,8 @@ if (navigator.userActivation) {
     document.addEventListener('click', function c(e) {
         document.removeEventListener('click', c);
         audioContext.resume();
-        if (inMenuScreen && !playMusic('menu')) setTimeout(function wait() {
-            if (inMenuScreen && !playMusic('menu')) setTimeout(wait, 1000);
+        if (inMenuScreen && !startMusic('menu')) setTimeout(function wait() {
+            if (inMenuScreen && !startMusic('menu')) setTimeout(wait, 1000);
         }, 1000);
     });
 }

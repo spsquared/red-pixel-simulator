@@ -155,7 +155,7 @@ table {
     text-align: center;
     transition: 400ms ease-in-out transform;
 }
-#modalSubtitle {
+#modalContent {
     font-size: 16px;
 }
 #modalYes {

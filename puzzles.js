@@ -775,15 +775,16 @@ const puzzles = [
                 difficulty: 'Very Hard',
                 id: 'c86adee3-5653-4ed9-ad28-ced12e02751b'
             },
-            // something
         ]
     }
 ];
 
-let currentPuzzleSection = 0;
-let currentPuzzleLevel = 0;
-let currentPuzzleId = 0;
-let currentPuzzleCompleted = false;
+const currentPuzzle = {
+    section: 0,
+    leve: 0,
+    id: 0,
+    completed: false
+};
 const winScreen = document.getElementById('winScreen');
 const winBox = document.getElementById('winBox');
 const winTicksText = document.getElementById('winTicks');
@@ -799,21 +800,26 @@ function triggerWin() {
     fastSimulation = false;
     updateTimeControlButtons();
     stopAllMusicPixels();
-    currentPuzzleCompleted = true;
-    window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compressToBase64(JSON.stringify({
+    currentPuzzle.completed = true;
+    window.localStorage.setItem(`challenge-${currentPuzzle.id}`, LZString.compressToBase64(JSON.stringify({
         code: saveCode,
         pixels: getPixelAmounts(),
         completed: true
     })));
     sounds.win();
-    document.getElementById(`puzzleButton-${currentPuzzleId}`).classList.add('levelButtonCompleted');
+    document.getElementById(`puzzleButton-${currentPuzzle.id}`).classList.add('levelButtonCompleted');
     winTicksText.innerText = ticks + ' Ticks';
     winScreen.style.opacity = '1';
     winScreen.style.pointerEvents = 'all';
     winBox.style.transform = 'translateY(-50%)';
     function keyHandle(e) {
-        if (e.key == 'Enter' && winNext.onclick) winNext.onclick();
-        else if (e.key == 'Escape') winReset.onclick();
+        if (e.key == 'Enter' && winNext.onclick) {
+            winNext.onclick();
+            sounds.click();
+        } else if (e.key == 'Escape') {
+            winReset.onclick();
+            sounds.click();
+        }
     };
     const hide = () => {
         winScreen.style.opacity = '';
@@ -825,11 +831,11 @@ function triggerWin() {
         document.removeEventListener('keydown', keyHandle);
         inWinScreen = false;
     };
-    if (puzzles[currentPuzzleSection].levels[currentPuzzleLevel + 1]) {
+    if (puzzles[currentPuzzle.section].levels[currentPuzzle.level + 1]) {
         winNext.onclick = () => {
             hide();
             transitionWithinGame(() => {
-                loadPuzzle(currentPuzzleSection, currentPuzzleLevel + 1);
+                loadPuzzle(currentPuzzle.section, currentPuzzle.level + 1);
             });
         };
         winNext.style.display = '';
@@ -854,16 +860,16 @@ const levelName = document.getElementById('levelName');
 const levelDescription = document.getElementById('levelDescription');
 function loadPuzzle(section, level) {
     try {
-        currentPuzzleSection = parseInt(section);
-        currentPuzzleLevel = parseInt(level);
+        currentPuzzle.section = parseInt(section);
+        currentPuzzle.level = parseInt(level);
         const puzzle = puzzles[section].levels[level];
-        currentPuzzleId = puzzle.id;
+        currentPuzzle.id = puzzle.id;
         glitchTextTransition('', `${parseInt(section) + 1}-${parseInt(level) + 1} ${puzzle.name}`, (text) => {
             levelName.innerText = text;
         }, 100);
         levelDescription.innerHTML = `${puzzle.description}<br><br><i>Difficulty: ${puzzle.difficulty}</i>`;
         saveCode = puzzle.saveCode;
-        let savedData = window.localStorage.getItem(`challenge-${currentPuzzleId}`);
+        let savedData = window.localStorage.getItem(`challenge-${currentPuzzle.id}`);
         if (savedData !== null) try { savedData = JSON.parse(savedData); } catch { savedData = JSON.parse(LZString.decompressFromBase64(savedData)); }
         if (savedData !== null) saveCode = savedData.code;
         saveCodeText.value = saveCode;
@@ -886,7 +892,7 @@ function loadPuzzle(section, level) {
                     updatePixelAmount(pixelType, pixelAmounts, false, true);
                 }
             }
-            currentPuzzleCompleted = savedData.completed ?? false;
+            currentPuzzle.completed = savedData.completed ?? false;
         } else {
             let isFirst = true;
             for (let pixelType in puzzle.inventory) {
@@ -897,7 +903,7 @@ function loadPuzzle(section, level) {
                 pixelAmounts[pixelType] = puzzle.inventory[pixelType];
                 updatePixelAmount(pixelType, pixelAmounts, false, true);
             }
-            currentPuzzleCompleted = false;
+            currentPuzzle.completed = false;
         }
         pixelAmounts['air'] = Infinity;
         updatePixelAmount('air', pixelAmounts, false, false);

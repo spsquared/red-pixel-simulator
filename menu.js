@@ -275,8 +275,8 @@ function restoreMenuScreen() {
     inMenuScreen = true;
     setTransitionTimeout(() => {
         stopAllMusic();
-        if (inMenuScreen && !playMusic('menu')) setTimeout(function wait() {
-            if (inMenuScreen && !playMusic('menu')) setTimeout(wait, 1000);
+        if (inMenuScreen && !startMusic('menu')) setTimeout(function wait() {
+            if (inMenuScreen && !startMusic('menu')) setTimeout(wait, 1000);
         }, 1000);
     }, 800);
     titleContainer.style.transform = 'translateY(-20vh)';
@@ -311,6 +311,8 @@ sandboxButton.onclick = (e) => {
     levelDetails.style.display = 'none';
     pixelPickerCrafting.style.display = '';
     restartButton.style.display = 'none';
+    quicksaveButton.disabled = false;
+    if (quicksave != null) quickloadButton.disabled = false;
     pauseButton.disabled = false;
     fastSimulationButton.disabled = false;
     slowSimulationButton.disabled = false;
@@ -331,6 +333,9 @@ sandboxButton.onclick = (e) => {
     resetPixelAmounts();
     loadStoredSave();
     fadeToGame();
+    setTimeout(() => {
+        startMusic('background', 0.5, true, true);
+    }, 1000);
 };
 puzzleButton.onclick = (e) => {
     if (!acceptMenuInputs || levelSelect._open || pixsimMenu._open) return;
@@ -380,6 +385,8 @@ function selectPuzzle() {
     levelDetails.style.display = '';
     pixelPickerCrafting.style.display = 'none';
     restartButton.style.display = '';
+    quicksaveButton.disabled = true;
+    quickloadButton.disabled = true;
     pauseButton.disabled = false;
     fastSimulationButton.disabled = false;
     slowSimulationButton.disabled = false;
@@ -395,6 +402,9 @@ function selectPuzzle() {
     levelSelect.style.transform = '';
     levelSelect._open = false;
     fadeToGame();
+    setTimeout(() => {
+        startMusic('background', 0.5, true, true);
+    }, 1000);
 };
 
 // pixsim submenu submenus
@@ -838,6 +848,6 @@ copyrightNotice.onclick = (e) => {
         }, 3000);
     };
     setTimeout(() => {
-        playMusic('credits', false);
+        startMusic('credits', 1, false);
     }, 500);
 };

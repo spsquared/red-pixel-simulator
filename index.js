@@ -10,7 +10,7 @@ inMenuScreen = true;
 const modalContainer = document.getElementById('modalContainer');
 const modalBody = document.getElementById('modal');
 const modalTitle = document.getElementById('modalTitle');
-const modalSubtitle = document.getElementById('modalSubtitle');
+const modalContent = document.getElementById('modalContent');
 const modalYes = document.getElementById('modalYes');
 const modalNo = document.getElementById('modalNo');
 const modalOk = document.getElementById('modalOk');
@@ -18,7 +18,7 @@ function modal(title, subtitle, confirmation = false) {
     if (!acceptInputs) return new Promise((resolve, reject) => reject('Modal already open'));
     acceptInputs = false;
     modalTitle.innerHTML = title;
-    modalSubtitle.innerHTML = subtitle;
+    modalContent.innerHTML = subtitle;
     if (confirmation) {
         modalYes.style.display = '';
         modalNo.style.display = '';

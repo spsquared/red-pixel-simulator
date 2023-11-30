@@ -310,6 +310,10 @@ class PixSimAPI {
         this.#gridWidth = width;
         this.#gridHeight = height;
         if (this.#inGame) socket.emit('gridSize', { width: this.#gridWidth, height: this.#gridHeight });
+        if (pixsimData.scriptRunner != null) {
+            pixsimData.scriptRunner.setVariable('width', width);
+            pixsimData.scriptRunner.setVariable('height', height);
+        }
     }
     static set onNewGridSize(cb) {
         if (typeof cb != 'function') return;
@@ -662,6 +666,9 @@ class PXASMRunner {
                     fastSimulation = false;
                     updateTimeControlButtons();
                     break;
+                case 'getPaused':
+                    this.#worker.postMessage([0, simulationPaused]);
+                    break;
                 case 'awaitTick':
                     // do nothing, the next tick will resolve it
                     break;
@@ -686,7 +693,6 @@ class PXASMRunner {
             this.#worker.postMessage([1, script]);
         });
     }
-
     async tick() {
         return await new Promise((resolve, reject) => {
             this.#postedData = {};
@@ -699,8 +705,18 @@ class PXASMRunner {
                     postedData[e.data[1][0]] = e.data[1][1];
                 }
             });
-            this.#worker.postMessage([1, `setVariable("tick", ${ticks});`]);
-            this.#worker.postMessage([2]);
+            this.#worker.postMessage([2, ticks]);
+        });
+    }
+    async setVariable(n, v) {
+        return await new Promise((resolve, reject) => {
+            this.#worker.addEventListener('message', function res(e) {
+                if (e.data[0] === 'setVariable') {
+                    resolve();
+                    this.removeEventListener('message', res);
+                }
+            });
+            this.#worker.postMessage([3, n, v]);
         });
     }
 

@@ -272,7 +272,7 @@
     background-image: url(/assets/svg/simulate.svg);
 }
 #slowSimulation {
-    background-color: lime;
+    background-color: lightgray;
     background-image: url(/assets/svg/slowmode.svg);
     background-size: 80% 80%;
 }

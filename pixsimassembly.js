@@ -29,6 +29,11 @@ let checkArgType = (v, t) => {
 // reserved variables? ticks?
 const variables = new Map();
 const functions = new Map();
+const reserved = {
+    ticks: 0,
+    width: 0,
+    height: 0
+}
 
 function setVariable(n, v) {
     variables.set(n, v);
@@ -36,6 +41,24 @@ function setVariable(n, v) {
 function getVariable(n) {
     if (!variables.has(n)) throw new PXASMReferenceError(`'${n}' is not defined`);
     return variables.get(n);
+};
+async function getReserved(n) {
+    switch (n) {
+        case 'time':
+            return Date.now();
+        case 'tick':
+            return reserved.ticks;
+        case 'paused':
+            return await sendCommand('getPaused');
+        case 'platform':
+            return 'rps';
+        case 'width':
+            return reserved.width;
+        case 'height':
+            return reserved.height;
+        default:
+            throw new PXASMReferenceError(`Reserved variable '${n}' does not exist`);
+    }
 };
 function defArray(n, l, v = 0) {
     variables.set(n, new Array(l).fill(v));
@@ -138,6 +161,7 @@ async function awaitTick() {
         addEventListener('message', function res(e) {
             if (e.data[0] === 2) {
                 this.removeEventListener('message', res);
+                ticks = e.data[1];
                 resolve();
             }
         });
@@ -151,11 +175,18 @@ onmessage = async (e) => {
     if (e.data[0] === 1) {
         await new Function(`return async()=>{${e.data[1]}}`)()();
         postMessage([0]);
+    } else if (e.data[0] === 3) {
+        switch (e.data[1]) {
+            case 'width':
+                reserved.width = e.data[2];
+            case 'height':
+                reserved.height = e.data[2];
+        }
     }
 };
 async function waitForResponse() {
     return await new Promise((resolve, reject) => {
-        addEventListener('message', function res(e) {
+        this.addEventListener('message', function res(e) {
             if (e.data[0] === 0) {
                 this.removeEventListener('message', res);
                 resolve(e.data[1]);

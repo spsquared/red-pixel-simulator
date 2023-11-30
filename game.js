@@ -1,7 +1,7 @@
 // canvas
 const canvasResolution = parseInt(window.localStorage.getItem('resolution') ?? 800);
 const NO_OFFSCREENCANVAS = typeof OffscreenCanvas == 'undefined';
-function createCanvas2() {
+function createCanvas() {
     if (NO_OFFSCREENCANVAS) {
         const canvas = document.createElement('canvas');
         canvas.width = canvasResolution;
@@ -14,17 +14,17 @@ function createCanvas2() {
 const canvasContainer = document.getElementById('canvasContainer');
 const canvas = document.getElementById('canvas');
 const gameCanvas = document.createElement('canvas');
-const gridCanvas = createCanvas2();
-const gridNoiseCanvas = createCanvas2();
-const aboveCanvas = createCanvas2();
-const fireCanvas = createCanvas2();
-const railCanvas = createCanvas2();
-const targetCanvas = createCanvas2();
-const placeableCanvas = createCanvas2();
-const noiseCanvas = createCanvas2();
-const noiseBufferCanvas = createCanvas2();
-const teamsCanvas = createCanvas2();
-const bufferCanvas = createCanvas2();
+const gridCanvas = createCanvas();
+const gridNoiseCanvas = createCanvas();
+const aboveCanvas = createCanvas();
+const fireCanvas = createCanvas();
+const railCanvas = createCanvas();
+const targetCanvas = createCanvas();
+const placeableCanvas = createCanvas();
+const noiseCanvas = createCanvas();
+const noiseBufferCanvas = createCanvas();
+const teamsCanvas = createCanvas();
+const bufferCanvas = createCanvas();
 const ctx = canvas.getContext('2d');
 const gamectx = gameCanvas.getContext('2d');
 const gridctx = gridCanvas.getContext('2d');
@@ -98,6 +98,8 @@ let saveCode = '100;0;air-23:wall:rotator_right:wall:air-72:wall:rotator_left:ai
 let gridScale = canvasResolution / Math.min(gridWidth, gridHeight);
 let canvasSize = Math.min(window.innerWidth, window.innerHeight) - 21;
 let canvasScale = canvasResolution / canvasSize;
+let drawScale = 1;
+let screenScale = 1;
 const grid = [];
 const lastGrid = [];
 const nextGrid = [];
@@ -134,8 +136,6 @@ let prevMX = 0;
 let prevMY = 0;
 let prevMXGrid = 0;
 let prevMYGrid = 0;
-let drawScale = 1;
-let screenScale = 1;
 let mouseOver = false;
 const camera = {
     x: 0,
@@ -187,7 +187,7 @@ let holdingAlt = false;
 let inResetState = true;
 let forceRedraw = true;
 
-// save codes (base 10 for backwards compatibility)
+// save codes
 function createGrid(width = 100, height = 100) {
     if (width < 1 || height < 1) return;
     gridWidth = width;
@@ -348,7 +348,7 @@ function loadSaveCode(code = saveCode) {
         if (sections[0] == '&1') {
             sections.shift();
             if (isNaN(parseInt(sections[0]))) return;
-            if (sections[0]) createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
+            createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
             if (sections[1]) ticks = parseInt(sections[1], 16);
             if (sections[2]) parseSaveCode(sections[2], 16);
             if (sections[3]) parseBooleanCode(fireGrid, sections[3], 16);
@@ -357,7 +357,7 @@ function loadSaveCode(code = saveCode) {
             if (sections[6]) parseBooleanCode(railGrid, sections[6], 16);
         } else {
             if (isNaN(parseInt(sections[0]))) return;
-            if (sections[0]) createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
+            createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
             if (sections[1]) ticks = parseInt(sections[1], 16);
             if (sections[2]) parseSaveCode(sections[2], 10);
             if (sections[3]) parseBooleanCode(fireGrid, sections[3], 16);
@@ -490,26 +490,19 @@ function loadStoredSave() {
 };
 window.addEventListener('load', (e) => {
     loadStoredSave();
-
     if (typeof window.requestIdleCallback == 'function') {
         setInterval(() => {
             window.requestIdleCallback(() => {
-                if (sandboxMode) {
-                    window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
-                }
+                if (sandboxMode) window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
             }, { timeout: 5000 });
         }, 30000);
     } else {
         setInterval(() => {
-            if (sandboxMode) {
-                window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
-            }
+            if (sandboxMode) window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
         }, 30000);
     }
     window.addEventListener('beforeunload', (e) => {
-        if (sandboxMode) {
-            window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
-        }
+        if (sandboxMode) window.localStorage.setItem('saveCode', LZString.compressToBase64(generateSaveCode()));
     });
 });
 
@@ -537,6 +530,7 @@ function PreRenderer(size = 60) {
         }
     }
 };
+// draw
 function drawPixels(type, rectangles, ctx, avoidGrid = false) {
     (numPixels[type] ?? numPixels[pixNum.MISSING]).draw(rectangles, ctx, avoidGrid);
 };
@@ -574,6 +568,7 @@ function colorAnimate(r1, g1, b1, r2, g2, b2, p) {
         Math.round((b1 * multiplier1) + (b2 * multiplier2)),
     ];
 };
+// update
 function updatePixel(x, y, i) {
     if (grid[y][x] !== 0 && numPixels[grid[y][x]] !== undefined && numPixels[grid[y][x]].updateStage === i) {
         randomSeed(ticks, x, y);
@@ -629,21 +624,18 @@ function isPassableLiquid(x, y) {
 function isTransparent(x, y) {
     return grid[y][x] == pixNum.AIR || grid[y][x] == pixNum.GLASS || grid[y][x] == pixNum.REINFORCED_GLASS;
 };
-function canMoveTo(x, y) {
-    return nextGrid[y][x] == -1 || nextGrid[y][x] == pixNum.AIR || nextGrid[y][x] == pixNum.DELETER;
-};
 function move(x1, y1, x2, y2) {
     if (grid[y2][x2] == pixNum.DELETER) {
         nextGrid[y1][x1] = pixNum.AIR;
         fireGrid[y1][x1] = false;
-        teamGrid[y1][x1] = false;
+        teamGrid[y1][x1] = 0;
     } else if (grid[y2][x2] == pixNum.MONSTER) {
         nextGrid[y1][x1] = pixNum.AIR;
         nextGrid[y2][x2] = pixNum.AIR;
         fireGrid[y1][x1] = false;
         fireGrid[y2][x2] = false;
-        teamGrid[y1][x1] = false;
-        teamGrid[y2][x2] = false;
+        teamGrid[y1][x1] = 0;
+        teamGrid[y2][x2] = 0;
     } else {
         nextGrid[y1][x1] = grid[y2][x2];
         nextGrid[y2][x2] = grid[y1][x1];
@@ -657,11 +649,11 @@ function move(x1, y1, x2, y2) {
 };
 function fall(x, y, xTravel, yTravel, isPassable = isPassableFluid) {
     if (y < gridHeight - 1) {
-        if (isPassable(x, y + 1) && canMoveTo(x, y + 1)) {
+        if (isPassable(x, y + 1) && validChangingPixel(x, y + 1)) {
             move(x, y, x, y + 1);
         } else if (y < gridHeight - yTravel) {
-            let slideLeft = canMoveTo(x - 1, y) && isPassable(x - 1, y);
-            let slideRight = canMoveTo(x + 1, y) && isPassable(x + 1, y);
+            let slideLeft = validChangingPixel(x - 1, y) && isPassable(x - 1, y);
+            let slideRight = validChangingPixel(x + 1, y) && isPassable(x + 1, y);
             let canMoveLeftDiagonal = false;
             let canMoveRightDiagonal = false;
             if (slideLeft) {
@@ -679,7 +671,7 @@ function fall(x, y, xTravel, yTravel, isPassable = isPassableFluid) {
                         }
                     }
                     if (valid) {
-                        canMoveLeftDiagonal = i == x - 1 && canMoveTo(i, y + 1);
+                        canMoveLeftDiagonal = i == x - 1 && validChangingPixel(i, y + 1);
                         break;
                     }
                     if (i == x - xTravel) slideLeft = false;
@@ -700,7 +692,7 @@ function fall(x, y, xTravel, yTravel, isPassable = isPassableFluid) {
                         }
                     }
                     if (valid) {
-                        canMoveRightDiagonal = i == x + 1 && canMoveTo(i, y + 1);
+                        canMoveRightDiagonal = i == x + 1 && validChangingPixel(i, y + 1);
                         break;
                     }
                     if (i == x + xTravel) slideRight = false;
@@ -730,7 +722,7 @@ function flow(x, y, isPassable = isAir) {
         return;
     }
     if (isPassable(x, y + 1)) {
-        if (canMoveTo(x, y + 1)) move(x, y, x, y + 1);
+        if (validChangingPixel(x, y + 1)) move(x, y, x, y + 1);
     } else {
         let left = x;
         let right = x;
@@ -738,8 +730,8 @@ function flow(x, y, isPassable = isAir) {
         let slideRight = 0;
         let foundLeftDrop = false;
         let foundRightDrop = false;
-        let incrementLeft = canMoveTo(x - 1, y) && isPassable(x - 1, y);
-        let incrementRight = canMoveTo(x + 1, y) && isPassable(x + 1, y);
+        let incrementLeft = validChangingPixel(x - 1, y) && isPassable(x - 1, y);
+        let incrementRight = validChangingPixel(x + 1, y) && isPassable(x + 1, y);
         if (!incrementLeft && !incrementRight) return;
         // move directly to destination?
         while (incrementLeft) {
@@ -801,15 +793,15 @@ function flow(x, y, isPassable = isAir) {
             }
         }
         if (toSlide > 0) {
-            if (foundRightDrop && isPassable(x + 1, y + 1) && canMoveTo(x + 1, y + 1)) {
+            if (foundRightDrop && isPassable(x + 1, y + 1) && validChangingPixel(x + 1, y + 1)) {
                 move(x, y, x + 1, y + 1);
-            } else if (canMoveTo(x + 1, y)) {
+            } else if (validChangingPixel(x + 1, y)) {
                 move(x, y, x + 1, y);
             }
         } else if (toSlide < 0) {
-            if (foundLeftDrop && isPassable(x - 1, y + 1) && canMoveTo(x - 1, y + 1)) {
+            if (foundLeftDrop && isPassable(x - 1, y + 1) && validChangingPixel(x - 1, y + 1)) {
                 move(x, y, x - 1, y + 1);
-            } else if (canMoveTo(x - 1, y)) {
+            } else if (validChangingPixel(x - 1, y)) {
                 move(x, y, x - 1, y);
             }
         }
@@ -943,7 +935,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveX == -1 && firstCollapsible != -1) moveX = firstCollapsible;
                 if (moveX != -1) {
-                    for (let i = moveX; i < x; i++) if (!canMoveTo(i, y)) return false;
+                    for (let i = moveX; i < x; i++) if (!validChangingPixel(i, y)) return false;
                     if (pistonOverride && moveX > 0 && grid[y][moveX - 1] == pixNum.PUSH_PISTON_RIGHT && !isDeactivated(moveX - 1, y)) return false;
                     if (!movePusher) x--;
                     for (let i = moveX; i < x; i++) {
@@ -982,7 +974,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveY == -1 && firstCollapsible != -1) moveY = firstCollapsible;
                 if (moveY != -1) {
-                    for (let i = moveY; i < y; i++) if (!canMoveTo(x, i)) return false;
+                    for (let i = moveY; i < y; i++) if (!validChangingPixel(x, i)) return false;
                     if (pistonOverride && moveY > 0 && grid[moveY - 1][x] == pixNum.PUSH_PISTON_DOWN && !isDeactivated(x, moveY - 1)) return false;
                     if (!movePusher) y--;
                     for (let i = moveY; i < y; i++) {
@@ -1021,7 +1013,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveX == -1 && firstCollapsible != -1) moveX = firstCollapsible;
                 if (moveX != -1) {
-                    for (let i = moveX; i > x; i--) if (!canMoveTo(i, y)) return false;
+                    for (let i = moveX; i > x; i--) if (!validChangingPixel(i, y)) return false;
                     if (pistonOverride && moveX < gridWidth - 1 && grid[y][moveX + 1] == pixNum.PUSH_PISTON_LEFT && !isDeactivated(moveX + 1, y)) return false;
                     if (!movePusher) x++;
                     for (let i = moveX; i > x; i--) {
@@ -1060,7 +1052,7 @@ function push(x, y, dir, movePusher = true, ignorePistons = false) {
                 }
                 if (moveY == -1 && firstCollapsible != -1) moveY = firstCollapsible;
                 if (moveY != -1) {
-                    for (let i = moveY; i > y; i--) if (!canMoveTo(x, i)) return false;
+                    for (let i = moveY; i > y; i--) if (!validChangingPixel(x, i)) return false;
                     if (pistonOverride && moveY < gridHeight - 1 && grid[moveY + 1][x] == pixNum.PUSH_PISTON_UP && !isDeactivated(x, moveY + 1)) return false;
                     if (!movePusher) y++;
                     for (let i = moveY; i > y; i--) {
@@ -1163,8 +1155,8 @@ function rayTrace(x1, y1, x2, y2, cb) {
     }
 };
 function possibleRotations(id) {
-    if (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2 || id == pixNum.ROTATOR_CLOCKWISE || id == pixNum.ROTATOR_COUNTERCLOCKWISE || id == pixNum.CARRIAGE_HORIZONTAL || id == pixNum.CARRIAGE_VERTICAL) return 2;
-    if ((id >= pixNum.PISTON_LEFT && id <= pixNum.ROTATOR_DOWN) || (id >= pixNum.COMPARATOR_LEFT && id <= pixNum.COMPARATOR_DOWN) || (id >= pixNum.LASER_LEFT && id <= pixNum.LASER_DOWN) || (id >= pixNum.FLAMETHROWER_LEFT && id <= pixNum.FLAMETHROWER_DOWN)) return 4;
+    if (id == pixNum.SLIDER_HORIZONTAL || id == pixNum.SLIDER_VERTICAL || id == pixNum.MIRROR_1 || id == pixNum.MIRROR_2 || id == pixNum.ROTATOR_CLOCKWISE || id == pixNum.ROTATOR_COUNTERCLOCKWISE) return 2;
+    if ((id >= pixNum.PISTON_LEFT && id <= pixNum.ROTATOR_DOWN) || (id >= pixNum.COMPARATOR_LEFT && id <= pixNum.COMPARATOR_DOWN) || (id >= pixNum.CARRIAGE_LEFT && id <= pixNum.CARRIAGE_DOWN) || (id >= pixNum.LASER_LEFT && id <= pixNum.LASER_DOWN) || (id >= pixNum.FLAMETHROWER_LEFT && id <= pixNum.FLAMETHROWER_DOWN)) return 4;
     return 1;
 };
 function rotatePixel(x, y) {
@@ -1439,6 +1431,7 @@ function explode(x1, y1, size, defer) {
     let intensity = size * Math.min(1, Math.max(0, 1 - (distance / 150)));
     sounds.explosion(4 * ((intensity / 80) ** 2));
 };
+// craft
 function craftPixel(id, team) {
     if (team == 0) return false;
     const inventory = teamPixelAmounts[team - 1];
@@ -1502,6 +1495,7 @@ let simulationPaused = true;
 let slowSimulation = false;
 let fastSimulation = false;
 let runTicks = 0;
+let diffuseMode = false;
 let fps = parseInt(window.localStorage.getItem('fps') ?? 60);
 let targetFps = fps;
 const frameList = [];
@@ -1951,7 +1945,7 @@ function drawUI() {
     }
     let fpsText = `FPS: ${frameList.length} ${debugInfo ? `(${frameTime.toFixed(1)}ms/${averageFrameTime.toFixed(1)}ms)` : ''}`;
     let tickText = `Tick: ${ticks} ${debugInfo ? `(${tickTime.toFixed(1)}ms/${averageTickTime.toFixed(1)}ms)` : ''}`;
-    let brushPixelText = (brush.isSelection && selection.grid[0] !== undefined) ? `Brush: Paste` : `Brush Pixel: ${pixels[brush.pixel].name}`;
+    let brushPixelText = (brush.isSelection && selection.grid[0] !== undefined) ? `Brush: Paste` : `Brush Pixel: ${(pixels[brush.pixel] ?? numPixels[pixNum.MISSING]).name}`;
     let brushSizeText = `Brush Size: ${(brush.isSelection && selection.grid[0] !== undefined) ? '-' : brush.size * 2 - 1}`;
     let brushLocationText = `${pixelAt(Math.max(camera.viewport.xmin, Math.min(camera.viewport.xmax, mXGrid)), Math.max(camera.viewport.ymin, Math.min(camera.viewport.ymax, mYGrid))).name} (${Math.max(camera.viewport.xmin, Math.min(camera.viewport.xmax, mXGrid))}, ${Math.max(camera.viewport.ymin, Math.min(camera.viewport.ymax, mYGrid))})`;
     let zoomText = `Zoom: ${Math.round(camera.scale * 10) / 10}`;
@@ -1999,7 +1993,7 @@ function drawUI() {
     }
     if (PixSimAPI.inGame) drawPixSimUI();
 };
-// TODO: Decouple ticking from drawing
+// TODO: Decouple ticking from drawing (but both draw and update need shared pixel functions)
 function updateTick() {
     let tickStart = performance.now();
     if ((!PixSimAPI.inGame || PixSimAPI.isHost) && ((!simulationPaused && (!slowSimulation || fastSimulation)) || runTicks > 0 || (!simulationPaused && !fastSimulation && slowSimulation && performance.now() - lastTick >= 100))) {
@@ -2011,8 +2005,7 @@ function updateTick() {
             -: fire
             0: nukes, plants, moss, sponges, flamethrowers, gunpowder, detonators, lasers, spongy rice, lag, music pixels
             1, 2, 3, 4: pushers, sticky pushers, copiers, cloners, super copiers, carriages
-            5: gravity solids, stone, ice, rotators, saplings, monsters
-            6: water, lava, steam, leaves, pumps, lava generators, freezers, wells, color wells, color generators, color collectors
+            5: gravity solids, stone, ice, rotators, saplings, monsters, water, lava, steam, leaves, pumps, lava generators, freezers, wells, color wells, color generators, color collectors
             */
             let monsterCount = 0;
             let fulfilledTargetCount = 0;
@@ -2046,7 +2039,7 @@ function updateTick() {
                     musicGrid[y][x] = 0;
                 }
             }
-            for (let updateStage = 0; updateStage <= 6; updateStage++) {
+            for (let updateStage = 0; updateStage <= 5; updateStage++) {
                 switch (updateStage) {
                     case 1:
                         for (let y = gridHeight - 1; y >= 0; y--) {
@@ -2101,6 +2094,35 @@ function updateTick() {
                     }
                 }
             }
+            if (diffuseMode) {
+                for (let y = 0; y < gridHeight; y++) {
+                    for (let x = gridWidth - 1; x >= 0; x--) {
+                        if (validChangingPixel(x, y) && Math.random() < 0.5) {
+                            if (Math.random() < 0.5) {
+                                if (Math.random() < 0.5) {
+                                    if (isOnGrid(x - 1, y) && validChangingPixel(x - 1, y)) move(x, y, x - 1, y);
+                                } else {
+                                    if (isOnGrid(x + 1, y) && validChangingPixel(x + 1, y)) move(x, y, x + 1, y);
+                                }
+                            } else {
+                                if (Math.random() < 0.5) {
+                                    if (isOnGrid(x, y - 1) && validChangingPixel(x, y - 1)) move(x, y, x, y - 1);
+                                } else {
+                                    if (isOnGrid(x, y + 1) && validChangingPixel(x, y + 1)) move(x, y, x, y + 1);
+                                }
+                            }
+                        }
+                    }
+                }
+                for (let y = 0; y < gridHeight; y++) {
+                    for (let x = 0; x < gridWidth; x++) {
+                        if (nextGrid[y][x] !== -1) {
+                            grid[y][x] = nextGrid[y][x];
+                            nextGrid[y][x] = -1;
+                        }
+                    }
+                }
+            }
             let newMonsterCount = 0;
             let newFulfilledTargetCount = 0;
             let hasUnfulfilledTargets = false;
@@ -2137,7 +2159,6 @@ function updateTick() {
         if (PixSimAPI.inGame && PixSimAPI.gameRunning) {
             new Promise(async (resolve, reject) => {
                 await pixsimData.scriptRunner.tick();
-                if (pixsimData.scriptEvents.tick !== undefined) await pixsimData.scriptRunner.run(pixsimData.scriptEvents.tick);
                 PixSimAPI.sendTick(grid, teamGrid, [
                     fireGrid,
                     targetGrid,
@@ -2231,10 +2252,10 @@ function updateBrush() {
                 }
                 if (!sandboxMode && !PixSimAPI.inGame) {
                     saveCode = generateSaveCode();
-                    window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compressToBase64(JSON.stringify({
+                    window.localStorage.setItem(`challenge-${currentPuzzle.id}`, LZString.compressToBase64(JSON.stringify({
                         code: saveCode,
                         pixels: getPixelAmounts(),
-                        completed: currentPuzzleCompleted
+                        completed: currentPuzzle.completed
                     })));
                     saveCodeText.value = saveCode;
                 }
@@ -2291,7 +2312,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
     const inventory = PixSimAPI.inGame ? (pxteam ? teamPixelAmounts[1] : teamPixelAmounts[0]) : pixelAmounts;
     const placeable = PixSimAPI.inGame ? (pxteam ? teamPlaceableGrids[1] : teamPlaceableGrids[0]) : placeableGrid;
     let modifiedPixelCounts = [];
-    let placePixelNum = pixels[placePixel].numId;
+    let placePixelNum = (pixels[placePixel] ?? numPixels[pixNum.MISSING]).numId;
     let skipToEnd = false;
     brushActionLine(x1, y1, x2, y2, size, (rect) => {
         if (skipToEnd) return;
@@ -2444,10 +2465,10 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
     }
     if (!sandboxMode && !PixSimAPI.inGame) {
         saveCode = generateSaveCode();
-        window.localStorage.setItem(`challenge-${currentPuzzleId}`, LZString.compressToBase64(JSON.stringify({
+        window.localStorage.setItem(`challenge-${currentPuzzle.id}`, LZString.compressToBase64(JSON.stringify({
             code: saveCode,
             pixels: getPixelAmounts(),
-            completed: currentPuzzleCompleted
+            completed: currentPuzzle.completed
         })));
         saveCodeText.value = saveCode;
     }
@@ -2511,7 +2532,7 @@ const pixsimData = {
     gameStart: 0,
     pixeliteCounts: [0, 0],
     scriptRunner: null,
-    scriptEvents: { }
+    scripts: { }
 };
 function resetPixSimPixelAmounts() {
     for (const id in pixels) {
@@ -2633,9 +2654,11 @@ PixSimAPI.onGameStart = () => {
                 }
             }
             pixsimData.scriptRunner = new PXASMRunner();
-            pixsimData.scriptEvents = {};
-            if (map.scripts.load !== undefined) pixsimData.scriptRunner.run(await PixSimAPI.getScript(map.scripts.load));
-            if (map.scripts.tick !== undefined) pixsimData.scriptEvents.tick = await PixSimAPI.getScript(map.scripts.tick);
+            pixsimData.scripts = {};
+            if (map.scripts.main !== undefined) pixsimData.scriptRunner.run(await PixSimAPI.getScript(map.scripts.main));
+            for (let i in map.scripts) {
+                pixsimData.scripts[i] = map.scripts[i];
+            }
             pixsimData.gameStart = Date.now(); // game timer
         }
         pixsimMenu._open = false;
@@ -2654,6 +2677,8 @@ PixSimAPI.onGameStart = () => {
         levelDetails.style.display = 'none';
         pixelPickerCrafting.style.display = '';
         restartButton.style.display = '';
+        quicksaveButton.disabled = true;
+        quickloadButton.disabled = true;
         pauseButton.disabled = true;
         fastSimulationButton.disabled = true;
         slowSimulationButton.disabled = true;
@@ -3073,7 +3098,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         mouseOver = mX >= 0 && mX < canvasResolution && mY >= 0 && mY < canvasResolution;
     };
     document.addEventListener('wheel', (e) => {
-        if (mouseOver && !inMenuScreen) {
+        if (mouseOver && acceptInputs && !inMenuScreen && !inWinScreen) {
             if (holdingControl) {
                 scaleCamera((Math.abs(e.deltaY) > 10) ? (e.deltaY < 0 ? 2 : 0.5) : 1);
                 document.onmousemove(e);
@@ -3164,7 +3189,7 @@ function updateTimeControlButtons() {
         slowSimulationButton.style.backgroundColor = 'red';
         slowSimulationButton.title = 'Disable slow-mode';
     } else {
-        slowSimulationButton.style.backgroundColor = 'lime';
+        slowSimulationButton.style.backgroundColor = 'lightgray';
         slowSimulationButton.title = 'Enable slow-mode';
     }
 };
@@ -3191,13 +3216,17 @@ advanceTickButton.onclick = (e) => {
 quicksaveButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
     quicksave = generateSaveCode();
+    quickloadButton.disabled = false;
 };
 quickloadButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs || !sandboxMode) return;
+    simulationPaused = true;
+    fastSimulation = false;
+    updateTimeControlButtons();
     if (quicksave != null) loadSaveCode(quicksave);
 };
 
-// save code inputs
+// save code controls
 let writeSaveTimeout = setTimeout(() => { });
 const generateSaveButton = document.getElementById('generateSave');
 const uploadSaveButton = document.getElementById('uploadSave');
@@ -3228,9 +3257,6 @@ generateSaveButton.onclick = (e) => {
 };
 uploadSaveButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
-    simulationPaused = true;
-    fastSimulation = false;
-    updateTimeControlButtons();
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.redpixel';
@@ -3241,12 +3267,16 @@ uploadSaveButton.onclick = (e) => {
         const reader = new FileReader();
         reader.onload = async (e) => {
             if (await modal('Load save?', 'Your current red simulation will be overwritten!', true)) {
+                simulationPaused = true;
+                fastSimulation = false;
+                updateTimeControlButtons();
                 saveCode = LZString.decompressFromBase64(e.target.result);
                 if (saveCode == null || saveCode == '') saveCode = e.target.result;
                 saveCodeText.value = saveCode;
                 loadSaveCode();
                 window.localStorage.setItem('saveCodeText', LZString.compressToBase64(saveCode));
                 quicksave = null;
+                quickloadButton.disabled = true;
             }
         };
         reader.readAsText(files[0]);
@@ -3273,6 +3303,7 @@ resetButton.onclick = async (e) => {
         loadSaveCode(saveCodeText.value.replace('\n', ''));
         inResetState = true;
         quicksave = null;
+        quickloadButton.disabled = true;
     }
 };
 restartButton.onclick = async (e) => {
@@ -3281,9 +3312,10 @@ restartButton.onclick = async (e) => {
     fastSimulation = false;
     updateTimeControlButtons();
     if (await modal('Restart?', 'Your solution will be removed!', true)) {
-        window.localStorage.removeItem(`challenge-${currentPuzzleId}`);
-        loadPuzzle(currentPuzzleSection, currentPuzzleLevel);
+        window.localStorage.removeItem(`challenge-${currentPuzzle.id}`);
+        loadPuzzle(currentPuzzle.section, currentPuzzle.level);
         quicksave = null;
+        quickloadButton.disabled = true;
     }
 };
 
