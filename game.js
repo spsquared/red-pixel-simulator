@@ -3063,7 +3063,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
                 brush.isSelection = true;
             }
         } else if (key == 'z' && e.ctrlKey) {
-            if (inResetState) {
+            if (inResetState && sandboxMode) {
                 if (undoStates.length) sounds.tick();
                 undoStates.pop();
                 if (undoStates.at(-1)) {
