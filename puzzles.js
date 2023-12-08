@@ -707,8 +707,8 @@ const puzzles = [
             },
             {
                 name: 'Puzzle Deactivated',
-                description: '410: Gone<br>The requested level has been permanently removed. Do not reattempt the request.<br><br>Wait why are there fish tanks??<br><br><i>Level credit: sp</i>',
-                saveCode: '&1;40-40;0000;wall-2:deleter-24:rotator_left:wall-2:monster:air-25:deleter:wall-16:fan_up:wall-c:fan_up:wall-2:air:deleter:wall:water-c:wall-8:air-2:wall:piston_right:slider_horizontal:rotator_clockwise:steel:air-6:slider_horizontal:deactivator:air:wall:air:deleter:wall:water-2:push_piston_left:cloner_right:water-8:wall-5:slime-2:unslime:deactivator:air:wall-b:air:wall-3:air:deleter:wall:water-6:rotator_left:push_piston_right:water-4:wall-5:slime:air:wall:push_piston_up:wall-2:air-7:wall:air-5:wall:air:deleter:wall:reinforced_glass-c:wall-2:rotator_down:wall-2:slime:air:wall-4:air-7:wall:air-5:wall:air:deleter:air-e:slider_horizontal:deactivator:air-2:slime:air:wall-4:air-7:wall:air-5:wall:air:deleter:wall:air-d:wall-a:air-7:wall:air-5:wall:air:deleter:wall:air-16:wall:air-d:wall:air:deleter:wall:air-16:wall:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-7:wall-3:air:wall-3:air:deleter:wall:air-16:reinforced_glass:air-7:wall:air:cloner_up:air:wall-3:air:deleter:wall:air-16:reinforced_glass:air-7:wall:cloner_left:rotator_clockwise:wall:deactivator:air:fan_right:air:deleter:wall:air-11:goal:air-4:wall:air-7:wall:air:push_cloner_up:goal:slime:air:wall:air:deleter:wall:air-16:wall-a:rotator_left:wall-4:air:deleter:wall:air-16:wall:air-7:wall:air-5:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-7:wall:air-5:wall:air:deleter:wall:air-16:reinforced_glass:air-7:wall:ice-5:wall:air:deleter:wall:air-16:wall:air-7:wall:ice-5:wall:air:deleter:wall:air-16:wall-f:air:deleter:wall:air-21:steel:slime:air:wall:air:deleter:wall:air-21:steel:slime:air:wall:air:deleter:wall:air-21:steel:slime:air:wall:air:deleter:wall:air-4:slime:air-2:slime:air-9:slime:air-3:slime-3:air-9:steel:slime:air:wall:air:deleter:wall-5:slime:wall-2:slime:air:wall-2:reinforced_glass-5:wall:slime:wall-3:air:slime:wall-4:reinforced_glass-6:wall:slime:air:wall:air:deleter:wall-4:deactivator:slime:wall:slime-3:air:wall:water-5:wall:slime:deactivator:wall:air:slime-3:wall:life-2:cloner_right:push_cloner_right:water-4:wall:deactivator:air:fan_right:air:deleter:wall-4:air-2:wall-2:deactivator:air:wall-2:water-2:sticky_piston_left:slime:water:wall:air-2:push_piston_right:air:deactivator:wall-3:life-2:water-6:wall-4:air:deleter:wall-4:fan_down:wall-3:fan_down-2:wall-b:fan_down:wall-10:air:deleter:wall:piston_right:air-25:rotator_up:wall-2:deleter-25:wall:;640:;e0:7:21:7:9:e:a:7:a:d:a:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:11:1:4:1:7:a:16:12:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:16:2:189:;127:1:1cb:1:34c:',
+                description: '410: Gone<br>The requested level has been permanently removed. Do not reattempt the request.<br><br>ARE YOU KIDDING ME?? <i>NONE</i> OF THESE ROTATORS ARE PLACEABLE??<br><br><i>Level credit: sp</i>',
+                saveCode: '&1;40-40;0000;wall-2:deleter-24:rotator_left:wall-2:monster:air-25:deleter:wall-16:fan_up:wall-c:fan_up:wall-2:air:deleter:wall:water-c:wall-8:air-2:wall:piston_right:slider_horizontal:rotator_clockwise:steel:air-6:slider_horizontal:deactivator:air:wall:air:deleter:wall:water-2:push_piston_left:cloner_right:water-8:wall-5:slime-2:unslime:deactivator:air:wall-b:air:wall-3:air:deleter:wall:water-6:rotator_left:push_piston_left:water-4:wall-5:slime:air:wall:push_piston_up:wall-2:air-7:wall:air-5:wall:air:deleter:wall:reinforced_glass-c:wall-2:rotator_down:wall-2:slime:air:wall-4:air-7:wall:air-5:wall:air:deleter:air-e:slider_horizontal:deactivator:air-2:slime:air:wall-4:air-7:wall:air-5:wall:air:deleter:wall:air-d:wall-a:air-7:wall:air-5:wall:air:deleter:wall:air-16:wall:air-d:wall:air:deleter:wall:air-16:wall:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-7:wall-3:air:wall-3:air:deleter:wall:air-16:reinforced_glass:air-7:wall:air:cloner_right:air:wall-3:air:deleter:wall:air-16:reinforced_glass:air-7:wall:cloner_up:rotator_clockwise:wall:deactivator:air:fan_right:air:deleter:wall:air-11:goal:air:rotator_clockwise:air-2:wall:air-7:wall:air:push_cloner_up:concrete:slime:air:wall:air:deleter:wall:air-16:wall-a:rotator_left:wall-4:air:deleter:wall:air-16:wall:air-7:wall:air-5:wall:air:deleter:wall:air-16:reinforced_glass:air-3:deactivator:air-9:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-d:wall:air:deleter:wall:air-16:reinforced_glass:air-7:wall:air-5:wall:air:deleter:wall:air-9:rotator_clockwise:air:rotator_clockwise:air-a:reinforced_glass:air-7:wall:ice-5:wall:air:deleter:wall:air-16:wall:air-7:wall:ice-5:wall:air:deleter:wall:rotator_counterclockwise:air-15:wall-f:air:deleter:wall:air-21:steel:slime:air:wall:air:deleter:wall:air-21:steel:slime:air:wall:air:deleter:wall:air-21:steel:slime:air:wall:air:deleter:wall:air-4:slime:air-2:slime:air-9:slime:air-3:slime-3:air-9:steel:slime:air:wall:air:deleter:wall-5:slime:wall-2:slime:air:wall-2:reinforced_glass-5:wall:slime:wall-3:air:slime:wall-4:reinforced_glass-6:wall:slime:air:wall:air:deleter:wall-4:deactivator:slime:wall:slime-3:air:wall:water-5:wall:slime:deactivator:wall:air:slime-3:wall:life-2:cloner_right:push_cloner_right:water-4:wall:deactivator:air:fan_right:air:deleter:wall-4:air-2:wall-2:deactivator:air:wall-2:water-2:sticky_piston_left:slime:water:wall:air-2:push_piston_right:air:deactivator:wall-3:life-2:water-6:wall-4:air:deleter:wall-4:fan_down:wall-3:fan_down-2:wall-b:fan_down:wall-10:air:deleter:wall:piston_right:air-25:rotator_up:wall-2:deleter-25:wall:;640:;e0:7:21:7:9:e:a:7:a:d:a:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:11:1:1:1:2:1:7:a:16:12:16:1:7:a:16:1:3:1:3:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:16:1:7:a:9:1:1:1:a:1:7:a:16:1:7:b:15:16:2:189:;127:1:518:;640:',
                 backgroundColor: '#fffffe',
                 inventory: {
                     concrete: 50,
@@ -732,11 +732,10 @@ const puzzles = [
                     push_cloner_up: 2,
                     push_cloner_right: 2,
                     push_cloner_down: 2,
-                    rotator_left: 6,
                     rotator_up: 4,
-                    rotator_right: 6,
+                    rotator_right: 4,
+                    rotator_left: 4,
                     rotator_down: 4,
-                    rotator_clockwise: 4,
                     slider_horizontal: 4,
                     slider_vertical: 8,
                     deactivator: 1,
@@ -744,7 +743,7 @@ const puzzles = [
                     slime: 18
                 },
                 difficulty: 'Hard',
-                id: 'ed84626a-5924-4134-b1ff-940f8ae70bee'
+                id: 'cbc49a90-6678-4cd8-91c7-24d7fce0dcc1'
             },
             {
                 name: 'Chaos 2: Electric Boogaloo (Déjà vu?)',
@@ -874,6 +873,8 @@ function loadPuzzle(section, level) {
         if (savedData !== null) saveCode = savedData.code;
         saveCodeText.value = saveCode;
         loadSaveCode();
+        undoStates.length = 0;
+        resetStateSave = saveCode;
         backgroundColor = puzzle.backgroundColor;
         simulationPaused = true;
         fastSimulation = false;

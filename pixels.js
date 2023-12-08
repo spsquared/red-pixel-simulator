@@ -10523,14 +10523,14 @@ window.addEventListener('load', async (e) => {
             box.onmouseover = (e) => {
                 pixelPickerDescription.innerHTML = pixel.generatedDescription;
                 pixelPickerDescription.appendChild(keybindChangeButton);
-                keybindChangeButton.innerText = 'Keybind: ' + (pixel.keybind ?? 'None').toUpperCase();
+                keybindChangeButton.innerText = 'Keybind: ' + ((pixel.keybind == ' ' ? 'SPACE' : pixel.keybind) ?? 'None').toUpperCase();
                 pixelPickerCrafting.innerHTML = '';
                 if (sandboxMode || PixSimAPI.inGame) pixelPickerCrafting.appendChild(generateCraftingHTML(id, PixSimAPI.inGame ? teamPixelAmounts[PixSimAPI.team] : pixelAmounts));
             };
             box.onmouseout = (e) => {
                 pixelPickerDescription.innerHTML = pixels[brush.pixel].generatedDescription;
                 pixelPickerDescription.appendChild(keybindChangeButton);
-                keybindChangeButton.innerText = 'Keybind: ' + (pixels[brush.pixel].keybind ?? 'None').toUpperCase();
+                keybindChangeButton.innerText = 'Keybind: ' + ((pixels[brush.pixel].keybind == ' ' ? 'SPACE' : pixels[brush.pixel].keybind) ?? 'None').toUpperCase();
                 pixelPickerCrafting.innerHTML = '';
                 if (sandboxMode || PixSimAPI.inGame) pixelPickerCrafting.appendChild(generateCraftingHTML(brush.pixel, PixSimAPI.inGame ? teamPixelAmounts[PixSimAPI.team] : pixelAmounts));
             };
@@ -10601,7 +10601,7 @@ window.addEventListener('load', async (e) => {
     for (let key in pixelKeybinds) {
         if (pixels[pixelKeybinds[key]]) {
             pixels[pixelKeybinds[key]].keybind = key;
-            pixelSelectors[pixelKeybinds[key]].keybind.innerText = (key ?? '').toUpperCase();
+            pixelSelectors[pixelKeybinds[key]].keybind.innerText = ((key == ' ' ? 'SPACE' : key) ?? '').toUpperCase();
         }
     }
     await Promise.all(promiseList);

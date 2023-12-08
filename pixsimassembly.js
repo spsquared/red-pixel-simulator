@@ -23,7 +23,7 @@ class PXASMArgumentError extends TypeError {
 }
 
 let checkArgType = (v, t) => {
-    if (typeof v != t) throw PXASMArgumentError(`Expected a ${t}, got ${v} (${typeof v})`);
+    if (typeof v != t) throw new PXASMArgumentError(`Expected a ${t}, got ${v} (${typeof v})`);
 };
 
 // reserved variables? ticks?
@@ -33,10 +33,10 @@ const reserved = {
     ticks: 0,
     width: 0,
     height: 0
-}
+};
 
 function setVariable(n, v) {
-    variables.set(n, v);
+    variables.set(n, structuredClone(v));
 };
 function getVariable(n) {
     if (!variables.has(n)) throw new PXASMReferenceError(`'${n}' is not defined`);
@@ -67,7 +67,7 @@ function setArray(n, i, v) {
     let arr = variables.get(n);
     if (!Array.isArray(arr)) throw new PXASMReferenceError(`'${n}' is not an array`);
     if (i < 0 || i > arr.length) throw new PXASMBoundsError(`Index ${i} out of bounds for array length ${arr.length}`);
-    arr[i] = v;
+    arr[i] = structuredClone(v);
 };
 function getArray(n, i) {
     let arr = variables.get(n);
@@ -106,11 +106,11 @@ async function setPixel(x, y, id) {
     checkArgType(id, 'string');
     return await sendCommand('setPixel', x, y, id);
 };
-async function getPixel(x, y) {
+async function getPixel(x, y, v) {
     checkArgType(x, 'number');
     checkArgType(y, 'number');
-    checkArgType(id, 'string');
-    return await sendCommand('getPixel', x, y);
+    checkArgType(v, 'string');
+    setVariable(v, await sendCommand('getPixel', x, y));
 };
 async function setAmount(id, t, n) {
     checkArgType(id, 'string');
@@ -119,11 +119,12 @@ async function setAmount(id, t, n) {
     if (t != 0 && t != 1) throw new PXASMArgumentError(`Team ID must be 0 or 1, got ${t}`);
     return await sendCommand('setAmount', id, t, n);
 };
-async function getAmount(id, t) {
+async function getAmount(id, t, v) {
     checkArgType(id, 'string');
     checkArgType(t, 'number');
+    checkArgType(v, 'string');
     if (t != 0 && t != 1) throw new PXASMArgumentError(`Team ID must be 0 or 1, got ${t}`);
-    return await sendCommand('getAmount', id, t);
+    setVariable(v, await sendCommand('getAmount', id, t));
 };
 function moveCamera(x, y, s, t) {
     checkArgType(x, 'number');

@@ -624,7 +624,7 @@ class PXASMRunner {
                     break;
                 case 'getPixel':
                     if (isOnGrid(dat[0], dat[1])) {
-                        this.#worker.postMessage([0, grid[dat[1]][dat[0]]]);
+                        this.#worker.postMessage([0, pixelAt(dat[0], dat[1]).id]);
                     }
                     break;
                 case 'setAmount':
