@@ -126,19 +126,19 @@ function toggleMusic() {
     musicMuted = !musicMuted;
     if (musicMuted) {
         musicVolume.gain.setValueAtTime(0, audioContext.currentTime);
-        musicMuteButton.style.backgroundImage = 'url(/assets/svg/volumeMute.svg)';
+        musicMuteButton.style.backgroundImage = 'url(./assets/svg/volumeMute.svg)';
     } else {
         musicVolume.gain.setValueAtTime(1, audioContext.currentTime);
-        musicMuteButton.style.backgroundImage = `url(/assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
+        musicMuteButton.style.backgroundImage = `url(./assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
     }
     window.localStorage.setItem('musicMuted', musicMuted ? 1 : 0);
 };
 function setGlobalVolume(vol) {
     volume = Math.max(0, Math.min(parseInt(vol), 100));
     globalVolume.gain.setValueAtTime(volume / 100, audioContext.currentTime);
-    if (musicMuted) musicMuteButton.style.backgroundImage = 'url(/assets/svg/volumeMute.svg)';
-    else musicMuteButton.style.backgroundImage = `url(/assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
-    volumeDisp.style.backgroundImage = `url(/assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
+    if (musicMuted) musicMuteButton.style.backgroundImage = 'url(./assets/svg/volumeMute.svg)';
+    else musicMuteButton.style.backgroundImage = `url(./assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
+    volumeDisp.style.backgroundImage = `url(./assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
     window.localStorage.setItem('volume', volume);
 };
 musicMuteButton.onclick = toggleMusic;
@@ -296,13 +296,13 @@ window.addEventListener('load', async (e) => {
     promiseList.push(addMusicPixelSound(88));
     if (musicMuted) {
         musicVolume.gain.setValueAtTime(0, audioContext.currentTime);
-        musicMuteButton.style.backgroundImage = 'url(/assets/svg/volumeMute.svg)';
+        musicMuteButton.style.backgroundImage = 'url(./assets/svg/volumeMute.svg)';
     } else {
         musicVolume.gain.setValueAtTime(1, audioContext.currentTime);
-        musicMuteButton.style.backgroundImage = `url(/assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
+        musicMuteButton.style.backgroundImage = `url(./assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
     }
     globalVolume.gain.setValueAtTime(volume / 100, audioContext.currentTime);
-    volumeDisp.style.backgroundImage = `url(/assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
+    volumeDisp.style.backgroundImage = `url(./assets/svg/volume${Math.ceil(volume / 50)}.svg)`;
     volumeSlider.value = volume;
     await Promise.all(promiseList);
     soundsResolveLoad();

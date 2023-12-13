@@ -88,7 +88,7 @@
     width: 40px;
     height: 40px;
     margin: 0px 0px;
-    background-image: url(/assets/svg/volumeMute.svg);
+    background-image: url(./assets/svg/volumeMute.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 80%;
@@ -112,7 +112,7 @@
     height: 30px;
     border: 5px outset #AAAAAA;
     background-color: lightgray;
-    background-image: url(/assets/svg/volume0.svg);
+    background-image: url(./assets/svg/volume0.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 80%;
@@ -166,7 +166,7 @@
     right: -14px;
     width: 40px;
     height: 40px;
-    background-image: url(/assets/svg/close.svg);
+    background-image: url(./assets/svg/close.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100%;
@@ -396,7 +396,7 @@
     left: 8px;
     width: 60px;
     height: 40px;
-    background-image: url(/assets/svg/backToMenu.svg);
+    background-image: url(./assets/svg/backToMenu.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 80% 80%;
@@ -430,12 +430,12 @@
 #hostGameTypePrevious {
     grid-column-start: c0;
     grid-row-start: r0;
-    background-image: url(/assets/svg/previous.svg);
+    background-image: url(./assets/svg/previous.svg);
 }
 #hostGameTypeNext {
     grid-column-start: c2;
     grid-row-start: r0;
-    background-image: url(/assets/svg/next.svg);
+    background-image: url(./assets/svg/next.svg);
 }
 #hostGameTypeName {
     grid-column-start: c1;
@@ -579,7 +579,7 @@
     grid-column: c2 / c3;
     grid-row: r0 / r2;
     background-color: crimson;
-    background-image: url(/assets/svg/close.svg);
+    background-image: url(./assets/svg/close.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 50% 50%;

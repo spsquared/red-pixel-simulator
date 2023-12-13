@@ -106,7 +106,7 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: 50%;
-    background-image: url(/assets/svg/dropdown.svg);
+    background-image: url(./assets/svg/dropdown.svg);
 }
 .pixelGroupHeaderLabel {
     grid-column-start: [c1];
@@ -265,19 +265,19 @@
 }
 #pause {
     background-color: lime;
-    background-image: url(/assets/svg/play.svg);
+    background-image: url(./assets/svg/play.svg);
 }
 #fastSimulation {
     background-color: gray;
-    background-image: url(/assets/svg/simulate.svg);
+    background-image: url(./assets/svg/simulate.svg);
 }
 #slowSimulation {
     background-color: lightgray;
-    background-image: url(/assets/svg/slowmode.svg);
+    background-image: url(./assets/svg/slowmode.svg);
     background-size: 80% 80%;
 }
 #advanceTick {
-    background-image: url(/assets/svg/advanceTick.svg);
+    background-image: url(./assets/svg/advanceTick.svg);
 }
 
 #savecodeControls {
@@ -426,10 +426,10 @@
     background-size: 90% 90%;
 }
 #importRedprint {
-    background-image: url(/assets/svg/rp-save.svg);
+    background-image: url(./assets/svg/rp-save.svg);
 }
 #exportRedprint {
-    background-image: url(/assets/svg/rp-load.svg);
+    background-image: url(./assets/svg/rp-load.svg);
 }
 #rpDownload, #rpUpload {
     grid-row: 7;
@@ -440,11 +440,11 @@
 }
 #rpDownload {
     grid-column: 1 / 2;
-    background-image: url(/assets/svg/download.svg);
+    background-image: url(./assets/svg/download.svg);
 }
 #rpUpload {
     grid-column: 2 / 3;
-    background-image: url(/assets/svg/upload.svg);
+    background-image: url(./assets/svg/upload.svg);
 }
 #rpListContainer {
     grid-column: 2;
@@ -513,17 +513,17 @@
     background-size: 90% 90%;
 }
 .rplOpen {
-    background-image: url(/assets/svg/rp-save.svg);
+    background-image: url(./assets/svg/rp-save.svg);
 }
 .rplExport {
-    background-image: url(/assets/svg/rp-load.svg);
+    background-image: url(./assets/svg/rp-load.svg);
 }
 .rplDelete {
-    background-image: url(/assets/svg/delete.svg);
+    background-image: url(./assets/svg/delete.svg);
     background-size: 100% 100%;
 }
 .rplDelete:hover {
-    background-image: url(/assets/svg/delete-hover.svg);
+    background-image: url(./assets/svg/delete-hover.svg);
 }
 
 #controlsTable {
@@ -636,7 +636,7 @@
         background-color: white;
     }
     .pixelGroupHeaderDropdownIcon {
-        background-image: url(/assets/svg/dropdown-light.svg);
+        background-image: url(./assets/svg/dropdown-light.svg);
     }
 
     #winScreen {

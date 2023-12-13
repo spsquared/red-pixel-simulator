@@ -3216,7 +3216,7 @@ const quickloadButton = document.getElementById('quickload');
 function updateTimeControlButtons() {
     if (simulationPaused) {
         pauseButton.style.backgroundColor = 'red';
-        pauseButton.style.backgroundImage = 'url(/assets/svg/play.svg)';
+        pauseButton.style.backgroundImage = 'url(./assets/svg/play.svg)';
         pauseButton.title = 'Play';
         fastSimulationButton.style.backgroundColor = '';
         fastSimulationButton.title = 'Disabled while paused';
@@ -3225,7 +3225,7 @@ function updateTimeControlButtons() {
         pauseMusicPixels();
     } else {
         pauseButton.style.backgroundColor = 'lime';
-        pauseButton.style.backgroundImage = 'url(/assets/svg/pause.svg)';
+        pauseButton.style.backgroundImage = 'url(./assets/svg/pause.svg)';
         pauseButton.title = 'Pause';
         if (fastSimulation) {
             fastSimulationButton.style.backgroundColor = 'lime';
