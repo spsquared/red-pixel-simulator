@@ -108,17 +108,15 @@ button:disabled:active {
 p {
     line-height: 18px;
 }
-b {
+h {
     /* background-color: beige; */
     border: 1px solid black;
     border-radius: 4px;
     padding: 0px 2px;
+    font-weight: bold;
 }
 a {
     color: black;
-}
-h {
-    font-weight: bold;
 }
 table {
     border-collapse: collapse;

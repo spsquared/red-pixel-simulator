@@ -88,7 +88,7 @@ class PixSimAPI {
         {
             name: 'Platformer Godmode',
             id: 'platformer',
-            description: '<b>Requires a Pixel Simulator Platformer player</b><br>Play god and prevent the Platformer Pixel from reaching the goal!'
+            description: '<h>Requires a Pixel Simulator Platformer player</h><br>Play god and prevent the Platformer Pixel from reaching the goal!'
         }
     ];
     static #spectating = false;

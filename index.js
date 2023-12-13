@@ -155,6 +155,60 @@ function* glitchTextTransitionGenerator(from, to, block, glitchLength, advanceMo
     }
 };
 
+window.addEventListener('load', (e) => {
+    if (window.location.hostname.includes('repl')) modal('Download progress?', '<h>Red Pixel Simulator is moving to a new host!</h><br>Your progress will be deleted after December 31, 2023 as Replit rolls out their changes to hosting. To avoid losing your data, download your progress now.', true).then((confirmed) => {
+        if (confirmed) {
+            const encoded = `data:text/json;base64,${window.btoa(LZString.compressToBase64(JSON.stringify(window.localStorage)))}`;
+            const a = document.createElement('a');
+            a.href = encoded;
+            a.download = `rps-progress.json`;
+            a.click();
+        }
+    });
+    else if (!window.localStorage.getItem('migrated')) modal('Upload progress?', '<h>Red Pixel Simulator has changed hosts!</h><br>Your progress will be deleted after December 31, 2023 as Replit rolls out their changes to hosting. To avoid losing your data, download your progress on the old <a href="red.pixelsimulator.repl.co">Replit</a> site and upload it here.', true).then((confirmed) => {
+        if (confirmed) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.oninput = (e) => {
+                let files = input.files;
+                if (files.length == 0) return;
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const json = JSON.parse(LZString.decompressFromBase64(e.target.result));
+                    for (let i in json) window.localStorage.setItem(i, json[i]);
+                    localStorage.setItem('migrated', true);
+                };
+                reader.readAsText(files[0]);
+            };
+            input.click();
+        } else {
+            modal('ARE YOU SURE?', 'im too lazy to make a button to upload your progress so this is your ONLY CHANCE!!<br><h>Click <b>YES</h> to <b>UPLOAD</h>, click <b>NO</h> to <b>DECLINE</h>.', true).then((confirmed) => {
+                if (confirmed) {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.json';
+                    input.oninput = (e) => {
+                        let files = input.files;
+                        if (files.length == 0) return;
+                        const reader = new FileReader();
+                        reader.onload = async (e) => {
+                            const json = JSON.parse(LZString.decompressFromBase64(e.target.result));
+                            for (let i in json) window.localStorage.setItem(i, json[i]);
+                            localStorage.setItem('migrated', true);
+                        };
+                        reader.readAsText(files[0]);
+                    };
+                    input.click();
+                } else {
+                    modal('oof', 'If you want to transfer your progress you have to do it manually now oof');
+                    localStorage.setItem('migrated', true);
+                }
+            });
+        }
+    });
+});
+
 if (Math.random() < 0.001) {
     const coverCanvas = document.createElement('canvas');
     const cctx = coverCanvas.getContext('2d');

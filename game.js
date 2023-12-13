@@ -3318,7 +3318,6 @@ uploadSaveButton.onclick = (e) => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.redpixel';
-    input.click();
     input.oninput = (e) => {
         let files = input.files;
         if (files.length == 0) return;
@@ -3341,6 +3340,7 @@ uploadSaveButton.onclick = (e) => {
         };
         reader.readAsText(files[0]);
     };
+    input.click();
 };
 downloadSaveButton.onclick = (e) => {
     if (inMenuScreen || inWinScreen || !acceptInputs) return;
