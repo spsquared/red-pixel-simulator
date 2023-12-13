@@ -245,11 +245,20 @@ window.addEventListener('load', async (e) => {
     promiseList.push(setAudio('./assets/sound/monsterDeath.mp3', (buf) => addAudioQueue(buf, 'monsterDeath', 200)));
     promiseList.push(setAudio('./assets/sound/targetFilled.mp3', (buf) => addAudioQueue(buf, 'targetFill')));
     promiseList.push(setAudio('./assets/sound/win.mp3', (buf) => addAudioQueue(buf, 'win')));
-    promiseList.push(setAudio('./assets/sound/null.mp3', (buf) => addAudioQueue(buf, 'rickroll')));
-    setAudio('./assets/sound/menu.mp3', (buf) => addMusic(buf, 'menu'));
-    setAudio('./assets/sound/credits.mp3', (buf) => addMusic(buf, 'credits'));
-    setAudio('./assets/sound/background1.mp3', (buf) => addMusic(buf, 'background'));
-    setAudio('./assets/sound/background2.mp3', (buf) => addMusic(buf, 'background'));
+    if (window.location.hostname == 'localhost') {
+        promiseList.push(setAudio('./assets/sound/null.mp3', (buf) => addAudioQueue(buf, 'rickroll')));
+        setAudio('./assets/sound/menu.mp3', (buf) => addMusic(buf, 'menu'));
+        setAudio('./assets/sound/credits.mp3', (buf) => addMusic(buf, 'credits'));
+        setAudio('./assets/sound/background1.mp3', (buf) => addMusic(buf, 'background'));
+        setAudio('./assets/sound/background2.mp3', (buf) => addMusic(buf, 'background'));
+    } else {
+        promiseList.push(setAudio('https://file.garden/ZVUmF8PdJFNCIg5B/null.mp3', (buf) => addAudioQueue(buf, 'rickroll')));
+        setAudio('https://file.garden/ZVUmF8PdJFNCIg5B/menu.mp3', (buf) => addMusic(buf, 'menu'));
+        setAudio('https://file.garden/ZVUmF8PdJFNCIg5B/credits.mp3', (buf) => addMusic(buf, 'credits'));
+        setAudio('https://file.garden/ZVUmF8PdJFNCIg5B/background1.mp3', (buf) => addMusic(buf, 'background'));
+        setAudio('https://file.garden/ZVUmF8PdJFNCIg5B/background2.mp3', (buf) => addMusic(buf, 'background'));
+        promiseList.push(setAudio('./assets/sound/null.mp3', (buf) => addAudioQueue(buf, 'rickroll')));
+    }
     promiseList.push(addMusicPixelSound(1));
     promiseList.push(addMusicPixelSound(2));
     promiseList.push(addMusicPixelSound(3));
