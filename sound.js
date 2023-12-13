@@ -257,7 +257,6 @@ window.addEventListener('load', async (e) => {
         setAudio('https://file.garden/ZVUmF8PdJFNCIg5B/credits.mp3', (buf) => addMusic(buf, 'credits'));
         setAudio('https://file.garden/ZVUmF8PdJFNCIg5B/background1.mp3', (buf) => addMusic(buf, 'background'));
         setAudio('https://file.garden/ZVUmF8PdJFNCIg5B/background2.mp3', (buf) => addMusic(buf, 'background'));
-        promiseList.push(setAudio('./assets/sound/null.mp3', (buf) => addAudioQueue(buf, 'rickroll')));
     }
     promiseList.push(addMusicPixelSound(1));
     promiseList.push(addMusicPixelSound(2));

@@ -178,6 +178,7 @@ window.addEventListener('load', (e) => {
                     const json = JSON.parse(LZString.decompressFromBase64(e.target.result));
                     for (let i in json) window.localStorage.setItem(i, json[i]);
                     localStorage.setItem('migrated', true);
+                    window.location.reload();
                 };
                 reader.readAsText(files[0]);
             };
@@ -196,6 +197,7 @@ window.addEventListener('load', (e) => {
                             const json = JSON.parse(LZString.decompressFromBase64(e.target.result));
                             for (let i in json) window.localStorage.setItem(i, json[i]);
                             localStorage.setItem('migrated', true);
+                            window.location.reload();
                         };
                         reader.readAsText(files[0]);
                     };
