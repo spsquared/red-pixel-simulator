@@ -229,7 +229,7 @@ function rpDraw() {
     rpDrawBrush();
 };
 // copy + paste & history
-const rpUnplaceablePixels = ['fire', 'rail', 'placementRestriction', 'monster', 'target', 'remove', 'teamNone', 'teamAlpna', 'teamBeta'];
+const rpUnplaceablePixels = ['fire', 'placementRestriction', 'monster', 'target', 'remove', 'teamNone', 'teamAlpna', 'teamBeta'];
 let lastMouseButton = brush.mouseButton;
 function rpUpdateMouseControls() {
     if (rpUnplaceablePixels.indexOf(brush.pixel) == -1 && acceptInputs && rpMX >= 0 && rpMX < rpCanvasRes && rpMY >= 0 && rpMY < rpCanvasRes) {
@@ -243,7 +243,7 @@ function rpUpdateMouseControls() {
             if (brush.mouseButton == -1) {
                 brush.lineMode = false;
                 let clickPixelNum = pixels[brush.pixel].numId;
-                brushActionLine(brush.lineStartX, brush.lineStartY, rpMXGrid, rpMYGrid, (rect) => {
+                brushActionLine(brush.lineStartX, brush.lineStartY, rpMXGrid, rpMYGrid, brush.size, (rect) => {
                     for (let i = rect.ymin; i <= rect.ymax; i++) {
                         for (let j = rect.xmin; j <= rect.xmax; j++) {
                             rpGrid[i][j] = clickPixelNum;
@@ -280,7 +280,7 @@ function rpUpdateMouseControls() {
     } else if (brush.mouseButton == -1 && brush.lineMode && !(brush.isSelection && selection.grid[0] != undefined) && brush.startsInRPE) {
         brush.lineMode = false;
         let clickPixelNum = pixels[brush.pixel].numId;
-        brushActionLine(brush.lineStartX, brush.lineStartY, rpMXGrid, rpMYGrid, (rect) => {
+        brushActionLine(brush.lineStartX, brush.lineStartY, rpMXGrid, rpMYGrid, brush.size, (rect) => {
             for (let i = rect.ymin; i <= rect.ymax; i++) {
                 for (let j = rect.xmin; j <= rect.xmax; j++) {
                     rpGrid[i][j] = clickPixelNum;
@@ -296,7 +296,7 @@ function rpDrawBrush() {
         let offsetX = rpCanvasRes / 2 - rpGridScale * rpGridWidth / 2;
         let offsetY = rpCanvasRes / 2 - rpGridScale * rpGridHeight / 2;
         rpDCtx.clearRect(0, 0, canvasResolution, canvasResolution);
-        brushActionLine(brush.lineStartX, brush.lineStartY, rpMXGrid, rpMYGrid, (rect) => {
+        brushActionLine(brush.lineStartX, brush.lineStartY, rpMXGrid, rpMYGrid, brush.size, (rect) => {
             drawPixels(clickPixelNum, [[rect.xmin, rect.ymin, rect.xmax - rect.xmin + 1, rect.ymax - rect.ymin + 1, true]], rpDCtx, true);
         });
         rpCtx.globalAlpha = 0.5;

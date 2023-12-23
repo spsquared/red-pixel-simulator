@@ -18,7 +18,6 @@ const gridCanvas = createCanvas();
 const gridNoiseCanvas = createCanvas();
 const aboveCanvas = createCanvas();
 const fireCanvas = createCanvas();
-const railCanvas = createCanvas();
 const targetCanvas = createCanvas();
 const placeableCanvas = createCanvas();
 const noiseCanvas = createCanvas();
@@ -31,7 +30,6 @@ const gridctx = gridCanvas.getContext('2d');
 const gridnoisectx = gridNoiseCanvas.getContext('2d');
 const abovectx = aboveCanvas.getContext('2d');
 const firectx = fireCanvas.getContext('2d');
-const railctx = railCanvas.getContext('2d');
 const targetctx = targetCanvas.getContext('2d');
 const placeablectx = placeableCanvas.getContext('2d');
 const noisectx = noiseCanvas.getContext('2d');
@@ -55,8 +53,6 @@ function resetCanvases() {
     abovectx.webkitImageSmoothingEnabled = false;
     firectx.imageSmoothingEnabled = false;
     firectx.webkitImageSmoothingEnabled = false;
-    railctx.imageSmoothingEnabled = false;
-    railctx.webkitImageSmoothingEnabled = false;
     targetctx.imageSmoothingEnabled = false;
     targetctx.webkitImageSmoothingEnabled = false;
     placeablectx.imageSmoothingEnabled = false;
@@ -106,7 +102,6 @@ const nextGrid = [];
 const fireGrid = [];
 const lastFireGrid = [];
 const nextFireGrid = [];
-const railGrid = [];
 const targetGrid = [];
 const musicGrid = [];
 const lastMusicGrid = [];
@@ -206,7 +201,6 @@ function createGrid(width = 100, height = 100) {
     fireGrid.length = 0;
     lastFireGrid.length = 0;
     nextFireGrid.length = 0;
-    railGrid.length = 0;
     targetGrid.length = 0;
     musicGrid.length = 0;
     lastMusicGrid.length = 0;
@@ -221,7 +215,6 @@ function createGrid(width = 100, height = 100) {
         fireGrid[i] = new Array(gridWidth);
         lastFireGrid[i] = new Array(gridWidth);
         nextFireGrid[i] = new Array(gridWidth);
-        railGrid[i] = new Array(gridWidth);
         targetGrid[i] = new Array(gridWidth);
         musicGrid[i] = new Array(gridWidth);
         lastMusicGrid[i] = new Array(gridWidth);
@@ -234,7 +227,6 @@ function createGrid(width = 100, height = 100) {
             fireGrid[i][j] = false;
             lastFireGrid[i][j] = false;
             nextFireGrid[i][j] = -1;
-            railGrid[i][j] = false;
             targetGrid[i][j] = false;
             musicGrid[i][j] = 0;
             lastMusicGrid[i][j] = 0;
@@ -354,7 +346,6 @@ function loadSaveCode(code = saveCode) {
             if (sections[3]) parseBooleanCode(fireGrid, sections[3], 16);
             if (sections[4]) parseBooleanCode(placeableGrid, sections[4], 16);
             if (sections[5]) parseBooleanCode(targetGrid, sections[5], 16);
-            if (sections[6]) parseBooleanCode(railGrid, sections[6], 16);
         } else {
             if (isNaN(parseInt(sections[0]))) return;
             createGrid(parseInt(sections[0].split('-')[0]), parseInt(sections[0].split('-')[1] ?? sections[0]));
@@ -452,7 +443,6 @@ function generateSaveCode() {
     createBooleanCode(fireGrid);
     createBooleanCode(placeableGrid);
     createBooleanCode(targetGrid);
-    createBooleanCode(railGrid);
     return saveCode;
 };
 async function loadPremade(id) {
@@ -1533,7 +1523,6 @@ function draw() {
     gridnoisectx.resetTransform();
     abovectx.resetTransform();
     firectx.resetTransform();
-    railctx.resetTransform();
     targetctx.resetTransform();
     placeablectx.resetTransform();
     teamsctx.resetTransform();
@@ -1544,7 +1533,6 @@ function draw() {
     gridnoisectx.globalAlpha = 1;
     abovectx.globalAlpha = 1;
     firectx.globalAlpha = 1;
-    railctx.globalAlpha = 1;
     targetctx.globalAlpha = 1;
     placeablectx.globalAlpha = 1;
     teamsctx.globalAlpha = 1;
@@ -1668,7 +1656,6 @@ function drawFrame() {
         }
         drawBooleanGrid(fireGrid, lastFireGrid, pixNum.FIRE, firectx);
         drawBooleanGrid(targetGrid, targetGrid, pixNum.TARGET, targetctx);
-        drawBooleanGrid(railGrid, railGrid, pixNum.RAIL, railctx);
         if (!PixSimAPI.inGame) drawBooleanGrid(placeableGrid, lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         else drawBooleanGrid(PixSimAPI.team ? teamPlaceableGrids[1] : teamPlaceableGrids[0], lastPlaceableGrid, pixNum.PLACEMENTRESTRICTION, placeablectx, true);
         if (!noNoise) {
@@ -1710,7 +1697,6 @@ function drawFrame() {
         gridctx.drawImage(gridNoiseCanvas, 0, 0);
         gamectx.drawImage(gridCanvas, 0, 0);
         gamectx.drawImage(aboveCanvas, 0, 0);
-        gamectx.drawImage(railCanvas, 0, 0);
         gamectx.drawImage(targetCanvas, 0, 0);
         gamectx.drawImage(fireCanvas, 0, 0);
         gamectx.drawImage(teamsCanvas, 0, 0);
@@ -2263,7 +2249,7 @@ function updateBrush() {
                     })));
                     saveCodeText.value = saveCode;
                 }
-                if (inResetState && changed) {
+                if (inResetState && changed && sandboxMode) {
                     let code = generateSaveCode();
                     quicksave = code;
                     quickloadButton.disabled = false;
@@ -2341,10 +2327,6 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                     changed = changed || targetGrid[y][x];
                     targetGrid[y][x] = false;
                 });
-                else if (placePixel == 'rail') act((x, y) => {
-                    changed = changed || railGrid[y][x];
-                    railGrid[y][x] = false;
-                });
                 else if (placePixel == 'placementRestriction') act((x, y) => {
                     changed = changed || placeable[y][x];
                     placeable[y][x] = true;
@@ -2358,37 +2340,26 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                         musicGrid[y][x] = 0;
                     }
                 });
-            } else {
-                if (placePixel == 'rail') act((x, y) => {
-                    if (placeable[y][x] && railGrid[y][x]) {
-                        changed = true;
-                        if (inventory[placePixel] == -Infinity) inventory[placePixel] = 0;
-                        inventory[placePixel]++;
-                        modifiedPixelCounts[placePixelNum] = true;
-                        railGrid[y][x] = false;
+            } else act((x, y) => {
+                if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN) && (grid[y][x] < pixNum.GENERIC_COLOR_WELL || grid[y][x] > pixNum.GENERIC_COLOR_WELL)))) {
+                    let pixel = pixelAt(x, y).id;
+                    if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
+                    inventory[pixel]++;
+                    modifiedPixelCounts[grid[y][x]] = true;
+                    changed = changed || grid[y][x] != pixNum.AIR;
+                    grid[y][x] = pixNum.AIR;
+                    if (fireGrid[y][x] && !PixSimAPI.inGame) {
+                        inventory['fire']++;
+                        modifiedPixelCounts[pixNum.FIRE] = true;
+                        fireGrid[y][x] = false;
                     }
-                });
-                else act((x, y) => {
-                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && grid[y][x] != pixNum.MONSTER && (!PixSimAPI.inGame || (2 - teamGrid[y][x] !== pxteam && (grid[y][x] < pixNum.COLOR_RED || grid[y][x] > pixNum.COLOR_BROWN) && (grid[y][x] < pixNum.GENERIC_COLOR_WELL || grid[y][x] > pixNum.GENERIC_COLOR_WELL)))) {
-                        let pixel = pixelAt(x, y).id;
-                        if (inventory[pixel] == -Infinity) inventory[pixel] = 0;
-                        inventory[pixel]++;
-                        modifiedPixelCounts[grid[y][x]] = true;
-                        changed = changed || grid[y][x] != pixNum.AIR;
-                        grid[y][x] = pixNum.AIR;
-                        if (fireGrid[y][x] && !PixSimAPI.inGame) {
-                            inventory['fire']++;
-                            modifiedPixelCounts[pixNum.FIRE] = true;
-                            fireGrid[y][x] = false;
-                        }
-                        if (musicGrid[y][x]) {
-                            musicPixel(musicGrid[y][x], false);
-                            musicGrid[y][x] = 0;
-                        }
-                        teamGrid[y][x] = 0;
+                    if (musicGrid[y][x]) {
+                        musicPixel(musicGrid[y][x], false);
+                        musicGrid[y][x] = 0;
                     }
-                });
-            }
+                    teamGrid[y][x] = 0;
+                }
+            });
         } else if (placePixel == 'fire') {
             if (sandboxMode) {
                 act((x, y) => {
@@ -2402,24 +2373,6 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
                     if (placeable[y][x] && grid[y][x] != pixNum.DELETER && !fireGrid[y][x]) {
                         changed = true;
                         fireGrid[y][x] = true;
-                        inventory[placePixel]--;
-                    }
-                    return inventory[placePixel] <= 0;
-                })) skipToEnd = true;
-            }
-        } else if (placePixel == 'rail') {
-            if (sandboxMode) {
-                act((x, y) => {
-                    changed = changed || !railGrid[y][x];
-                    railGrid[y][x] = true;
-                });
-            } else {
-                modifiedPixelCounts[placePixelNum] = true;
-                if (inventory[placePixel] <= 0) skipToEnd = true;
-                else if (act((x, y) => {
-                    if (placeable[y][x] && grid[y][x] != pixNum.DELETER && !railGrid[y][x]) {
-                        changed = true;
-                        railGrid[y][x] = true;
                         inventory[placePixel]--;
                     }
                     return inventory[placePixel] <= 0;
@@ -2497,7 +2450,7 @@ function clickLine(x1, y1, x2, y2, remove, placePixel = brush.pixel, size = brus
         })));
         saveCodeText.value = saveCode;
     }
-    if (inResetState && changed) {
+    if (inResetState && changed && sandboxMode) {
         let code = generateSaveCode();
         quicksave = code;
         quickloadButton.disabled = false;

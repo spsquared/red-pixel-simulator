@@ -5845,119 +5845,6 @@ const pixels = {
         id: 'unslime',
         numId: 0
     },
-    carriage_left: {
-        name: 'Linear Carriage (Left)',
-        description: 'A carriage. It moves on linear rails, like the name implies...',
-        draw: function (rectangles, ctx, avoidGrid) {
-            ctx.globalAlpha = 1;
-            forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                imagePixels(x, y, width, height, this.prerenderedFrames[0], ctx);
-            });
-            // slider but the sliding part is gray and there's some stuff on the outside to signify direction
-            // prerender because complex
-        },
-        update: function (x, y) {
-
-        },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-        },
-        prerender: function () {
-            const { ctx, fillPixels, toImage } = new PreRenderer(90);
-            ctx.fillStyle = 'rgb(255, 180, 0)';
-            fillPixels(0, 0, 1, 1);
-            ctx.fillStyle = 'rgb(130, 130, 130)';
-            fillPixels(0, 1 / 4, 1, 1 / 2);
-            this.prerenderedFrames.push(toImage());
-        },
-        recipe: {
-            steel: 2,
-            slider_horizontal: 1,
-        },
-        craftAmount: 1,
-        prerenderedFrames: [],
-        blastResistance: 17,
-        flammability: 0,
-        pushable: false,
-        cloneable: true,
-        rotateable: true,
-        rotation: 0,
-        stickable: true,
-        collectible: true,
-        group: 1,
-        updateStage: 3,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: true,
-        pickable: false,
-        pixsimPickable: false,
-        generatedDescription: '',
-        image: '',
-        keybind: null,
-        id: 'carriage_left',
-        numId: 0
-    },
-    rail: {
-        name: 'Linear Rail',
-        description: 'Lightweight linear rail for carriage to move along',
-        draw: function (rectangles, ctx, avoidGrid) {
-            ctx.globalAlpha = 1;
-            if (avoidGrid) {
-                ctx.fillStyle = 'rgb(160, 160, 160)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    for (let i = 0; i < width; i++) {
-                        fillPixels(x + i + 3 / 8, y, 1 / 4, height, ctx);
-                    }
-                    for (let i = 0; i < height; i++) {
-                        fillPixels(x, y + i + 3 / 8, width, 1 / 4, ctx);
-                    }
-                });
-            } else {
-                ctx.fillStyle = 'rgb(160, 160, 160)';
-                forRectangles(rectangles, (x, y, width, height, redrawing) => {
-                    forEachPixel(x, y, width, height, (x2, y2) => {
-                        let horizontal = (x2 > 0 && railGrid[y2][x2 - 1]) || (x2 < gridWidth - 1 && railGrid[y2][x2 + 1]);
-                        let vertical = (y2 > 0 && railGrid[y2 - 1][x2]) || (y2 < gridHeight - 1 && railGrid[y2 + 1][x2]);
-                        if (horizontal || !vertical) fillPixels(x2, y2 + 3 / 8, 1, 1 / 4, ctx);
-                        if (vertical) fillPixels(x2 + 3 / 8, y2, 1 / 4, 1, ctx);
-                    });
-                });
-            }
-        },
-        update: function (x, y) { },
-        drawPreview: function (ctx) {
-            ctx.clearRect(0, 0, 50, 50);
-            ctx.fillStyle = 'rgb(160, 160, 160)';
-            ctx.fillRect(0, 75 / 4, 50, 25 / 2);
-            ctx.fillRect(75 / 4, 0, 25 / 2, 50);
-        },
-        prerender: function () { },
-        recipe: {
-            steel: 1,
-        },
-        craftAmount: 2,
-        prerenderedFrames: [],
-        blastResistance: 10,
-        flammability: 0,
-        pushable: false,
-        cloneable: false,
-        rotateable: false,
-        stickable: false,
-        collectible: false,
-        group: 1,
-        updateStage: -1,
-        animatedNoise: false,
-        animated: false,
-        alwaysRedraw: true,
-        pickable: true,
-        pixsimPickable: false,
-        generatedDescription: '',
-        image: '',
-        keybind: null,
-        id: 'rail',
-        numId: 0
-
-    },
     laser_left: {
         name: 'L.A.S.E.R. (Left)',
         description: '<span style="font-style: italic;">Lol Are Super Entities Rowing (boats) (Leftwards)</span><br>Destroys pixels in a line using hypersonic boating super entities',
@@ -5995,7 +5882,7 @@ const pixels = {
                     teamGrid[last[1]][last[0]] = 0;
                     explode(last[0], last[1], 5, true);
                 }
-                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER && grid[last[1]][last[0]] != pixNum.PIXELITE_CRYSTAL) {
                     nextGrid[last[1]][last[0]] = pixNum.AIR;
                     teamGrid[last[1]][last[0]] = 0;
                 }
@@ -6079,7 +5966,7 @@ const pixels = {
                     teamGrid[last[1]][last[0]] = 0;
                     explode(last[0], last[1], 5, true);
                 }
-                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER && grid[last[1]][last[0]] != pixNum.PIXELITE_CRYSTAL) {
                     nextGrid[last[1]][last[0]] = pixNum.AIR;
                     teamGrid[last[1]][last[0]] = 0;
                 }
@@ -6163,7 +6050,7 @@ const pixels = {
                     teamGrid[last[1]][last[0]] = 0;
                     explode(last[0], last[1], 5, true);
                 }
-                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER && grid[last[1]][last[0]] != pixNum.PIXELITE_CRYSTAL) {
                     nextGrid[last[1]][last[0]] = pixNum.AIR;
                     teamGrid[last[1]][last[0]] = 0;
                 }
@@ -6247,7 +6134,7 @@ const pixels = {
                     teamGrid[last[1]][last[0]] = 0;
                     explode(last[0], last[1], 5, true);
                 }
-                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER) {
+                if (grid[last[1]][last[0]] != pixNum.LASER_SCATTERER && grid[last[1]][last[0]] != pixNum.PIXELITE_CRYSTAL) {
                     nextGrid[last[1]][last[0]] = pixNum.AIR;
                     teamGrid[last[1]][last[0]] = 0;
                 }
