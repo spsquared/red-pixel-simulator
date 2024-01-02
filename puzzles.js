@@ -1,3 +1,5 @@
+// Copyright (C) 2024 Sampleprovider(sp)
+
 const puzzles = [
     // not using json for reasons unknown to mankind
     {

@@ -1,4 +1,4 @@
-// run in separate thread to avoid lag from scripts
+// Copyright (C) 2024 Sampleprovider(sp)
 
 class PXASMReferenceError extends ReferenceError {
     constructor(message = undefined) {

@@ -1,3 +1,5 @@
+// Copyright (C) 2024 Sampleprovider(sp)
+
 const menuScreen = document.getElementById('menuScreen');
 const titleContainer = document.getElementById('titleContainer');
 const t_redpixel = document.getElementById('t_redpixel');

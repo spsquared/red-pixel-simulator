@@ -1,3 +1,5 @@
+// Copyright (C) 2024 Sampleprovider(sp)
+
 let randSeed = 1;
 function random(min = 0, max = 1) {
     return (((randSeed = (randSeed * 16807) % 2147483647) - 1) / 2147483646) * (max - min) + min;

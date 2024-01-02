@@ -1,3 +1,5 @@
+// Copyright (C) 2024 Sampleprovider(sp)
+
 const apiURI = 'https://api.pixelsimulator.repl.co';
 // const apiURI = 'http://localhost:5000';
 const socket = io(apiURI, {

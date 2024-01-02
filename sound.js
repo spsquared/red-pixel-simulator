@@ -1,3 +1,5 @@
+// Copyright (C) 2024 Sampleprovider(sp)
+
 const audioContext = new AudioContext();
 let volume = parseInt(window.localStorage.getItem('volume') ?? 100);
 const volumeDisp = document.getElementById('volumeAdjustDisp');

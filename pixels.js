@@ -1,3 +1,5 @@
+// Copyright (C) 2024 Sampleprovider(sp)
+
 const pixels = {
     air: {
         name: 'Air',

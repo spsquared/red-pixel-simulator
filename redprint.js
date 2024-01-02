@@ -1,3 +1,5 @@
+// Copyright (C) 2024 Sampleprovider(sp)
+
 const redPrints = new Function(`try { return JSON.parse(window.localStorage.getItem('redprints') ?? '[]'); } catch { return JSON.parse(LZString.decompressFromBase64(window.localStorage.getItem('redprints'))); }`)();
 
 // canvas
