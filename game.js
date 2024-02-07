@@ -3075,7 +3075,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
             brush.isSelection = false;
             selection.show = false;
         } else if (key == 'r' && e.ctrlKey) {
-            sidebar.scrollTo({ top: 0, behavior: 'smooth' });
+            sidebar.scrollTo({ top: levelDetails.getBoundingClientRect().height, behavior: 'smooth' });
+            // pixelPicker.scrollIntoView({ block: 'start', behavior: 'smooth' });
         } else if (key == 'p' && e.ctrlKey) {
             const encoded = `data:image/png;base64,${gameCanvas.toDataURL('image/png')}`;
             const a = document.createElement('a');
