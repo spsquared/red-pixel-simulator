@@ -3342,7 +3342,7 @@ let backgroundColor = '#ffffff';
 let noNoise = window.localStorage.getItem('noNoise') === '1';
 let noAnimations = window.localStorage.getItem('noAnimations') === '1';
 let maxLaserDepth = 512;
-let fadeEffect = parseInt(window.localStorage.getItem('noNoise') ?? 127);
+let fadeEffect = parseInt(window.localStorage.getItem('fadeEffect') ?? 127);
 let enableCameraShake = (window.localStorage.getItem('cameraShake') ?? '1') === '1';
 let debugInfo = false;
 const noNoiseButton = document.getElementById('noNoise');
