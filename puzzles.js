@@ -273,6 +273,7 @@ const puzzles = [
                     copier_left: 1,
                     copier_up: 3,
                     copier_right: 1,
+                    copier_left: 1,
                     rotator_left: 1,
                     rotator_up: 1,
                     rotator_right: 1,
@@ -446,7 +447,7 @@ const puzzles = [
             {
                 name: 'Sunset Rose Rafting',
                 description: `That's a cool sunset. It's not the best looking scenery to be in, but at least this river isn't radiator fluid.`,
-                saveCode: '50-50;0000;air-305:grass-6:air-44:stone-6:air-44:stone-5:air-46:stone-3:air-23:leaves-2:air-23:stone-2:air-21:leaves-4:air-46:leaves-2:wood:leaves-2:air-46:wood:leaves-3:air-46:wood:air:leaves:air-47:wood:air-46:grass-3:dirt:grass:air-44:grass:dirt-5:grass-2:air-42:stone-8:air-42:stone-8:air-42:stone-7:air-44:stone-6:air-44:stone-4:air-47:stone-3:air-47:stone-2:air-625:wood:air-24:leaves:wood:leaves-2:air-21:wood:air-24:leaves:wood:leaves-2:air-21:wood:air-24:leaves:wood:leaves-2:air-21:wood:air-24:leaves:wood:leaves-2:air-18:crate:air-2:wood:air-25:wood:air-19:wood:crate:bricks-2:wood:basalt:lava:basalt:air:sponge:wood:air-19:wood:air-19:wood-2:bricks-2:wood:basalt-3:wood-3:air-15:crate-7:air-15:water-4:wood-7:water-138:mud-5:water-42:mud-3:dirt-5:mud-4:water-35:mud-3:dirt-4:stone:dirt-3:clay:dirt-2:clay:mud-5:water-24:mud-6:dirt-2:clay-3:stone-5:dirt-5:clay:dirt:clay-3:silt-24:clay-4:dirt-2:clay-3:dirt:stone-3:;9c4:;0:1f:13:1f:13:1f:13:1f:13:1f:13:1f:13:5:6:14:13:5:6:14:13:5:5:15:13:6:3:16:13:7:2:15:14:1e:14:1f:13:1f:13:1f:13:1c:16:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:4f9:;81f:1:1:1:1a2:;9c4:',
+                saveCode: '&1;50-50;0000;air-131:grass-6:air-2c:stone-6:air-2c:stone-5:air-2e:stone-3:air-17:leaves-2:air-17:stone-2:air-15:leaves-4:air-2e:leaves-2:wood:leaves-2:air-2e:wood:leaves-3:air-2e:wood:air:leaves:air-2f:wood:air-2e:grass-3:dirt:grass:air-2c:grass:dirt-5:grass-2:air-2a:stone-8:air-2a:stone-8:air-2a:stone-7:air-2c:stone-6:air-2c:stone-4:air-2f:stone-3:air-2f:stone-2:air-271:wood:air-18:leaves:wood:leaves-2:air-15:wood:air-18:leaves:wood:leaves-2:air-15:wood:air-18:leaves:wood:leaves-2:air-15:wood:air-18:leaves:wood:leaves-2:air-12:crate:air-2:wood:air-15:wood-5:air-13:wood:crate:bricks-2:wood:basalt:lava:basalt:air:sponge:wood:air-f:wood:monster:wood:monster:wood:air-13:wood-2:bricks-2:wood:basalt-3:wood-3:air-f:crate-7:air-f:water-4:wood-7:water-8a:mud-5:water-2a:mud-3:dirt-5:mud-4:water-23:mud-3:dirt-4:stone:dirt-3:clay:dirt-2:clay:mud-5:water-18:mud-6:dirt-2:clay-3:stone-5:dirt-5:clay:dirt:clay-3:silt-18:clay-4:dirt-2:clay-3:dirt:stone-3:;9c4:;0:1f:13:1f:13:1f:13:1f:13:1f:13:1f:13:5:6:14:13:5:6:14:13:5:5:15:13:6:3:16:13:7:2:15:14:1e:14:1f:13:1f:13:1f:13:1c:16:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:17:1b:4f9:;9c4:',
                 backgroundColor: new Function('let fn = ' + function () {
                     let a = ctx.createLinearGradient(0, 0, 0, canvasResolution);
                     a.addColorStop(0, '#028a9b');
@@ -467,7 +468,7 @@ const puzzles = [
 
                 },
                 difficulty: 'Medium',
-                id: '420b583a-98e4-4c0b-9fc1-a22bd5ebaead'
+                id: 'e2cf86c1-d4dc-46ac-81c5-641244a7a7d8'
             },
         ]
     },
